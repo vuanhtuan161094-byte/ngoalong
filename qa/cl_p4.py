@@ -67,29 +67,33 @@ def main():
         page.wait_for_function("window.__CLTQ_P4_QA__?.assetsLoaded()", timeout=30000)
 
         base = page.evaluate("window.__P2_QA__.getGame()")
-        all_ids = page.evaluate("window.__CLTQ_P4_QA__.allHeroIds()")
+        all_ids = page.evaluate("window.__CLTQ_P4_QA__.playableHeroIds()")
         new_heroes = page.evaluate("window.__CLTQ_P4_QA__.heroes()")
-        check("P4 roster has 30+ historical and original commanders", len(all_ids) >= 30 and len(all_ids) == 49)
+        check("P4 campaign roster has 49 playable historical and original commanders", len(all_ids) == 49)
         check("22 historical recruit portraits plus legacy portraits cover 30 unique characters", len(page.evaluate("window.__CLTQ_P4_QA__.portraitedIds()")) == 30)
         check("three original generated portrait assets load offline in Chromium", page.evaluate("window.__CLTQ_P4_QA__.assetsLoaded()"))
-        check("seven alignments have at least one playable member", len(page.evaluate("Object.keys(window.__CLTQ_P4_QA__.factionCounts())")) == 7 and all(v > 0 for v in page.evaluate("Object.values(window.__CLTQ_P4_QA__.factionCounts())")))
+        faction_counts = page.evaluate("window.__CLTQ_P4_QA__.factionCounts()")
+        check("seven alignments cover the 49 playable campaign commanders", len(faction_counts) == 7 and all(v > 0 for v in faction_counts.values()) and sum(faction_counts.values()) == len(all_ids))
         check("every added commander has a distinct tactical skill descriptor", len(new_heroes) == 25 and len({h["skill"] for h in new_heroes}) == 25 and all(page.evaluate("id=>window.__CLTQ_P4_QA__.skill(id)?.tag", h["id"]) == h["skill"] for h in new_heroes))
 
-        # Verify recruitment through the real tavern control, including reserve-slot integration.
+        # Verify the explicit classic WEB recruit flow and its real commander-slot integration.
         recruit_state = json.loads(json.dumps(base))
         recruit_state["freeRecruit"] = True
         recruit_state["silver"] = 20000
         page.evaluate("s=>window.__P2_QA__.setGame(s)", recruit_state)
         page.evaluate("window.__P2_QA__.selectTab('heroes')")
         before_roster = page.evaluate("window.__P2_QA__.getGame()")
-        page.locator("[data-recruit]").click()
+        page.locator('[data-nla-recruit="zhao"]').click()
         recruited = page.evaluate("window.__P2_QA__.getGame()")
         recruited_id = next((x for x in recruited["roster"] if x not in before_roster["roster"]), None)
-        check("free tavern recruit grants a real new hero and fills a commander slot", recruited_id is not None and recruited_id in recruited["cltq"]["commanders"] and recruited["hero"].get(recruited_id, {}).get("troops", 0) >= 30)
+        check("free Zhao Yun recruit joins the real roster, commander slot and selected army", recruited_id == "zhao" and recruited_id in recruited["cltq"]["commanders"] and recruited_id in recruited["cltq"]["selectedArmy"] and recruited["hero"].get(recruited_id, {}).get("troops", 0) >= 30)
         silver_before_paid = recruited["silver"]
-        page.locator("[data-recruit]").click()
+        recruited["cleared"] = [1, 2]
+        page.evaluate("s=>window.__P2_QA__.setGame(s)", recruited)
+        page.evaluate("window.__P2_QA__.selectTab('heroes')")
+        page.locator('[data-nla-recruit="huang"]').click()
         paid = page.evaluate("window.__P2_QA__.getGame()")
-        check("paid tavern recruit debits exactly 1,800 silver", len(paid["roster"]) == len(before_roster["roster"]) + 2 and silver_before_paid - paid["silver"] == 1800)
+        check("stage-gated Huang Zhong recruit debits exactly 650 silver and fills the next command slot", len(paid["roster"]) == len(before_roster["roster"]) + 2 and paid["silver"] == silver_before_paid - 650 and "huang" in paid["cltq"]["commanders"] and paid["hero"]["huang"]["troops"] >= 30)
 
         make_roster_fixture(page, base, all_ids)
         page.evaluate("window.__P2_QA__.selectTab('heroes')")

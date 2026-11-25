@@ -24,7 +24,7 @@ def check(name: str, condition: object, evidence: dict | None = None) -> bool:
 
 def fixture(page) -> dict:
     state = page.evaluate("window.__P2_QA__.getGame()")
-    ids = page.evaluate("window.__CLTQ_P4_QA__.allHeroIds()")
+    ids = page.evaluate("window.__CLTQ_P4_QA__.playableHeroIds()")
     state["roster"] = ids
     for hero_id in ids:
         state["hero"][hero_id] = {"level": 35, "xp": 0, "troops": 1500}

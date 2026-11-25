@@ -36756,7 +36756,7 @@ function clP4FinishChapter(){if(!battle||battle.finished||battle.replay)return;c
 const clP4BaseFinishBattle=cltqFinishBattle;cltqFinishBattle=function(){if(battle?.cltq?.kind==='chapter')return clP4FinishChapter();return clP4BaseFinishBattle();};
 document.addEventListener('click',ev=>{const stage=ev.target.closest('[data-cl-p4-stage]');if(stage&&!stage.disabled)clP4StartChapter(+stage.dataset.clP4Stage);});
 const CL_P4_ROSTER_IMAGES=Object.fromEntries(Object.entries(CL_P4_ROSTER_ASSETS).map(([key,src])=>{const image=new Image();image.decoding='async';image.src=src;return [key,image];}));
-if(window.__P2_ENABLE_QA__){window.__CLTQ_P4_QA__={factions:CL_P4_FACTIONS,heroes:()=>CL_P4_NEW_HEROES.map(h=>({...h})),allHeroIds:()=>Object.keys(HEROES),factionCounts:()=>Object.values(HEROES).reduce((o,h)=>{o[h.clFaction]=(o[h.clFaction]||0)+1;return o;},{}),stages:()=>structuredClone(CL_P4_STAGES),getState:()=>structuredClone(game.cltq.p4),setState:s=>{game.cltq.p4={...clP4DefaultState(),...structuredClone(s)};clP4HydrateState();save();render();},start:clP4StartChapter,synergy:clP4FactionPlan,skill:id=>P2_SKILLS[id],portraitMap:CLP4_ATLAS_PORTRAITS,portraitedIds:()=>[...Object.keys(p4PortraitMap),...Object.keys(CLP4_ATLAS_PORTRAITS),'huang_yueying','jia_xu'],assetsLoaded:()=>Object.values(CL_P4_ROSTER_IMAGES).every(i=>i.complete&&i.naturalWidth>0),finish:clP4FinishChapter,render:clP4CampaignPanel};}
+if(window.__P2_ENABLE_QA__){window.__CLTQ_P4_QA__={factions:CL_P4_FACTIONS,heroes:()=>CL_P4_NEW_HEROES.map(h=>({...h})),allHeroIds:()=>Object.keys(HEROES),playableHeroIds:()=>Object.keys(HEROES).filter(id=>Boolean(HEROES[id]?.clFaction&&CL_P4_FACTIONS[HEROES[id].clFaction])),factionCounts:()=>Object.values(HEROES).filter(h=>CL_P4_FACTIONS[h.clFaction]).reduce((o,h)=>{o[h.clFaction]=(o[h.clFaction]||0)+1;return o;},{}),stages:()=>structuredClone(CL_P4_STAGES),getState:()=>structuredClone(game.cltq.p4),setState:s=>{game.cltq.p4={...clP4DefaultState(),...structuredClone(s)};clP4HydrateState();save();render();},start:clP4StartChapter,synergy:clP4FactionPlan,skill:id=>P2_SKILLS[id],portraitMap:CLP4_ATLAS_PORTRAITS,portraitedIds:()=>[...Object.keys(p4PortraitMap),...Object.keys(CLP4_ATLAS_PORTRAITS),'huang_yueying','jia_xu'],assetsLoaded:()=>Object.values(CL_P4_ROSTER_IMAGES).every(i=>i.complete&&i.naturalWidth>0),finish:clP4FinishChapter,render:clP4CampaignPanel};}
 
 
 if(window.__P2_ENABLE_QA__){window.__P41_QA__={image:P41_IMAGE,p5Image:CL_P5_INFANTRY_SCOUT_IMAGE,p5Manifest:CL_P5_INFANTRY_SCOUT_ANIM,p5Index:clP5InfantryFrameIndex,manifest:P41_ANIM,index:p41FrameIndex,drawFrame:p41DrawFrame,visual:p41VisualState,applyFrame:p2ApplyFrame,phase:p41EventPhase,drawScene,
@@ -39930,6 +39930,12 @@ function nlARecruitHero(id){
   game.roster.push(id);
   game.hero[id]={level:1,xp:0,troops:160};
   if(!game.troopModes||typeof game.troopModes!=='object')game.troopModes={};
+  // Keep a newly recruited hero available to the five-commander world army.
+  // The classic WEB chooser is authoritative; assign only to an open slot.
+  if(game.cltq&&Array.isArray(game.cltq.commanders)){
+    const slot=game.cltq.commanders.findIndex(hero=>!hero);
+    if(slot>=0){game.cltq.commanders[slot]=id;if(!game.cltq.selectedArmy.includes(id))game.cltq.selectedArmy.push(id);}
+  }
   if(row.method==='tavern')a.talkUsed++;
   if(id==='zhao' && game.freeRecruit)game.freeRecruit=false;
   a.recruitReceipts.push({id,method:row.method,stage:row.stage||null,cost:price,at:Date.now(),source:'SIMULATED'});
