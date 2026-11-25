@@ -1,7 +1,7 @@
 # Ngọa Long Mobile production feature inventory
 
 **Authority:** [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md)
-**Snapshot:** branch `feature/ngoalong-v1-complete`, runtime source checkpoint `c888918`; exact-SHA hosted checks for this runtime checkpoint are pending.
+**Snapshot:** branch `feature/ngoalong-v1-complete`, runtime source checkpoint `c888918`; full regression passed on source-equivalent SHA `c160b4b`, with Link Web Review still running.
 **Product state:** NOT COMPLETE. This inventory is a working backlog grounded in repository files and the dated source matrix. `VERIFIED` only means a public source establishes that a system/capability exists; it does not establish hidden rates or formulas. No row claims full Mobile parity.
 
 ## Status meanings
