@@ -23,6 +23,30 @@ with sync_playwright() as p:
         assert result["nav"]>=14 and result["city"]>0 and result["save"]==5,result
         page.locator('.nav[data-tab="heroes"]').click()
         page.wait_for_function("document.querySelectorAll('[data-nla-hero] .nl-art-d-img').length>0")
+        found = page.evaluate("""() => {
+          const selector='[data-nlc-panel="heroes"] [data-nlc-id="wiki-mobile-hero-083"]';
+          for(let i=0;i<80&&!document.querySelector(selector);i++){
+            const next=document.querySelector('[data-nlc-panel="heroes"] [data-nlc-action="hero-page"][data-nlc-id="next"]');
+            if(!next||next.disabled)break;
+            next.click();
+          }
+          return Boolean(document.querySelector(selector));
+        }""")
+        assert found, "Lục Tốn must remain reachable in the paginated Wiki hero catalogue"
+        page.wait_for_function("document.querySelector('[data-nlc-panel=heroes] [data-nlc-id=wiki-mobile-hero-083]')?.closest('.nlc-row')?.querySelector('.nl-art-d-img')")
+        portrait = page.evaluate("""() => {
+          const q=window.__NL_ART_D_QA__;
+          const button=document.querySelector('[data-nlc-panel=heroes] [data-nlc-id="wiki-mobile-hero-083"]');
+          const image=button?.closest('.nlc-row')?.querySelector('.nl-art-d-img');
+          const source=q.portrait('wiki-mobile-hero-083');
+          const imageSource=image?.src||'';
+          return {registered:q.heroPortraitIds.includes('wiki-mobile-hero-083'),
+            sourceIsPng:source.startsWith('data:image/png;base64,'),sourceLength:source.length,
+            imageSourceIsPng:imageSource.startsWith('data:image/png;base64,'),
+            title:image?.title||'',loaded:Boolean(image?.complete&&image?.naturalWidth===1254)};
+        }""")
+        assert portrait["registered"] and portrait["sourceIsPng"] \
+            and portrait["imageSourceIsPng"] and portrait["loaded"],portrait
         result3=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
           return {maps:q.mapCount(),architecture:q.architecture('hall','Thành Chính')!==q.architecture('tower','Tháp'),
@@ -40,6 +64,6 @@ with sync_playwright() as p:
         page.wait_for_function("document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0")
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
         assert not errors,errors
-        print("NL_ART_D/D3 PASS",width,result,result3)
+        print("NL_ART_D/D3 PASS",width,result,result3,portrait)
         page.close()
     browser.close()

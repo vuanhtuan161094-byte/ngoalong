@@ -66,9 +66,11 @@ def main():
               page.locator('[data-nl-command]').count() == 1 and
               page.locator('[data-nl-city-panel]').count() == 1 and
               page.locator('[data-nl-city-kind="select"]').count() == 38)
-        check("existing four original legacy resources remain visible",
-              all(x in page.locator('[data-nl-city-panel]').inner_text()
-                  for x in ["Bạc","Lương","Sắt","Uy danh"]))
+        city_resources = page.locator('[data-nl-city-panel]').inner_text()
+        check("classic WEB city shows Bạc, Lương and Uy danh while retaining legacy Sắt in Save",
+              all(x in city_resources for x in ["Bạc","Lương","Uy danh"]) and
+              "Sắt" not in city_resources and
+              page.evaluate("window.__P2_QA__.getGame().iron") == 3200)
         # Supply test resources through the existing QA state authority, not the city engine.
         original = page.evaluate("window.__P2_QA__.getGame()")
         original.update({"silver":100000,"grain":50000,"iron":20000})
@@ -82,10 +84,12 @@ def main():
         after = page.evaluate("window.__P2_QA__.getGame()")
         receipt = after["nlCity"]["receipts"]
         check("construction reserves one job and debits actual game resources",
+              len(receipt) == 1 and
               after["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks" and
               after["silver"] < original["silver"] and
               after["grain"] < original["grain"] and
-              after["iron"] < original["iron"] and len(receipt) == 1)
+              after["iron"] == original["iron"] and
+              "iron" not in receipt[0].get("debit",{}))
         check("single persisted city receipt and schema-v5 authority",
               after["version"] == 5 and
               len(after["nlCity"]["receiptIndex"]) == 1 and

@@ -99,6 +99,42 @@ def main() -> int:
                                 results["errors"].append(f"{width}x{height}/{tab['id']}: screen appears blank: {metrics}")
                             if tab["id"] == "city" and not metrics["cityMapVisible"]:
                                 results["errors"].append(f"{width}x{height}/city: city map is not the initial visible window")
+                            if tab["id"] == "heroes" and width <= 650:
+                                recruit_page = page.evaluate("""() => {
+                                    const list=document.querySelector('#view [data-nla-recruit-panel] .nl-a-hero-list');
+                                    const visible=Array.from(list?.children||[]).filter(row=>
+                                        getComputedStyle(row).display!=='none'&&row.getClientRects().length>0);
+                                    const label=list?.querySelector('.nl-a-hero-details small');
+                                    const panel=list?.closest('[data-nla-recruit-panel]');
+                                    return {visibleRows:visible.length,
+                                        rowIds:visible.map(row=>row.dataset.nlaHero||row.getAttribute('data-nla-hero')),
+                                        detailFont:label?parseFloat(getComputedStyle(label).fontSize):0,
+                                        panelTransform:panel?getComputedStyle(panel).transform:'none'};
+                                }""")
+                                pane_count=page.locator('#nl-screen-select option').count()
+                                if (recruit_page["visibleRows"] > 3 or recruit_page["visibleRows"] == 0
+                                        or recruit_page["detailFont"] < 10.5 or pane_count < 3
+                                        or recruit_page["panelTransform"] != "none"):
+                                    results["errors"].append(
+                                        f"{width}x{height}/heroes: recruit rows are not readable/paginated: "
+                                        f"{recruit_page}; panes={pane_count}")
+                                else:
+                                    first_page_ids=set(recruit_page["rowIds"])
+                                    page.locator('#nl-screen-select').select_option('1')
+                                    page.wait_for_timeout(80)
+                                    next_page_ids=page.evaluate("""() => Array.from(
+                                        document.querySelectorAll('#view [data-nla-recruit-panel] .nl-a-hero-list > :not(.nl-pane-hidden)'))
+                                        .filter(row=>getComputedStyle(row).display!=='none'&&row.getClientRects().length>0)
+                                        .map(row=>row.dataset.nlaHero||row.getAttribute('data-nla-hero'))""")
+                                    if not next_page_ids or first_page_ids.intersection(next_page_ids):
+                                        results["errors"].append(
+                                            f"{width}x{height}/heroes: next recruit page did not change candidates")
+                                    results.setdefault("interactions", []).append({
+                                        "viewport": f"{width}x{height}",
+                                        "flow": "recruit list paginates with readable mobile text",
+                                        "result": "PASS" if next_page_ids and not first_page_ids.intersection(next_page_ids) else "FAIL",
+                                    })
+                                    page.locator('#nl-screen-select').select_option('0')
                             if tab["id"] == "formation" and width <= 650:
                                 if not metrics["formationBoardVisible"] or metrics["formationRosterVisible"]:
                                     results["errors"].append(f"{width}x{height}/formation: board/picker not separated on first window")

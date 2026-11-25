@@ -39,6 +39,20 @@ def build(html: Path) -> str:
     root = HERE.parent
     d4 = {'region':scene_uri(root/'assets/p5/cl-p5-region-map.webp'),
           'city':scene_uri(root/'assets/p4/city.webp')}
+    portrait_path = root/'assets/ngoalong/nl_v1/portraits/lu-xun.png'
+    portrait_manifest_path = root/'assets/ngoalong/nl_v1/portraits/lu-xun.manifest.json'
+    portrait = portrait_path.read_bytes()
+    portrait_manifest = json.loads(portrait_manifest_path.read_text(encoding='utf-8'))
+    dimensions = [int.from_bytes(portrait[16:20], 'big'), int.from_bytes(portrait[20:24], 'big')]
+    if (portrait[:8] != b'\x89PNG\r\n\x1a\n' or portrait[12:16] != b'IHDR'
+            or hashlib.sha256(portrait).hexdigest() != portrait_manifest['image']['sha256']
+            or dimensions != [portrait_manifest['image']['width'], portrait_manifest['image']['height']]
+            or portrait_manifest['status'] != 'RECREATED'
+            or portrait_manifest['assetId'] != 'wiki-mobile-hero-083'):
+        raise ValueError('Lục Tốn portrait failed its manifest or PNG integrity check')
+    d4['heroPortraits'] = {
+        portrait_manifest['assetId']: 'data:image/png;base64,' + base64.b64encode(portrait).decode('ascii')
+    }
     js = JS.read_text(encoding='utf-8') + '\nwindow.__NL_ART_D4_UI__=' + json.dumps(d4,separators=(',',':')) + ';\n' + (HERE / 'nl_art_d.js').read_text(encoding='utf-8')
     if 'NL-WINDOW-UI-V2' not in js or 'NL FIXED WINDOW V2' not in css:
         raise ValueError('UI V2 source markers missing')

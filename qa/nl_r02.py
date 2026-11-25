@@ -136,7 +136,7 @@ def main():
           }}
           q.closeBattle('city');return rows;
         }}""")
-        check("same-seed one/two/three-drum A/B changes skill timing and respects morale cap", drum_results[0]["ready"] < 100 and drum_results[0]["mode"] == "normal" and drum_results[1]["ready"] >= 100 and drum_results[1]["mode"] == "skill" and drum_results[2]["ready"] <= 130 and drum_results[2]["mode"] == "skill")
+        check("same-seed 25-morale WEB drum tempo delays skill until the third drummer and respects the cap", drum_results[0]["ready"] == 65 and drum_results[0]["mode"] == "normal" and drum_results[1]["ready"] == 90 and drum_results[1]["mode"] == "normal" and drum_results[2]["ready"] == 115 and drum_results[2]["mode"] == "skill" and drum_results[2]["morale"] <= 100)
 
         # Stage 5's named strategist applies a morale seal through its real skill event.
         page.evaluate(f"g=>{qa}.setGame(g)", base)

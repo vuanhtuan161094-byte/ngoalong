@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/ngoalong-v1-complete
   workflow_dispatch:
 
 concurrency:

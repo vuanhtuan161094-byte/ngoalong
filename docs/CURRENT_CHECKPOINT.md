@@ -1,3 +1,13 @@
+# Active task checkpoint — 2026-11-25
+
+This repository was moved to `vuanhtuan161094-byte/ngoalong`. This active task is on `feature/ngoalong-v1-complete`, based on `main` at `58a11806dd5eb0267244407b7808fe7848406808`. The current product direction is an original offline-first strategy game inspired by classic Ngọa Long WEB; old Heoofgaia paths, other branches/repositories, and retired hybrid/Chiến Loạn directions below are historical records only. `README.md`, `AGENTS.md`, [V1 master checklist](V1_MASTER_CHECKLIST.md) and [V1 release handoff](V1_RELEASE_HANDOFF.md) govern current work.
+
+**V1.0 is not complete.** Baseline review run [45529293610](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45529293610) built the game, captured 28 screenshots and passed its QA job; the separate Pages deployment failed because repository Pages is not enabled. That run is not the full `ngoalong-qa.yml` release suite. The task branch exact-SHA CI and draft PR are pending.
+
+Current batch: transactional Save-v1–v5 import and cross-origin transfer instructions; mobile hero-list pagination; one original static Lục Tốn portrait with manifest/hash; corrected stale A2/A3/B2 tests; and updated workflow triggers/docs. Local screenshot, Save transfer, art and targeted regression evidence is summarized in `docs/V1_RELEASE_HANDOFF.md`. Full long-game balance, roster art, animation/audio, device play and owner acceptance remain pending.
+
+---
+
 # ISSUE #9 V1.0 WORKING BRANCH UPDATE — 18/11/2026
 
 - Cloud task branch: `feature/nl-codex-cloud-v1-finish`, based on freshly fetched `codex/nl-wiki-01-r02-20261117` at `28aaf5f70e332688199e43d2cf46c7c5817a7eab`; existing Draft PR #10 remains the sole delivery PR, targeting PR #6's source branch. Hero files are untouched.

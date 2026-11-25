@@ -30,6 +30,14 @@
  }
  function addPageForRoot(root,tab){
    const narrow=viewportNarrow();
+   const recruitList=root.matches('[data-nla-recruit-panel]')
+     ?root.querySelector('.nl-a-hero-list')
+     :root.querySelector('[data-nla-recruit-panel] .nl-a-hero-list');
+   const recruitRows=recruitList&&children(recruitList);
+   if(recruitRows&&recruitRows.length>4){
+     makeChunks(root,recruitList,recruitRows,narrow?3:8,'Chiêu mộ');
+     return;
+   }
    if((root.classList.contains('grid-2')||root.classList.contains('formation-wrap'))&&children(root).length>=2){
      const sides=children(root);
      const scene=tab==='campaign'?root.querySelector('.stage-grid'):null;

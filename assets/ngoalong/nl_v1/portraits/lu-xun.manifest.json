@@ -1,0 +1,26 @@
+{
+  "assetId": "wiki-mobile-hero-083",
+  "displayName": "Lục Tốn",
+  "assetKind": "portrait",
+  "status": "RECREATED",
+  "source": {
+    "route": "OpenAI ImageGen",
+    "date": "2026-11-25",
+    "promptFile": "lu-xun.prompt.txt",
+    "externalReferences": [],
+    "cost": "UNKNOWN"
+  },
+  "image": {
+    "file": "lu-xun.png",
+    "sha256": "4d0bcd236f78832744d78549c17498838cad963f23063e1b9577ab19346ff845",
+    "width": 1254,
+    "height": 1254,
+    "format": "PNG",
+    "channels": "RGBA",
+    "alpha": "PRESERVED",
+    "registration": "square portrait canvas; display with object-fit: contain"
+  },
+  "use": "One static hero portrait for catalogue and recruitment UI. Not a battle sprite and has no animation frames.",
+  "rights": "Project-generated original image; no game screenshot or third-party image was used as a reference.",
+  "prompt": "Create a single original game character portrait master for Lục Tốn (Lu Xun), the Three Kingdoms era strategist-general, for an original Vietnamese historical strategy game. Square 1024x1024 composition, bust-length with both shoulders and full hat silhouette visible, facing three-quarter view, composed intelligent expression, adult East Asian man in his early thirties, refined dark hair in a high topknot under a modest bronze scholar-general crown, layered vermilion silk robe over finely detailed bronze lamellar shoulder armor, restrained jade-green accents, one small scroll case at the shoulder, historically inspired late Han / Three Kingdoms materials. High-end hand-painted 2D game portrait with controlled brush texture, precise facial anatomy, crisp silhouette, rich but restrained colors, warm natural key light and cool soft fill, character clearly separated from a transparent background. No environment, no glow effects, no border, no frame, no lettering, no calligraphy, no logo, no collage, no extra people, no resemblance to an existing game or specific actor. Preserve clean transparency around the whole character; place face and shoulder armor inside a central 82 percent safe area.\n"
+}

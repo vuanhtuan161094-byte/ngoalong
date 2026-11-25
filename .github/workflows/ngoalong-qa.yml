@@ -2,7 +2,7 @@ name: Muu Dinh Tam Quoc · Ngọa Long-focused full regression and release
 
 on:
   push:
-    branches: [main-ngoalong, 'codex/**', 'feature/nl-codex-cloud-v1-finish', 'feature/nl-mcv2-08-items-integration', 'feature/nl-integration-review-20261119']
+    branches: [main-ngoalong, 'codex/**', 'feature/nl-codex-cloud-v1-finish', 'feature/nl-mcv2-08-items-integration', 'feature/nl-integration-review-20261119', 'feature/ngoalong-v1-complete']
   workflow_dispatch:
 
 permissions:
@@ -93,6 +93,7 @@ jobs:
           python qa/ngoa_long_mode.py
           python qa/nl_heroes207_browser.py
           python qa/nl_premerge_hero207_items.py
+          python qa/nl_save_transfer.py
           python qa/nl_city_integration.py
           python qa/nl_native_pve_a1_browser.py
           python qa/nl_r02.py
@@ -179,6 +180,8 @@ jobs:
         run: python qa/nl_heroes207_browser.py
       - name: Combined Hero207 + Items browser/save/replay gate
         run: python qa/nl_premerge_hero207_items.py
+      - name: Cross-origin Save transfer, validation, confirmation and rollback
+        run: python qa/nl_save_transfer.py
       - name: CHAT03 City real browser, shared Save and mobile integration
         run: python qa/nl_city_integration.py
       - name: A1 28-stage native Combat V2, Boss AI, troop, replay and receipt browser gate

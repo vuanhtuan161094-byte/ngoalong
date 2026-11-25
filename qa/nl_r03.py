@@ -125,7 +125,7 @@ def run():
           __P2_QA__.stepBattle();
         }""")
         rallied = page.evaluate("window.__P2_QA__.getBattle()")
-        check("Hiệu Lệnh adds 12 morale to every ally in a real drum action", rallied["events"][-1]["mode"] == "drum" and all(unit["morale"] == (63 if unit["id"] == "liu" else 56) for unit in rallied["p"]))
+        check("Hiệu Lệnh adds its 12 morale to the classic WEB 25-morale drum action", rallied["events"][-1]["mode"] == "drum" and all(unit["morale"] == 47 for unit in rallied["p"]))
         page.evaluate("window.__P2_QA__.closeBattle('city')")
 
         # Change the cavalry path and prove the live player action selects a rear target.
@@ -297,9 +297,11 @@ def run():
         }""")
         end_report = page.evaluate("window.__P2_QA__.getGame().battleReports.at(-1)")
         ending_result = page.locator('[data-nl-campaign-ending="1"]')
-        first_silver = state(page)["silver"]
+        report_count = len(state(page)["battleReports"])
         page.evaluate("window.__P2_QA__.finishBattle()")
-        check("final boss victory settles encounter 28 once and renders the end-of-campaign result", ending_result.count() == 1 and end_report["won"] and end_report["stage"] == 28 and 28 in state(page)["cleared"] and state(page)["silver"] == first_silver)
+        final_state = state(page)
+        final_boss_ok = ending_result.count() == 1 and end_report["won"] and end_report["stage"] == 28 and final_state["cleared"].count(28) == 1 and len(final_state["battleReports"]) == report_count
+        check("final boss victory settles encounter 28 once and renders the end-of-campaign result", final_boss_ok)
         page.locator('[data-end-battle="1"]').click()
         page.locator('[data-tab="campaign"]').click()
         check("clearing encounter 28 of chapter 8 renders the ending and the final boss badge", page.locator('[data-nl-campaign-ending="1"]').count() == 1 and "28 cửa ải" in page.locator('[data-nl-campaign-ending="1"]').inner_text() and page.locator('[data-nl-boss="1"]').count() == 1)

@@ -1,6 +1,7 @@
 /* NL-ART-D-V1 — original deterministic, offline presentation only. */
 (()=>{'use strict';
  const NS='http://www.w3.org/2000/svg',cache=new Map();
+ const supplied=window.__NL_ART_D4_UI__||{};
  const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0};
  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
  const palettes=[['#344f67','#8cb9bc'],['#704038','#cf9460'],['#365d4f','#94be91'],['#59506c','#c1a4d7'],['#6b5638','#d5bc79']];
@@ -109,7 +110,7 @@
  function icon(kind,id=''){return svg(defs+frame+(shapes[kind]||shapes.quests));}
  const heroMap=()=>window.__NL_ART_CATALOG__||{};
  function heroForName(name){const n=norm(name).trim();return Object.entries(heroMap()).find(([id,h])=>norm(h.name).trim()===n);}
- function art(kind,id,h){const key=kind+':'+id;if(!cache.has(key))cache.set(key,uri(kind==='hero'?portrait(id,h):kind==='architecture'?architecture(id,h?.name):kind==='landscape'?landscape(id):kind==='loot'?lootArt(id,h):families.includes(kind)?troop(kind,id):icon(kind,id)));return cache.get(key)}
+ function art(kind,id,h){const suppliedPortrait=kind==='hero'&&supplied.heroPortraits?.[id];if(suppliedPortrait)return suppliedPortrait;const key=kind+':'+id;if(!cache.has(key))cache.set(key,uri(kind==='hero'?portrait(id,h):kind==='architecture'?architecture(id,h?.name):kind==='landscape'?landscape(id):kind==='loot'?lootArt(id,h):families.includes(kind)?troop(kind,id):icon(kind,id)));return cache.get(key)}
  function decorate(el,kind,id,h,replace=false){
    if(!el||el.dataset.nlArtD===kind+':'+id)return;
    el.dataset.nlArtD=kind+':'+id;
@@ -126,7 +127,7 @@
      im.style.filter='saturate('+(0.87+(n%4)*.07)+') brightness('+(0.87+(n%3)*.06)+')';
      im.title='Minh họa địa hình đại diện; không phải bản đồ địa lý gốc';
    }
-   if(kind==='hero'){im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}
+   if(kind==='hero'){if(supplied.heroPortraits?.[id])im.title='Chân dung Lục Tốn · Ảnh nguyên bản tạo riêng cho dự án';else{im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}}
    if(replace)el.classList.add('nl-art-d-replace');
  }
  function buildingKind(s){s=norm(s);return /thap|tower/.test(s)?'tower':/quan|binh|barrack|stable|drill/.test(s)?'barracks':/kho|granary|luong|mill|farm/.test(s)?'grain':/thu[eế]|tax|bac|treasury|ngan|mine/.test(s)?'silver':/hoc|tech|nghien|academy/.test(s)?'tech':'city'}
@@ -174,6 +175,6 @@
  // Observe native render boundaries, not subtree edits made by this presentation layer.
  for(const el of [document.getElementById('view'),document.getElementById('resources')])if(el)new MutationObserver(schedule).observe(el,{childList:true});
  document.addEventListener('change',schedule,true);document.addEventListener('click',schedule,true);
- if(window.__P2_ENABLE_QA__)window.__NL_ART_D_QA__={count:()=>Object.keys(heroMap()).length,portrait:id=>art('hero',id,heroMap()[id]),troop:(f,id)=>art(f,id),icons:Object.keys(shapes),apply,architecture:(id,name)=>art('architecture',id,{name}),landscape:id=>art('landscape',id),loot:(id,kind,rarity)=>art('loot',id,{kind,rarity}),mapCount:()=>Object.keys(window.__NL_ART_MAP_CATALOG__||{}).length};
+ if(window.__P2_ENABLE_QA__)window.__NL_ART_D_QA__={count:()=>Object.keys(heroMap()).length,portrait:id=>art('hero',id,heroMap()[id]),heroPortraitIds:Object.keys(supplied.heroPortraits||{}),troop:(f,id)=>art(f,id),icons:Object.keys(shapes),apply,architecture:(id,name)=>art('architecture',id,{name}),landscape:id=>art('landscape',id),loot:(id,kind,rarity)=>art('loot',id,{kind,rarity}),mapCount:()=>Object.keys(window.__NL_ART_MAP_CATALOG__||{}).length};
  apply();
 })();
