@@ -3,7 +3,7 @@ name: Muu Dinh Tam Quoc - One Link Web Review (UI V2)
 on:
   push:
     branches:
-      - feature/nl-web-review-20261122
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -165,8 +165,6 @@ jobs:
             site/index.html
             site/review-status.json
           if-no-files-found: error
-      - name: Configure Pages deployment for the review site
-        uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
@@ -175,14 +173,12 @@ jobs:
     name: Deploy permanent GitHub Pages URL after QA
     needs: build-and-review
     runs-on: ubuntu-24.04
-    if: ${{ success() && github.ref == 'refs/heads/feature/nl-web-review-20261122' }}
+    if: ${{ success() && github.ref == 'refs/heads/main' }}
     permissions:
       pages: write
       id-token: write
       contents: read
-    # Isolate preview publishing from the default GitHub Pages branch protection.
-    # The push trigger and job-level ref condition both restrict deployment to
-    # feature/nl-web-review-20261122; never deploy on a pull request.
+    # Dedicated repository: only main is canonical; never publish from a pull request.
     environment:
       name: nl-web-review
       url: ${{ steps.deployment.outputs.page_url }}
