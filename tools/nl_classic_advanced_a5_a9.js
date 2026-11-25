@@ -15,7 +15,9 @@ const VERSION=1, HOUR=3600000;
 const RANKS=[['Bạch thân',0,0],['Hiệu Úy',80,250],['Đô Úy',200,450],['Thái Thú',450,800],['Trung Lang Tướng',900,1300],['Đại Tướng Quân',1800,2200],['Châu Mục',3500,3400],['Vương',6000,5000]];
 const TARGETS=[['changan','Trường An',2,'neutral'],['xuchang','Hứa Xương',4,'wei'],['chengdu','Thành Đô',5,'shu'],['jianye','Kiến Nghiệp',8,'wu'],['hefei','Hợp Phì',12,'wei'],['hanzhong','Hán Trung',16,'shu'],['wuchang','Vũ Xương',20,'wu'],['luoyang','Lạc Dương',24,'neutral']];
 const MERCHANTS=[['horse','Thương nhân chiến mã',500,1,850,0],['book','Thương nhân binh thư',800,2,0,180],['treasure','Thương nhân bảo vật',1200,3,1800,60]];
-const TASKS=[['rank','Thăng quan lần đầu',1,500,40],['dispatch','Hoàn thành ủy phái',1,400,50],['guild','Gia nhập quân đoàn',1,500,60],['capture','Chiếm thành PvE',1,800,100],['advanced','Đột phá võ tướng',1,1000,150],['trial','Thắng thử thách',1,500,70],['naval','Hoàn thành vận tải biển',1,650,80]];
+const TREASURE_ROUTES=[['trade-road','Thương lộ Quan Trung',5,30,150,80,650,18],['han-ruins','Di tích Hán Trung',12,60,350,140,1250,36],['royal-vault','Kho cổ Lạc Dương',20,90,700,260,2100,60]];
+const TREASURE_COOLDOWN=22*HOUR;
+const TASKS=[['rank','Thăng quan lần đầu',1,500,40],['dispatch','Hoàn thành ủy phái',1,400,50],['guild','Gia nhập quân đoàn',1,500,60],['capture','Chiếm thành PvE',1,800,100],['advanced','Đột phá võ tướng',1,1000,150],['trial','Thắng thử thách',1,500,70],['naval','Hoàn thành vận tải biển',1,650,80],['treasure','Hoàn thành Thám Bảo',1,750,100]];
 const EVENTS=[['relief','Cứu tế dân chúng',300,100,30],['supply','Tiếp tế quân nhu',0,250,65],['investment','Đầu tư thương mại',500,0,90]];
 const obj=x=>x&&typeof x==='object'&&!Array.isArray(x);
 const nat=x=>Number.isSafeInteger(x)&&x>=0?x:0;
@@ -28,11 +30,15 @@ const today=()=>dayId();
 function state(){
  if(!obj(game.nlClassicAdvanced))game.nlClassicAdvanced={};
  const s=game.nlClassicAdvanced;s.version=VERSION;
- for(const k of ['growth','territories','milestones','daily','guild','dispatch','naval'])if(!obj(s[k]))s[k]={};
+ for(const k of ['growth','territories','milestones','daily','guild','dispatch','naval','treasure'])if(!obj(s[k]))s[k]={};
+ if(!Array.isArray(s.treasure.discoveries))s.treasure.discoveries=[];
+ s.treasure.lastTripAt=nat(s.treasure.lastTripAt);
+ if(!obj(s.treasure.job))s.treasure.job=null;
+ if(!obj(s.treasure.pendingLoot))s.treasure.pendingLoot=null;
  for(const k of ['claimed','receipts'])if(!Array.isArray(s[k]))s[k]=[];
  s.rank=clamp(nat(s.rank),0,RANKS.length-1);s.happiness=Number.isFinite(s.happiness)?clamp(Math.round(s.happiness),0,100):80;
  if(s.day!==today()){s.day=today();s.daily={};}
- for(const k of ['relief','invest','event','war','trial','donate','ship'])s.daily[k]=nat(s.daily[k]);
+ for(const k of ['relief','invest','event','war','trial','donate','ship','treasure'])s.daily[k]=nat(s.daily[k]);
  s.guild.level=clamp(nat(s.guild.level),0,10);s.guild.contribution=nat(s.guild.contribution);
  s.naval.ships=clamp(nat(s.naval.ships),0,10);
  return s;
@@ -178,8 +184,45 @@ function collectSea(){
  const s=state(),j=s.naval.job;if(battle||!obj(j)||Date.now()<j.until||!canGain(j.reward))return false;
  delete s.naval.job;gain(j.reward);mark(s,'naval');return done(s,'sea-collect',j.reward);
 }
+function treasureLootLabel(id){
+ return EQUIPMENT[id]?.name||(typeof NL_ITEM_CATALOGUE!=='undefined'?NL_ITEM_CATALOGUE.items.find(x=>x.id===id)?.name:null)||id;
+}
+function startTreasure(id){
+ const s=state(),r=TREASURE_ROUTES.find(x=>x[0]===id),now=Date.now();
+ if(battle||!r||s.treasure.job||!completed(r[2])||s.daily.treasure>=1||
+    (s.treasure.lastTripAt&&now<s.treasure.lastTripAt+TREASURE_COOLDOWN)||!pay({silver:r[4],grain:r[5]}))return false;
+ const trip={routeId:id,startedAt:now,until:now+r[3]*60000,reward:{silver:r[6],merit:r[7]},
+  lootStage:r[2],lootReceipt:'nla59:treasure:'+id+':'+now};
+ s.treasure.job=trip;s.treasure.lastTripAt=now;s.daily.treasure++;
+ return done(s,'treasure-start:'+id+':'+now,{silver:-r[4],grain:-r[5]});
+}
+function collectTreasure(){
+ const before=state(),job=before.treasure.job,route=job&&TREASURE_ROUTES.find(x=>x[0]===job.routeId);
+ if(battle||!obj(job)||!route||Date.now()<job.until||!canGain(job.reward)||typeof nlItemApi==='undefined'||typeof nlItemLootForStage!=='function')return false;
+ const lootId=nlItemLootForStage(job.lootStage);if(!lootId)return false;
+ const grant=nlItemApi.grant(game,[{id:lootId,quantity:1}],job.lootReceipt);
+ const capacityErrors=['EQUIPMENT_CAPACITY','STACK_CAPACITY','STACK_KIND_CAPACITY'];
+ if(!grant.ok&&!capacityErrors.includes(grant.code))return false;
+ if(grant.ok&&!grant.duplicate)Object.assign(game,grant.state);
+ const settled=state(),treasure=settled.treasure,completedJob=treasure.job;
+ treasure.job=null;
+ treasure.discoveries.push({routeId:completedJob.routeId,at:Date.now(),lootId,receipt:completedJob.lootReceipt});
+ treasure.discoveries=treasure.discoveries.slice(-200);
+ treasure.pendingLoot=grant.ok?null:{id:lootId,receipt:completedJob.lootReceipt};
+ gain(completedJob.reward);mark(settled,'treasure');
+ return done(settled,'treasure-collect:'+completedJob.lootReceipt,completedJob.reward);
+}
+function claimTreasureLoot(){
+ const s=state(),pending=s.treasure.pendingLoot;
+ if(battle||!obj(pending)||typeof nlItemApi==='undefined')return false;
+ const grant=nlItemApi.grant(game,[{id:pending.id,quantity:1}],pending.receipt);
+ if(!grant.ok)return false;
+ if(!grant.duplicate)Object.assign(game,grant.state);
+ const settled=state();settled.treasure.pendingLoot=null;
+ return done(settled,'treasure-loot-claim:'+pending.receipt);
+}
 let tabA='office',page=0,hero='';
-const tabs=[['office','Quan chức'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải vận'],['facility','Công trình']];
+const tabs=[['office','Quan chức'],['treasure','Thám Bảo'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải vận'],['facility','Công trình']];
 const btn=(action,id,label,disabled=false)=>'<button class="gold-button" data-nla59-action="'+action+'" data-nla59-id="'+esc(id)+'" '+(disabled?'disabled':'')+'>'+esc(label)+'</button>';
 const row=(title,desc,actions='')=>'<div class="nla59-row"><div><b>'+esc(title)+'</b><small>'+esc(desc)+'</small></div><div>'+actions+'</div></div>';
 const countdown=j=>Date.now()>=j.until?'Có thể nhận':Math.ceil((j.until-Date.now())/60000)+' phút';
@@ -195,6 +238,14 @@ function panel(){
   row('Đầu tư quốc gia','400 Bạc → Uy danh · '+s.daily.invest+'/5',btn('invest','','Đầu tư',locked||nation()==='neutral'||s.daily.invest>=5));
  }else if(tabA==='merchant'){
   b=s.dispatch.job?row('Ủy phái đang thực hiện',countdown(s.dispatch.job),btn('dispatch-collect','','Nhận',locked||Date.now()<s.dispatch.job.until)):MERCHANTS.map(m=>row(m[1],m[2]+' Bạc · '+m[3]+' giờ · thu Bạc/Chiến công mô phỏng',btn('dispatch',m[0],'Ủy phái',locked||!completed(4)))).join('');
+ }else if(tabA==='treasure'){
+  const t=s.treasure,now=Date.now(),cooling=t.lastTripAt&&now<t.lastTripAt+TREASURE_COOLDOWN;
+  if(t.job){const r=TREASURE_ROUTES.find(x=>x[0]===t.job.routeId);b=row(r?.[1]||'Đang Thám Bảo',countdown(t.job)+' · thưởng '+fmt(t.job.reward.silver)+' Bạc + '+fmt(t.job.reward.merit)+' Chiến công + 1 vật phẩm',btn('treasure-collect','','Nhận',locked||now<t.job.until));}
+  else b=TREASURE_ROUTES.map(r=>row(r[1],
+   'Mở sau ải '+r[2]+' · '+r[3]+' phút · '+fmt(r[4])+' Bạc + '+fmt(r[5])+' Lương → '+fmt(r[6])+' Bạc + '+fmt(r[7])+' Chiến công + trang bị/vật phẩm (SIMULATED)',
+   btn('treasure',r[0],cooling?'Đang hồi lượt':'Khởi hành',locked||!completed(r[2])||s.daily.treasure>=1||Boolean(cooling)))).join('');
+  if(t.pendingLoot)b+=row('Vật phẩm Thám Bảo chờ nhận',treasureLootLabel(t.pendingLoot.id)+' · kho đầy ở lần nhận trước',btn('treasure-loot','','Nhận vật phẩm',locked));
+  b+='<p class="tiny">Một chuyến mỗi ngày, kèm hồi lượt 22 giờ. Thời gian chạy khi đóng game; vật phẩm dùng kho trang bị hiện có. Công thức thưởng là SIMULATED.</p>';
  }else if(tabA==='guild'){
   b=row('Quân đoàn '+(s.guild.level?({'wei':'Ngụy','shu':'Thục','wu':'Ngô'}[s.guild.nation]||''):'chưa gia nhập'),'Offline · cấp '+s.guild.level+' · cống hiến '+s.guild.contribution,btn('join','','Gia nhập',locked||s.guild.level>0||nation()==='neutral'||!completed(4)))+
   row('Cống hiến','500 Bạc → 100 cống hiến · '+s.daily.donate+'/5',btn('donate','','Đóng góp',locked||!s.guild.level||s.daily.donate>=5||s.guild.level>=10))+
@@ -229,11 +280,11 @@ document.addEventListener('click',e=>{
  const k=b.dataset.nla59Action,id=b.dataset.nla59Id;
  if(k==='page'){page=Math.max(0,page+(id==='next'?1:-1));render();return;}
  if(k==='rebirth'){if(window.confirm('Chuyển sinh đưa tướng về cấp 1, tốn 2.000 Bạc và 500 Chiến công. Xác nhận?')&&!nlClassicA4Rebirth(id))toast('Chưa đủ điều kiện.');return;}
- const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,join:joinGuild,donate,territory:territoryIncome,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea};
+ const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,treasure:startTreasure,'treasure-collect':collectTreasure,'treasure-loot':claimTreasureLoot,join:joinGuild,donate,territory:territoryIncome,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea};
  if(typeof actions[k]==='function'&&!actions[k](id))toast('Chưa đủ điều kiện hoặc tài nguyên.');
 });
 document.addEventListener('change',e=>{if(e.target.matches?.('[data-nla59-hero]')&&owned(e.target.value)){hero=e.target.value;render();}});
 const css=document.createElement('style');css.textContent='.nla59-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}.nla59-tabs button,.nla59-row button{font-size:11px;padding:5px 8px}.nla59-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #665e43;padding:5px 0}.nla59-row b,.nla59-row small{display:block}.nla59-row small{font-size:10px;color:#c4bda8}.nla59 p{font-size:11px;margin:5px 0}.nla59 select{max-width:100%}@media(max-width:480px){.nla59{padding:6px}.nla59-row{padding:3px 0}.nla59-tabs button{padding:4px 6px}}';document.head.appendChild(css);
-if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,joinGuild,donate,challenge,territoryIncome,breakthrough,advancedTrain,awaken,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
+if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,startTreasure,collectTreasure,claimTreasureLoot,treasureRoutes:TREASURE_ROUTES,joinGuild,donate,challenge,territoryIncome,breakthrough,advancedTrain,awaken,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
 })();
 // === end NL-CLASSIC-A5-A9-V1 ===

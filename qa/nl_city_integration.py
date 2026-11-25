@@ -94,6 +94,9 @@ def main():
         # Supply test resources through the existing QA state authority, not the city engine.
         original = page.evaluate("window.__P2_QA__.getGame()")
         original.update({"silver":100000,"grain":50000,"iron":20000})
+        # Freeze passive production so the reload assertion measures Save
+        # persistence instead of resources earned while Chromium reloads.
+        original["lastTick"] = page.evaluate("Date.now()+86400000")
         page.evaluate("g=>window.__P2_QA__.setGame(g)", original)
         page.locator('.nav[data-tab="city"]').click()
         ironworks = visible_window(page, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
