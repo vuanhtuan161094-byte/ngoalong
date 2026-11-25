@@ -96,6 +96,7 @@ jobs:
           python qa/nl_save_transfer.py
           python qa/nl_city_integration.py
           python qa/nl_native_pve_a1_browser.py
+          python qa/nl_audio_browser.py
           python qa/nl_r02.py
           python qa/nl_r03.py
           python qa/nl_progression.py
@@ -186,6 +187,8 @@ jobs:
         run: python qa/nl_city_integration.py
       - name: A1 28-stage native Combat V2, Boss AI, troop, replay and receipt browser gate
         run: python qa/nl_native_pve_a1_browser.py
+      - name: Original synthesized audio settings and native battle cue browser gate
+        run: python qa/nl_audio_browser.py
       - name: P2 smoke Chromium
         run: python qa/smoke.py
       - name: Ngọa Long 3x3 command center desktop/mobile browser gate

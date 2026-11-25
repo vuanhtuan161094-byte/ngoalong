@@ -171,7 +171,10 @@ def payload() -> str:
                  "p41Units":p41_manifest["units"],"p5Rows":p5_manifest["atlas"]["rowOrder"]}
     assert art_d2.count("__NL_D4_RASTER__") == 1
     art_d2 = art_d2.replace("__NL_D2_SHEETS__", js_json(art_sheets)).replace("__NL_D2_FX__", js_json(art_fx)).replace("__NL_D4_RASTER__", js_json(raster_d4))
-    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), END])
+    audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
+    if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
+        raise ValueError("Invalid original audio module")
+    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), audio.rstrip(), END])
 
 
 def render(html: str, insertion: str) -> str:
