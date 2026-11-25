@@ -2,21 +2,22 @@
 
 ## Active project and scope
 
-- This repository is `vuanhtuan161094-byte/ngoalong`. The active product direction is an original, offline-first strategy game inspired by classic Ngọa Long WEB. Do not redirect it to Chiến Loạn, a hybrid, an idle game, or modern gacha design.
-- Use the task's requested branch and baseline. For the current V1 continuation, work on `feature/ngoalong-v1-complete` from `main` baseline `58a11806dd5eb0267244407b7808fe7848406808`.
+- This repository is `vuanhtuan161094-byte/ngoalong`. [`docs/PRODUCT_AUTHORITY.md`](docs/PRODUCT_AUTHORITY.md) is the single current product authority; it supersedes older WEB-first or other-branch instructions.
+- The primary product benchmark is Ngọa Long Mobile VNG. Current Mobile/H5 play and official Wiki are primary references for UX and system discovery; classic WEB and Chinese builds are supplemental, version-scoped references. Keep Mưu Định Tam Quốc an original offline-first game; do not redirect it to Chiến Loạn, an idle game, or a live multiplayer product.
+- Use the task's requested branch and baseline. For the current V1 continuation, work on `feature/ngoalong-v1-complete` from `main` baseline `58a11806dd5eb0267244407b7808fe7848406808`. The current delivery is Draft PR #1; commits and pushes to this branch are authorized, merge is not.
 - Work only in this repository. Do not modify Heoofgaia, Đắc Kỷ Mobile, Heroes of Gaia, Tông Môn Bá Đạo, or another checkout. Never merge to `main`, force-push, delete source data, or rewrite shared history. The owner explicitly authorized task-branch commits, pushes and a draft PR for this task.
 - Keep old Chiến Loạn state and its tests where needed for Save compatibility and regression; they are not active product direction.
 
 ## Authority, sources and attribution
 
-- Read [README.md](README.md), [the rebuild spec](docs/NGOA_LONG_REBUILD_SPEC_V1.md), [data-driven runtime](docs/NL_DATA_DRIVEN_V2.md), [reference matrix](docs/NL_REFERENCE_MATRIX.md), [fidelity audit](docs/NL_FIDELITY_GAP_AUDIT_V1.md), the relevant batch documents and code before changing a system.
-- Classic WEB is the gameplay and UX reference. Mobile Wiki is supplementary research. Do not claim parity unless evidence identifies the same version and mechanic.
+- Read [PRODUCT_AUTHORITY.md](docs/PRODUCT_AUTHORITY.md), [README.md](README.md), [Mobile feature inventory](docs/NL_MOBILE_FEATURE_INVENTORY.md), current checkpoint, the relevant source matrix, module handoff and code before changing a system. `NGOA_LONG_REBUILD_SPEC_V1.md` is retained history, not an active directive.
+- Mobile is the product and UX reference. Classic WEB and Chinese sources are supplementary. Do not merge version-specific rules or claim parity unless evidence identifies the same version and mechanic.
 - Keep `VERIFIED`, `DERIVED`, `SIMULATED` and `UNKNOWN` distinct. Cite data provenance; preserve null/UNKNOWN when a source does not establish a value. Project-authored formulas and balance values are `SIMULATED` or `DERIVED`, never official VNG values.
 - Use original code, art, sound and interface design. Do not copy proprietary game assets, text or internal formulas. Record source, license, prompt, dimensions and hash for generated or external art. Distinguish a portrait or static callout from a complete animation set.
 
 ## Build and source of truth
 
-- The deliverable is one reproducible offline `index.html`, assembled from structured data and repository generators. Make source changes in the data/tools/assets/tests that produce it; do not hand-edit generated HTML when a generator owns that section.
+- The deliverable is one reproducible offline `index.html`, assembled from structured data and repository generators. Make source changes in data/tools/assets/tests that produce it; do not hand-edit generated HTML when a generator owns that section.
 - Validate and build in canonical order:
 
   ```bash
@@ -57,5 +58,5 @@
 
 ## Cloud workspace
 
-- The managed cloud environment is authorized for this task. Use the existing `/workspace/ngoalong` checkout and preinstalled Python/Playwright/Chromium tools. The game itself needs no credentials, server, or CDN. Do not create another checkout or change environment secrets/network permissions unless the task requires it.
+- The managed cloud environment is authorized for this task. Use the existing `/workspace/ngoalong` checkout. Verify which Python/Playwright/Chromium tools are installed in the selected environment; it may provide system Chromium rather than a Playwright-downloaded browser. The game itself needs no credentials, backend, or CDN. Do not create another checkout or change environment secrets/network permissions unless the task requires it.
 - Repository onboarding config is a reviewable draft; saving it does not publish the environment. Never put credentials in scripts or configuration.

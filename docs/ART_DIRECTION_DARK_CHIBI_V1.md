@@ -1,5 +1,6 @@
 # ART BIBLE V1 — DARK FANTASY SHARP-EYED CHIBI 2D
-**Owner-selected direction 17/11/2026:** phong cách chính thức của Mưu Định Tam Quốc là **tranh vẽ tay 2D chibi hắc ám, mắt sắc phát sáng năng lượng**. Thay lựa chọn bán hiện thực/thủy mặc khám phá trước đó; toàn bộ ảnh tạo trong chat mới là concept, chưa phải atlas sản xuất.
+> **RETIRED 2026-11-25.** This earlier chibi direction is superseded by Character Art V5 in [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md). Keep these notes as history; do not use the chibi style for new production assets.
+**Historical owner direction, retired 25/11/2026:** the former hand-painted dark-chibi concept is retained as project history. Current production follows Character Art V5 in [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md); this retired concept is not approval for new assets.
 
 ## Style lock
 - **Tướng tỷ lệ ~3–3,5 đầu**, chân/tay đủ dài cho chiến đấu, không hình búp bê. Mắt hẹp, mày xếch, ánh nhìn quyết đoán. Ánh sáng con ngươi có năng lượng xanh/đỏ/tím/vàng khi tụ lực, nhưng nhìn rõ mắt và nét mặt ngay cả khi không bật hiệu ứng.

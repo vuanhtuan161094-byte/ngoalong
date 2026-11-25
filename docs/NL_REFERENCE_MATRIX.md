@@ -1,8 +1,10 @@
 # NL-WIKI-01 — Ngọa Long reference and fidelity matrix
 
+> **Dated research snapshot (2026-11-18).** This matrix is supplemental source evidence and its baseline repository/branch references are historical. The current product authority is [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md): Mobile VNG is primary; classic WEB/China are supplemental and version-scoped. Keep the matrix's VERIFIED/DERIVED/SIMULATED/UNKNOWN classifications when using any fact.
+
 **Research date:** 2026-11-18 (continued review)
 **Repository baseline:** vuanhtuan161094-byte/Heoofgaia, main-ngoalong@05cb413b08e917e1aa4026fb54a5ff621373153e.
-**Product contract:** docs/NGOA_LONG_REBUILD_SPEC_V1.md; current owner instructions: GitHub Issue #4.
+**Historical product contract:** docs/NGOA_LONG_REBUILD_SPEC_V1.md and GitHub Issue #4 record earlier WEB-first direction. Current product and implementation authority is [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md).
 **Research status:** **PARTIAL, core mechanics reviewed; Wiki not read exhaustively.** This matrix records what was opened, what remains unread, and which claims apply to which version.
 
 ## Version and evidence rules

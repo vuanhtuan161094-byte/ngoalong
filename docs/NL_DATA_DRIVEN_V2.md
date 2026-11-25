@@ -1,5 +1,7 @@
 # Mưu Định Tam Quốc — Wiki-driven data pipeline V2
 
+> **Historical implementation snapshot.** The repository and branch names in this dated document describe earlier work and are not current checkout instructions. The active repository/branch, Mobile-first product scope, and current completion gates are in [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md); current backlog is [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md). Its data provenance and version-boundary rules remain applicable.
+
 **Ngày cập nhật:** 2026-11-17
 **Nguồn gameplay:** GitHub Issue #4, Wiki-driven V2 owner prompt, `docs/NGOA_LONG_REBUILD_SPEC_V1.md`, `docs/REV_PROTOCOL.md`.
 **Phạm vi:** repo `vuanhtuan161094-byte/Heoofgaia`, task branch `codex/nl-wiki-01-r02-20261117`; không merge hoặc sửa Hero.

@@ -2,21 +2,34 @@
 
 **Release status: NOT COMPLETE.** This handoff records a reviewable implementation batch and the evidence gathered so far. It is not V1 acceptance.
 
+**Current product authority:** Ngọa Long Mobile VNG is the primary benchmark; classic WEB and China are supplemental, version-scoped sources. See [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) and the active [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md). The historical WEB-first audit notes below are retained as dated evidence, not current product direction.
+
 ## Repository and review state
 
 - Repository: `vuanhtuan161094-byte/ngoalong`
 - Base branch: `main`
 - Task branch: `feature/ngoalong-v1-complete`
 - Baseline: `58a11806dd5eb0267244407b7808fe7848406808`
-- Last hosted implementation commit before the local V5 art follow-up: `7510726fa857766e78b81bf41fb70d67d6c5e70e`.
-- Exact-SHA full regression: [run 45579439636](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45579439636) — in progress.
-- Exact-SHA web review: [run 45579440289](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45579440289) — in progress.
+- Current branch checkpoint before this recovery batch: `4b3909ea6eb164f7ab4064844ba841f850a73186`.
+- Exact-SHA full regression: [run 45615834772](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45615834772) — **FAIL** in CHAT03 because the test expected two semantic windows to coexist; corrected local gate checks both windows separately.
+- Exact-SHA web review: [run 45615834817](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45615834817) — **FAIL** in B2 because the browser test clicked a hidden troop control; corrected local gate selects the visible semantic page.
+- Prior exact-SHA full and web-review runs for `7510726fa857766e78b81bf41fb70d67d6c5e70e` completed successfully. The current failing SHA still requires new hosted exact-SHA checks after its fixes.
 - Draft PR: [#1](https://github.com/vuanhtuan161094-byte/ngoalong/pull/1) (open, draft, not merged)
 - First task-branch commit: `2d3bb331fcd205de76cf9e129e8f154ad25482ab`
 - First task-branch Actions: [run 45538189218](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45538189218) quick **PASS**, full **FAIL** at CL-P3; [run 45538189204](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45538189204) web-review build/screenshots **PASS**. Later follow-ups are recorded below.
 - Website URL: unavailable. The baseline review workflow's build job passed, but its Pages deployment failed because Pages is not enabled for this repository.
-- Cloud setup: the running environment and existing draft are current. Python 3.11.18, Playwright 1.58.0, Chromium 145 and Node 24.22.3 were verified; Chromium opened a local page and the HTTPS Git remote read succeeded. The game needs no server, secret or CDN. No environment settings changed.
+- Cloud setup: the selected environment is running with `/usr/bin/chromium`, Playwright, Python and Node. Managed Chromium blocks `file://` navigation in B2, so its browser gate serves the same local HTML through a temporary loopback HTTP origin. The game needs no backend, secret or CDN.
 - Prior exact-SHA web review [run 45542827251](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45542827251) passed its desktop/mobile screen suite; artifact inspection confirmed 30 captures (15 views per viewport). Prior full run [45542827263](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45542827263) passed through CL-P4 and stopped at CL-P5 mobile map width. Its 390px map measured 504.6px. Commit `577c2cc` changes the narrow grid track to `minmax(0,1fr)`; local Chromium now reports CL-P5 **9/9** and the playable map is 364px wide.
+
+## Current Mobile-authority recovery batch — 2026-11-25
+
+- Reconfirmed `origin` points to `vuanhtuan161094-byte/ngoalong`, base `main` is `58a11806dd5eb0267244407b7808fe7848406808`, branch HEAD before edits is `4b3909ea6eb164f7ab4064844ba841f850a73186`, and Draft PR #1 is open.
+- Added [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) and [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md). Updated current coordination docs to make Mobile primary and marked conflicting dated WEB-first, hybrid, chibi, and other-branch controls as retired/historical.
+- Updated the hero-system source metadata and UI copy to describe Mobile as the primary reference while leaving all existing costs/effects classified as project SIMULATED. No Save key/schema or stable IDs changed.
+- Corrected CHAT03 to test the city command hub and building panel as separate visible semantic windows. Corrected B2 to select visible semantic-window controls and serve the same built HTML over loopback HTTP for this managed Chromium. Local generated-HTML results: CHAT03 **18/18**, B2 **11/11**.
+- Canonical validation and all ordered build/reproducibility checks pass. Playable HTML: 31,564,021 bytes, SHA-256 `e0e83c68e97f97e8da3d40cdc93dbdf7a90de812123762223e97a67bbbe79fb3`. Focused Chromium suites pass: Hero V5 16/16, CHAT03 city 18/18, B2 11/11; `git diff --check` passes. Runs 45615834772 and 45615834817 above are failures on the old `4b3909ea...` SHA; hosted exact-SHA checks for this recovery commit are still required. Release remains NOT COMPLETE; physical device and owner acceptance are still open.
+
+## Prior implementation and QA evidence (historical snapshot)
 
 The baseline run is [Actions run 45529293610](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45529293610). Its web-review build succeeded and uploaded review/playable artifacts; its separate `Deploy permanent GitHub Pages URL after QA` job failed. This is a web-review workflow result, not evidence that the full `ngoalong-qa.yml` release suite passed.
 
@@ -47,7 +60,7 @@ The following counts come from current repository validators and runtime audits;
 - Items: 674 source reference rows, 669 project playable item models, 392 source gear rows and 411 runtime gear models. These records still need reconciliation, individual effects and long-run balance.
 - The tower reference has 100 total floors and the seal catalog has 18 entries. Native floors 1–20 remain in the original route; this batch adds playable project-simulated floors 21–100 in eight arcs. The 80 plans and reward progression have focused browser coverage, but full-floor balance, human acceptance and floor-specific original art remain open.
 
-Classic WEB informs gameplay/UI priorities. Mobile Wiki is supplemental research. Project-authored costs, combat and progression remain `SIMULATED` or `DERIVED`; no classic-to-Mobile parity is claimed. The game is offline single-player and does not have a multiplayer server.
+These counts and tests describe the measured project build at the time recorded, not Mobile parity. Current product research prioritizes Mobile Wiki; classic WEB and Chinese evidence remain version-scoped supplements. Project-authored costs, combat and progression remain `SIMULATED` or `DERIVED`; no cross-version parity is claimed. The game is offline single-player and does not have a multiplayer server.
 
 ## QA evidence
 

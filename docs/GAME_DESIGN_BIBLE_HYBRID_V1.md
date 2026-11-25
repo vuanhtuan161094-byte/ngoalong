@@ -1,8 +1,8 @@
 # MƯU ĐỊNH TAM QUỐC — GAME DESIGN BIBLE V1 (HYBRID, ĐÃ THAY THẾ)
 
-> **Quyết định mới nhất 17/11/2026:** người dùng hủy hướng hybrid, chuyển hoàn toàn sang game Ngọa Long-inspired; xem [NGOA_LONG_REBUILD_SPEC_V1.md](NGOA_LONG_REBUILD_SPEC_V1.md). Phần dưới đây chỉ là lưu trữ định hướng cũ, không còn là quy tắc roadmap.
+> **Quyết định hiện hành 25/11/2026:** Ngọa Long Mobile VNG là benchmark chính; xem [PRODUCT_AUTHORITY.md](PRODUCT_AUTHORITY.md). Phần dưới đây chỉ là lưu trữ định hướng hybrid cũ, không còn là quy tắc roadmap.
 
-**Owner decision: LOCKED 17/11/2026.** Đây là tài liệu sản phẩm có quyền ưu tiên cao nhất. Sản phẩm là **một game độc lập** kết hợp Ngọa Long và Chiến Loạn Tam Quốc; KHÔNG xây hai game, KHÔNG sao chép bản quyền, KHÔNG đổi tên nhánh lịch sử `main-ngoalong`, KHÔNG reset Save. Tên game chính thức: **Mưu Định Tam Quốc**. “Hắc Ám Chiến Kỷ” là tên mỹ thuật nội bộ, không tự ý đổi branding.
+**Historical owner decision, superseded 25/11/2026.** This hybrid document no longer has product authority. Its dated single-game, no-copying, branding, and Save safeguards are retained only where compatible with [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md).
 
 ## 1. DNA và vòng chơi vàng
 - **Chiến Loạn:** chọn đạo quân → click thành/mỏ/quan ải → xem tuyến/ETA/lương → hành quân có hình ảnh thật → đánh NPC, công thành/chiếm/đồn trú/thu hoạch/giữ thành.

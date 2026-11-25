@@ -1,4 +1,5 @@
 # Mưu Định Tam Quốc — Phase B1 native combat fidelity (2026-11-23)
+> **Historical combat-source snapshot.** Dated WEB rules are supplemental only under the Mobile-first authority. Keep each source version label; do not generalize its formulas to Mobile.
 
 ## Source boundaries
 Ngọa Long web 2011–2012 is the gameplay reference; the VNG current Mobile Wiki is not automatically identical.

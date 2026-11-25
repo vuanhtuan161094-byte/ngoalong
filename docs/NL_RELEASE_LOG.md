@@ -1,4 +1,5 @@
 # Ngọa Long Alpha release log
+> **Historical release log.** Entries record their exact repositories, branches, source versions, and checks; they are not current branch instructions or Mobile acceptance. See [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) for the active authority.
 
 ## NL-R02 desktop and mobile live battle roster — 2026-11-18
 

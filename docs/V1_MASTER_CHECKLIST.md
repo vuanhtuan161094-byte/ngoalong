@@ -1,6 +1,6 @@
 # V1.0 master checklist
 
-**Status: NOT COMPLETE.** This checklist describes the source/runtime coverage currently present in the repository. “Implemented” means only the stated scope exists; it does not mean the game-wide V1 acceptance gate has passed.
+**Status: NOT COMPLETE.** [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) sets Ngọa Long Mobile VNG as the primary product benchmark; classic WEB/China are supplementary, version-scoped references. This checklist describes source/runtime coverage currently present. “Implemented” means only the stated slice exists; it does not mean the game-wide V1 acceptance gate has passed. See [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md) for the active Mobile backlog.
 
 ## Status key
 
@@ -12,6 +12,8 @@
 - **Missing / unverified** — no adequate implementation or evidence is known.
 
 ## System-by-system status
+
+The table keeps historical runtime labels and evidence from the existing implementation. A working WEB-era path does not satisfy the new Mobile-first feature acceptance; use the active inventory to close those gaps and keep each source version explicit.
 
 | System | Current status and measured scope | Work still required for V1.0 |
 |---|---|---|
@@ -34,7 +36,7 @@
 | Audio and settings | **Prototype / needs art.** A browser-synthesized motif and interaction/combat/result cues have independent music/effect levels, mute and persisted preferences; browser QA passes 9/9. This is not a polished soundtrack or final SFX set. | Produce and review original music/SFX, check mix, consistency and accessibility on real devices, and decide whether the prototype tone meets the game's art direction. |
 | Onboarding, help, accessibility | **Partial / unverified.** Accelerated onboarding simulations exist; Save transfer instructions are clearer. | Human first-session usability, optional short tutorial, tooltips, loss explanations, readable type, keyboard/touch behavior and localization need review. |
 | Performance and browser/device support | **Partial.** Chromium desktop/mobile screenshots and checks exist; assets run offline. | Profile catalog rendering and 1280/1920/mobile landscapes/portrait on real devices, memory/load time and reduced-motion/audio preferences. Windows/Android hardware acceptance is pending. |
-| Deployment and release | **Partial.** Exact-SHA full and web-review runs for `7510726fa857766e78b81bf41fb70d67d6c5e70e` are in progress. The earlier baseline CI built QA artifacts but Pages deployment failed because Pages is not enabled. | Record exact-SHA results and retain playable artifact/screenshots; owner enables Pages if a website is desired, then verify deployment. Do not merge this branch or infer release readiness from a subset. |
+| Deployment and release | **Partial / current exact SHA failed.** Full focused run [45615834772](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45615834772) and web review [45615834817](https://github.com/vuanhtuan161094-byte/ngoalong/actions/runs/45615834817) on `4b3909ea6eb164f7ab4064844ba841f850a73186` failed at CHAT03 and B2 respectively. The prior `7510726` full and web-review runs completed successfully; Pages remains unavailable because repository Pages settings are not enabled. | Fix the semantic-window assertions without weakening them, rerun both workflows on a new exact SHA, and retain artifact/screenshots. Do not merge this branch or infer release readiness from a subset. |
 
 ## Release Definition of Done
 

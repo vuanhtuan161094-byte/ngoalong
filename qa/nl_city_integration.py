@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -46,8 +47,12 @@ def visible_window(page, selector):
 
 def main():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True,
-            args=["--no-sandbox", "--disable-dev-shm-usage"])
+        launch_options = {"headless": True,
+            "args": ["--no-sandbox", "--disable-dev-shm-usage"]}
+        system_chromium = shutil.which("chromium")
+        if system_chromium:
+            launch_options["executable_path"] = system_chromium
+        browser = playwright.chromium.launch(**launch_options)
         page = page_for(browser)
         ready = page.evaluate("""()=>({
           loaded:!!window.__NL_CITY_QA__,
@@ -74,13 +79,15 @@ def main():
         check("Boss 28 authored tactical dossier comes from the same source pack",
               "final-war-drum" in page.evaluate("window.__NL_TACTICS_QA__.renderStage(28)"))
         page.locator('.nav[data-tab="city"]').click()
+        command_panel = visible_window(page, '[data-nl-command]')
+        check("city navigation retains a reachable native command hub window",
+              command_panel.count() == 1 and command_panel.is_visible())
         city_panel = visible_window(page, '[data-nl-city-panel]')
-        check("native city and new live building panel coexist",
-              page.locator('[data-nl-command]').count() == 1 and
+        check("live building panel opens as its own city window",
               city_panel.count() == 1 and city_panel.is_visible() and
               page.locator('[data-nl-city-kind="select"]').count() == 38)
         city_resources = city_panel.inner_text()
-        check("classic WEB city shows Bạc, Lương and Uy danh while retaining legacy Sắt in Save",
+        check("project city shows Bạc, Lương and Uy danh while retaining legacy Sắt only in Save",
               all(x in city_resources for x in ["Bạc","Lương","Uy danh"]) and
               "Sắt" not in city_resources and
               page.evaluate("window.__P2_QA__.getGame().iron") == 3200)

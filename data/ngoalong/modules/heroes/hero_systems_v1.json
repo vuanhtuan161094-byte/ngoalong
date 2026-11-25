@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "NL_HERO_SYSTEMS_V1",
-  "edition": "NGOALONG_WEB_GAMEPLAY_WITH_MOBILE_REFERENCE",
+  "edition": "NGOALONG_MOBILE_PRIMARY_OFFLINE_SIMULATION",
   "provenancePolicy": {
     "verifiedSources": "Current VNG Mobile/H5 Wiki thresholds and listed material names only.",
     "projectGameplay": "All added costs, quantities, unlock-by-campaign rules, stat effects and formulas are SIMULATED.",

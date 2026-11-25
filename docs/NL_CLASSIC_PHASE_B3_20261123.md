@@ -1,4 +1,5 @@
 # B3 — Binh chủng, trận pháp và kỹ năng (23/11/2026)
+> **Historical implementation snapshot.** Existing troop/preset IDs and tests remain compatibility state. Current production should prioritize Mobile sources and use the active feature inventory.
 
 ## SOURCE SCOPE: do not silently claim classic parity
 - Ngọa Long WEB 2011 historic catalogue: **5 initial + 10 first-transfers + 40 second-transfers = 55**. Source: https://www.lequ.com/wly/201102/11807.html ; https://web.17173.com/content/2011-06-01/20110601093832311.shtml

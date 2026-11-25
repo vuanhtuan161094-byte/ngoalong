@@ -1,7 +1,8 @@
 # ART DIRECTION V1 — HAND-PAINTED 2D / MƯU ĐỊNH TAM QUỐC (HISTORICAL)
+> **RETIRED 2026-11-25.** Character Art V5 and [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) replace both the old ink-wash exploration and chibi override below. Keep compatible provenance/no-rig/QA notes; do not treat old style options as current approval choices.
 
-> **FINAL DARK CHIBI OVERRIDE, 17/11/2026:** Owner approved **hand-painted 2D Dark Fantasy Sharp-Eyed Chibi with glowing energy eyes**. See `docs/ART_DIRECTION_DARK_CHIBI_V1.md`. Earlier ink-wash/semi-realistic options below are obsolete. Keep only common provenance/no-rig/QA requirements.
-**Owner directive:** 17 Nov 2026. Replace the previous mixed old-style/pixel-like battlefield look with an independently illustrated, coherent **tranh vẽ tay 2D** art direction. This is an art-direction rule and production backlog, NOT a claim that the game graphics are already replaced.
+> **HISTORICAL OVERRIDE, retired 25/11/2026:** the old dark-chibi selection is superseded by Character Art V5 in [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md). This file is retained for provenance and compatible no-rig/QA notes only.
+**Historical owner direction:** 17 Nov 2026. This file preserves the earlier hand-painted 2D art exploration; Character Art V5 superseded it on 25 Nov 2026. The text below is not the current art production rule.
 
 ## 1. North star (mandatory) / Style identity
 - **Primary:** original 2D hand-painted illustration and 2D painted game sprites. Historical Three Kingdoms fantasy, clear silhouettes, rich pigments and organic brush texture. Painterly shading, believable cloth/armor/wood/stone, soft atmospheric perspective. Not flat geometric wireframes, rough CSS silhouettes, retro pixel art, 3D models masquerading as 2D, or AI-looking inconsistent cutouts.

@@ -1,9 +1,9 @@
 # MƯU ĐỊNH TAM QUỐC — CHIẾN LOẠN MASTER SPEC (HISTORICAL, SUPERSEDED)
 
-> **17/11/2026:** Owner cancelled Chiến Loạn and hybrid primary gameplay; see `docs/NGOA_LONG_REBUILD_SPEC_V1.md`. This document is research/archive only; branch, save and QA restrictions still bind.
+> **Retired direction.** Owner replaced Chiến Loạn/hybrid and WEB-first product authority. Current direction is in `docs/PRODUCT_AUTHORITY.md`; this document is research/archive only. Preserve only compatible Save, branch, licensing, and QA safeguards.
 
 
-> **HYBRID FINAL DIRECTION, 17/11/2026:** owner selected one Chiến Loạn × Ngọa Long original hybrid game. The authoritative product design is `docs/GAME_DESIGN_BIBLE_HYBRID_V1.md`; art authority `docs/ART_DIRECTION_DARK_CHIBI_V1.md`. Conflicting single-reference roadmap and semi-realistic ideas below are superseded, but safety, save, branch isolation and QA still apply.
+> **HISTORICAL HYBRID DIRECTION, 17/11/2026 — RETIRED:** the dated hybrid and chibi authorities below were superseded. Current product and art direction are in [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md); retain only compatible Save, branch, licensing, and QA safeguards.
 Date: 2026-11-16 · Owner-directed product pivot · dedicated Codex game agent.
 
 ## 0. OVERRIDING PRODUCT DIRECTION

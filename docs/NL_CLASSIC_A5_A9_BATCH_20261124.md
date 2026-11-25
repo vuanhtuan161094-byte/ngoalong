@@ -1,4 +1,5 @@
 # Classic WEB A5–A9 — code-first integrated batch (2026-11-24)
+> **Historical runtime snapshot.** A5–A9 code remains in the one game as legacy/offline systems, but its WEB rules are not the current product contract. Reconcile future changes against Mobile sources and the active feature inventory.
 
 Branch: feature/nl-web-review-20261122. Prior head: 0db71f9e3f9d6f5d332379a1f830c22ed1a84886. PR #10 remains draft; no merge, no Codex Cloud, no default-branch write.
 

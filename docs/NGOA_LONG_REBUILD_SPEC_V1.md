@@ -1,7 +1,9 @@
-# MƯU ĐỊNH TAM QUỐC — NGỌA LONG FIRST / REBUILD V1
-**Chỉ đạo chủ dự án ngày 17/11/2026: “Làm lại game đi. Tôi muốn game Ngọa Long cơ.”**
-> **Implementation addendum (17/11/2026):** Owner's Wiki-driven V2 adds the data/provenance pipeline and P0–P5 delivery order without changing the independent Ngọa Long gameplay contract below. See [NL_DATA_DRIVEN_V2.md](NL_DATA_DRIVEN_V2.md) for the active schema, migration status, and evidence gates. Wiki coverage stays partial; Mobile-to-classic parity stays UNKNOWN.
-Đây là **quyết định gameplay mới nhất**, thay thế mọi định hướng trước đó lấy Chiến Loạn hoặc hybrid làm trọng tâm. Không tự làm hai game. Tên sản phẩm gốc độc lập vẫn là **Mưu Định Tam Quốc**, không mạo danh game chính thức của VNG.
+# [RETIRED] MƯU ĐỊNH TAM QUỐC — NGỌA LONG FIRST / REBUILD V1
+
+> **Historical specification — not an active implementation authority.** This document preserves the dated classic-WEB-first requirements and their evidence. Effective 2026-11-25, [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) makes Ngọa Long Mobile VNG the primary product benchmark, and [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md) tracks current runtime gaps. Do not execute old repository, branch, chibi-art, or WEB-first directions below.
+**Historical owner direction from 17/11/2026:** “Làm lại game đi. Tôi muốn game Ngọa Long cơ.” The following WEB-first implementation contract is retained as dated history.
+> **Historical implementation addendum (17/11/2026):** Wiki-driven V2 added the data/provenance pipeline and P0–P5 order for the earlier WEB-first scope. See [NL_DATA_DRIVEN_V2.md](NL_DATA_DRIVEN_V2.md) for its dated schema, migration status, and evidence gates. Current Mobile-first authority is [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md).
+At the time, this direction replaced the then-current Chiến Loạn/hybrid plans. Effective 25/11/2026 it is superseded by [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md), which makes Ngọa Long Mobile VNG the primary benchmark. The product remains one original game named **Mưu Định Tam Quốc** and does not claim affiliation with VNG.
 
 ## 1. Sản phẩm và vòng chơi chủ đạo
 Game chiến thuật Tam Quốc dạng **Ngọa Long cổ điển**, với:

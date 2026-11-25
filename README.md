@@ -1,8 +1,10 @@
-# Mưu Định Tam Quốc — Ngọa Long WEB
+# Mưu Định Tam Quốc — Ngọa Long Mobile-inspired
 
-An independent, offline-first strategy game inspired by classic Ngọa Long WEB. This repository is not affiliated with VNG. Mobile Wiki records are research references; they do not establish classic WEB parity. Project-created rules are marked `SIMULATED` or `DERIVED` in the data and source documentation.
+An independent, offline-first strategy game with Ngọa Long Mobile VNG as its primary product benchmark. Classic WEB and Chinese-build material are supplemental references with separate version scope. This repository is not affiliated with VNG. Public references establish only the stated facts; project-created rules are marked `SIMULATED` or `DERIVED`, and unsupported details remain `UNKNOWN`.
 
-The current game is playable as a single HTML file, but **V1.0 is not complete**. The canonical source is `index.html` plus its structured data, generators, original assets and QA. The current task branch is `feature/ngoalong-v1-complete`, based on `main` at `58a11806dd5eb0267244407b7808fe7848406808`; release evidence and remaining gaps are tracked in [V1_RELEASE_HANDOFF.md](docs/V1_RELEASE_HANDOFF.md) and [V1_MASTER_CHECKLIST.md](docs/V1_MASTER_CHECKLIST.md).
+[`docs/PRODUCT_AUTHORITY.md`](docs/PRODUCT_AUTHORITY.md) is the single current decision source. The active delivery is Draft PR #1 on `feature/ngoalong-v1-complete`; this is one game and one offline runtime.
+
+The current game is playable as a single HTML file, but **V1.0 is not complete**. The canonical source is `index.html` plus structured data, generators, original assets and QA. The task branch is `feature/ngoalong-v1-complete`, based on `main` at `58a11806dd5eb0267244407b7808fe7848406808`; release evidence and remaining gaps are tracked in [V1_RELEASE_HANDOFF.md](docs/V1_RELEASE_HANDOFF.md), [V1_MASTER_CHECKLIST.md](docs/V1_MASTER_CHECKLIST.md), and [NL_MOBILE_FEATURE_INVENTORY.md](docs/NL_MOBILE_FEATURE_INVENTORY.md).
 
 ## Play locally
 
@@ -38,9 +40,11 @@ Further content, visual polish, sustained mid/late-game balance, mobile-device a
 
 ## Project references
 
+- [Product authority](docs/PRODUCT_AUTHORITY.md) — current benchmark, architecture, source rules, build and completion gates.
+- [Mobile feature inventory](docs/NL_MOBILE_FEATURE_INVENTORY.md) — measured runtime/data/UI/art/Save status and acceptance work per system.
 - [V1 master checklist](docs/V1_MASTER_CHECKLIST.md) — per-system status and remaining work.
 - [V1 release handoff](docs/V1_RELEASE_HANDOFF.md) — exact branch, builds, QA evidence and limitations.
-- [Rebuild specification](docs/NGOA_LONG_REBUILD_SPEC_V1.md) — active gameplay direction.
+- [Rebuild specification](docs/NGOA_LONG_REBUILD_SPEC_V1.md) — retired WEB-first historical record.
 - [Data-driven runtime](docs/NL_DATA_DRIVEN_V2.md) and [reference matrix](docs/NL_REFERENCE_MATRIX.md) — data shape and provenance.
 - [Fidelity gap audit](docs/NL_FIDELITY_GAP_AUDIT_V1.md) — known gaps and evidence.
 - [Current checkpoint](docs/CURRENT_CHECKPOINT.md) — historical milestone log; older headings are not current release status.
