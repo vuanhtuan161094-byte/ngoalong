@@ -28,7 +28,8 @@ def main():
     page=open_page(browser)
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 hero screen has twelve development systems and custom vector navigation',page.locator('.nlh-system-button').count()==12 and page.locator('.nav[data-tab] .nl-nav-icon').count()==15)
-    check('ten production hero IDs have portrait, splash and character art registered',page.evaluate("['cao','liu','guan','zhang','zhao','zhuge','lu','sun','ma','wiki-mobile-hero-083'].every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))"))
+    production_ids=['cao','liu','guan','zhang','zhao','zhuge','lu','sun','ma','wiki-mobile-hero-083','wiki-mobile-hero-026','huang','sunquan','zhou','dian','xun','wiki-mobile-hero-025','wiki-mobile-hero-027','wiki-mobile-hero-033','wiki-mobile-hero-164','wiki-mobile-hero-168','wiki-mobile-hero-292']
+    check('twenty-two production hero IDs have portrait, splash and character art registered',page.evaluate("ids=>ids.every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))",production_ids))
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 portraits load for the owned roster',page.locator('.nlh-portrait-card img').evaluate_all('xs=>xs.length>=3&&xs.every(x=>x.complete&&x.naturalWidth>0)'))
     for mode in ['portrait','splash','character']:
@@ -36,13 +37,17 @@ def main():
       check('hero art switch displays '+mode,page.locator('.nlh-character-'+mode).count()==1 and page.locator('.nlh-character-'+mode).evaluate('x=>x.complete&&x.naturalWidth>0'))
     page.locator('.nlh-art-tab[data-nlh-mode="character"]').click()
     g=page.evaluate('window.__P2_QA__.getGame()')
-    for hero_id in ['cao','zhuge','lu','sun','ma']:
+    new_hero_rows=[('huang','Hoàng Trung'),('sunquan','Tôn Quyền'),('zhou','Chu Du'),('dian','Điển Vi'),('xun','Tuân Úc'),('wiki-mobile-hero-025','Hách Chiêu'),('wiki-mobile-hero-027','Tào Hưu'),('wiki-mobile-hero-033','Hí Chí Tài'),('wiki-mobile-hero-164','Hàn Toại'),('wiki-mobile-hero-168','Mê Đương'),('wiki-mobile-hero-292','Bàng Nghĩa')]
+    for hero_id in ['cao','zhuge','lu','sun','ma','wiki-mobile-hero-026']+[row[0] for row in new_hero_rows]:
       if hero_id not in g['roster']:g['roster'].append(hero_id)
+      g['hero'][hero_id]={'level':20,'xp':0,'troops':500}
+      g['heroDevelopment']['artModes'][hero_id]='character'
     g['hero']['cao']={'level':20,'xp':0,'troops':500}
     g['hero']['zhuge']={'level':20,'xp':0,'troops':500}
     g['hero']['lu']={'level':20,'xp':0,'troops':500}
     g['hero']['sun']={'level':20,'xp':0,'troops':500}
     g['hero']['ma']={'level':20,'xp':0,'troops':500}
+    g['hero']['wiki-mobile-hero-026']={'level':20,'xp':0,'troops':500}
     g['cleared']=list(range(1,29));g['silver']=500000;g['iron']=200000;g['gems']=10000
     g['nlClassicA']['merit']=5000;g['nlClassicA']['meritSpent']=0
     g['heroDevelopment']['selectedHero']='cao';g['heroDevelopment']['selectedSystem']='commander'
@@ -51,9 +56,17 @@ def main():
     g['lastTick']=page.evaluate('Date.now()+86400000')
     page.evaluate('g=>window.__P2_QA__.setGame(g)',g)
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(80)
-    for hero_id,name in [('zhuge','Gia Cát Lượng'),('lu','Lữ Bố'),('sun','Tôn Thượng Hương'),('ma','Mã Siêu')]:
+    for hero_id,name in [('zhuge','Gia Cát Lượng'),('lu','Lữ Bố'),('sun','Tôn Thượng Hương'),('ma','Mã Siêu'),('wiki-mobile-hero-026','Lý Điển')]:
       page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click();page.wait_for_timeout(80)
       check(name+' V5 trio is selected from its stable hero ID',page.locator('.nlh-profile h2').inner_text()==name and page.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+      if hero_id=='wiki-mobile-hero-026':page.screenshot(path=str(ROOT/'qa'/'nl-li-dian-v5-desktop.png'),full_page=False)
+    for hero_id,name in new_hero_rows:
+      page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click();page.wait_for_timeout(80)
+      check(name+' character art resolves through its stable hero ID',page.locator('.nlh-profile h2').inner_text()==name and page.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+      if hero_id=='huang':page.screenshot(path=str(ROOT/'qa'/'nl-art-b1-runtime-desktop.png'),full_page=False)
+      for mode in ['portrait','splash']:
+        page.locator('.nlh-art-tab[data-nlh-mode="'+mode+'"]').click();page.wait_for_timeout(60)
+        check(name+' '+mode+' art loads in the runtime profile',page.locator('.nlh-character-'+mode).count()==1 and page.locator('.nlh-character-'+mode).evaluate('x=>x.complete&&x.naturalWidth>0'))
     page.locator('[data-nlh-action="hero"][data-nlh-hero="cao"]').click();page.wait_for_timeout(80)
     page.locator('.nlh-system-button[data-nlh-target="commander"]').click();page.wait_for_timeout(80)
     before=page.evaluate('window.__P2_QA__.getGame()')
@@ -84,6 +97,13 @@ def main():
     mobile.locator('[data-nlh-action="hero"][data-nlh-hero="ma"]').click();mobile.wait_for_timeout(100)
     check('390px mobile view resolves Mã Siêu character art without clipping',mobile.locator('.nlh-character-character').count()==1 and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
     mobile.screenshot(path=str(ROOT/'qa'/'nl-ma-chao-v5-mobile.png'),full_page=False)
+    mobile.locator('[data-nlh-action="hero"][data-nlh-hero="wiki-mobile-hero-026"]').click();mobile.wait_for_timeout(100)
+    check('390px mobile resolves Lý Điển V5 character art without clipping',mobile.locator('.nlh-profile h2').inner_text()=='Lý Điển' and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+    mobile.screenshot(path=str(ROOT/'qa'/'nl-li-dian-v5-mobile.png'),full_page=False)
+    mobile.locator('[data-nlh-action="hero"][data-nlh-hero="huang"]').click();mobile.wait_for_timeout(100)
+    mobile.locator('.nlh-art-tab[data-nlh-mode="character"]').click();mobile.wait_for_timeout(80)
+    check('390px mobile resolves Hoàng Trung V5 character art without clipping',mobile.locator('.nlh-profile h2').inner_text()=='Hoàng Trung' and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+    mobile.screenshot(path=str(ROOT/'qa'/'nl-art-b1-runtime-mobile.png'),full_page=False)
     mobile.screenshot(path='/tmp/ngoalong-v5-heroes/390x844_heroes_save.png',full_page=False)
     check('no browser JavaScript exceptions across art switching, upgrade, reload and mobile',not errors)
     browser.close()
