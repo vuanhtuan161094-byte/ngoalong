@@ -38,7 +38,7 @@ def image_size(path: Path) -> list[int]:
 
 def asset_record(hero: dict, kind: str, source: Path, output_id: str, prompt: str,
                  target: str, reference_asset: str | None, reference_sha: str | None,
-                 quality_pass: bool) -> dict:
+                 quality_pass: bool, prompt_version: str) -> dict:
     stem = f"female-{hero['slug']}-v5-{kind}"
     png_path = ART_DIR / f"{stem}.png"
     webp_path = ART_DIR / f"{stem}.webp"
@@ -61,7 +61,7 @@ def asset_record(hero: dict, kind: str, source: Path, output_id: str, prompt: st
     provenance = {
         "provider": "OpenAI ImageGen",
         "generationOutputId": output_id,
-        "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_1",
+        "promptVersion": prompt_version,
         "promptRecordStatus": "VERBATIM",
         "promptLibrary": "art_prompts_v5.json",
         "promptKey": output_id,
@@ -106,6 +106,8 @@ def main() -> int:
     parser.add_argument("--visual-qc-passed", action="store_true")
     args = parser.parse_args()
     batch = json.loads(args.batch_json.read_text(encoding="utf-8"))
+    milestone = batch.get("milestone", "ART-B1")
+    prompt_version = batch.get("promptVersion", "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_1")
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     prompts = json.loads(PROMPTS.read_text(encoding="utf-8"))
     seen = set()
@@ -128,7 +130,7 @@ def main() -> int:
             record = asset_record(
                 hero, kind, source, item["outputId"], item["prompt"],
                 item["targetResolution"], item.get("referenceAsset"),
-                reference_sha, args.visual_qc_passed,
+                reference_sha, args.visual_qc_passed, prompt_version,
             )
             records[kind] = record
             prompts[item["outputId"]] = {
@@ -139,7 +141,7 @@ def main() -> int:
                 "generationOutputId": item["outputId"],
                 "referenceAsset": item.get("referenceAsset"),
                 "referenceSha256": reference_sha,
-                "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_1",
+                "promptVersion": prompt_version,
                 "promptRecordStatus": "VERBATIM",
                 "targetResolution": item["targetResolution"],
                 "prompt": item["prompt"],
@@ -152,12 +154,12 @@ def main() -> int:
             **records,
         }
     manifest["lastAssetAudit"] = (
-        f"{date.today().isoformat()}; ART-B1 registered {len(seen)} additional V5 trios "
-        "with PNG masters, WebP runtime derivatives and exact ImageGen provenance; "
+        f"{date.today().isoformat()}; {milestone} registered {len(seen)} additional V5 trios "
+        "with PNG masters, WebP runtime derivatives and ImageGen provenance; "
         "broader roster batches remain in production."
     )
     manifest["uncoveredHeroIds"] = (
-        f"ART-B1 adds {len(seen)} individually designed V5 trios; continue remaining "
+        f"{milestone} adds {len(seen)} individually designed V5 trios; continue remaining "
         "native, Shu, Wei, Wu, Qun and neutral identities in subsequent batches."
     )
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
