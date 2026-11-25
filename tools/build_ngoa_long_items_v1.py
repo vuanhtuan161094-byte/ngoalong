@@ -171,10 +171,32 @@ def payload() -> str:
                  "p41Units":p41_manifest["units"],"p5Rows":p5_manifest["atlas"]["rowOrder"]}
     assert art_d2.count("__NL_D4_RASTER__") == 1
     art_d2 = art_d2.replace("__NL_D2_SHEETS__", js_json(art_sheets)).replace("__NL_D2_FX__", js_json(art_fx)).replace("__NL_D4_RASTER__", js_json(raster_d4))
+    city_dir = ROOT / "assets/ngoalong/original"
+    city_manifest = json.loads((city_dir / "capital_courtyard_v1.manifest.json").read_text(encoding="utf-8"))
+    city_source = city_dir / "capital_courtyard_v1_source.png"
+    city_runtime = city_dir / "capital_courtyard_v1.webp"
+    city_source_bytes = city_source.read_bytes()
+    city_runtime_bytes = city_runtime.read_bytes()
+    source_meta = city_manifest["files"]["sourcePng"]
+    runtime_meta = city_manifest["files"]["runtimeWebp"]
+    if (source_meta["bytes"] != len(city_source_bytes) or
+        source_meta["sha256"] != hashlib.sha256(city_source_bytes).hexdigest() or
+        not city_source_bytes.startswith(b"\x89PNG\r\n\x1a\n") or
+        runtime_meta["bytes"] != len(city_runtime_bytes) or
+        runtime_meta["sha256"] != hashlib.sha256(city_runtime_bytes).hexdigest() or
+        city_runtime_bytes[:4] != b"RIFF" or city_runtime_bytes[8:12] != b"WEBP"):
+        raise ValueError("Capital courtyard art differs from its provenance manifest")
+    city_art = (TOOLS / "nl_city_art_v1.js").read_text(encoding="utf-8")
+    if (city_art.count("// === NL-CITY-ART-V1:") != 1 or
+        city_art.count("// === end NL-CITY-ART-V1 ===") != 1 or
+        city_art.count("__NL_CITY_ART_DATA_URL__") != 1 or "</script" in city_art.lower()):
+        raise ValueError("Invalid city art runtime module")
+    city_url = "data:image/webp;base64," + b64encode(city_runtime_bytes).decode("ascii")
+    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url))
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")
-    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), audio.rstrip(), END])
+    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), city_art.rstrip(), audio.rstrip(), END])
 
 
 def render(html: str, insertion: str) -> str:

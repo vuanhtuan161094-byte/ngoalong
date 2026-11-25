@@ -8463,7 +8463,7 @@
           7
         ],
         "tactic": "",
-        "enemyPower": 1.06,
+        "enemyPower": 1.2,
         "rewards": {
           "silver": 6800,
           "grain": 2400,
@@ -8689,7 +8689,7 @@
           7
         ],
         "tactic": "",
-        "enemyPower": 1,
+        "enemyPower": 1.2,
         "rewards": {
           "silver": 15000,
           "grain": 4700,

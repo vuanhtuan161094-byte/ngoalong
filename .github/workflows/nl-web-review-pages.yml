@@ -79,6 +79,8 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: D2-D4 native squad raster and VFX smoke (desktop/mobile)
         run: python qa/nl_art_d2_browser.py
+      - name: Original capital art, offline asset and building interaction browser gate
+        run: python qa/nl_city_art_browser.py
       - name: Focused combat, Save v5 and item regression on canonical gameplay
         run: |
           python qa/nl_native_pve_a1_browser.py
@@ -130,6 +132,8 @@ jobs:
           path: |
             qa/ui-v2-screenshots/**
             qa/nl-art-d2/**
+            qa/nl-city-art-desktop.png
+            qa/nl-city-art-mobile.png
             qa/wiki-runtime-gap.json
             qa/NL_ONBOARDING_30MIN.json
             qa/NL_ONBOARDING_60MIN.json
