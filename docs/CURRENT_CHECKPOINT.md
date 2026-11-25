@@ -6,6 +6,8 @@ Current authority is [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md): Ngọa Long
 
 The current canonical offline `index.html` is 73,200,107 bytes, SHA-256 `6adb72e5afe2698117efe5e967648b8fa7fdca02d8e9e4ab5731d048960a6d80`. Data validation and all four builder reproducibility checks pass. Focused V5 hero Chromium QA passed **101/101**, including all 36 IDs, all art modes for the ART-B3 pair, Save/reload, desktop and 390px mobile. Hero207 Save/recruit QA passed **16/16** after the passive-clock fix. The updated D4 Link review gate passes locally at desktop and mobile sizes using the offline review HTML. Runtime screenshots are `qa/nl-art-b3-runtime-desktop.png` and `qa/nl-art-b3-runtime-mobile.png`; B3 character and recovered-image contact sheets are `qa/nl-art-b3-character-contact.jpg` and `qa/nl-art-b3-recovered-contact.jpg`. Owner visual/gameplay and physical-device acceptance remain open.
 
+The Android packaging check found `/usr/bin/java` but no Gradle, Android SDK, `sdkmanager`, or `adb`; no APK has been built or claimed in this environment.
+
 There are now **36 V5 hero trios** integrated by stable ID, including all 14 native identities and 22 Wiki identities. V1.0 remains NOT COMPLETE: ART-B3 remainder and ART-B4–B7, broader gameplay inventory, exact-SHA hosted CI, owner acceptance, and physical-device acceptance remain open.
 
 ## Thám Bảo offline gameplay slice — runtime commit `c888918`
