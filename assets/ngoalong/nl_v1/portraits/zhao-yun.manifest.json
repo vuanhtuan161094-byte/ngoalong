@@ -1,0 +1,26 @@
+{
+  "assetId": "zhao",
+  "displayName": "Triệu Vân",
+  "assetKind": "portrait",
+  "status": "RECREATED",
+  "source": {
+    "route": "OpenAI ImageGen",
+    "date": "2026-11-25",
+    "promptFile": "zhao-yun.prompt.txt",
+    "externalReferences": [],
+    "cost": "UNKNOWN"
+  },
+  "image": {
+    "file": "zhao-yun.png",
+    "sha256": "5edd98c41cde3d7456774fcab207ecbb60818f9e56df2a437cc45c2bbf9113c9",
+    "width": 1263,
+    "height": 1246,
+    "format": "PNG",
+    "channels": "RGBA",
+    "alpha": "PRESERVED",
+    "registration": "transparent portrait cutout; display with object-fit: contain"
+  },
+  "use": "One static hero portrait for the visible core recruitment row and hero catalogue. Not a battle sprite and has no animation frames.",
+  "rights": "Project-generated original image; no game screenshot or third-party image was used as a reference.",
+  "prompt": "Create an original premium character portrait for an independent historical strategy game. A dignified adult cavalry commander inspired only by the public-domain historical figure Zhao Yun from the Three Kingdoms era; do not imitate any existing game, movie, actor, or illustration. Centered shoulder-up bust, calm alert expression, refined handsome face, dark hair in a traditional high knot, elegant ivory and silver lamellar armor with restrained teal-green cloth accents and engraved bronze trim, the top of a long spear visible behind one shoulder. Hand-painted 2D game art with rich painterly brush texture, subtle warm rim light, highly readable silhouette and facial features when displayed at 64 pixels, fine material detail without tiny clutter. Transparent background, isolated cutout, no frame, no scenery, no text, no letters, no watermark, no logo, no blood."
+}

@@ -1,7 +1,11 @@
 """Focused visual layer contract, no simulated gameplay assertions."""
+import argparse
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser(description="Offline visual layer coverage for a canonical or review HTML build.")
+parser.add_argument("--html",type=Path,default=root/"index.html")
+html_path=parser.parse_args().html.resolve()
 with sync_playwright() as p:
     browser=p.chromium.launch()
     for width,height in [(1280,720),(390,844)]:
@@ -9,7 +13,7 @@ with sync_playwright() as p:
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.add_init_script("window.__P2_ENABLE_QA__=true")
-        page.goto((root/"index.html").as_uri(),wait_until="domcontentloaded")
+        page.goto(html_path.as_uri(),wait_until="domcontentloaded")
         page.wait_for_function("Boolean(window.__NL_ART_D_QA__)")
         result=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
@@ -23,6 +27,19 @@ with sync_playwright() as p:
         assert result["nav"]>=14 and result["city"]>0 and result["save"]==5,result
         page.locator('.nav[data-tab="heroes"]').click()
         page.wait_for_function("document.querySelectorAll('[data-nla-hero] .nl-art-d-img').length>0")
+        page.wait_for_function("document.querySelector('[data-nla-hero=zhao] .nl-art-d-img')?.complete")
+        zhao_portrait = page.evaluate("""() => {
+          const q=window.__NL_ART_D_QA__;
+          const image=document.querySelector('[data-nla-hero=zhao] .nl-art-d-img');
+          const source=q.portrait('zhao');
+          const imageSource=image?.src||'';
+          return {registered:q.heroPortraitIds.includes('zhao'),
+            sourceIsPng:source.startsWith('data:image/png;base64,'),
+            imageSourceIsPng:imageSource.startsWith('data:image/png;base64,'),
+            title:image?.title||'',loaded:Boolean(image?.complete&&image?.naturalWidth===1263)};
+        }""")
+        assert zhao_portrait["registered"] and zhao_portrait["sourceIsPng"] \
+            and zhao_portrait["imageSourceIsPng"] and zhao_portrait["loaded"],zhao_portrait
         found = page.evaluate("""() => {
           const selector='[data-nlc-panel="heroes"] [data-nlc-id="wiki-mobile-hero-083"]';
           for(let i=0;i<80&&!document.querySelector(selector);i++){
@@ -64,6 +81,6 @@ with sync_playwright() as p:
         page.wait_for_function("document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0")
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
         assert not errors,errors
-        print("NL_ART_D/D3 PASS",width,result,result3,portrait)
+        print("NL_ART_D/D3 PASS",width,result,result3,zhao_portrait,portrait)
         page.close()
     browser.close()

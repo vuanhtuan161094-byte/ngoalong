@@ -19,7 +19,11 @@ function nlA2BuildingCost(id){
  const level=game.buildings[id];if(!Number.isInteger(level)||level<1)return null;
  const oldSilver=Math.round(b.base*Math.pow(1.75,level-1));
  const oldIron=Math.round(b.iron*Math.pow(1.65,level-1));
- return {silver:oldSilver+oldIron*NL_A2_EXCHANGE_RATE,grain:Math.ceil(oldIron/2)};
+ const cost={silver:oldSilver+oldIron*NL_A2_EXCHANGE_RATE,grain:Math.ceil(oldIron/2)};
+ // CL-P3's lumberyard consumes its actual wood stock in addition to the A2
+ // silver/grain projection of the retired construction iron cost.
+ if(id==='lumberyard'&&Number.isSafeInteger(game.wood))cost.wood=Math.round(120*Math.pow(1.65,level-1));
+ return cost;
 }
 buildingCost=nlA2BuildingCost;
 upgrade=function(id){

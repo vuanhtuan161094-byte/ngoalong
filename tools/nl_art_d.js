@@ -127,7 +127,7 @@
      im.style.filter='saturate('+(0.87+(n%4)*.07)+') brightness('+(0.87+(n%3)*.06)+')';
      im.title='Minh họa địa hình đại diện; không phải bản đồ địa lý gốc';
    }
-   if(kind==='hero'){if(supplied.heroPortraits?.[id])im.title='Chân dung Lục Tốn · Ảnh nguyên bản tạo riêng cho dự án';else{im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}}
+   if(kind==='hero'){if(supplied.heroPortraits?.[id])im.title=supplied.heroPortraitTitles?.[id]||'Chân dung nguyên bản tạo riêng cho dự án';else{im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}}
    if(replace)el.classList.add('nl-art-d-replace');
  }
  function buildingKind(s){s=norm(s);return /thap|tower/.test(s)?'tower':/quan|binh|barrack|stable|drill/.test(s)?'barracks':/kho|granary|luong|mill|farm/.test(s)?'grain':/thu[eế]|tax|bac|treasury|ngan|mine/.test(s)?'silver':/hoc|tech|nghien|academy/.test(s)?'tech':'city'}
