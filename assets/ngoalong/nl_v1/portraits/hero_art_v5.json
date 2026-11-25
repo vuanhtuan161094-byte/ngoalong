@@ -14,8 +14,8 @@
       "expressionVariants",
       "skins"
     ],
-    "style": "Premium semi-realistic anime CG; refined adult Asian fantasy beauty; expressive differentiated faces; luminous soft skin; bold high-fashion oriental styling; character-focused compositions.",
-    "safety": "Opaque coverage; no nudity or explicit sexual content.",
+    "style": "Premium semi-realistic anime CG; refined adult Asian fantasy beauty; expressive differentiated faces; luminous soft skin; bold high-fashion Oriental styling; sheer silk, chiffon or gauze overlays over opaque lining; individually designed silhouettes and relaxed editorial poses.",
+    "safety": "Sheer outer fabric is allowed; opaque underlayers cover intimate areas. No nudity or explicit sexual content.",
     "styleConstraints": "Illustrated anime CG, not photorealistic; no western comic, plastic 3D, chibi, rough painting, text, UI or watermark.",
     "faceConsistency": "Portrait, character and splash are generated from one identity reference and reviewed together; retain hero-specific facial and costume details."
   },
@@ -1180,74 +1180,306 @@
           "integrated_in_game": true
         }
       }
+    },
+    "ma": {
+      "name": "Mã Siêu",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "portrait": {
+        "sourcePng": "female-ma-chao-v5-portrait-r3.png",
+        "runtimeWebp": "female-ma-chao-v5-portrait-r3.webp",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "promptFile": "female-ma-chao-v5-portrait-r3.prompt.txt",
+        "sourceSha256": "1d621e8ffb706e38d7e36c30c7843c9fa30bdfaa055c520e8a9841a7c29b23c6",
+        "runtimeSha256": "262baab1d4ced186420776c10e6a8c855b04a8207529bfa4e8adefc38d4113d9",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e18fe6de-8465-43b7-b1a7-e43ac918a2f1",
+          "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-e18fe6de-8465-43b7-b1a7-e43ac918a2f1",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+          "referenceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "generationSourcePath": "/workspace/generated_images/exec-e18fe6de-8465-43b7-b1a7-e43ac918a2f1.png",
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r3.png",
+          "sourceSizeBytes": 3095994,
+          "sourceSha256": "1d621e8ffb706e38d7e36c30c7843c9fa30bdfaa055c520e8a9841a7c29b23c6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r3.webp",
+          "runtimeSizeBytes": 413752,
+          "runtimeSha256": "262baab1d4ced186420776c10e6a8c855b04a8207529bfa4e8adefc38d4113d9",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        },
+        "supersedes": {
+          "sourcePng": "female-ma-chao-v5-portrait-r2.png",
+          "runtimeWebp": "female-ma-chao-v5-portrait-r2.webp",
+          "promptFile": "female-ma-chao-v5-portrait-r2.prompt.txt",
+          "sourceSha256": "5e11d91d74f7c3488737c7e268827ea07864ba8f93c1fdd190c7a7eb043e447c",
+          "runtimeSha256": "1021110d718891c0e932d540cb1e1913fe7102be286c4e13500de5fc82d71f6a",
+          "provenance": {
+            "provider": "OpenAI ImageGen",
+            "generationOutputId": "exec-a4c1c2d4-6ee5-4244-9936-0fb28b16586f",
+            "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+            "promptRecordStatus": "VERBATIM",
+            "promptLibrary": "art_prompts_v5.json",
+            "promptKey": "exec-a4c1c2d4-6ee5-4244-9936-0fb28b16586f",
+            "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+            "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+            "referenceAssets": [
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+                "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+              },
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+                "sha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6"
+              }
+            ],
+            "createdOn": "2026-11-25",
+            "providerTimestamp": "unknown",
+            "targetResolution": "1:1 square portrait",
+            "actualResolution": [
+              1254,
+              1254
+            ],
+            "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r2.png",
+            "sourceSizeBytes": 3164688,
+            "sourceSha256": "5e11d91d74f7c3488737c7e268827ea07864ba8f93c1fdd190c7a7eb043e447c",
+            "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r2.webp",
+            "runtimeSizeBytes": 430550,
+            "runtimeSha256": "1021110d718891c0e932d540cb1e1913fe7102be286c4e13500de5fc82d71f6a",
+            "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+            "cost": "unknown; provider did not return an estimate",
+            "image_created": true,
+            "file_exported": true,
+            "asset_qc_pass": true,
+            "integrated_in_game": false,
+            "owner_review": "PENDING"
+          }
+        }
+      },
+      "character": {
+        "sourcePng": "female-ma-chao-v5-character-r3.png",
+        "runtimeWebp": "female-ma-chao-v5-character-r3.webp",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "promptFile": "female-ma-chao-v5-character-r3.prompt.txt",
+        "sourceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+        "runtimeSha256": "e655c082d9af87402ec02640f897b1b044189e229c44db7a7bc117bf07253b45",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-977449b5-c114-4138-8871-0241d424bcdb",
+          "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-977449b5-c114-4138-8871-0241d424bcdb",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+          "referenceSha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6",
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+              "sha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6"
+            }
+          ],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "generationSourcePath": "/workspace/generated_images/exec-977449b5-c114-4138-8871-0241d424bcdb.png",
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+          "sourceSizeBytes": 3041698,
+          "sourceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.webp",
+          "runtimeSizeBytes": 425852,
+          "runtimeSha256": "e655c082d9af87402ec02640f897b1b044189e229c44db7a7bc117bf07253b45",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        },
+        "supersedes": {
+          "sourcePng": "female-ma-chao-v5-character-r2.png",
+          "runtimeWebp": "female-ma-chao-v5-character-r2.webp",
+          "promptFile": "female-ma-chao-v5-character-r2.prompt.txt",
+          "sourceSha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6",
+          "runtimeSha256": "dd96f258f6057df21bd8fb4f1da5f77e428fece639beb8effd1f19d53ae60692",
+          "provenance": {
+            "provider": "OpenAI ImageGen",
+            "generationOutputId": "exec-d471e9e8-9442-4f13-885d-59d4354a2dcd",
+            "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+            "promptRecordStatus": "VERBATIM",
+            "promptLibrary": "art_prompts_v5.json",
+            "promptKey": "exec-d471e9e8-9442-4f13-885d-59d4354a2dcd",
+            "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+            "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+            "referenceAssets": [
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+                "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+              }
+            ],
+            "createdOn": "2026-11-25",
+            "providerTimestamp": "unknown",
+            "targetResolution": "2:3 vertical full-body character illustration",
+            "actualResolution": [
+              1024,
+              1536
+            ],
+            "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+            "sourceSizeBytes": 3213129,
+            "sourceSha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6",
+            "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.webp",
+            "runtimeSizeBytes": 453530,
+            "runtimeSha256": "dd96f258f6057df21bd8fb4f1da5f77e428fece639beb8effd1f19d53ae60692",
+            "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+            "cost": "unknown; provider did not return an estimate",
+            "image_created": true,
+            "file_exported": true,
+            "asset_qc_pass": true,
+            "integrated_in_game": false,
+            "owner_review": "PENDING"
+          }
+        }
+      },
+      "splash": {
+        "sourcePng": "female-ma-chao-v5-splash-r3.png",
+        "runtimeWebp": "female-ma-chao-v5-splash-r3.webp",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "promptFile": "female-ma-chao-v5-splash-r3.prompt.txt",
+        "sourceSha256": "1f2c5081c1c273a27f7ac894f362be47a782380120f40aed016b2571082926dc",
+        "runtimeSha256": "2668ba71a8a943a18cb115c16b63fcec03536e72b20f4450d5aaa644f5235bf8",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "classification": "RECREATED_V5_SPLASH_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-589a9b38-e809-46c5-b718-fd5f9cbde700",
+          "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-589a9b38-e809-46c5-b718-fd5f9cbde700",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+          "referenceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal cinematic splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "generationSourcePath": "/workspace/generated_images/exec-589a9b38-e809-46c5-b718-fd5f9cbde700.png",
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r3.png",
+          "sourceSizeBytes": 3039022,
+          "sourceSha256": "1f2c5081c1c273a27f7ac894f362be47a782380120f40aed016b2571082926dc",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r3.webp",
+          "runtimeSizeBytes": 438720,
+          "runtimeSha256": "2668ba71a8a943a18cb115c16b63fcec03536e72b20f4450d5aaa644f5235bf8",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        },
+        "supersedes": {
+          "sourcePng": "female-ma-chao-v5-splash-r2.png",
+          "runtimeWebp": "female-ma-chao-v5-splash-r2.webp",
+          "promptFile": "female-ma-chao-v5-splash-r2.prompt.txt",
+          "sourceSha256": "c61f58b324182174de5cc53a33ecb93e2efa0be3bf1f7cc5dde2d440d30cff04",
+          "runtimeSha256": "a93c95f080402ccf0a0355c3968a01b31116b42e0603b6a3b2c9795cfa84fd6c",
+          "provenance": {
+            "provider": "OpenAI ImageGen",
+            "generationOutputId": "exec-a671a77f-350f-4aeb-892e-9b8b097ebbf9",
+            "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+            "promptRecordStatus": "VERBATIM",
+            "promptLibrary": "art_prompts_v5.json",
+            "promptKey": "exec-a671a77f-350f-4aeb-892e-9b8b097ebbf9",
+            "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+            "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+            "referenceAssets": [
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+                "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+              },
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+                "sha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6"
+              },
+              {
+                "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r2.png",
+                "sha256": "5e11d91d74f7c3488737c7e268827ea07864ba8f93c1fdd190c7a7eb043e447c"
+              }
+            ],
+            "createdOn": "2026-11-25",
+            "providerTimestamp": "unknown",
+            "targetResolution": "16:9 horizontal cinematic splash art",
+            "actualResolution": [
+              1672,
+              941
+            ],
+            "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r2.png",
+            "sourceSizeBytes": 2785769,
+            "sourceSha256": "c61f58b324182174de5cc53a33ecb93e2efa0be3bf1f7cc5dde2d440d30cff04",
+            "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r2.webp",
+            "runtimeSizeBytes": 344460,
+            "runtimeSha256": "a93c95f080402ccf0a0355c3968a01b31116b42e0603b6a3b2c9795cfa84fd6c",
+            "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+            "cost": "unknown; provider did not return an estimate",
+            "image_created": true,
+            "file_exported": true,
+            "asset_qc_pass": true,
+            "integrated_in_game": false,
+            "owner_review": "PENDING"
+          }
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
     }
   },
   "uncoveredHeroIds": "V5 art currently produced for cao, guan, liu, lu, sun, wiki-mobile-hero-083, zhang, zhao, zhuge. The remaining original and Wiki roster IDs await individually designed and reviewed assets.",
   "aliases": {},
-  "lastAssetAudit": {
-    "portraitCount": 6,
-    "splashCount": 3,
-    "characterCount": 4,
-    "expressions": 0,
-    "skins": 0,
-    "v5ValidatedHeroIds": [
-      "cao",
-      "guan",
-      "liu",
-      "lu",
-      "sun",
-      "wiki-mobile-hero-083",
-      "zhang",
-      "zhao",
-      "zhuge"
-    ],
-    "v5PortraitCount": 9,
-    "v5SplashCount": 9,
-    "v5CharacterCount": 9,
-    "auditDate": "2026-11-25",
-    "v5PortraitHeroIds": [
-      "cao",
-      "guan",
-      "liu",
-      "lu",
-      "sun",
-      "wiki-mobile-hero-083",
-      "zhang",
-      "zhao",
-      "zhuge"
-    ],
-    "v5HeroIds": [
-      "cao",
-      "guan",
-      "liu",
-      "lu",
-      "sun",
-      "wiki-mobile-hero-083",
-      "zhang",
-      "zhao",
-      "zhuge"
-    ],
-    "v5SplashHeroIds": [
-      "cao",
-      "guan",
-      "liu",
-      "lu",
-      "sun",
-      "wiki-mobile-hero-083",
-      "zhang",
-      "zhao",
-      "zhuge"
-    ],
-    "v5CharacterHeroIds": [
-      "cao",
-      "guan",
-      "liu",
-      "lu",
-      "sun",
-      "wiki-mobile-hero-083",
-      "zhang",
-      "zhao",
-      "zhuge"
-    ]
-  }
+  "lastAssetAudit": "2026-11-25; Mã Siêu V5 sheer silk r3 trio generated, exported, visually reviewed, built into offline HTML and browser-verified; owner art review pending."
 }

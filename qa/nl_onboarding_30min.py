@@ -8,7 +8,11 @@ from __future__ import annotations
 import json
 import sys
 import argparse
+import shutil
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Thread
 
 from playwright.sync_api import sync_playwright
 
@@ -23,6 +27,36 @@ PROFILES = {
 checks: list[dict[str, object]] = []
 page_errors: list[str] = []
 
+class QuietStaticHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return
+
+
+def visible_window(page, selector: str):
+    """Navigate the real one-window UI until the requested control is visible."""
+    elements = page.locator(selector)
+    if elements.count() == 0:
+        raise AssertionError(f"Control does not exist in the rendered game: {selector}")
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        for index in range(chooser.locator("option").count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(50)
+            for item_index in range(elements.count()):
+                element = elements.nth(item_index)
+                if element.is_visible():
+                    return element
+    for item_index in range(elements.count()):
+        element = elements.nth(item_index)
+        if element.is_visible():
+            return element
+    raise AssertionError(f"Control exists but no screen exposes it: {selector}")
+
+
+def open_hero_system(page, system: str) -> None:
+    page.locator('.nav[data-tab="heroes"]').click()
+    visible_window(page, f'[data-nlh-action="system"][data-nlh-target="{system}"]').click()
+
 
 def check(name: str, condition: object) -> None:
     passed = bool(condition)
@@ -34,24 +68,34 @@ def run(duration_minutes: int = 30) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     summaries: dict[str, dict[str, object]] = {}
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietStaticHandler, directory=str(ROOT)))
+    Thread(target=server.serve_forever, daemon=True).start()
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        launch_options = {"headless": True, "args": ["--no-sandbox", "--disable-dev-shm-usage"]}
+        system_chromium = shutil.which("chromium")
+        if system_chromium:
+            launch_options["executable_path"] = system_chromium
+        browser = playwright.chromium.launch(**launch_options)
         for profile, (formation, seed_base) in PROFILES.items():
             context = browser.new_context(viewport={"width": 1280, "height": 720})
             context.add_init_script("window.__P2_ENABLE_QA__=true;let __nlRandom=8675309;Math.random=()=>{__nlRandom=(Math.imul(__nlRandom,1664525)+1013904223)>>>0;return __nlRandom/4294967296}")
             page = context.new_page()
             page.on("pageerror", lambda error: page_errors.append(str(error)))
-            page.goto(HTML.as_uri(), wait_until="domcontentloaded")
+            page.goto(f"http://127.0.0.1:{server.server_port}/{HTML.name}", wait_until="domcontentloaded")
             page.wait_for_timeout(50)
             state = page.evaluate("window.__P2_QA__.getGame()")
             page.locator('.nav[data-tab="heroes"]').click()
-            page.locator('[data-nla-recruit="zhao"]').click()
+            visible_window(page, '[data-nlh-action="system"][data-nlh-target="recruit"]').click()
+            recruit_button = visible_window(page, '[data-nla-recruit="zhao"]')
+            if not recruit_button.is_enabled():
+                raise AssertionError("The named free Zhao Yun recruit is not enabled in the live hero screen")
+            recruit_button.click()
             recruited_state = page.evaluate("window.__P2_QA__.getGame()")
             recruited = next(hero for hero in recruited_state["roster"] if hero not in state["roster"])
             page.locator('.nav[data-tab="formation"]').click()
-            page.locator(f'[data-choose-hero="{recruited}"]').click()
+            visible_window(page, f'[data-choose-hero="{recruited}"]').click()
             empty_slot = next(index for index, hero in enumerate(recruited_state["slots"]) if hero is None)
-            page.locator(f'[data-slot="{empty_slot}"]').click()
+            visible_window(page, f'[data-slot="{empty_slot}"]').click()
             state = page.evaluate("window.__P2_QA__.getGame()")
             check(f"{profile}: named free Triệu Vân recruit is placed into a real empty formation slot", len(state["roster"]) == 4 and not state["freeRecruit"] and state["slots"][empty_slot] == recruited and state["silver"] == 14000)
             heroes = state["roster"]
@@ -171,30 +215,34 @@ def run(duration_minutes: int = 30) -> int:
                 page.evaluate("window.__P2_QA__.closeBattle('city')")
                 if not report["won"] and stage == 5 and minutes < 30 and len(heroes) < 5 and settled["silver"] >= 1000:
                     before_silver = settled["silver"]
-                    page.locator('.nav[data-tab="heroes"]').click()
+                    open_hero_system(page, "recruit")
                     # The classic recruit system has no random 1800-Bạc draw.
                     # Hoàng Trung unlocks from stage 2, so the Stage-5
                     # recovery route is a reproducible, named WEB recruit
                     # rather than the old RNG gacha or late-stage Mã Siêu.
                     candidate = "huang"
-                    page.locator(f'[data-nla-recruit="{candidate}"]').click()
+                    recruit_button = visible_window(page, f'[data-nla-recruit="{candidate}"]')
+                    if not recruit_button.is_enabled():
+                        raise AssertionError("The named Huang Zhong recovery recruit is not enabled")
+                    recruit_button.click()
                     recruited_state = page.evaluate("window.__P2_QA__.getGame()")
                     fifth = next((hero for hero in recruited_state["roster"] if hero not in heroes), None)
                     if fifth:
                         page.locator('.nav[data-tab="formation"]').click()
-                        page.locator(f'[data-choose-hero="{fifth}"]').click()
+                        visible_window(page, f'[data-choose-hero="{fifth}"]').click()
                         open_slot = next(index for index, hero in enumerate(recruited_state["slots"]) if hero is None)
-                        page.locator(f'[data-slot="{open_slot}"]').click()
-                        page.locator('[data-p3-preset="spear-van"]').click()
+                        visible_window(page, f'[data-slot="{open_slot}"]').click()
+                        visible_window(page, '[data-p3-preset="spear-van"]').click()
                         recruited_fifth = True
                         heroes = recruited_state["roster"]
                         formation = "spear"
-                        page.locator('.nav[data-tab="heroes"]').click()
+                        open_hero_system(page, "training")
                         before_training_silver = page.evaluate("window.__P2_QA__.getGame().silver")
                         for hero in heroes:
+                            visible_window(page, f'[data-nlh-action="hero"][data-nlh-hero="{hero}"]').click()
                             for _ in range(4):
                                 if page.evaluate("window.__P2_QA__.getGame().silver") >= 700:
-                                    page.locator(f'[data-train="{hero}"]').click()
+                                    visible_window(page, f'[data-train="{hero}"]').click()
                                     training_actions += 1
                         after_training = page.evaluate("window.__P2_QA__.getGame()")
                         history.append({"minute": minutes, "stage": stage, "event": "named-recruit-train-and-spear-van", "hero": fifth, "silverSpentRecruit": before_silver - recruited_state["silver"], "silverSpentTraining": before_training_silver - after_training["silver"], "trainingActions": training_actions, "averageHeroLevel": sum(after_training["hero"][hero]["level"] for hero in heroes) / len(heroes), "levelsByHero": {hero: after_training["hero"][hero]["level"] for hero in heroes}})
@@ -254,18 +302,23 @@ def run(duration_minutes: int = 30) -> int:
             restored = page.evaluate("window.__P2_QA__.getGame()")
             check(f"{profile}: reload preserves unlocks, troop casualties, reports and v5 Save", restored["version"] == 5 and restored["cleared"] == final["cleared"] and restored["battleReports"] == final["battleReports"] and restored["hero"] == final["hero"] and serialized is not None)
             page.locator('.nav[data-tab="campaign"]').click()
-            if page.locator('[data-stage="5"]').count() and not page.locator('[data-stage="5"]').is_disabled():
-                page.locator('[data-stage="5"]').click()
-            recommendation_visible = page.locator('[data-nl-preparation="5"]').count() == 1 and "cấp trung bình khoảng 5" in page.locator('[data-nl-preparation="5"]').inner_text() and page.locator('[data-nl-recommended-preset="spear-van"]').count() == 1 and "Tiên Phong" in page.locator('[data-nl-recommended-preset="spear-van"]').inner_text()
+            stage_five = visible_window(page, '[data-stage="5"]')
+            if not stage_five.is_disabled():
+                stage_five.click()
+            preparation = visible_window(page, '[data-nl-preparation="5"]')
+            recommendation = visible_window(page, '[data-nl-recommended-preset="spear-van"]')
+            recommendation_visible = "cấp trung bình khoảng 5" in preparation.inner_text() and "Tiên Phong" in recommendation.inner_text()
             check(f"{profile}: stage 5 shows its simulated preparation hint in the live campaign UI", recommendation_visible)
             page.evaluate("()=>{const g=window.__P2_QA__.getGame();g.p3PresetId='shield-van';window.__P2_QA__.setGame(g)}")
-            apply_recommendation = page.locator('[data-nl-apply-recommended="spear-van"]')
+            apply_recommendation = visible_window(page, '[data-nl-apply-recommended="spear-van"]')
             apply_recommendation.click()
             applied_game = page.evaluate("window.__P2_QA__.getGame()")
             check(f"{profile}: campaign preparation action applies the verified spear-van preset through the real UI", applied_game["p3PresetId"] == "spear-van" and page.locator('[data-nl-apply-recommended="spear-van"]').is_disabled())
             page.screenshot(path=str(ROOT / "qa" / f"nl-onboarding-{duration_minutes}-{profile}.png"))
             context.close()
         browser.close()
+    server.shutdown()
+    server.server_close()
 
     check("Chromium produced no page exceptions", not page_errors)
     report = {"milestone": f"NL-ONBOARDING-{duration_minutes}MIN-SIMULATED", "method": "accelerated deterministic Chromium simulation; not a human session", "profiles": summaries, "total": len(checks), "passed": sum(bool(row["pass"]) for row in checks), "failed": [row["name"] for row in checks if not row["pass"]], "pageErrors": page_errors, "checks": checks}

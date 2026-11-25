@@ -74,7 +74,10 @@ def run():
   check("new hero equipment contributes positive live combat stats",bonus.get("weaponAtk",0)>0 and isinstance(unit,dict) and unit.get("id")==key)
   ledger=equipped["nlItemsV1"]
   check("item receipt ledger and recruited hero share Save-v5 state",ledger.get("actionNonce",0)>=2 and key in equipped["hero"] and equipped["version"]==5)
-  page.evaluate("window.__P2_QA__.getGame().cleared.includes(1)")
+  # The game passively produces resources while the browser gate is open.
+  # Freeze the clock in the persisted state so reload compares the same
+  # resource snapshot rather than racing the next production tick.
+  page.evaluate("""() => {const q=window.__P2_QA__,g=q.getGame();g.lastTick=Date.now()+86400000;q.setGame(g)}""")
   saved=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   reload=open_page(browser,saved)
   restored=state(reload)

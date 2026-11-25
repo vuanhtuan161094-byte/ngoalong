@@ -1,6 +1,7 @@
 """NL-R03 Chromium gate for real troop evolutions and four late-campaign tactics."""
 from pathlib import Path
 import json
+import shutil
 import sys
 from playwright.sync_api import sync_playwright
 
@@ -35,25 +36,44 @@ def state(page):
 
 
 def visible_window(page, selector):
-    elements = page.locator(selector)
     chooser = page.locator("#nl-screen-select")
     windows = []
     if chooser.count():
         options = chooser.locator("option")
         for index in range(options.count()):
-            chooser.select_option(str(index))
-            page.wait_for_timeout(120)
+            value = options.nth(index).get_attribute("value")
+            chooser.select_option(value)
+            page.wait_for_timeout(220)
             windows.append(options.nth(index).inner_text())
-            for element_index in range(elements.count()):
-                element = elements.nth(element_index)
-                if element.is_visible():
-                    return element
-    raise AssertionError(f"No visible pane contains {selector}; windows={windows}; matches={elements.count()}")
+            # Branch selection can re-render #view while the compact-window
+            # router is still scheduling its MutationObserver rebuild. Query
+            # the live visible locator after each screen switch so a stale
+            # nth() reference cannot point back to a now-hidden duplicate.
+            visible = page.locator(selector + ":visible")
+            if visible.count():
+                return visible.first
+    matches = page.locator(selector).count()
+    raise AssertionError(f"No visible pane contains {selector}; windows={windows}; matches={matches}")
+
+
+def choose_branch(page, hero, branch):
+    # The branch selector and its action live in one row. Keep the action
+    # scoped to that row and perform it immediately; rescanning all five
+    # windows between select and click lets the one-second game render replace
+    # the row and silently discard the selected value on slower CI runners.
+    select = visible_window(page, f'[data-r03-select="{hero}"]')
+    row = select.locator("xpath=..")
+    select.select_option(branch)
+    row.locator(f'[data-r03-evolve="{hero}"]').click(timeout=10000)
 
 
 def run():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        browser = playwright.chromium.launch(
+            headless=True,
+            executable_path=shutil.which("chromium"),
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
         page = open_page(browser)
         initial = state(page)
         check("R03 hydration keeps schema v5 and initializes independent evolution state", initial["version"] == 5 and initial["nlr03"] == {"schema": 1, "evolutions": {}})
@@ -96,8 +116,7 @@ def run():
                 baseline = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", hero)
             else:
                 baseline = page.evaluate("({id,key})=>window.__NL_R03_QA__.unit(id,'p',2,1)[key]", {"id": hero, "key": metric})
-            visible_window(page, f'[data-r03-select="{hero}"]').select_option(branch)
-            visible_window(page, f'[data-r03-evolve="{hero}"]').click()
+            choose_branch(page, hero, branch)
             after = state(page)
             if metric == "skill":
                 changed = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", hero) > baseline
@@ -126,33 +145,26 @@ def run():
         before_invalid = state(page)
         check("a general cannot learn a branch from another troop class", page.evaluate("()=>window.__NL_R03_QA__.evolve('guan','medic')") is False and state(page)["silver"] == before_invalid["silver"])
         same_branch_before = state(page)
-        visible_window(page, '[data-r03-select="guan"]').select_option("shock")
-        visible_window(page, '[data-r03-evolve="guan"]').click()
+        choose_branch(page, "guan", "shock")
         check("reapplying the current lineage cannot charge resources again", state(page)["silver"] == same_branch_before["silver"] and state(page)["nlr03"]["evolutions"]["guan"] == "shock")
 
         volley_base = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", "sun")
-        visible_window(page, '[data-r03-select="sun"]').select_option("volley")
-        visible_window(page, '[data-r03-evolve="sun"]').click()
+        choose_branch(page, "sun", "volley")
         volley = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'})", "sun")
         check("Liên Nỗ changes the archer skill to a stronger real double strike", volley["pattern"] == "double" and volley["mult"] > volley_base)
-        visible_window(page, '[data-r03-select="zhou"]').select_option("disrupt")
-        visible_window(page, '[data-r03-evolve="zhou"]').click()
+        choose_branch(page, "zhou", "disrupt")
         disrupted = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'})", "zhou")
         check("Nhiễu Tâm adds real morale drain to the strategist skill", disrupted.get("drainMorale", 0) >= 18)
-        visible_window(page, '[data-r03-select="zhang"]').select_option("spearwall")
-        visible_window(page, '[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "spearwall")
         spear = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("Thương Phá Kỵ keeps its infantry combat archetype, switches to spear troop and counters cavalry", spear["troop"] == "spear" and spear["type"] == "infantry" and page.evaluate("window.__P3_QA__.counter('spear','cavalry') > 1"))
-        visible_window(page, '[data-r03-select="zhang"]').select_option("phalanx")
-        visible_window(page, '[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "phalanx")
         phalanx = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("spear specialization is selectable on an infantry commander and changes real unit class and defense", phalanx["troop"] == "spear" and phalanx["r03Branch"] == "phalanx" and phalanx["tdef"] >= spear["tdef"])
-        visible_window(page, '[data-r03-select="zhang"]').select_option("impaler")
-        visible_window(page, '[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "impaler")
         impaler = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("alternate spear branch is a distinct live combat build", impaler["troop"] == "spear" and impaler["r03Branch"] == "impaler" and impaler["atk"] > phalanx["atk"])
-        visible_window(page, '[data-r03-select="liu"]').select_option("rally")
-        visible_window(page, '[data-r03-evolve="liu"]').click()
+        choose_branch(page, "liu", "rally")
         page.evaluate("window.__P2_QA__.useTroop('liu','drum')")
         page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
         page.evaluate("""() => {
@@ -167,8 +179,7 @@ def run():
 
         # Change the cavalry path and prove the live player action selects a rear target.
         page.locator('.nav[data-tab="barracks"]').click()
-        visible_window(page, '[data-r03-select="guan"]').select_option("raider")
-        visible_window(page, '[data-r03-evolve="guan"]').click()
+        choose_branch(page, "guan", "raider")
         page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
         page.evaluate("""() => {
           const b=__P2_QA__.debugBattle();

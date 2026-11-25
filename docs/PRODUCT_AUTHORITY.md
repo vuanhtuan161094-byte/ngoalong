@@ -31,9 +31,10 @@ Mưu Định Tam Quốc remains an original, offline-first, single-player strate
 ## Art direction
 
 - Inherit Character Art V5: premium semi-realistic Asian fantasy game illustration with individualized identity, expression, hair, costume, and composition. Do not replace it with SVG portraits, emoji, chibi, or rough placeholder art.
-- Current production specification: clearly adult women, preferably 25+, with opaque coverage and no nudity or explicit sexual content. Preserve historical name, faction, weapon, role, skills, and Save ID while feminizing the established V5 identities.
-- Keep PNG masters, runtime WebP, exact prompt/provenance, dimensions, and hashes in the existing manifests. The nine integrated IDs are `cao`, `liu`, `guan`, `zhang`, `zhao`, `zhuge`, `lu`, `sun`, and `wiki-mobile-hero-083`.
-- `female-huang-zhong-v5-portrait.png` is a one-off preview committed at HEAD; it is not a reviewed V5 trio or an integrated roster asset. Do not count it as completed coverage until its age/style policy, prompt provenance, companion art, manifest, and runtime wiring agree.
+- Current production specification: clearly adult women, preferably 25+, with varied, bold high-fashion Oriental costumes and relaxed editorial poses. Sheer silk, chiffon and gauze may be prominent overlays over opaque lining that covers intimate areas; no nudity or explicit sexual content. Preserve historical name, faction, weapon, role, skills, and Save ID while feminizing the established V5 identities.
+- Keep PNG masters, runtime WebP, exact prompt/provenance, dimensions, and hashes in the existing manifests. Ten integrated IDs are `cao`, `liu`, `guan`, `zhang`, `zhao`, `zhuge`, `lu`, `sun`, `ma`, and `wiki-mobile-hero-083`.
+- Mã Siêu (`ma`) has an integrated V5 r3 portrait/character/splash trio with clearly visible sheer chiffon over opaque satin lining, a relaxed editorial pose, and consistent face/identity cues. Prompt and checksum provenance are complete; internal visual/file QC passed; owner art acceptance remains pending.
+- `female-huang-zhong-v5-portrait.png` is a one-off preview committed at the baseline HEAD; it is not a reviewed V5 trio or an integrated roster asset. Do not count it as completed coverage until its age/style policy, prompt provenance, companion art, manifest, and runtime wiring agree.
 - Static character art is not troop animation. Sprite frames, VFX, audio, buildings, maps, and item icons each need their own source and runtime evidence.
 
 ## Canonical build and review

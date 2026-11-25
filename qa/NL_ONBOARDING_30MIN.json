@@ -1,0 +1,574 @@
+{
+  "milestone": "NL-ONBOARDING-30MIN-SIMULATED",
+  "method": "accelerated deterministic Chromium simulation; not a human session",
+  "profiles": {
+    "steady": {
+      "minutesSimulated": 30,
+      "freeRecruit": "zhao",
+      "paidFifthRecruit": true,
+      "trainingActions": 20,
+      "wins": 5,
+      "losses": 1,
+      "retries": 1,
+      "blockedActions": 0,
+      "recruitBatches": 2,
+      "stagesCleared": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "resources": {
+        "silver": 6648,
+        "grain": 11108,
+        "iron": 6255,
+        "reserve": 140
+      },
+      "troopsByHero": {
+        "liu": 270,
+        "guan": 172,
+        "zhang": 212,
+        "zhao": 330,
+        "huang": 311
+      },
+      "levelsByHero": {
+        "liu": 5,
+        "guan": 5,
+        "zhang": 5,
+        "zhao": 5,
+        "huang": 4
+      },
+      "stage5BalanceSweep": [
+        {
+          "power": 1.0,
+          "seed": 8917924,
+          "won": true,
+          "totalTroopLosses": 221
+        },
+        {
+          "power": 1.15,
+          "seed": 8917924,
+          "won": true,
+          "totalTroopLosses": 290
+        },
+        {
+          "power": 1.3,
+          "seed": 8917924,
+          "won": true,
+          "totalTroopLosses": 426
+        },
+        {
+          "power": 1.9,
+          "seed": 8917924,
+          "won": false,
+          "totalTroopLosses": 585
+        }
+      ],
+      "stage9BalanceSweep": [],
+      "stage10BalanceSweep": [],
+      "reportsValid": true,
+      "history": [
+        {
+          "minute": 5,
+          "stage": 1,
+          "seed": 8715913,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1224,
+          "grain": 7385,
+          "silver": 15190
+        },
+        {
+          "minute": 10,
+          "stage": 2,
+          "seed": 8756517,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1172,
+          "grain": 8280,
+          "silver": 16480
+        },
+        {
+          "minute": 15,
+          "stage": 3,
+          "seed": 8797121,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1084,
+          "grain": 9220,
+          "silver": 17940
+        },
+        {
+          "minute": 20,
+          "stage": 4,
+          "seed": 8837725,
+          "formation": "spear",
+          "event": "win",
+          "troops": 932,
+          "grain": 10210,
+          "silver": 19600
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "seed": 8878329,
+          "formation": "spear",
+          "event": "loss",
+          "troops": 685,
+          "grain": 10855,
+          "silver": 20440
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "event": "named-recruit-train-and-spear-van",
+          "hero": "huang",
+          "silverSpentRecruit": 650,
+          "silverSpentTraining": 14000,
+          "trainingActions": 20,
+          "averageHeroLevel": 4.6,
+          "levelsByHero": {
+            "liu": 5,
+            "guan": 5,
+            "zhang": 5,
+            "zhao": 5,
+            "huang": 3
+          }
+        },
+        {
+          "minute": 30,
+          "stage": 5,
+          "seed": 8917924,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1295,
+          "grain": 11050,
+          "silver": 6480
+        }
+      ]
+    },
+    "defensive": {
+      "minutesSimulated": 30,
+      "freeRecruit": "zhao",
+      "paidFifthRecruit": true,
+      "trainingActions": 20,
+      "wins": 5,
+      "losses": 1,
+      "retries": 1,
+      "blockedActions": 0,
+      "recruitBatches": 2,
+      "stagesCleared": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "resources": {
+        "silver": 6816,
+        "grain": 11166,
+        "iron": 6255,
+        "reserve": 140
+      },
+      "troopsByHero": {
+        "liu": 212,
+        "guan": 172,
+        "zhang": 196,
+        "zhao": 326,
+        "huang": 311
+      },
+      "levelsByHero": {
+        "liu": 5,
+        "guan": 5,
+        "zhang": 5,
+        "zhao": 5,
+        "huang": 4
+      },
+      "stage5BalanceSweep": [
+        {
+          "power": 1.0,
+          "seed": 120503732,
+          "won": true,
+          "totalTroopLosses": 192
+        },
+        {
+          "power": 1.15,
+          "seed": 120503732,
+          "won": true,
+          "totalTroopLosses": 277
+        },
+        {
+          "power": 1.3,
+          "seed": 120503732,
+          "won": true,
+          "totalTroopLosses": 402
+        },
+        {
+          "power": 1.9,
+          "seed": 120503732,
+          "won": false,
+          "totalTroopLosses": 554
+        }
+      ],
+      "stage9BalanceSweep": [],
+      "stage10BalanceSweep": [],
+      "reportsValid": true,
+      "history": [
+        {
+          "minute": 5,
+          "stage": 1,
+          "seed": 120301721,
+          "formation": "turtle",
+          "event": "win",
+          "troops": 1175,
+          "grain": 7385,
+          "silver": 15190
+        },
+        {
+          "minute": 10,
+          "stage": 2,
+          "seed": 120342325,
+          "formation": "turtle",
+          "event": "win",
+          "troops": 1075,
+          "grain": 8280,
+          "silver": 16480
+        },
+        {
+          "minute": 15,
+          "stage": 3,
+          "seed": 120382929,
+          "formation": "turtle",
+          "event": "win",
+          "troops": 1023,
+          "grain": 9220,
+          "silver": 17940
+        },
+        {
+          "minute": 20,
+          "stage": 4,
+          "seed": 120423533,
+          "formation": "turtle",
+          "event": "win",
+          "troops": 876,
+          "grain": 10210,
+          "silver": 19600
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "seed": 120464137,
+          "formation": "turtle",
+          "event": "loss",
+          "troops": 754,
+          "grain": 10855,
+          "silver": 20440
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "event": "named-recruit-train-and-spear-van",
+          "hero": "huang",
+          "silverSpentRecruit": 650,
+          "silverSpentTraining": 13916,
+          "trainingActions": 20,
+          "averageHeroLevel": 4.6,
+          "levelsByHero": {
+            "liu": 5,
+            "guan": 5,
+            "zhang": 5,
+            "zhao": 5,
+            "huang": 3
+          }
+        },
+        {
+          "minute": 30,
+          "stage": 5,
+          "seed": 120503732,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1217,
+          "grain": 11166,
+          "silver": 6816
+        }
+      ]
+    },
+    "fast": {
+      "minutesSimulated": 30,
+      "freeRecruit": "zhao",
+      "paidFifthRecruit": true,
+      "trainingActions": 20,
+      "wins": 5,
+      "losses": 1,
+      "retries": 1,
+      "blockedActions": 0,
+      "recruitBatches": 2,
+      "stagesCleared": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "resources": {
+        "silver": 6816,
+        "grain": 11166,
+        "iron": 6255,
+        "reserve": 140
+      },
+      "troopsByHero": {
+        "liu": 201,
+        "guan": 167,
+        "zhang": 196,
+        "zhao": 321,
+        "huang": 290
+      },
+      "levelsByHero": {
+        "liu": 5,
+        "guan": 5,
+        "zhang": 5,
+        "zhao": 5,
+        "huang": 4
+      },
+      "stage5BalanceSweep": [
+        {
+          "power": 1.0,
+          "seed": 220503732,
+          "won": true,
+          "totalTroopLosses": 205
+        },
+        {
+          "power": 1.15,
+          "seed": 220503732,
+          "won": true,
+          "totalTroopLosses": 300
+        },
+        {
+          "power": 1.3,
+          "seed": 220503732,
+          "won": true,
+          "totalTroopLosses": 431
+        },
+        {
+          "power": 1.9,
+          "seed": 220503732,
+          "won": false,
+          "totalTroopLosses": 547
+        }
+      ],
+      "stage9BalanceSweep": [],
+      "stage10BalanceSweep": [],
+      "reportsValid": true,
+      "history": [
+        {
+          "minute": 5,
+          "stage": 1,
+          "seed": 220301721,
+          "formation": "goose",
+          "event": "win",
+          "troops": 1164,
+          "grain": 7385,
+          "silver": 15190
+        },
+        {
+          "minute": 10,
+          "stage": 2,
+          "seed": 220342325,
+          "formation": "goose",
+          "event": "win",
+          "troops": 1079,
+          "grain": 8280,
+          "silver": 16480
+        },
+        {
+          "minute": 15,
+          "stage": 3,
+          "seed": 220382929,
+          "formation": "goose",
+          "event": "win",
+          "troops": 995,
+          "grain": 9220,
+          "silver": 17940
+        },
+        {
+          "minute": 20,
+          "stage": 4,
+          "seed": 220423533,
+          "formation": "goose",
+          "event": "win",
+          "troops": 1009,
+          "grain": 10210,
+          "silver": 19600
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "seed": 220464137,
+          "formation": "goose",
+          "event": "loss",
+          "troops": 735,
+          "grain": 10855,
+          "silver": 20440
+        },
+        {
+          "minute": 25,
+          "stage": 5,
+          "event": "named-recruit-train-and-spear-van",
+          "hero": "huang",
+          "silverSpentRecruit": 650,
+          "silverSpentTraining": 13916,
+          "trainingActions": 20,
+          "averageHeroLevel": 4.6,
+          "levelsByHero": {
+            "liu": 5,
+            "guan": 5,
+            "zhang": 5,
+            "zhao": 5,
+            "huang": 3
+          }
+        },
+        {
+          "minute": 30,
+          "stage": 5,
+          "seed": 220503732,
+          "formation": "spear",
+          "event": "win",
+          "troops": 1175,
+          "grain": 11108,
+          "silver": 6648
+        }
+      ]
+    }
+  },
+  "total": 31,
+  "passed": 31,
+  "failed": [],
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "steady: named free Triệu Vân recruit is placed into a real empty formation slot",
+      "pass": true
+    },
+    {
+      "name": "steady: 30 accelerated game-minutes use real production and persist v5 state",
+      "pass": true
+    },
+    {
+      "name": "steady: player can progress and recover after losses without a softlock",
+      "pass": true
+    },
+    {
+      "name": "steady: adapts from the stage-5 morale-lock loss to a spear-van clear after recruiting and training",
+      "pass": true
+    },
+    {
+      "name": "steady: same-seed Stage 5 keeps 1.15 playable, 1.9 lethal and monotonically harder at 1.3",
+      "pass": true
+    },
+    {
+      "name": "steady: every simulated battle has valid deterministic settlement receipts",
+      "pass": true
+    },
+    {
+      "name": "steady: no resource underflow or negative troop counts",
+      "pass": true
+    },
+    {
+      "name": "steady: reload preserves unlocks, troop casualties, reports and v5 Save",
+      "pass": true
+    },
+    {
+      "name": "steady: stage 5 shows its simulated preparation hint in the live campaign UI",
+      "pass": true
+    },
+    {
+      "name": "steady: campaign preparation action applies the verified spear-van preset through the real UI",
+      "pass": true
+    },
+    {
+      "name": "defensive: named free Triệu Vân recruit is placed into a real empty formation slot",
+      "pass": true
+    },
+    {
+      "name": "defensive: 30 accelerated game-minutes use real production and persist v5 state",
+      "pass": true
+    },
+    {
+      "name": "defensive: player can progress and recover after losses without a softlock",
+      "pass": true
+    },
+    {
+      "name": "defensive: adapts from the stage-5 morale-lock loss to a spear-van clear after recruiting and training",
+      "pass": true
+    },
+    {
+      "name": "defensive: same-seed Stage 5 keeps 1.15 playable, 1.9 lethal and monotonically harder at 1.3",
+      "pass": true
+    },
+    {
+      "name": "defensive: every simulated battle has valid deterministic settlement receipts",
+      "pass": true
+    },
+    {
+      "name": "defensive: no resource underflow or negative troop counts",
+      "pass": true
+    },
+    {
+      "name": "defensive: reload preserves unlocks, troop casualties, reports and v5 Save",
+      "pass": true
+    },
+    {
+      "name": "defensive: stage 5 shows its simulated preparation hint in the live campaign UI",
+      "pass": true
+    },
+    {
+      "name": "defensive: campaign preparation action applies the verified spear-van preset through the real UI",
+      "pass": true
+    },
+    {
+      "name": "fast: named free Triệu Vân recruit is placed into a real empty formation slot",
+      "pass": true
+    },
+    {
+      "name": "fast: 30 accelerated game-minutes use real production and persist v5 state",
+      "pass": true
+    },
+    {
+      "name": "fast: player can progress and recover after losses without a softlock",
+      "pass": true
+    },
+    {
+      "name": "fast: adapts from the stage-5 morale-lock loss to a spear-van clear after recruiting and training",
+      "pass": true
+    },
+    {
+      "name": "fast: same-seed Stage 5 keeps 1.15 playable, 1.9 lethal and monotonically harder at 1.3",
+      "pass": true
+    },
+    {
+      "name": "fast: every simulated battle has valid deterministic settlement receipts",
+      "pass": true
+    },
+    {
+      "name": "fast: no resource underflow or negative troop counts",
+      "pass": true
+    },
+    {
+      "name": "fast: reload preserves unlocks, troop casualties, reports and v5 Save",
+      "pass": true
+    },
+    {
+      "name": "fast: stage 5 shows its simulated preparation hint in the live campaign UI",
+      "pass": true
+    },
+    {
+      "name": "fast: campaign preparation action applies the verified spear-van preset through the real UI",
+      "pass": true
+    },
+    {
+      "name": "Chromium produced no page exceptions",
+      "pass": true
+    }
+  ]
+}

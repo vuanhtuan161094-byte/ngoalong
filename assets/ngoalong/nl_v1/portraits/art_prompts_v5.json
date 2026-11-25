@@ -262,5 +262,155 @@
     "promptVersion": "NL_CHARACTER_ART_V5",
     "promptRecordStatus": "VERBATIM",
     "prompt": "Use the attached Sun Shangxiang portrait as the exact same face and identity reference. Create premium semi-realistic anime CG 16:9 horizontal splash art for a Chinese fantasy game. Same adult woman aged 27; preserve her unique playful face, vivid amber-brown layered eyes, bright warm smile, auburn high ponytail, phoenix hair comb, jade earrings and red ribbons. She is the central focus, occupying about 78 percent of image height, face unobstructed and sharply rendered. A distinct relaxed glamour-editorial pose: reclining sideways on a richly carved low pavilion couch overlooking a lotus lake, one elbow resting on a soft silk cushion, one knee bent elegantly under a flowing skirt, her recurved jade-and-crimson bow resting across the couch beside her with a few arrows in a case, playful sideways glance toward the viewer; not drawing or aiming. Flowing sleeves and sash move gently in the evening breeze. Luxurious Jiangdong colors of emerald, ivory, crimson and gold; fitted tasteful silk bodice with opaque lining, draped off-shoulder robe and high slit over opaque inner skirt, lovely jade waist jewelry, elegant feminine glamour. Large lotus pond and warm sunset behind her with restrained soft bokeh; cinematic gold rim light, refined color grading, polished Chinese fantasy collectible art, luminous skin, delicate hair detail and richly embroidered fabric, semi-realistic anime CG illustration, not photorealistic. One woman only. No text, letters, logo, watermark, UI, no extra people, no stiff pose, no harsh shadows, no plastic look, no malformed anatomy."
+  },
+  "exec-a4c1c2d4-6ee5-4244-9936-0fb28b16586f": {
+    "heroId": "ma",
+    "heroName": "Mã Siêu",
+    "kind": "portrait",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+    "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+    "referenceAssets": [
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+        "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+      },
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+        "sha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6"
+      }
+    ],
+    "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Create one square 1:1 portrait of the same adult Ma Chao heroine in these references, preserving exactly her face, violet eyes, dark braids, turquoise jewelry, white-horse crest and silver details. Premium semi-realistic Asian fantasy game CG, character-art V5. Framing is a glamour head-and-shoulders portrait with her face dominant, shoulders bare and a soft translucent turquoise chiffon wrap slipping loosely off one shoulder over a fully opaque pearl satin bodice; elegant tasteful cleavage, all intimate areas covered. Clearly an adult woman age 28+, confident alluring direct gaze, subtle knowing smile, refined makeup, luminous natural skin, fine layered hair. Warm candlelight meets cool moonlight, blurred silk chamber, soft focus background, high-end fashion editorial, sensual but poised. No spear near her face, no extra person, no text, no UI, no watermark, no border, not photography, no nudity.",
+    "promptFile": "female-ma-chao-v5-portrait-r2.prompt.txt",
+    "createdOn": "2026-11-25",
+    "targetResolution": "1:1 square portrait",
+    "actualResolution": [
+      1254,
+      1254
+    ],
+    "outputPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r2.png",
+    "outputSha256": "5e11d91d74f7c3488737c7e268827ea07864ba8f93c1fdd190c7a7eb043e447c",
+    "cost": "unknown; provider did not return an estimate"
+  },
+  "exec-d471e9e8-9442-4f13-885d-59d4354a2dcd": {
+    "heroId": "ma",
+    "heroName": "Mã Siêu",
+    "kind": "character",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+    "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+    "referenceAssets": [
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+        "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+      }
+    ],
+    "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Recreate this exact adult Ma Chao heroine as a bolder, more sensual but tasteful Character Art V5 image. Vertical 2:3 full-body luxury oriental fantasy editorial, premium semi-realistic Asian game illustration. She is unmistakably a woman aged 28+, with the same face, dark long braids, violet eyes, turquoise jade jewelry, white-horse crest and silver cavalry spear. Pose: relaxed and asymmetrical, reclining sideways on a carved courtyard daybed beside her white horse, one knee elegantly bent and one leg extended through the slit, shoulders turned toward the viewer, confident alluring gaze and a playful half-smile; loose hair and translucent silk ribbons move in the breeze. Replace the heavy uniform with soft, flowing pearl-white and turquoise satin: an ornate fitted corset-inspired bodice with a deep fashion neckline and visible cleavage, bare shoulders and open back, a high side slit, delicate sheer chiffon sleeves and an airy transparent overskirt. Keep the bodice, cups and intimate areas fully covered by opaque lining and tasteful layered fabric; sheer fabric is only an outer layer. Add restrained silver armor accents, jade clasps, red tassels, a relaxed spear prop and white-horse details so her historical commander identity remains clear. High-fashion boudoir glamour with elegant composure, not explicit, no nudity. Soft moonlit silk-chamber and warm candle rim light, uncluttered background, heroine fills 80% of frame, face clear. Natural elegant anatomy and hands. Illustrated, not photography, not western comic, not plastic 3D, not chibi. No text, no UI, no watermark, one adult heroine only.",
+    "promptFile": "female-ma-chao-v5-character-r2.prompt.txt",
+    "createdOn": "2026-11-25",
+    "targetResolution": "2:3 vertical full-body character illustration",
+    "actualResolution": [
+      1024,
+      1536
+    ],
+    "outputPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+    "outputSha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6",
+    "cost": "unknown; provider did not return an estimate"
+  },
+  "exec-a671a77f-350f-4aeb-892e-9b8b097ebbf9": {
+    "heroId": "ma",
+    "heroName": "Mã Siêu",
+    "kind": "splash",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+    "referenceSha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f",
+    "referenceAssets": [
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait.png",
+        "sha256": "445f33dc37bd288ed3d583b56c0014cac1751bbe5921ad4163244838ba66ea4f"
+      },
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+        "sha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6"
+      },
+      {
+        "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r2.png",
+        "sha256": "5e11d91d74f7c3488737c7e268827ea07864ba8f93c1fdd190c7a7eb043e447c"
+      }
+    ],
+    "promptVersion": "NL_CHARACTER_ART_V5_BOLD_V2",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Create one wide 16:9 cinematic splash art for the exact same adult Ma Chao heroine shown in the references. Preserve her identical beautiful mature face, violet eyes, dark braided hair, turquoise jewelry, white-horse crest, silver spear, and matching pearl-white/turquoise couture. Premium semi-realistic Asian fantasy mobile game CG. Pose is a bold glamour editorial: she sits sideways on the saddle of her white warhorse in a private palace stable, torso elegantly turned back over her bare shoulder toward the viewer, one hand loosely on the reins and her spear resting at her side; a confident seductive gaze, relaxed and self-assured. Outfit is soft pearl satin and jade silk with a fitted opaque corset bodice and deep but tasteful neckline, bare shoulders and open back, high slit showing one thigh, a translucent chiffon outer robe drifting in the wind over opaque lined coverage; visible sheer layers but no exposed intimate areas, no nudity. Adult woman clearly age 28+. Framing shows her from head through upper legs with horse neck and saddle, face unobstructed; character fills about 75% of image height. Warm golden candlelight and cool moonlight, silk curtains, gentle depth of field, uncluttered elegant setting. No combat violence. Strong high-fashion oriental boudoir glamour, tasteful not explicit. Illustrated not photograph; no extra people, no duplicate face, no text, no UI, no border, no watermark.",
+    "promptFile": "female-ma-chao-v5-splash-r2.prompt.txt",
+    "createdOn": "2026-11-25",
+    "targetResolution": "16:9 horizontal cinematic splash art",
+    "actualResolution": [
+      1672,
+      941
+    ],
+    "outputPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r2.png",
+    "outputSha256": "c61f58b324182174de5cc53a33ecb93e2efa0be3bf1f7cc5dde2d440d30cff04",
+    "cost": "unknown; provider did not return an estimate"
+  },
+  "exec-977449b5-c114-4138-8871-0241d424bcdb": {
+    "heroId": "ma",
+    "kind": "character",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r2.png",
+    "referenceSha256": "d3091248049d03170f7b3fb0f91919c34a464a93631d7b2b84fff48efc61f8c6",
+    "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Edit the referenced full-body character illustration of the same adult heroine Ma Chao (age 28+) to make the outfit unmistakably lighter, thinner, and more sheer while keeping the exact recognizable face, long dark braids, violet eyes, turquoise jade ornaments, white-horse identity, premium semi-realistic Chinese fantasy game-art quality. Create a striking luxury oriental fashion editorial, vertical 2:3 full-body. Her clothing should be a daring soft pearl-white and turquoise layered silk ensemble: transparent fine chiffon and gauze visibly draped across the torso and arms, open shoulders and back, deep sweetheart neckline, high side slit, long sheer sleeves, translucent floating overskirt. Make the thin fabric visibly see-through through its weave and graceful folds, with tasteful opaque pearl satin lingerie-inspired corset and matching high-waisted shorts clearly serving as full coverage beneath; no exposed nipples or genitals, no nudity. Sheer material should dominate the silhouette, not heavy armor. Elegant alluring reclined pose on a carved daybed beside a white horse, one knee bent, relaxed confident gaze, playful smile, legs extended with the sheer skirt flowing. Keep the image classy, sensual and adult, anatomy natural, fully clothed by the opaque underlayer. Soft candle rim light and cool moonlight, clean palace background, face unobstructed. One heroine, no text, no UI, no watermark, no photorealism.",
+    "generatedPath": "/workspace/generated_images/exec-977449b5-c114-4138-8871-0241d424bcdb.png",
+    "exportedPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+    "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+    "targetResolution": "2:3 vertical full-body character illustration",
+    "actualResolution": [
+      1024,
+      1536
+    ],
+    "cost": "unknown; provider did not return an estimate"
+  },
+  "exec-e18fe6de-8465-43b7-b1a7-e43ac918a2f1": {
+    "heroId": "ma",
+    "kind": "portrait",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+    "referenceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+    "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Use the exact same adult Ma Chao heroine and outfit design as the reference: age 28+, same refined face, long dark braids, layered violet eyes, turquoise jade jewelry, white-horse crest. Premium semi-realistic anime CG, illustrated Chinese fantasy game art, adult feminine glamour. Clothing is visibly thin and sheer pearl-white/turquoise chiffon and gauze, open shoulders, delicate translucent fabric visibly layered over an opaque pearl satin corset-style undergarment that fully covers intimate areas. The sheer fabric is a defining feature; graceful folds and fine woven texture, sensual fashion editorial but tasteful, no nudity. Keep identity cues and palette; no text, UI or watermark. Create a square 1:1 portrait, face and upper torso framed closely, direct alluring eye contact and soft playful smile, elaborate braid detail and turquoise hair ornaments, bare shoulders with sheer embroidered chiffon draped over the arms and a tasteful opaque satin sweetheart bustier visible beneath, tasteful neckline, subtle moonlit palace garden bokeh. Her face fills 70% of the square, beautiful expressive eyes, luminous soft skin, clean readable composition.",
+    "generatedPath": "/workspace/generated_images/exec-e18fe6de-8465-43b7-b1a7-e43ac918a2f1.png",
+    "exportedPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-portrait-r3.png",
+    "sha256": "1d621e8ffb706e38d7e36c30c7843c9fa30bdfaa055c520e8a9841a7c29b23c6",
+    "targetResolution": "1:1 square portrait",
+    "actualResolution": [
+      1254,
+      1254
+    ],
+    "cost": "unknown; provider did not return an estimate"
+  },
+  "exec-589a9b38-e809-46c5-b718-fd5f9cbde700": {
+    "heroId": "ma",
+    "kind": "splash",
+    "provider": "OpenAI ImageGen",
+    "referenceAsset": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+    "referenceSha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6",
+    "promptVersion": "NL_CHARACTER_ART_V5_SHEER_V3",
+    "promptRecordStatus": "VERBATIM",
+    "prompt": "Use the exact same adult Ma Chao heroine and outfit design as the reference: age 28+, same refined face, long dark braids, layered violet eyes, turquoise jade jewelry, white-horse crest. Premium semi-realistic anime CG, illustrated Chinese fantasy game art, adult feminine glamour. Clothing is visibly thin and sheer pearl-white/turquoise chiffon and gauze, open shoulders, delicate translucent fabric visibly layered over an opaque pearl satin corset-style undergarment that fully covers intimate areas. The sheer fabric is a defining feature; graceful folds and fine woven texture, sensual fashion editorial but tasteful, no nudity. Keep identity cues and palette; no text, UI or watermark. Create a cinematic horizontal 16:9 splash illustration. Show the same heroine reclining sideways on a luxury carved courtyard daybed beside her white horse, relaxed asymmetric pose, one arm resting on the daybed, one leg extended beneath a high slit; preserve face visibility. A flowing very light sheer chiffon robe is open across her shoulders and silhouette, layered over an opaque pearl satin bodysuit with high-fashion neckline and fully covered intimate areas. The fabric should look airy and clearly translucent in the moonlight, turquoise/silver embroidery, subtle spear beside her, expressive confident half-smile. She fills 75% of image height; simple courtyard and moonlit silk curtains.",
+    "generatedPath": "/workspace/generated_images/exec-589a9b38-e809-46c5-b718-fd5f9cbde700.png",
+    "exportedPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-splash-r3.png",
+    "sha256": "1f2c5081c1c273a27f7ac894f362be47a782380120f40aed016b2571082926dc",
+    "targetResolution": "16:9 horizontal cinematic splash art",
+    "actualResolution": [
+      1672,
+      941
+    ],
+    "cost": "unknown; provider did not return an estimate"
   }
 }

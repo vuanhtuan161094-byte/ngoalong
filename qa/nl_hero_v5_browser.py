@@ -28,7 +28,7 @@ def main():
     page=open_page(browser)
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 hero screen has twelve development systems and custom vector navigation',page.locator('.nlh-system-button').count()==12 and page.locator('.nav[data-tab] .nl-nav-icon').count()==15)
-    check('nine production hero IDs have portrait, splash and character art registered',page.evaluate("['cao','liu','guan','zhang','zhao','zhuge','lu','sun','wiki-mobile-hero-083'].every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))"))
+    check('ten production hero IDs have portrait, splash and character art registered',page.evaluate("['cao','liu','guan','zhang','zhao','zhuge','lu','sun','ma','wiki-mobile-hero-083'].every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))"))
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 portraits load for the owned roster',page.locator('.nlh-portrait-card img').evaluate_all('xs=>xs.length>=3&&xs.every(x=>x.complete&&x.naturalWidth>0)'))
     for mode in ['portrait','splash','character']:
@@ -36,12 +36,13 @@ def main():
       check('hero art switch displays '+mode,page.locator('.nlh-character-'+mode).count()==1 and page.locator('.nlh-character-'+mode).evaluate('x=>x.complete&&x.naturalWidth>0'))
     page.locator('.nlh-art-tab[data-nlh-mode="character"]').click()
     g=page.evaluate('window.__P2_QA__.getGame()')
-    for hero_id in ['cao','zhuge','lu','sun']:
+    for hero_id in ['cao','zhuge','lu','sun','ma']:
       if hero_id not in g['roster']:g['roster'].append(hero_id)
     g['hero']['cao']={'level':20,'xp':0,'troops':500}
     g['hero']['zhuge']={'level':20,'xp':0,'troops':500}
     g['hero']['lu']={'level':20,'xp':0,'troops':500}
     g['hero']['sun']={'level':20,'xp':0,'troops':500}
+    g['hero']['ma']={'level':20,'xp':0,'troops':500}
     g['cleared']=list(range(1,29));g['silver']=500000;g['iron']=200000;g['gems']=10000
     g['nlClassicA']['merit']=5000;g['nlClassicA']['meritSpent']=0
     g['heroDevelopment']['selectedHero']='cao';g['heroDevelopment']['selectedSystem']='commander'
@@ -50,7 +51,7 @@ def main():
     g['lastTick']=page.evaluate('Date.now()+86400000')
     page.evaluate('g=>window.__P2_QA__.setGame(g)',g)
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(80)
-    for hero_id,name in [('zhuge','Gia Cát Lượng'),('lu','Lữ Bố'),('sun','Tôn Thượng Hương')]:
+    for hero_id,name in [('zhuge','Gia Cát Lượng'),('lu','Lữ Bố'),('sun','Tôn Thượng Hương'),('ma','Mã Siêu')]:
       page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click();page.wait_for_timeout(80)
       check(name+' V5 trio is selected from its stable hero ID',page.locator('.nlh-profile h2').inner_text()==name and page.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
     page.locator('[data-nlh-action="hero"][data-nlh-hero="cao"]').click();page.wait_for_timeout(80)
@@ -68,11 +69,21 @@ def main():
     reloaded=restored.evaluate('window.__P2_QA__.getGame()')
     check('reload restores V5 development level and chosen art view',reloaded['heroDevelopment']['heroes']['cao']['commanderLevel']==1 and reloaded['heroDevelopment']['artModes']['cao']=='character')
     restored.locator('.nav[data-tab="heroes"]').click();restored.wait_for_timeout(80)
-    check('desktop runtime screenshot shows the playable V5 heroine screen',restored.locator('.nlh-character-character').count()==1 and restored.locator('.nlh-portrait-card img').evaluate_all('xs=>xs.length>=4&&xs.every(x=>x.complete&&x.naturalWidth>0)'))
+    check('desktop runtime screenshot shows the playable V5 heroine screen',restored.locator('.nlh-character-character').count()==1 and restored.locator('.nlh-portrait-card img').evaluate_all('xs=>xs.length>=5&&xs.every(x=>x.complete&&x.naturalWidth>0)'))
     Path('/tmp/ngoalong-v5-heroes').mkdir(exist_ok=True)
     restored.screenshot(path='/tmp/ngoalong-v5-heroes/1280x720_heroes_save.png',full_page=False)
+    restored.locator('[data-nlh-action="hero"][data-nlh-hero="ma"]').click();restored.wait_for_timeout(100)
+    for mode in ['character','portrait','splash']:
+      if mode!='character':restored.locator('.nlh-art-tab[data-nlh-mode="'+mode+'"]').click()
+      check('Mã Siêu V5 '+mode+' art is selectable and loads in the live profile',restored.locator('.nlh-character-'+mode).count()==1 and restored.locator('.nlh-character-'+mode).evaluate('x=>x.complete&&x.naturalWidth>0'))
+      if mode!='splash':restored.locator('.nlh-art-tab[data-nlh-mode="character"]').click()
+    restored.locator('.nlh-art-tab[data-nlh-mode="character"]').click()
+    restored.screenshot(path=str(ROOT/'qa'/'nl-ma-chao-v5-desktop.png'),full_page=False)
     mobile=open_page(browser,390,844,saved);mobile.locator('.nav[data-tab="heroes"]').click();mobile.wait_for_timeout(100)
     check('390px V5 hero screen keeps all systems and avoids document overflow',mobile.locator('.nlh-system-button').count()==12 and mobile.evaluate('document.documentElement.scrollWidth<=innerWidth+2&&document.body.scrollHeight<=innerHeight+2'))
+    mobile.locator('[data-nlh-action="hero"][data-nlh-hero="ma"]').click();mobile.wait_for_timeout(100)
+    check('390px mobile view resolves Mã Siêu character art without clipping',mobile.locator('.nlh-character-character').count()==1 and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+    mobile.screenshot(path=str(ROOT/'qa'/'nl-ma-chao-v5-mobile.png'),full_page=False)
     mobile.screenshot(path='/tmp/ngoalong-v5-heroes/390x844_heroes_save.png',full_page=False)
     check('no browser JavaScript exceptions across art switching, upgrade, reload and mobile',not errors)
     browser.close()
