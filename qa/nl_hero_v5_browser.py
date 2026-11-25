@@ -28,8 +28,8 @@ def main():
     page=open_page(browser)
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 hero screen has twelve development systems and custom vector navigation',page.locator('.nlh-system-button').count()==12 and page.locator('.nav[data-tab] .nl-nav-icon').count()==15)
-    production_ids=['cao','liu','guan','zhang','zhao','zhuge','lu','sun','ma','wiki-mobile-hero-083','wiki-mobile-hero-026','huang','sunquan','zhou','dian','xun','wiki-mobile-hero-025','wiki-mobile-hero-027','wiki-mobile-hero-033','wiki-mobile-hero-164','wiki-mobile-hero-168','wiki-mobile-hero-292','wiki-mobile-hero-041','wiki-mobile-hero-042','wiki-mobile-hero-043','wiki-mobile-hero-045','wiki-mobile-hero-046','wiki-mobile-hero-047','wiki-mobile-hero-051','wiki-mobile-hero-053','wiki-mobile-hero-056','wiki-mobile-hero-057','wiki-mobile-hero-058','wiki-mobile-hero-060']
-    check('thirty-four production hero IDs have portrait, splash and character art registered',page.evaluate("ids=>ids.every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))",production_ids))
+    production_ids=['cao','liu','guan','zhang','zhao','zhuge','lu','sun','ma','wiki-mobile-hero-083','wiki-mobile-hero-026','huang','sunquan','zhou','dian','xun','wiki-mobile-hero-025','wiki-mobile-hero-027','wiki-mobile-hero-033','wiki-mobile-hero-164','wiki-mobile-hero-168','wiki-mobile-hero-292','wiki-mobile-hero-041','wiki-mobile-hero-042','wiki-mobile-hero-043','wiki-mobile-hero-045','wiki-mobile-hero-046','wiki-mobile-hero-047','wiki-mobile-hero-051','wiki-mobile-hero-053','wiki-mobile-hero-056','wiki-mobile-hero-057','wiki-mobile-hero-058','wiki-mobile-hero-060','wiki-mobile-hero-001','wiki-mobile-hero-002']
+    check('thirty-six production hero IDs have portrait, splash and character art registered',page.evaluate("ids=>ids.every(id=>Object.values(window.__NL_HERO_SYSTEMS_QA__.art(id)).every(Boolean))",production_ids))
     page.locator('.nav[data-tab="heroes"]').click();page.wait_for_timeout(100)
     check('V5 portraits load for the owned roster',page.locator('.nlh-portrait-card img').evaluate_all('xs=>xs.length>=3&&xs.every(x=>x.complete&&x.naturalWidth>0)'))
     for mode in ['portrait','splash','character']:
@@ -39,7 +39,8 @@ def main():
     g=page.evaluate('window.__P2_QA__.getGame()')
     new_hero_rows=[('huang','Hoàng Trung'),('sunquan','Tôn Quyền'),('zhou','Chu Du'),('dian','Điển Vi'),('xun','Tuân Úc'),('wiki-mobile-hero-025','Hách Chiêu'),('wiki-mobile-hero-027','Tào Hưu'),('wiki-mobile-hero-033','Hí Chí Tài'),('wiki-mobile-hero-164','Hàn Toại'),('wiki-mobile-hero-168','Mê Đương'),('wiki-mobile-hero-292','Bàng Nghĩa')]
     b2_hero_rows=[('wiki-mobile-hero-043','Hoàng Nguyệt Anh'),('wiki-mobile-hero-041','Bàng Thống'),('wiki-mobile-hero-042','Giản Ung'),('wiki-mobile-hero-045','Lưu Thiện'),('wiki-mobile-hero-046','Mã Tốc'),('wiki-mobile-hero-047','Ngụy Diên'),('wiki-mobile-hero-051','Từ Thứ'),('wiki-mobile-hero-053','Khương Duy'),('wiki-mobile-hero-056','Mã Vân Lộc'),('wiki-mobile-hero-057','Pháp Chính'),('wiki-mobile-hero-058','Quan Bình'),('wiki-mobile-hero-060','Trương Bao')]
-    for hero_id in ['cao','zhuge','lu','sun','ma','wiki-mobile-hero-026']+[row[0] for row in new_hero_rows+b2_hero_rows]:
+    b3_hero_rows=[('wiki-mobile-hero-001','Bàng Đức'),('wiki-mobile-hero-002','Chân Cơ')]
+    for hero_id in ['cao','zhuge','lu','sun','ma','wiki-mobile-hero-026']+[row[0] for row in new_hero_rows+b2_hero_rows+b3_hero_rows]:
       if hero_id not in g['roster']:g['roster'].append(hero_id)
       g['hero'][hero_id]={'level':20,'xp':0,'troops':500}
       g['heroDevelopment']['artModes'][hero_id]='character'
@@ -61,11 +62,12 @@ def main():
       page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click();page.wait_for_timeout(80)
       check(name+' V5 trio is selected from its stable hero ID',page.locator('.nlh-profile h2').inner_text()==name and page.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
       if hero_id=='wiki-mobile-hero-026':page.screenshot(path=str(ROOT/'qa'/'nl-li-dian-v5-desktop.png'),full_page=False)
-    for hero_id,name in new_hero_rows+b2_hero_rows:
+    for hero_id,name in new_hero_rows+b2_hero_rows+b3_hero_rows:
       page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click();page.wait_for_timeout(80)
       check(name+' character art resolves through its stable hero ID',page.locator('.nlh-profile h2').inner_text()==name and page.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
       if hero_id=='huang':page.screenshot(path=str(ROOT/'qa'/'nl-art-b1-runtime-desktop.png'),full_page=False)
       if hero_id=='wiki-mobile-hero-043':page.screenshot(path=str(ROOT/'qa'/'nl-art-b2-runtime-desktop.png'),full_page=False)
+      if hero_id=='wiki-mobile-hero-001':page.screenshot(path=str(ROOT/'qa'/'nl-art-b3-runtime-desktop.png'),full_page=False)
       for mode in ['portrait','splash']:
         page.locator('.nlh-art-tab[data-nlh-mode="'+mode+'"]').click();page.wait_for_timeout(60)
         check(name+' '+mode+' art loads in the runtime profile',page.locator('.nlh-character-'+mode).count()==1 and page.locator('.nlh-character-'+mode).evaluate('x=>x.complete&&x.naturalWidth>0'))
@@ -110,6 +112,10 @@ def main():
     mobile.locator('.nlh-art-tab[data-nlh-mode="character"]').click();mobile.wait_for_timeout(80)
     check('390px mobile resolves Hoàng Nguyệt Anh V5 character art without clipping',mobile.locator('.nlh-profile h2').inner_text()=='Hoàng Nguyệt Anh' and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
     mobile.screenshot(path=str(ROOT/'qa'/'nl-art-b2-runtime-mobile.png'),full_page=False)
+    mobile.locator('[data-nlh-action="hero"][data-nlh-hero="wiki-mobile-hero-001"]').click();mobile.wait_for_timeout(100)
+    mobile.locator('.nlh-art-tab[data-nlh-mode="character"]').click();mobile.wait_for_timeout(80)
+    check('390px mobile resolves Bàng Đức V5 character art without clipping',mobile.locator('.nlh-profile h2').inner_text()=='Bàng Đức' and mobile.locator('.nlh-character-character').evaluate('x=>x.complete&&x.naturalWidth>0'))
+    mobile.screenshot(path=str(ROOT/'qa'/'nl-art-b3-runtime-mobile.png'),full_page=False)
     mobile.screenshot(path='/tmp/ngoalong-v5-heroes/390x844_heroes_save.png',full_page=False)
     check('no browser JavaScript exceptions across art switching, upgrade, reload and mobile',not errors)
     browser.close()

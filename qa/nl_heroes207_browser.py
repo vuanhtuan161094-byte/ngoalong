@@ -63,6 +63,12 @@ def main():
   check("recruited general builds into actual PvE combat unit",isinstance(binding.get("unit"),dict) and binding["unit"].get("id")==key)
   stored=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   check("Save v5 writes a persisted post-recruit state",isinstance(stored,str) and len(stored)>100 and '"version":5' in stored)
+  # Freeze passive production so this assertion checks Save persistence, not
+  # silver accrued while the large offline bundle is reloaded in Chromium.
+  frozen=page.evaluate("window.__P2_QA__.getGame()")
+  frozen["lastTick"]=page.evaluate("Date.now()+86400000")
+  page.evaluate("(g)=>{window.__P2_QA__.setGame(g);localStorage.setItem('muu_dinh_tam_quoc_v1',JSON.stringify(window.__P2_QA__.getGame()));}",frozen)
+  stored=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   reloaded=open_page(browser,1280,stored)
   fresh=reloaded.evaluate("window.__P2_QA__.getGame()")
   check("browser reload preserves recruited hero + silver",key in fresh["roster"] and fresh["silver"]==after["silver"])
