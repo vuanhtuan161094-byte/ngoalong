@@ -115,10 +115,38 @@ def payload() -> str:
     from nl_content_c_projection import build as build_c
     content_c = build_c(ROOT)
     tier4 = json.loads((ROOT / "data/ngoalong/modules/troops/classic_web_tier4_v1.json").read_text(encoding="utf-8"))["troops"]
+    tower = json.loads((ROOT / "data/ngoalong/modules/campaign/trial_tower_v1.json").read_text(encoding="utf-8"))
     c_runtime = (TOOLS / "nl_content_c_runtime.js").read_text(encoding="utf-8")
-    if len(tier4)!=40 or len({t["id"] for t in tier4})!=40 or c_runtime.count("__NL_CONTENT_C_DATA__")!=1 or c_runtime.count("__NL_CONTENT_C_TIER4__")!=1 or "</script" in c_runtime.lower():
+    if (len(tier4)!=40 or len({t["id"] for t in tier4})!=40 or
+        c_runtime.count("__NL_CONTENT_C_DATA__")!=1 or c_runtime.count("__NL_CONTENT_C_TIER4__")!=1 or
+        c_runtime.count("__NL_TOWER_DATA__")!=1 or "</script" in c_runtime.lower()):
         raise ValueError("Invalid Content C bundle")
-    c_runtime = c_runtime.replace("__NL_CONTENT_C_DATA__",js_json(content_c)).replace("__NL_CONTENT_C_TIER4__",js_json(tier4))
+    tower_roles={"infantry","spear","cavalry","archer","strategist","support","drum","dancer"}
+    tower_styles={"pressure","counter","finish","protect"}
+    arcs=tower.get("arcs",[]);layouts=tower.get("layouts",[])
+    if (tower.get("schemaVersion")!=1 or tower.get("provenance")!="PROJECT_SIMULATED" or
+        tower.get("nativeFloors")!=20 or tower.get("maxFloor")!=100 or
+        tower.get("eliteEvery")!=5 or tower.get("chapterBossEvery")!=10 or
+        len(arcs)!=8 or len(layouts)!=10 or
+        [a.get("firstFloor") for a in arcs]!=list(range(21,101,10)) or
+        len({a.get("id") for a in arcs})!=8):
+        raise ValueError("Trial Tower schema or floor coverage drift")
+    for arc in arcs:
+        if (len(arc.get("roster",[]))!=5 or arc.get("aiStyle") not in tower_styles or
+            not all(unit.get("role") in tower_roles and unit.get("name") and unit.get("skill") for unit in arc["roster"])):
+            raise ValueError(f"Invalid Trial Tower arc: {arc.get('id')}")
+    for layout in layouts:
+        if (sorted(layout.get("order",[]))!=list(range(5)) or len(layout.get("slots",[]))!=5 or
+            len(set(layout["slots"]))!=5 or any(not isinstance(slot,int) or slot<0 or slot>8 for slot in layout["slots"])):
+            raise ValueError("Invalid Trial Tower formation layout")
+    bands=tower.get("enemyCountBands",[])
+    if (not bands or bands[0].get("first")!=21 or bands[-1].get("last")!=100 or
+        any(b.get("count") not in (3,4,5) or b.get("first")>b.get("last") for b in bands) or
+        any(a["last"]+1!=b["first"] for a,b in zip(bands,bands[1:]))):
+        raise ValueError("Invalid Trial Tower enemy-count coverage")
+    c_runtime = (c_runtime.replace("__NL_CONTENT_C_DATA__",js_json(content_c))
+                 .replace("__NL_CONTENT_C_TIER4__",js_json(tier4))
+                 .replace("__NL_TOWER_DATA__",js_json(tower)))
     # D2: original R06 frame sheets, embedded in the existing native renderer.
     art_dir = ROOT / "assets/ngoalong/troops_r06"
     art_manifest = json.loads((art_dir / "manifest.json").read_text(encoding="utf-8"))

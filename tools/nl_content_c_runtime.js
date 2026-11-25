@@ -1,6 +1,7 @@
 // === NL-CONTENT-C-V1: sourced roster and project-simulated native P2 expansion ===
 const NL_CONTENT_C=__NL_CONTENT_C_DATA__;
 const NL_C_TIER4=__NL_CONTENT_C_TIER4__;
+const NL_CONTENT_C_TOWER=__NL_TOWER_DATA__;
 let nlContentCSettle;
 (()=>{
 'use strict';
@@ -24,10 +25,10 @@ function state(){
  const s=game.nlContentC;s.version=1;
  for(const k of ['cleared','mapsCleared','seals','recruits'])if(!obj(s[k]))s[k]={};
  if(!Array.isArray(s.equippedSeals))s.equippedSeals=[];
- s.extraFloor=clamp(nat(s.extraFloor),0,80);s.soul=nat(s.soul);
+ s.extraFloor=clamp(nat(s.extraFloor),0,NL_CONTENT_C_TOWER.maxFloor-NL_CONTENT_C_TOWER.nativeFloors);s.soul=nat(s.soul);
  return s;
 }
-const floor=()=>Math.max(0,Math.min(20,nat(game.towerFloor)))+state().extraFloor;
+const floor=()=>Math.max(0,Math.min(NL_CONTENT_C_TOWER.nativeFloors,nat(game.towerFloor)))+state().extraFloor;
 function heroReady(h){return h.towerGate?floor()>=h.towerGate&&state().soul>=h.soulCost:game.cleared.includes(h.gate);}
 function recruit(id){
  const h=HERO.get(id),s=state();
@@ -67,13 +68,14 @@ function openObjective(o,units,scale){
  beginBattle(1,'campaign');
  if(!battle||battle.replay||battle.finished||battle.stage!==1||battle.mode!=='campaign')return false;
  battle.nlContentC=o;
- battle.e=units.map((u,i)=>{
-  const role=family(u[2]),slot=u[0],boss=!!o.boss&&i===units.length-1;
-  const e=p2Unit('e','e',boss?4:i,Math.min(28,Math.max(1,scale)));
-  e.id='c-'+i;e.slot=slot;e.name=u[1];e.troop=role;e.type=role==='spear'?'infantry':(['drum','dancer'].includes(role)?'support':role);
+ battle.e=units.map((raw,i)=>{
+  const u=Array.isArray(raw)?{slot:raw[0],name:raw[1],label:raw[2],skill:raw[3],troops:raw[4],level:raw[5]}:raw;
+  const role=u.role||family(u.label),slot=u.slot,boss=!!o.boss&&i===units.length-1;
+  const e=p2Unit('e','e',boss?4:i,Math.min(28,Math.max(1,u.level||scale)));
+  e.id='c-'+i;e.slot=slot;e.name=u.name;e.troop=role;e.type=role==='spear'?'infantry':(['drum','dancer','support'].includes(role)?'support':role);
   e.icon=({archer:'🏹',cavalry:'🐎',spear:'🔱',strategist:'🪶',support:'📜',drum:'🥁',dancer:'💃'})[role]||'🛡️';
-  e.skill=u[3];e.nlCDescriptor=descriptor(u[3],role,boss);
-  const ratio=clamp(Math.sqrt(Math.max(1,u[4])/Math.max(200,250+scale*90)),.75,1.45);
+  e.skill=u.skill;e.nlCDescriptor=descriptor(u.skill,role,boss);
+  const ratio=clamp(Math.sqrt(Math.max(1,u.troops)/Math.max(200,250+scale*90)),.75,1.45);
   const difficulty=clamp(1+Math.max(0,scale-28)*.025,1,2.8);
   for(const k of ['atk','catk','matk','def','tdef','mdef'])e[k]=Math.max(1,Math.round(e[k]*ratio*difficulty));
   e.hp=e.maxHp=Math.max(1,Math.round(e.maxHp*ratio*difficulty));e.effects=[];e.morale=boss?60:40;
@@ -87,11 +89,31 @@ function startNpc(id){
  if(!readyNpc(id))return false;const r=NPC.get(id),scale=r.map.gate;
  return openObjective({kind:'npc',id,mapId:r.map.id,title:r.map.name+' · '+r.n.name,boss:r.n.boss,xp:95+scale*12},r.n.units,scale);
 }
-const towerRoles=['Bộ','Thương','Kỵ','Cung','Quan văn','Kỳ Cổ Thủ'];
+const TOWER_ROLE_NAMES={infantry:'Bộ binh',spear:'Thương binh',cavalry:'Kỵ binh',archer:'Cung thủ',strategist:'Mưu sĩ',support:'Hỗ trợ',drum:'Cổ thủ',dancer:'Vũ cơ'};
+function towerPlan(n){
+ if(!Number.isInteger(n)||n<=NL_CONTENT_C_TOWER.nativeFloors||n>NL_CONTENT_C_TOWER.maxFloor)return null;
+ const arc=NL_CONTENT_C_TOWER.arcs.find(x=>n>=x.firstFloor&&n<x.firstFloor+10),local=arc?n-arc.firstFloor:-1;
+ if(!arc||local<0||local>=NL_CONTENT_C_TOWER.layouts.length)return null;
+ const layout=NL_CONTENT_C_TOWER.layouts[local],band=NL_CONTENT_C_TOWER.enemyCountBands.find(x=>n>=x.first&&n<=x.last);
+ if(!band)return null;
+ const boss=n%NL_CONTENT_C_TOWER.eliteEvery===0,chapterBoss=n%NL_CONTENT_C_TOWER.chapterBossEvery===0;
+ const units=layout.order.slice(0,band.count).map((idx,i)=>{
+  const source=arc.roster[idx],isLeader=boss&&i===band.count-1;
+  return {slot:layout.slots[i],name:(isLeader?'Thủ lĩnh ':'')+source.name,role:source.role,skill:source.skill,
+   troops:Math.round((500+n*90)*(source.troopScale||1)),level:n,boss:isLeader};
+ });
+ return {kind:'tower',id:'tower-'+n,floor:n,arcId:arc.id,arcName:arc.name,doctrine:arc.doctrine,counterplay:arc.counterplay,
+  title:'Tháp Thí Luyện · Tầng '+n+' · '+arc.name,rank:chapterBoss?'Boss chương':boss?'Tinh anh':'Thường',boss,
+  chapterBoss,aiStyle:arc.aiStyle,layoutIndex:local,units};
+}
+function towerRewards(n){
+ const f=NL_CONTENT_C_TOWER.rewardFormula,b=f.normal,bonus=n%NL_CONTENT_C_TOWER.chapterBossEvery===0?f.chapterBossBonus:{silver:0,grain:0,prestige:0,soul:0};
+ return {silver:b.silverBase+n*b.silverPerFloor+bonus.silver,grain:b.grainBase+n*b.grainPerFloor+bonus.grain,
+  prestige:b.prestigeBase+n*b.prestigePerFloor+bonus.prestige,soul:b.soulBase+n*b.soulPerFloor+bonus.soul};
+}
 function startTower(){
- const n=floor()+1;if(n<=20||n>100||battle||!game.activity||game.activity.towerTries<=0)return false;
- const slots=[2,5,8,4,7],units=slots.slice(0,Math.min(5,3+Math.floor(n/30))).map((slot,i)=>[slot,'Tháp '+n+' · '+['Tiền quân','Hộ vệ','Xung kích','Quân sư','Thủ lĩnh'][i],towerRoles[(n+i)%towerRoles.length],['Thiết Bích','Hoành Tảo','Xuyên Phong','Huyễn Thuật','Bộc Viêm'][(n+i)%5],500+n*90,n]);
- return openObjective({kind:'tower',id:'tower-'+n,floor:n,title:'Tháp Thí Luyện · Tầng '+n,boss:n%5===0,xp:95+n*12},units,n);
+ const n=floor()+1,plan=towerPlan(n);if(!plan||battle||!game.activity||game.activity.towerTries<=0||!towerAvailable())return false;
+ return openObjective({...plan,xp:95+n*12},plan.units,n);
 }
 // Called only inside native finishBattle's victory branch. Native credit, losses, XP,
 // report and replay are still the sole settlement owner; no legacy stage reward/loot.
@@ -103,8 +125,8 @@ nlContentCSettle=function(o){
   if(r.map.npcs.every(n=>s.cleared[n.id]))s.mapsCleared[r.map.id]=true;
   return {silver:350+r.map.gate*85,grain:120+r.map.gate*25,prestige:r.n.boss?30+r.map.gate*3:10+r.map.gate};
  }
- if(o.kind==='tower'&&o.floor===floor()+1&&o.floor<=100){
-  s.extraFloor++;s.soul+=30+o.floor;return {silver:1100+o.floor*420,grain:150+o.floor*30,prestige:60+o.floor*30};
+ if(o.kind==='tower'&&o.floor===floor()+1&&o.floor<=NL_CONTENT_C_TOWER.maxFloor){
+  s.extraFloor++;const reward=towerRewards(o.floor);s.soul+=reward.soul;return {silver:reward.silver,grain:reward.grain,prestige:reward.prestige};
  }
  return {};
 };
@@ -113,6 +135,13 @@ p2Skill=function(actor){
  if(actor?.team==='e'&&battle?.nlContentC&&actor.nlCDescriptor)return actor.nlCDescriptor;
  const awake=actor?.team==='p'&&battle?.mode!=='cltq'&&game.nlClassicAdvanced?.growth?.[actor.id]?.awakened&&NL_CONTENT_C.awakeningSkills?.[actor.id];
  return awake?{...awake.descriptor}:oldSkill(actor);
+};
+const nlContentCBaseTarget=p2Target;
+p2Target=function(actor,mode){
+ const plan=battle?.nlContentC;
+ if(actor?.team!=='e'||plan?.kind!=='tower')return nlContentCBaseTarget(actor,mode);
+ const stage=battle.stage,styleStage={pressure:0,counter:1,finish:2,protect:3}[plan.aiStyle]??1;
+ try{battle.stage=styleStage;return nlContentCBaseTarget(actor,mode);}finally{battle.stage=stage;}
 };
 const oldReport=p2StoreReport;
 p2StoreReport=function(rewards,loot){oldReport(rewards,loot);if(battle?.nlContentC&&battle.report)battle.report.nlContentC=structuredClone(battle.nlContentC);};
@@ -167,7 +196,16 @@ function campaignPanel(){const s=state(),m=MAP.get(mapId)||MAPS[0],list=MAPS.fil
 }
 function heroPanel(){const s=state(),rows=[...HERO.values()];return pane('heroes','Danh tướng Wiki bổ sung · '+HERO.size,'<p>364 hồ sơ Wiki được ánh xạ · '+NL_CONTENT_C.counts.runtimeHeroes+' danh tính runtime, gồm tướng cũ.</p>'+pages(rows,heroPage,h=>row(h.name,(h.faction||'')+' · '+h.skill+' · '+(h.towerGate?'Tháp '+h.towerGate+' · '+h.soulCost+' Tướng Hồn':'ải '+h.gate)+' · '+h.silver+' Bạc',btn('recruit',h.id,owned(h.id)?'Đã có':'Chiêu mộ',owned(h.id)||!!battle||!heroReady(h)||game.silver<h.silver)),'hero-page'));}
 function troopPanel(){if(!owned(heroId))heroId=game.roster[0]||'';return pane('troops','Quân cấp 4 · '+tier4.size,'<p>40 quân WEB 2011 · mở sau 10 chuyển sinh, Tháp 40, Doanh Trại 4 · 300 Tướng Hồn + 5.000 Bạc.</p><select data-nlc-hero>'+game.roster.map(id=>'<option value="'+esc(id)+'" '+(id===heroId?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select>'+pages(NL_C_TIER4,unitPage,t=>row(t.name,t.sourceName+' · '+t.familyName,btn('tier4',t.id,nlwB4Active(heroId)?.id===t.id?'Đang dùng':'Chuyển quân',!!battle||!owned(heroId)||floor()<40||nat(game.nlClassicWorldA4?.rebirth?.[heroId])<10||game.buildings.barracks<4||state().soul<300||game.silver<5000)),'unit-page'));}
-function towerPanel(){return pane('tower','Tháp mở rộng · 100 tầng','<p>Đã vượt '+floor()+'/100 · lượt '+(game.activity?.towerTries||0)+'/3 · Tướng Hồn '+state().soul+'</p>'+row('Tầng '+Math.min(100,floor()+1),floor()<20?'Hoàn thành 20 tầng gốc trước.':'Đối thủ tăng dần · thưởng Bạc/Lương/Uy danh/Tướng Hồn',btn('tower','','Khiêu chiến',!!battle||floor()<20||floor()>=100||!game.activity?.towerTries)));}
+function towerPanel(){
+ const completed=floor(),locked=completed<NL_CONTENT_C_TOWER.nativeFloors,done=completed>=NL_CONTENT_C_TOWER.maxFloor,
+  next=locked?NL_CONTENT_C_TOWER.nativeFloors+1:Math.min(NL_CONTENT_C_TOWER.maxFloor,completed+1),plan=!locked&&!done?towerPlan(next):null,
+  tries=game.activity?.towerTries||0,reward=plan?towerRewards(next):null;
+ const roster=plan?plan.units.map(u=>esc(u.name)+' · '+esc(TOWER_ROLE_NAMES[u.role]||u.role)+' · '+esc(u.skill)).join('<br>'):'';
+ const preview=plan?'<div class="nlc-tower-plan"><b>'+esc(plan.arcName)+' · '+esc(plan.rank)+'</b><small>'+esc(plan.doctrine)+'</small><p>'+esc(plan.counterplay)+'</p><div class="nlc-tower-lineup">'+roster+'</div></div>':locked?'<div class="nlc-tower-plan"><b>Mở rộng từ tầng '+next+'</b><small>Hoàn thành 20 tầng gốc để mở 8 chặng mô phỏng đến tầng 100.</small></div>':row('Tháp đã chinh phục','Đã hoàn thành đủ '+NL_CONTENT_C_TOWER.maxFloor+' tầng.');
+ const loot=reward?'<p class="nlc-tower-reward">Thưởng mô phỏng: Bạc +'+fmt(reward.silver)+' · Lương +'+fmt(reward.grain)+' · Uy danh +'+fmt(reward.prestige)+' · Tướng Hồn +'+fmt(reward.soul)+(plan.chapterBoss?' · thưởng Boss chương':'')+'</p>':'';
+ const progress=locked?'Đã vượt '+completed+'/'+NL_CONTENT_C_TOWER.nativeFloors+' tầng gốc':`Đã vượt ${completed}/${NL_CONTENT_C_TOWER.maxFloor}`;
+ return pane('tower','Tháp Thí Luyện · '+NL_CONTENT_C_TOWER.maxFloor+' tầng','<p>'+progress+' · lượt hôm nay '+tries+'/3 · Tướng Hồn '+state().soul+'</p>'+preview+loot+row(done?'Hoàn tất':locked?'Tầng '+NL_CONTENT_C_TOWER.nativeFloors+' → '+next:'Tầng '+next,locked?'Mở rộng sau khi vượt đủ 20 tầng gốc.':done?'Đã hoàn thành Tháp Thí Luyện.':'Đội hình '+plan.units.length+' quân · '+plan.aiStyle+' · PROJECT_SIMULATED',btn('tower','','Khiêu chiến',!!battle||locked||done||!tries)));
+}
 function sealPanel(){const s=state();return pane('seals','Quân ấn · '+SEALS.length+' mẫu','<p>Đã mở '+Object.keys(s.seals).length+' · trang bị '+s.equippedSeals.length+'/3 · chỉ số cộng cho đội.</p>'+pages(SEALS,sealPage,r=>row(r[1],r[2]+' +'+r[3]+' · '+({stage:'Ải',npc:'NPC Wiki',tower:'Tầng',prestige:'Uy danh',heroes:'Võ tướng',territory:'Lãnh địa',seals:'Quân ấn'})[r[4]]+' '+r[5],s.seals[r[0]]?btn('equip-seal',r[0],s.equippedSeals.includes(r[0])?'Tháo':'Trang bị',!!battle||(!s.equippedSeals.includes(r[0])&&s.equippedSeals.length>=3)):btn('unlock-seal',r[0],'Nhận',!!battle||!sealReady(r))),'seal-page'));}
 const c0=renderCampaign,h0=renderHeroes,b0=renderBarracks,t0=renderTower,f0=renderFormation;
 renderCampaign=function(){return c0()+campaignPanel();};renderHeroes=function(){return h0()+heroPanel();};renderBarracks=function(){return b0()+troopPanel();};renderTower=function(){return t0()+towerPanel();};renderFormation=function(){return f0()+sealPanel();};
@@ -175,7 +213,7 @@ document.addEventListener('change',e=>{if(e.target.matches?.('[data-nlc-map]')&&
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-action]');if(!b||b.disabled)return;const a=b.dataset.nlcAction,id=b.dataset.nlcId,delta=id==='next'?1:-1;
  if(a==='map-page'){mapPage=Math.max(0,mapPage+delta);const list=MAPS.filter(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(list[mapPage*20]){mapId=list[mapPage*20].id;npcPage=0;}render();return;}
  if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,recruit,tier4:tid=>choose4(heroId,tid),tower:startTower,'unlock-seal':unlockSeal,'equip-seal':equipSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
-const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}';document.head.appendChild(style);
-if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,startTower,recruit,choose4,unlockSeal,equipSeal,floor,descriptor,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,panels:()=>[campaignPanel(),heroPanel(),troopPanel(),towerPanel(),sealPanel()]});
+const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}.nlc-tower-plan{margin:8px 0;padding:9px 11px;border:1px solid #786a47;border-radius:6px;background:linear-gradient(135deg,#29362f,#172522)}.nlc-tower-plan>b{display:block;color:#f1d797}.nlc-tower-plan>small{display:block;margin-top:3px;color:#c5b68e;font-size:10px}.nlc-tower-plan p{line-height:1.55;margin:6px 0;color:#c4cdc0}.nlc-tower-lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:3px 10px;color:#e0d4b4;font-size:10px}.nlc-tower-reward{padding:7px 9px;background:#172c27;border-left:3px solid #c3a262;color:#e5d4a9;line-height:1.6}@media(max-width:560px){.nlc-tower-lineup{grid-template-columns:1fr}}';document.head.appendChild(style);
+if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,startTower,towerPlan,towerRewards,towerTarget:p2Target,recruit,choose4,unlockSeal,equipSeal,floor,descriptor,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,panels:()=>[campaignPanel(),heroPanel(),troopPanel(),towerPanel(),sealPanel()]});
 })();
 // === end NL-CONTENT-C-V1 ===
