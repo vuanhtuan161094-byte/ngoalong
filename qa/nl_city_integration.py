@@ -33,6 +33,17 @@ def page_for(browser, saved=None, width=1280):
     page.set_content(markup, wait_until="domcontentloaded")
     return page
 
+def visible_window(page, selector):
+    element = page.locator(selector).first
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        for index in range(chooser.locator("option").count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(60)
+            if element.is_visible():
+                return element
+    return element
+
 def main():
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True,
@@ -57,16 +68,18 @@ def main():
               tactics.get("liveV2CombatEnabled") is True and
               tactics.get("rewardAuthority") == "native-p2")
         page.locator('.nav[data-tab="campaign"]').click()
+        stage_one = visible_window(page, '[data-nl-v2-intel="1"]')
         check("stage-one V2 tactical data appears inside the real campaign UI",
-              page.locator('[data-nl-v2-intel="1"]').count() == 1)
+              stage_one.count() == 1 and stage_one.is_visible())
         check("Boss 28 authored tactical dossier comes from the same source pack",
               "final-war-drum" in page.evaluate("window.__NL_TACTICS_QA__.renderStage(28)"))
         page.locator('.nav[data-tab="city"]').click()
+        city_panel = visible_window(page, '[data-nl-city-panel]')
         check("native city and new live building panel coexist",
               page.locator('[data-nl-command]').count() == 1 and
-              page.locator('[data-nl-city-panel]').count() == 1 and
+              city_panel.count() == 1 and city_panel.is_visible() and
               page.locator('[data-nl-city-kind="select"]').count() == 38)
-        city_resources = page.locator('[data-nl-city-panel]').inner_text()
+        city_resources = city_panel.inner_text()
         check("classic WEB city shows Bạc, Lương and Uy danh while retaining legacy Sắt in Save",
               all(x in city_resources for x in ["Bạc","Lương","Uy danh"]) and
               "Sắt" not in city_resources and
@@ -76,8 +89,10 @@ def main():
         original.update({"silver":100000,"grain":50000,"iron":20000})
         page.evaluate("g=>window.__P2_QA__.setGame(g)", original)
         page.locator('.nav[data-tab="city"]').click()
-        page.locator('[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]').click()
-        upgrade = page.locator('[data-nl-city-kind="build"][data-nl-city-id="nl_city_ironworks"]')
+        ironworks = visible_window(page, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
+        check("target building appears in an accessible city subwindow", ironworks.count() == 1 and ironworks.is_visible())
+        ironworks.click()
+        upgrade = visible_window(page, '[data-nl-city-kind="build"][data-nl-city-id="nl_city_ironworks"]')
         check("new building exposes executable paid construction button",
               upgrade.count() == 1 and upgrade.is_enabled())
         upgrade.click()
@@ -109,8 +124,9 @@ def main():
               reloaded["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks")
         mobile = page_for(browser, saved, 390)
         mobile.locator('.nav[data-tab="city"]').click()
+        mobile_tile = visible_window(mobile, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
         check("mobile 390px shows city tiles and no horizontal overflow",
-              mobile.locator('[data-nl-city-kind="select"]').count() == 38 and
+              mobile.locator('[data-nl-city-kind="select"]').count() == 38 and mobile_tile.is_visible() and
               mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 4"))
         check("no new Chromium exceptions", not errors)
         for tab in (page, reopened, mobile):

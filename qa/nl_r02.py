@@ -31,39 +31,56 @@ def open_page(browser, width=1280, height=720, stored=None):
     return page
 
 
+def visible_window(page, selector):
+    element = page.locator(selector).first
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        for index in range(chooser.locator("option").count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(60)
+            if element.is_visible():
+                return element
+    return element
+
+
 def main():
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = open_page(browser)
         qa = "window.__P2_QA__"
         check("real desktop hub has 3x3 and six formation families / 24 variants", page.locator('[data-nl-command] .nl-slot').count() == 9 and page.locator('[data-p3-preset]').count() == 0 and page.locator('[data-nl-command]').count() == 1)
-        page.locator('[data-nl-route="formation"]').click()
+        formation_route = visible_window(page, '[data-nl-route="formation"]')
+        check("formation route is reachable from the city command window", formation_route.count() == 1 and formation_route.is_visible())
+        formation_route.click()
+        page.wait_for_function("document.querySelector('.nav.active[data-tab=formation]') !== null")
         presets = page.evaluate("window.__P3_QA__.presets")
-        check("preset catalog preserves all 24 IDs across six formations and four variants", len(presets) == 24 and len({p["id"] for p in presets}) == 24 and len({p["formation"] for p in presets}) == 6 and len({p["style"] for p in presets}) == 4 and "6 trận pháp / 24 phương án" in page.locator("#view").inner_text())
+        preset = visible_window(page, '[data-p3-preset]')
+        check("preset catalog preserves all 24 IDs across six formations and four variants", len(presets) == 24 and len({p["id"] for p in presets}) == 24 and len({p["formation"] for p in presets}) == 6 and len({p["style"] for p in presets}) == 4 and preset.count() > 0 and preset.is_visible() and "6 trận pháp / 24 phương án" in page.locator("#view").inner_text())
         catalog_binding = page.evaluate("""() => {
           const data=window.__P2_QA__.data.formations,actual=window.__P3_QA__.presets.map(p=>p.id).sort();
           const expected=data.families.flatMap(f=>data.plans.map(p=>`${f.id}-${p.key}`)).sort();
           return {actual,expected,match:JSON.stringify(actual)===JSON.stringify(expected)};
         }""")
         check("live formation families and plans are instantiated from the validated JSON catalog", catalog_binding["match"] and len(catalog_binding["actual"]) == 24)
-        check("Thương selector is available for owned infantry generals", page.locator('[data-nl-spear="zhang"]').count() == 1 and "Bộ → Thương → Kỵ → Bộ" in page.locator("#view").inner_text())
+        spear = visible_window(page, '[data-nl-spear="zhang"]')
+        check("Thương selector is available for owned infantry generals", spear.count() == 1 and spear.is_visible() and "Bộ → Thương → Kỵ → Bộ" in page.locator("#view").inner_text())
 
         before = page.evaluate(f"{qa}.getGame()")
-        page.locator('[data-nl-spear="zhang"]').click()
+        spear.click()
         after = page.evaluate(f"{qa}.getGame()")
         unit = page.evaluate(f"{qa}.makeUnit('zhang','p',2,1)")
         check("switching an infantry general to spear spends real silver/grain and changes battle unit", after["troopModes"].get("zhang") == "spear" and before["silver"] - after["silver"] == 120 and before["grain"] - after["grain"] == 60 and unit["troop"] == "spear")
 
         # Visible pre-battle dossier is driven by the same selected NPC slots as runtime.
         page.locator('.nav[data-tab="campaign"]').click()
-        intel = page.locator('[data-nl-enemy-intel="1"]')
-        chapter = page.locator('[data-nl-chapter="nl-chapter-01"]')
+        chapter = visible_window(page, '[data-nl-chapter="nl-chapter-01"]')
+        intel = visible_window(page, '[data-nl-enemy-intel="1"]')
         check("selected campaign chapter shows both NPC fights from validated data",
-              chapter.count() == 1 and chapter.locator('[data-nl-chapter-step]').count() == 2
+              chapter.count() == 1 and chapter.is_visible() and chapter.locator('[data-nl-chapter-step]').count() == 2
               and "Trương Bảo" in chapter.inner_text() and "Ba Tài" in chapter.inner_text()
               and "0/2 trận" in chapter.inner_text())
         check("campaign reconnaissance shows the live stage-one enemy 3x3 deployment",
-              intel.count() == 1
+              intel.count() == 1 and intel.is_visible()
               and intel.locator('[data-nl-intel-slot]').count() == 9
               and "Trương Bảo" in intel.inner_text()
               and "3 đơn vị tham chiến" in intel.inner_text()

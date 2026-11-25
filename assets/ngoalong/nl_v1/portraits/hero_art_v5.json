@@ -1,0 +1,1253 @@
+{
+  "schemaVersion": 1,
+  "edition": "NL_CHARACTER_ART_V5_PREMIUM_ORIENTAL_BEAUTY_CG",
+  "offlineEmbedded": true,
+  "referenceConcept": "Owner-provided female Cao Cao concept screenshot; used as visual direction only, not copied into game assets.",
+  "requirements": {
+    "femaleIdentity": "All generals are adult women age 25+; historical names, faction, skill, weapon and Save IDs remain unchanged.",
+    "perHeroAssets": [
+      "portrait-1x1",
+      "splash-16x9",
+      "character-2x3"
+    ],
+    "optional": [
+      "expressionVariants",
+      "skins"
+    ],
+    "style": "Premium semi-realistic anime CG; refined adult Asian fantasy beauty; expressive differentiated faces; luminous soft skin; bold high-fashion oriental styling; character-focused compositions.",
+    "safety": "Opaque coverage; no nudity or explicit sexual content.",
+    "styleConstraints": "Illustrated anime CG, not photorealistic; no western comic, plastic 3D, chibi, rough painting, text, UI or watermark.",
+    "faceConsistency": "Portrait, character and splash are generated from one identity reference and reviewed together; retain hero-specific facial and costume details."
+  },
+  "heroes": {
+    "cao": {
+      "name": "Tào Tháo",
+      "portrait": {
+        "sourcePng": "female-cao-cao-v5-portrait.png",
+        "runtimeWebp": "female-cao-cao-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "female-cao-cao-v5-portrait.prompt.txt",
+        "sourceSha256": "889af9144ba895166ac93d5c15ffd194d739959bca7084aec5a52abff3f66fbb",
+        "runtimeSha256": "c6a685fa9e89939a7d76d6cd0f1600d2fdbef2f37db48f6a650c479bf9224924",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-c718d7ae-7f93-4717-9f12-6728a717552f",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v4-portrait.png",
+          "referenceSha256": "50c59eedfe755f07c376ccc865e6d8f653a44e2a6d76d5c9867ad28152d795d7",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-portrait.png",
+          "sourceSizeBytes": 2877038,
+          "sourceSha256": "889af9144ba895166ac93d5c15ffd194d739959bca7084aec5a52abff3f66fbb",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-portrait.webp",
+          "runtimeSizeBytes": 384288,
+          "runtimeSha256": "c6a685fa9e89939a7d76d6cd0f1600d2fdbef2f37db48f6a650c479bf9224924",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        },
+        "classification": "RECREATED_V5_PORTRAIT"
+      },
+      "splash": {
+        "sourcePng": "female-cao-cao-v5-splash.png",
+        "runtimeWebp": "female-cao-cao-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "female-cao-cao-v5-splash.prompt.txt",
+        "sourceSha256": "d6d67a401d72fc447d089b7cbc8ff698eaa99641d7772a6a4efb83720079c324",
+        "runtimeSha256": "62fad82a0f37f4680d2b7da64cf9854b6c657b4efb1c950b00ad30a170ddc06f",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-d2e74498-24f7-404a-8204-bea2af76a3bb",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-portrait.png",
+          "referenceSha256": "889af9144ba895166ac93d5c15ffd194d739959bca7084aec5a52abff3f66fbb",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-splash.png",
+          "sourceSizeBytes": 2603415,
+          "sourceSha256": "d6d67a401d72fc447d089b7cbc8ff698eaa99641d7772a6a4efb83720079c324",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-splash.webp",
+          "runtimeSizeBytes": 343078,
+          "runtimeSha256": "62fad82a0f37f4680d2b7da64cf9854b6c657b4efb1c950b00ad30a170ddc06f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-cao-cao-v5-character.png",
+        "runtimeWebp": "female-cao-cao-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "female-cao-cao-v5-character.prompt.txt",
+        "sourceSha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec",
+        "runtimeSha256": "2ce6ebc5d0b773e54866c3e809e8e698969d2bdbfb2951d84c2db8f31d16e187",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-b8be2f12-7e0d-4d5d-8d5e-deadffa073de",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-portrait.png",
+          "referenceSha256": "889af9144ba895166ac93d5c15ffd194d739959bca7084aec5a52abff3f66fbb",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+          "sourceSizeBytes": 2902995,
+          "sourceSha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.webp",
+          "runtimeSizeBytes": 440074,
+          "runtimeSha256": "2ce6ebc5d0b773e54866c3e809e8e698969d2bdbfb2951d84c2db8f31d16e187",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "liu": {
+      "name": "Lưu Bị",
+      "portrait": {
+        "sourcePng": "female-liu-bei-v5-portrait.png",
+        "runtimeWebp": "female-liu-bei-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-7437634c-dda7-4e89-8b68-4a0587fc47ba",
+        "sourceSha256": "26ad79b091ebfd61e341dbf3e1dafd09300df9ddc02f3ca5257e112bd043e716",
+        "runtimeSha256": "b150929186d3d1fd59f86dc327bd5ac6321e8055d4600c0bbec2a58cac3c6900",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-7437634c-dda7-4e89-8b68-4a0587fc47ba",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-7437634c-dda7-4e89-8b68-4a0587fc47ba",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-liu-bei.png",
+          "referenceSha256": "bd33c5cdd1a3b34b6ae7bd2e4d5500f69a5017c27ae0ee2257dfdb03eff3a810",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-portrait.png",
+          "sourceSizeBytes": 3067513,
+          "sourceSha256": "26ad79b091ebfd61e341dbf3e1dafd09300df9ddc02f3ca5257e112bd043e716",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-portrait.webp",
+          "runtimeSizeBytes": 421906,
+          "runtimeSha256": "b150929186d3d1fd59f86dc327bd5ac6321e8055d4600c0bbec2a58cac3c6900",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-liu-bei-v5-splash.png",
+        "runtimeWebp": "female-liu-bei-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-f9c5b0b9-b8e2-4065-b837-c8ce1429ae83",
+        "sourceSha256": "ecc169f8cba5df5ebe3d3b8041c30a0b6a886135c19c78d75493fa79c1af0656",
+        "runtimeSha256": "8a34e14fda49f94e649aad03e44e2e25cac0df5f3653eb027aa47240ae21713c",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-f9c5b0b9-b8e2-4065-b837-c8ce1429ae83",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-f9c5b0b9-b8e2-4065-b837-c8ce1429ae83",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-portrait.png",
+          "referenceSha256": "26ad79b091ebfd61e341dbf3e1dafd09300df9ddc02f3ca5257e112bd043e716",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-splash.png",
+          "sourceSizeBytes": 3004963,
+          "sourceSha256": "ecc169f8cba5df5ebe3d3b8041c30a0b6a886135c19c78d75493fa79c1af0656",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-splash.webp",
+          "runtimeSizeBytes": 438434,
+          "runtimeSha256": "8a34e14fda49f94e649aad03e44e2e25cac0df5f3653eb027aa47240ae21713c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-liu-bei-v5-character.png",
+        "runtimeWebp": "female-liu-bei-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-57d11807-d557-402c-a981-2d7d5b4068a1",
+        "sourceSha256": "ca20952462d9ed7ead47fa84ee095ae4ab0909753117d8d7432f0d218297a3c3",
+        "runtimeSha256": "ee657a770ebe82bb6f4c812c3ea3e6703988491912e7c7bf297496a49c84c0c1",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-57d11807-d557-402c-a981-2d7d5b4068a1",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-57d11807-d557-402c-a981-2d7d5b4068a1",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-portrait.png",
+          "referenceSha256": "26ad79b091ebfd61e341dbf3e1dafd09300df9ddc02f3ca5257e112bd043e716",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-character.png",
+          "sourceSizeBytes": 2876138,
+          "sourceSha256": "ca20952462d9ed7ead47fa84ee095ae4ab0909753117d8d7432f0d218297a3c3",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-liu-bei-v5-character.webp",
+          "runtimeSizeBytes": 435394,
+          "runtimeSha256": "ee657a770ebe82bb6f4c812c3ea3e6703988491912e7c7bf297496a49c84c0c1",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "guan": {
+      "name": "Quan Vũ",
+      "portrait": {
+        "sourcePng": "female-guan-yu-v5-portrait.png",
+        "runtimeWebp": "female-guan-yu-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-c34eed4a-90e1-403c-80c6-2df647981857",
+        "sourceSha256": "12defe3181a37392cb835ff12b966d8253a29e7b5daa251d8ceafbec8d767e0c",
+        "runtimeSha256": "c4438e4c7509940f8e848c9a7741ec85bc7266713c2104d9f2efd0ab0bb6b85c",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-c34eed4a-90e1-403c-80c6-2df647981857",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-c34eed4a-90e1-403c-80c6-2df647981857",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-guan-yu.png",
+          "referenceSha256": "6d2513a72a60c2ef477cd324a7b4878a5b6feb663efbba003fcb43acae69e723",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-portrait.png",
+          "sourceSizeBytes": 3089960,
+          "sourceSha256": "12defe3181a37392cb835ff12b966d8253a29e7b5daa251d8ceafbec8d767e0c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-portrait.webp",
+          "runtimeSizeBytes": 444462,
+          "runtimeSha256": "c4438e4c7509940f8e848c9a7741ec85bc7266713c2104d9f2efd0ab0bb6b85c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-guan-yu-v5-splash.png",
+        "runtimeWebp": "female-guan-yu-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-d23d58bf-1909-4ac1-a64f-3e963b570760",
+        "sourceSha256": "4885111fdd8aa0e6640b608af231afa355f64e14e8af6c08e513d1a8ad52ba5e",
+        "runtimeSha256": "63f383cac08f8ee24fa0fc842322e09eb965022c9917854e3e6dd57b5c115d7b",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-d23d58bf-1909-4ac1-a64f-3e963b570760",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-d23d58bf-1909-4ac1-a64f-3e963b570760",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-portrait.png",
+          "referenceSha256": "12defe3181a37392cb835ff12b966d8253a29e7b5daa251d8ceafbec8d767e0c",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-splash.png",
+          "sourceSizeBytes": 2980028,
+          "sourceSha256": "4885111fdd8aa0e6640b608af231afa355f64e14e8af6c08e513d1a8ad52ba5e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-splash.webp",
+          "runtimeSizeBytes": 449666,
+          "runtimeSha256": "63f383cac08f8ee24fa0fc842322e09eb965022c9917854e3e6dd57b5c115d7b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-guan-yu-v5-character.png",
+        "runtimeWebp": "female-guan-yu-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-3b7cbc2d-c92b-4d6a-8917-a3149c7c6ad5",
+        "sourceSha256": "e917a1cbed921fe30d4656fa20e8e5a1943e69bdfa37a8f24a0be87a23bb17fd",
+        "runtimeSha256": "005cd19235848209bd9093ffd74bb9407f076f91cfc0aa10f48b5a65e8550027",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-3b7cbc2d-c92b-4d6a-8917-a3149c7c6ad5",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-3b7cbc2d-c92b-4d6a-8917-a3149c7c6ad5",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-portrait.png",
+          "referenceSha256": "12defe3181a37392cb835ff12b966d8253a29e7b5daa251d8ceafbec8d767e0c",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-character.png",
+          "sourceSizeBytes": 3163474,
+          "sourceSha256": "e917a1cbed921fe30d4656fa20e8e5a1943e69bdfa37a8f24a0be87a23bb17fd",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-guan-yu-v5-character.webp",
+          "runtimeSizeBytes": 519330,
+          "runtimeSha256": "005cd19235848209bd9093ffd74bb9407f076f91cfc0aa10f48b5a65e8550027",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "zhang": {
+      "name": "Trương Phi",
+      "portrait": {
+        "sourcePng": "female-zhang-fei-v5-portrait.png",
+        "runtimeWebp": "female-zhang-fei-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-4cd4793e-a469-4288-9bd0-906d90e91ca9",
+        "sourceSha256": "65f204e2efc906a9719e4dad7acffe390e0176a3bc21d62469963986beaf06cb",
+        "runtimeSha256": "13c0b438ffaf22464806adef059d3123a49b8ad8bd86aff54c3137c36c1abfba",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-4cd4793e-a469-4288-9bd0-906d90e91ca9",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-4cd4793e-a469-4288-9bd0-906d90e91ca9",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei.png",
+          "referenceSha256": "60e4e60191b2b87b04b9d95f0638600452d31806b07a9e89583141e0b596d841",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-portrait.png",
+          "sourceSizeBytes": 2722382,
+          "sourceSha256": "65f204e2efc906a9719e4dad7acffe390e0176a3bc21d62469963986beaf06cb",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-portrait.webp",
+          "runtimeSizeBytes": 350710,
+          "runtimeSha256": "13c0b438ffaf22464806adef059d3123a49b8ad8bd86aff54c3137c36c1abfba",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-zhang-fei-v5-splash.png",
+        "runtimeWebp": "female-zhang-fei-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-ab99e41f-0886-430c-bc44-84438eb4dd25",
+        "sourceSha256": "3dd7795a506928a4dc1e2c708f80f975b4dcdf295323116365e3ec588d838020",
+        "runtimeSha256": "56f913da2985d956cc1432f1873507d65f4350113094a91bdbbb378ec3eb85f2",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ab99e41f-0886-430c-bc44-84438eb4dd25",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-ab99e41f-0886-430c-bc44-84438eb4dd25",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-portrait.png",
+          "referenceSha256": "65f204e2efc906a9719e4dad7acffe390e0176a3bc21d62469963986beaf06cb",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-splash.png",
+          "sourceSizeBytes": 2491493,
+          "sourceSha256": "3dd7795a506928a4dc1e2c708f80f975b4dcdf295323116365e3ec588d838020",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-splash.webp",
+          "runtimeSizeBytes": 321888,
+          "runtimeSha256": "56f913da2985d956cc1432f1873507d65f4350113094a91bdbbb378ec3eb85f2",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-zhang-fei-v5-character.png",
+        "runtimeWebp": "female-zhang-fei-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-df396705-4a23-44a5-ae0b-b69a798ff619",
+        "sourceSha256": "b09e1c339867cf74b25bb7fbffbd5052c344ff28565084393577466d436e65ff",
+        "runtimeSha256": "0337dbe3c960add2f260dfaa2142be886f989786406b51cd9e1f28a0501e2198",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-df396705-4a23-44a5-ae0b-b69a798ff619",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-df396705-4a23-44a5-ae0b-b69a798ff619",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-portrait.png",
+          "referenceSha256": "65f204e2efc906a9719e4dad7acffe390e0176a3bc21d62469963986beaf06cb",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-character.png",
+          "sourceSizeBytes": 2819708,
+          "sourceSha256": "b09e1c339867cf74b25bb7fbffbd5052c344ff28565084393577466d436e65ff",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhang-fei-v5-character.webp",
+          "runtimeSizeBytes": 413402,
+          "runtimeSha256": "0337dbe3c960add2f260dfaa2142be886f989786406b51cd9e1f28a0501e2198",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "zhao": {
+      "name": "Triệu Vân",
+      "portrait": {
+        "sourcePng": "female-zhao-yun-v5-portrait.png",
+        "runtimeWebp": "female-zhao-yun-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-31a6addb-08c1-461d-9eff-ea05f1ecc2fc",
+        "sourceSha256": "f4851ad5c8fb3984815bf1668b227c8150fe688208c3f1eaa70bc632672eaa0a",
+        "runtimeSha256": "78cc51deed739a6e770993fba900579bdf42233dc333be95cd0ba20b058f35b3",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-31a6addb-08c1-461d-9eff-ea05f1ecc2fc",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-31a6addb-08c1-461d-9eff-ea05f1ecc2fc",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun.png",
+          "referenceSha256": "15684e50836a800c355a283dac922ed5a1d42f656142399f6a9877c30e5ad710",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-portrait.png",
+          "sourceSizeBytes": 2710616,
+          "sourceSha256": "f4851ad5c8fb3984815bf1668b227c8150fe688208c3f1eaa70bc632672eaa0a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-portrait.webp",
+          "runtimeSizeBytes": 299084,
+          "runtimeSha256": "78cc51deed739a6e770993fba900579bdf42233dc333be95cd0ba20b058f35b3",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-zhao-yun-v5-splash.png",
+        "runtimeWebp": "female-zhao-yun-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-f2db3a4f-4ceb-4ece-8a07-c53dc17f5d6e",
+        "sourceSha256": "f500f6269f891ba97fea23509899f97c98a4843ff915bcbb75c9281bc2f33a45",
+        "runtimeSha256": "c0f4f2f97ee7fa7db745403cbd1a187f3c611edc5d5ef0741f71e90f51b342a2",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-f2db3a4f-4ceb-4ece-8a07-c53dc17f5d6e",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-f2db3a4f-4ceb-4ece-8a07-c53dc17f5d6e",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-portrait.png",
+          "referenceSha256": "f4851ad5c8fb3984815bf1668b227c8150fe688208c3f1eaa70bc632672eaa0a",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-splash.png",
+          "sourceSizeBytes": 2599774,
+          "sourceSha256": "f500f6269f891ba97fea23509899f97c98a4843ff915bcbb75c9281bc2f33a45",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-splash.webp",
+          "runtimeSizeBytes": 299252,
+          "runtimeSha256": "c0f4f2f97ee7fa7db745403cbd1a187f3c611edc5d5ef0741f71e90f51b342a2",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-zhao-yun-v5-character.png",
+        "runtimeWebp": "female-zhao-yun-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-f4f29e5d-06a6-447f-b375-60883bec6a4b",
+        "sourceSha256": "a4afc879d48899629de127a91953ebd3b659172a3f922969f6144328448b41cf",
+        "runtimeSha256": "9c3549ccb5ee3a25d5f9dd4ea52d770dca1bd45c73e46bf4f56fedb305580958",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-f4f29e5d-06a6-447f-b375-60883bec6a4b",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-f4f29e5d-06a6-447f-b375-60883bec6a4b",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-portrait.png",
+          "referenceSha256": "f4851ad5c8fb3984815bf1668b227c8150fe688208c3f1eaa70bc632672eaa0a",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-character.png",
+          "sourceSizeBytes": 3052465,
+          "sourceSha256": "a4afc879d48899629de127a91953ebd3b659172a3f922969f6144328448b41cf",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhao-yun-v5-character.webp",
+          "runtimeSizeBytes": 414892,
+          "runtimeSha256": "9c3549ccb5ee3a25d5f9dd4ea52d770dca1bd45c73e46bf4f56fedb305580958",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "lu": {
+      "name": "Lữ Bố",
+      "expressionVariants": [],
+      "skins": [],
+      "portrait": {
+        "sourcePng": "female-lu-bu-v5-portrait.png",
+        "runtimeWebp": "female-lu-bu-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-e9520c3d-c613-44b4-87bf-da5af835959a",
+        "sourceSha256": "e4eb45e757af822f4c485461193b28be5b7699a80ad31f7ec0e4cdcbda5c247e",
+        "runtimeSha256": "b0d3531475f8bc0bdee0e719c4a4fd2f9a308da84e1fc0bf3b13b7291aa1b3e8",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e9520c3d-c613-44b4-87bf-da5af835959a",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-e9520c3d-c613-44b4-87bf-da5af835959a",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-portrait.png",
+          "sourceSizeBytes": 2866086,
+          "sourceSha256": "e4eb45e757af822f4c485461193b28be5b7699a80ad31f7ec0e4cdcbda5c247e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-portrait.webp",
+          "runtimeSizeBytes": 371652,
+          "runtimeSha256": "b0d3531475f8bc0bdee0e719c4a4fd2f9a308da84e1fc0bf3b13b7291aa1b3e8",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-lu-bu-v5-character.png",
+        "runtimeWebp": "female-lu-bu-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-d0410ceb-93b5-4b0a-b193-28ae357e337d",
+        "sourceSha256": "f99811e8ebcceacdbf4c83796f17e373049a0340ec149b42cf87d1069c1cd77b",
+        "runtimeSha256": "5d5ffae5acacd9b97f568ef185e5aeb94ef0a2e81e0ce7aada2ce7fdfd5cfb60",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-d0410ceb-93b5-4b0a-b193-28ae357e337d",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-d0410ceb-93b5-4b0a-b193-28ae357e337d",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-portrait.png",
+          "referenceSha256": "e4eb45e757af822f4c485461193b28be5b7699a80ad31f7ec0e4cdcbda5c247e",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-character.png",
+          "sourceSizeBytes": 2805327,
+          "sourceSha256": "f99811e8ebcceacdbf4c83796f17e373049a0340ec149b42cf87d1069c1cd77b",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-character.webp",
+          "runtimeSizeBytes": 393306,
+          "runtimeSha256": "5d5ffae5acacd9b97f568ef185e5aeb94ef0a2e81e0ce7aada2ce7fdfd5cfb60",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-lu-bu-v5-splash.png",
+        "runtimeWebp": "female-lu-bu-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-551074b3-e7ff-439a-aa0a-7e4bf7a816f9",
+        "sourceSha256": "a57840901d0cfd1d36fa93668e4bc0a6a10def34699c7aed687f45f7b3c7b356",
+        "runtimeSha256": "728ee4c6655f78e65d88808c2a5f284319fab06c69870df1d9988efa61ebab9c",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "classification": "RECREATED_V5_SPLASH",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-551074b3-e7ff-439a-aa0a-7e4bf7a816f9",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-551074b3-e7ff-439a-aa0a-7e4bf7a816f9",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-portrait.png",
+          "referenceSha256": "e4eb45e757af822f4c485461193b28be5b7699a80ad31f7ec0e4cdcbda5c247e",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-splash.png",
+          "sourceSizeBytes": 2900691,
+          "sourceSha256": "a57840901d0cfd1d36fa93668e4bc0a6a10def34699c7aed687f45f7b3c7b356",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-bu-v5-splash.webp",
+          "runtimeSizeBytes": 403354,
+          "runtimeSha256": "728ee4c6655f78e65d88808c2a5f284319fab06c69870df1d9988efa61ebab9c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      }
+    },
+    "wiki-mobile-hero-083": {
+      "name": "Lục Tốn",
+      "portrait": {
+        "sourcePng": "female-lu-xun-v5-portrait.png",
+        "runtimeWebp": "female-lu-xun-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-a9097441-8b43-4d6a-a894-85fa54ed808c",
+        "sourceSha256": "98149b1b6e6bd8e2de992bd8e9a721641b60f9ae06351cb8981bca5b1534d7dd",
+        "runtimeSha256": "2a0021a2ab944c5da9ce30b97cf1fde0881363ab1edc731080f6755c2bc1c57f",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-a9097441-8b43-4d6a-a894-85fa54ed808c",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-a9097441-8b43-4d6a-a894-85fa54ed808c",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-lu-xun.png",
+          "referenceSha256": "8fdde5a62617b6ba9a985ed5e18f751b00f1094a2b3f9417f75102876bd2734e",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-portrait.png",
+          "sourceSizeBytes": 2653338,
+          "sourceSha256": "98149b1b6e6bd8e2de992bd8e9a721641b60f9ae06351cb8981bca5b1534d7dd",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-portrait.webp",
+          "runtimeSizeBytes": 350094,
+          "runtimeSha256": "2a0021a2ab944c5da9ce30b97cf1fde0881363ab1edc731080f6755c2bc1c57f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-lu-xun-v5-splash.png",
+        "runtimeWebp": "female-lu-xun-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-fa42365c-0645-4911-a698-e6efb61440d8",
+        "sourceSha256": "b50b89f226acd6669d94ddd56b086c335ccb9e88e80de4b6207a274b9b6506d5",
+        "runtimeSha256": "3366ca704ca5a01092282aa074c11452b377f9d8568b63df61af522fa73df3b6",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-fa42365c-0645-4911-a698-e6efb61440d8",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-fa42365c-0645-4911-a698-e6efb61440d8",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-portrait.png",
+          "referenceSha256": "98149b1b6e6bd8e2de992bd8e9a721641b60f9ae06351cb8981bca5b1534d7dd",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-splash.png",
+          "sourceSizeBytes": 2618089,
+          "sourceSha256": "b50b89f226acd6669d94ddd56b086c335ccb9e88e80de4b6207a274b9b6506d5",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-splash.webp",
+          "runtimeSizeBytes": 361348,
+          "runtimeSha256": "3366ca704ca5a01092282aa074c11452b377f9d8568b63df61af522fa73df3b6",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-lu-xun-v5-character.png",
+        "runtimeWebp": "female-lu-xun-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-7cb4506b-8ce8-4f4d-81b5-c06a1bd41018",
+        "sourceSha256": "8f57935420840fa0ec0ca001d13caf3537773dcbb8a123da2558ac9f12a2d11c",
+        "runtimeSha256": "6c4d0ee1ee6805bfcb7559e9ac1fa7ce4614a55cc20395f000ff06bf816b283f",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-7cb4506b-8ce8-4f4d-81b5-c06a1bd41018",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-7cb4506b-8ce8-4f4d-81b5-c06a1bd41018",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-portrait.png",
+          "referenceSha256": "98149b1b6e6bd8e2de992bd8e9a721641b60f9ae06351cb8981bca5b1534d7dd",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-character.png",
+          "sourceSizeBytes": 2811451,
+          "sourceSha256": "8f57935420840fa0ec0ca001d13caf3537773dcbb8a123da2558ac9f12a2d11c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-xun-v5-character.webp",
+          "runtimeSizeBytes": 411150,
+          "runtimeSha256": "6c4d0ee1ee6805bfcb7559e9ac1fa7ce4614a55cc20395f000ff06bf816b283f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "zhuge": {
+      "name": "Gia Cát Lượng",
+      "portrait": {
+        "sourcePng": "female-zhuge-liang-v5-portrait.png",
+        "runtimeWebp": "female-zhuge-liang-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-7a07d256-05a0-4755-9a20-212283cc2d99",
+        "sourceSha256": "ee8de423dfbfd44095e217976f6bfb11e4276156bca68921c752bd7a9b845d0f",
+        "runtimeSha256": "6d60627ade9c444e64b81a8a21e298b99a103560664240375b967244d30bf5eb",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-7a07d256-05a0-4755-9a20-212283cc2d99",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-7a07d256-05a0-4755-9a20-212283cc2d99",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-portrait.png",
+          "sourceSizeBytes": 2786586,
+          "sourceSha256": "ee8de423dfbfd44095e217976f6bfb11e4276156bca68921c752bd7a9b845d0f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-portrait.webp",
+          "runtimeSizeBytes": 318320,
+          "runtimeSha256": "6d60627ade9c444e64b81a8a21e298b99a103560664240375b967244d30bf5eb",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-zhuge-liang-v5-character.png",
+        "runtimeWebp": "female-zhuge-liang-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-ad495513-f766-4654-8aa1-0a7bc1d23852",
+        "sourceSha256": "df0f8c625efcc6bad5797870ccc1269d66c5bad70e0533509657b3bfa0558441",
+        "runtimeSha256": "2ced68997bc9e34f8b52da40a5294f9292a3a41b98def0df8f1e0c115dc9e728",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ad495513-f766-4654-8aa1-0a7bc1d23852",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-ad495513-f766-4654-8aa1-0a7bc1d23852",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-portrait.png",
+          "referenceSha256": "ee8de423dfbfd44095e217976f6bfb11e4276156bca68921c752bd7a9b845d0f",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-character.png",
+          "sourceSizeBytes": 2633592,
+          "sourceSha256": "df0f8c625efcc6bad5797870ccc1269d66c5bad70e0533509657b3bfa0558441",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-character.webp",
+          "runtimeSizeBytes": 329270,
+          "runtimeSha256": "2ced68997bc9e34f8b52da40a5294f9292a3a41b98def0df8f1e0c115dc9e728",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-zhuge-liang-v5-splash.png",
+        "runtimeWebp": "female-zhuge-liang-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-f1fb34aa-f2e8-4ded-b0f4-472812e75f93",
+        "sourceSha256": "89ebb58588384de8660d0138c845ccadf0eb4e51b9ad8a856bb2dc3ff1204052",
+        "runtimeSha256": "d1146adb1d6290e8cf391714d359558a27300894ebd28238a06b2df3d26b9186",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "classification": "RECREATED_V5_SPLASH",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-f1fb34aa-f2e8-4ded-b0f4-472812e75f93",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-f1fb34aa-f2e8-4ded-b0f4-472812e75f93",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-portrait.png",
+          "referenceSha256": "ee8de423dfbfd44095e217976f6bfb11e4276156bca68921c752bd7a9b845d0f",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-splash.png",
+          "sourceSizeBytes": 2511076,
+          "sourceSha256": "89ebb58588384de8660d0138c845ccadf0eb4e51b9ad8a856bb2dc3ff1204052",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-zhuge-liang-v5-splash.webp",
+          "runtimeSizeBytes": 280452,
+          "runtimeSha256": "d1146adb1d6290e8cf391714d359558a27300894ebd28238a06b2df3d26b9186",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "expressionVariants": [],
+      "skins": []
+    },
+    "sun": {
+      "name": "Tôn Thượng Hương",
+      "expressionVariants": [],
+      "skins": [],
+      "portrait": {
+        "sourcePng": "female-sun-shangxiang-v5-portrait.png",
+        "runtimeWebp": "female-sun-shangxiang-v5-portrait.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-8142b0b1-f627-4056-9715-09ec4b849f31",
+        "sourceSha256": "f108fc727e108f8fd186938840ad4742aa99f392ac6a7f1f45a8e39950ba33e8",
+        "runtimeSha256": "34d1fd97e3254d7567f30fa4c2fb17bc47eaf0a81558c9b6c5e9a2e8d232bf5f",
+        "runtimeSize": [
+          1254,
+          1254
+        ],
+        "classification": "RECREATED_V5_PORTRAIT",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-8142b0b1-f627-4056-9715-09ec4b849f31",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-8142b0b1-f627-4056-9715-09ec4b849f31",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square portrait; pixel target unspecified",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-portrait.png",
+          "sourceSizeBytes": 2992347,
+          "sourceSha256": "f108fc727e108f8fd186938840ad4742aa99f392ac6a7f1f45a8e39950ba33e8",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-portrait.webp",
+          "runtimeSizeBytes": 408412,
+          "runtimeSha256": "34d1fd97e3254d7567f30fa4c2fb17bc47eaf0a81558c9b6c5e9a2e8d232bf5f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "character": {
+        "sourcePng": "female-sun-shangxiang-v5-character.png",
+        "runtimeWebp": "female-sun-shangxiang-v5-character.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-0013a82d-7d16-4d3a-8ecb-ecbd8184a626",
+        "sourceSha256": "04f55389de78d04ed7da1e00009c7e95213c27c50de2af4e7e2410ca72a36996",
+        "runtimeSha256": "760ec0cfaa660662da2d8dc606ce7aa054634102adfebd379043bae5ab3d7d1b",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-0013a82d-7d16-4d3a-8ecb-ecbd8184a626",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-0013a82d-7d16-4d3a-8ecb-ecbd8184a626",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-portrait.png",
+          "referenceSha256": "f108fc727e108f8fd186938840ad4742aa99f392ac6a7f1f45a8e39950ba33e8",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical character art",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-character.png",
+          "sourceSizeBytes": 2894196,
+          "sourceSha256": "04f55389de78d04ed7da1e00009c7e95213c27c50de2af4e7e2410ca72a36996",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-character.webp",
+          "runtimeSizeBytes": 420456,
+          "runtimeSha256": "760ec0cfaa660662da2d8dc606ce7aa054634102adfebd379043bae5ab3d7d1b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      },
+      "splash": {
+        "sourcePng": "female-sun-shangxiang-v5-splash.png",
+        "runtimeWebp": "female-sun-shangxiang-v5-splash.webp",
+        "status": "RECREATED_V5",
+        "promptFile": "art_prompts_v5.json#exec-59b9dd9f-9c5f-4db2-9203-141e682b32b0",
+        "sourceSha256": "30326948aff2023831b55e11fa38e5ac5c25661c9a1b6787a5280f51a2b71e19",
+        "runtimeSha256": "aff931644f7083271a48744b04183840a417403068d9ce2bd7dcf63d31aff34c",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "classification": "RECREATED_V5_SPLASH",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-59b9dd9f-9c5f-4db2-9203-141e682b32b0",
+          "promptVersion": "NL_CHARACTER_ART_V5",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-59b9dd9f-9c5f-4db2-9203-141e682b32b0",
+          "referenceAssetPath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-portrait.png",
+          "referenceSha256": "f108fc727e108f8fd186938840ad4742aa99f392ac6a7f1f45a8e39950ba33e8",
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-splash.png",
+          "sourceSizeBytes": 2764784,
+          "sourceSha256": "30326948aff2023831b55e11fa38e5ac5c25661c9a1b6787a5280f51a2b71e19",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-sun-shangxiang-v5-splash.webp",
+          "runtimeSizeBytes": 369968,
+          "runtimeSha256": "aff931644f7083271a48744b04183840a417403068d9ce2bd7dcf63d31aff34c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true
+        }
+      }
+    }
+  },
+  "uncoveredHeroIds": "V5 art currently produced for cao, guan, liu, lu, sun, wiki-mobile-hero-083, zhang, zhao, zhuge. The remaining original and Wiki roster IDs await individually designed and reviewed assets.",
+  "aliases": {},
+  "lastAssetAudit": {
+    "portraitCount": 6,
+    "splashCount": 3,
+    "characterCount": 4,
+    "expressions": 0,
+    "skins": 0,
+    "v5ValidatedHeroIds": [
+      "cao",
+      "guan",
+      "liu",
+      "lu",
+      "sun",
+      "wiki-mobile-hero-083",
+      "zhang",
+      "zhao",
+      "zhuge"
+    ],
+    "v5PortraitCount": 9,
+    "v5SplashCount": 9,
+    "v5CharacterCount": 9,
+    "auditDate": "2026-11-25",
+    "v5PortraitHeroIds": [
+      "cao",
+      "guan",
+      "liu",
+      "lu",
+      "sun",
+      "wiki-mobile-hero-083",
+      "zhang",
+      "zhao",
+      "zhuge"
+    ],
+    "v5HeroIds": [
+      "cao",
+      "guan",
+      "liu",
+      "lu",
+      "sun",
+      "wiki-mobile-hero-083",
+      "zhang",
+      "zhao",
+      "zhuge"
+    ],
+    "v5SplashHeroIds": [
+      "cao",
+      "guan",
+      "liu",
+      "lu",
+      "sun",
+      "wiki-mobile-hero-083",
+      "zhang",
+      "zhao",
+      "zhuge"
+    ],
+    "v5CharacterHeroIds": [
+      "cao",
+      "guan",
+      "liu",
+      "lu",
+      "sun",
+      "wiki-mobile-hero-083",
+      "zhang",
+      "zhao",
+      "zhuge"
+    ]
+  }
+}

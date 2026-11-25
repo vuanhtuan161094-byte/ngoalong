@@ -130,7 +130,7 @@
      }
      if(pendingLabel)pushPage(pendingLabel,semanticLabel(pendingLabel,'Mục'));
      // City should open on its playable map, not the legacy command-center preface.
-     // Reorder only review pages; never modify canonical game markup or Save v5.
+     // Prioritize playable city pages without changing campaign or Save v5 data.
      if(tab==='city'){
        const mapPage=pages.findIndex(p=>p.root?.querySelector?.('.city-visual'));
        if(mapPage>0)pages.unshift(...pages.splice(mapPage,1));

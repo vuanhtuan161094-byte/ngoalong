@@ -37,6 +37,21 @@ def state(page):
     return page.evaluate("window.__P2_QA__.getGame()")
 
 
+def visible_window(page, selector):
+    elements = page.locator(selector)
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        options = chooser.locator("option")
+        for index in range(options.count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(100)
+            for element_index in range(elements.count()):
+                element = elements.nth(element_index)
+                if element.is_visible():
+                    return element
+    raise AssertionError(f"No visible pane contains {selector}")
+
+
 def run() -> int:
     expected_items = {item["id"] for item in PACK["equipment"]["projectItems"]}
     expected_research = set(PACK["research"]["systemIds"])
@@ -83,27 +98,28 @@ def run() -> int:
             reserve["technology"][tech_id] = 0
         page.evaluate("g=>window.__P2_QA__.setGame(g)", reserve)
         page.locator('.nav[data-tab="barracks"]').click()
-        reserve_without_tech = page.locator("#view").inner_text()
+        reserve_without_tech = visible_window(page, ".small-data").inner_text()
         reserve["technology"]["recruit"] = 4
         page.evaluate("g=>window.__P2_QA__.setGame(g)", reserve)
         page.locator('.nav[data-tab="barracks"]').click()
-        reserve_with_tech = page.locator("#view").inner_text()
+        reserve_with_tech = visible_window(page, ".small-data").inner_text()
         check("recruit research changes the live barracks reserve-capacity display", reserve_without_tech != reserve_with_tech and "1.100" in reserve_with_tech)
+        fixture["lastTick"] = page.evaluate("Date.now() + 86400000")
         page.evaluate("g=>window.__P2_QA__.setGame(g)", fixture)
         before_stats = page.evaluate("id=>window.__NL_R03_QA__.equipmentStats(id)", hero)
         page.locator('.nav[data-tab="equipment"]').click()
-        page.locator('[data-buy="g_sword"]').click()
+        visible_window(page, '[data-buy="g_sword"]').click()
         bought = state(page)
         sword = next((item for item in bought["items"] if item["base"] == "g_sword"), None)
         a3_quote = page.evaluate("window.__NL_A3_QA__.legacyPrice('g_sword')")
         check("shop buys a JSON-defined item at the WEB silver/grain quote and preserves legacy iron", sword is not None and fixture["silver"] - bought["silver"] == a3_quote["silver"] and fixture["grain"] - bought["grain"] == a3_quote["grain"] and bought["iron"] == fixture["iron"])
         if sword:
-            page.locator(f'[data-equip="{sword["uid"]}"]').click()
+            visible_window(page, f'[data-equip="{sword["uid"]}"]').click()
         equipped = state(page)
         after_equip = page.evaluate("id=>window.__NL_R03_QA__.equipmentStats(id)", hero)
         check("equipping a bought weapon updates the actual hero equipment stat lane", after_equip["weaponAtk"] == 29 and after_equip["atk"] == before_stats["atk"] + 29 and equipped["gear"][hero]["weapon"] == sword["uid"])
         if sword:
-            page.locator(f'[data-reinforce="{sword["uid"]}"]').click()
+            visible_window(page, f'[data-reinforce="{sword["uid"]}"]').click()
         reinforced = state(page)
         after_reinforce = page.evaluate("id=>window.__NL_R03_QA__.equipmentStats(id)", hero)
         reinforce_quote = page.evaluate("window.__NL_A3_QA__.reinforceCost(1)")
@@ -112,26 +128,28 @@ def run() -> int:
         before_unit = page.evaluate("id=>window.__NL_R03_QA__.unit(id,'p',2,1)", hero)
         page.locator('.nav[data-tab="tech"]').click()
         before_first_research = state(page)
-        page.locator('[data-research="arms"]').click()
+        visible_window(page, '[data-research="arms"]').click()
         first_research = state(page)
         check("first research purchase uses the WEB silver cost and preserves legacy iron and prestige", first_research["technology"]["arms"] == 1 and before_first_research["silver"] - first_research["silver"] == 550 and before_first_research["iron"] == first_research["iron"] and before_first_research["prestige"] == first_research["prestige"] and first_research["techSpent"] == before_first_research["techSpent"])
         after_first_unit = page.evaluate("id=>window.__NL_R03_QA__.unit(id,'p',2,1)", hero)
         check("research definitions drive real physical and charge attack calculations", after_first_unit["atk"] > before_unit["atk"] and after_first_unit["catk"] > before_unit["catk"] and page.evaluate("window.__NL_R03_QA__.techValue('atkMultiplierBonus')") == 0.04)
         before_second = state(page)
-        page.locator('[data-research="arms"]').click()
+        visible_window(page, '[data-research="arms"]').click()
         second_research = state(page)
         check("next-level research applies its WEB cost formula without charging legacy iron or prestige", second_research["technology"]["arms"] == 2 and before_second["silver"] - second_research["silver"] == 2200 and before_second["iron"] == second_research["iron"] and before_second["prestige"] == second_research["prestige"])
         check("all research effect targets resolve from catalog definitions", all(isinstance(page.evaluate("target=>window.__NL_R03_QA__.techValue(target)", target), (int, float)) for target in {effect["target"] for tech in catalog["research"] for effect in tech["effects"]}))
-        check("research UI derives every level cap from its catalog", page.locator('[data-research-card]').count() == len(expected_research) and page.locator('[data-research-card="arms"]').inner_text().find("Cấp 2/10") >= 0)
+        arms_card = visible_window(page, '[data-research-card="arms"]')
+        check("research UI derives every level cap from its catalog", page.locator('[data-research-card]').count() == len(expected_research) and arms_card.inner_text().find("Cấp 2/10") >= 0)
 
         page.locator('.nav[data-tab="heroes"]').click()
         training_before = state(page)
         current_hero = training_before["hero"][hero]
-        page.locator(f'[data-train="{hero}"]').click()
+        visible_window(page, f'[data-train="{hero}"]').click()
         trained = state(page)
         check("hero training uses data-driven cost, XP threshold and academy bonus", trained["silver"] == training_before["silver"] - PACK["heroes"]["training"]["silverCost"] and trained["hero"][hero]["level"] == current_hero["level"] + 1 and trained["hero"][hero]["xp"] == current_hero["xp"] + PACK["heroes"]["training"]["baseXp"] + training_before["buildings"]["academy"] * PACK["heroes"]["training"]["academyXpPerLevel"] - current_hero["level"] * PACK["heroes"]["training"]["xpRequiredPerHeroLevel"])
         check("training, equipment and research retain the unchanged v5 Save key and schema", trained["version"] == 5 and trained["gear"][hero]["weapon"] == sword["uid"] and trained["technology"]["arms"] == 2)
 
+        page.evaluate("()=>{const q=window.__P2_QA__,g=q.getGame();g.lastTick=Date.now();q.setGame(g)}")
         serialized = page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
         page.close()
         reloaded = open_page(browser, stored=serialized)
@@ -147,10 +165,12 @@ def run() -> int:
 
         mobile = open_page(browser, 390, 844, stored=serialized)
         mobile.locator('.nav[data-tab="equipment"]').click()
-        check("mobile equipment catalog is interactive without horizontal overflow", mobile.locator('[data-buy]').count() == len(expected_items) and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+        buy_button = visible_window(mobile, '[data-buy]')
+        check("mobile equipment catalog is interactive without horizontal overflow", mobile.locator('[data-buy]').count() == len(expected_items) and buy_button.is_visible() and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
         mobile.screenshot(path=str(ROOT / "qa" / "nl-r03-progression-mobile.png"), full_page=False)
         mobile.locator('.nav[data-tab="tech"]').click()
-        check("mobile research catalog fits and keeps live controls", mobile.locator('[data-research-card]').count() == len(expected_research) and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
+        research_card = visible_window(mobile, '[data-research-card]')
+        check("mobile research catalog fits and keeps live controls", mobile.locator('[data-research-card]').count() == len(expected_research) and research_card.is_visible() and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
         page = open_page(browser)
         page.screenshot(path=str(ROOT / "qa" / "nl-r03-progression-desktop.png"), full_page=False)
         check("Chromium captured desktop view and reported no page errors", not errors)

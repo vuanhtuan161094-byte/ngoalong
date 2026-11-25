@@ -9,6 +9,19 @@ HTML=HTML.replace('<script>',STUB+'<script>',1)
 checks=[]
 def check(name,condition):
  checks.append((name,bool(condition)));print(('PASS' if condition else 'FAIL')+' '+name)
+def visible_window(page,selector):
+ elements=page.locator(selector);chooser=page.locator('#nl-screen-select')
+ for i in range(elements.count()):
+  element=elements.nth(i)
+  if element.is_visible():return element
+ if chooser.count():
+  options=chooser.locator('option')
+  for i in range(options.count()):
+   chooser.select_option(str(i));page.wait_for_timeout(80)
+   for j in range(elements.count()):
+    element=elements.nth(j)
+    if element.is_visible():return element
+ raise AssertionError('No visible window contains '+selector)
 def main():
  with sync_playwright() as p:
   browser=p.chromium.launch(executable_path=('/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None),headless=True,args=['--no-sandbox'])
@@ -41,13 +54,13 @@ def main():
   dots=[i for i,e in enumerate(b['events']) if e['mode']=='dot']
   check('damage over time produces first-class timeline event',len(dots)>0)
   page.evaluate('window.__P2_QA__.skipBattle()')
-  page.locator('[data-replay-last]').click()
+  visible_window(page,'[data-replay-last]').click()
   check('replay seek control visibly rendered',page.locator('#replay-slider').count()==1)
   if dots:
    page.evaluate('''n=>{const el=document.querySelector('#replay-slider');el.value=String(n);el.dispatchEvent(new Event('input',{bubbles:true}));}''',dots[0]+1)
    rb=page.evaluate('window.__P2_QA__.getBattle()')
    check('DOT event seek reconstructs saved state',rb['replayIndex']==dots[0]+1 and rb['p']==rb['report']['events'][dots[0]]['state']['p'] and rb['e']==rb['report']['events'][dots[0]]['state']['e'])
-  page.locator('[data-replay-reset]').click();page.locator('[data-replay-toggle]').click();page.wait_for_timeout(1300)
+  visible_window(page,'[data-replay-reset]').click();visible_window(page,'[data-replay-toggle]').click();page.wait_for_timeout(1300)
   check('replay play mode advances automatically',page.evaluate('window.__P2_QA__.getBattle().replayIndex>=1'))
   check('replay status stays read-only and XP single-accounted',len(page.evaluate('window.__P2_QA__.getGame().battleReports'))==1)
   check('advanced tests: no JavaScript errors',not errors)

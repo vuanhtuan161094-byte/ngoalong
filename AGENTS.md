@@ -44,7 +44,7 @@
 ## QA and release workflow
 
 - Keep the focused job and all historic regression gates in `.github/workflows/ngoalong-qa.yml`. Code/data/art/QA changes should run the focused quick suite. Add `[full-ci]` to an authorized task-branch commit when a full integration milestone is ready; verify Actions against that exact SHA.
-- `.github/workflows/nl-web-review-pages.yml` captures 28 desktop/mobile UI screens and art/runtime checks. A feature-branch run builds evidence only. Its deployment job is restricted to the default branch; do not enable Pages or publish a site from this task branch.
+- The canonical item builder embeds the production fixed-window UI V2, so the primary offline `index.html` fits a single viewport and pages through semantic screens. `.github/workflows/nl-web-review-pages.yml` adds review art and captures 30 desktop/mobile UI screens (15 screens at each viewport). A feature-branch run builds evidence only. Its deployment job is restricted to the default branch; do not enable Pages or publish a site from this task branch.
 - Before handoff, report exact commit SHA, focused and full workflow outcomes, playable artifact link/hash when available, screenshots, failures corrected and remaining gates. Never infer release readiness from a green subset.
 - User-authorized work permits commits, push to the requested feature branch and a **draft** pull request. Do not merge it. If current exact-SHA checks are still running, say so in the handoff and update the record after completion.
 

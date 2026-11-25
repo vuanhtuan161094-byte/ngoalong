@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "NL_HERO_SYSTEMS_V1",
+  "edition": "NGOALONG_WEB_GAMEPLAY_WITH_MOBILE_REFERENCE",
+  "provenancePolicy": {
+    "verifiedSources": "Current VNG Mobile/H5 Wiki thresholds and listed material names only.",
+    "projectGameplay": "All added costs, quantities, unlock-by-campaign rules, stat effects and formulas are SIMULATED.",
+    "webParity": "UNKNOWN",
+    "neverPromoteSimulationToVerified": true
+  },
+  "systems": [
+    {"id":"hero","label":"Võ Tướng","levelSource":"game.hero[id].level","maxLevel":40,"unlock":{"campaignClears":0},"effect":"Historical identity, faction, skill and troop remain attached to the general.","classification":"SIMULATED_PROJECT_ALPHA"},
+    {"id":"training","label":"Huấn Luyện","levelSource":"game.hero[id].level","maxLevel":40,"unlock":{"campaignClears":0},"formula":{"silver":700,"xp":"floor((95 + academyLevel * 12) * (1 + trainingBonus))","nextLevelXp":"heroLevel * 90"},"effect":"Raises hero level and native combat stats.","classification":"SIMULATED_PROJECT_ALPHA"},
+    {"id":"troops","label":"Binh Chủng","levelSource":"assigned troop tier / existing branch","maxLevel":4,"unlock":{"campaignClears":3},"database":{"projectTroopIds":25,"projectEvolutionBranches":18,"classicWebTroops":55,"classicWebFormations":10},"effect":"Changes troop identity, raster unit family, native troop coefficients and skill pattern through existing barracks runtime.","classification":"MIXED_REFERENCE_AND_SIMULATED"},
+    {"id":"commander","label":"Thống Soái","levelSource":"game.heroDevelopment.heroes[id].commanderLevel","maxLevel":5,"unlock":{"campaignClears":6},"formula":{"silver":"1000 * nextLevel","iron":"80 * nextLevel","commandManual":"nextLevel"},"effectPerLevel":{"attackPct":0.012,"defensePct":0.012,"speedFlat":1},"classification":"SIMULATED"},
+    {"id":"specialWeapon","label":"Vũ Khí Đặc Biệt","levelSource":"game.heroDevelopment.heroes[id].weaponLevel","maxLevel":6,"unlock":{"campaignClears":8},"formula":{"silver":"1300 * nextLevel","iron":"95 * nextLevel","weaponCore":"nextLevel"},"effectPerLevel":{"attackPct":0.025,"tacticAttackPct":0.025,"magicAttackPct":0.025},"classification":"SIMULATED"},
+    {"id":"inheritance","label":"Ấn Kế Thừa","levelSource":"game.heroDevelopment.heroes[id].inheritanceLevel","maxLevel":5,"unlock":{"campaignClears":12},"formula":{"silver":"1500 * nextLevel","gems":"4 * nextLevel","inheritanceSeal":"nextLevel"},"effectPerLevel":{"hpPct":0.035,"defensePct":0.015},"classification":"SIMULATED"},
+    {"id":"destiny","label":"Mệnh Cách","levelSource":"game.heroDevelopment.heroes[id].destinyLevel","maxLevel":5,"unlock":{"campaignClears":24},"verifiedMobileGate":{"mainCityLevel":400,"source":"wiki_progression_rules_v1.json#DESTINY_SYSTEM"},"options":[{"id":"war","name":"Thiên Uy","effect":"+2.8% Công mỗi cấp"},{"id":"guard","name":"Long Thủ","effect":"+4% HP và +1.5% Thủ mỗi cấp"},{"id":"tactic","name":"Tinh Cơ","effect":"+3% Mưu Công và +2 Tốc mỗi cấp"}],"formula":{"silver":"3000 * nextLevel","merit":"50 * nextLevel","temperingStone":"2 * nextLevel","destinyJade":"nextLevel","blank":"1"},"oneEquipped":true,"classification":"SIMULATED_PROJECT_ROUTE_USING_VERIFIED_MATERIAL_NAMES"},
+    {"id":"equipment","label":"Trang Bị","levelSource":"sum of equipped equipment reinforcement levels","maxLevel":84,"unlock":{"campaignClears":0},"database":{"sourceEquipment":392,"playableEquipment":411,"slots":7},"effect":"Uses existing inventory, equip, unequip and reinforcement transactions.","classification":"MIXED_REFERENCE_AND_SIMULATED"},
+    {"id":"formation","label":"Trận Pháp","levelSource":"formation and academy level","maxLevel":12,"unlock":{"campaignClears":0},"database":{"classicWebFormations":10,"projectTacticalPresets":24},"effect":"Uses existing formation board and native combat modifiers.","classification":"MIXED_REFERENCE_AND_SIMULATED"},
+    {"id":"rewards","label":"Thưởng","levelSource":"first-clear campaign stages","maxLevel":28,"unlock":{"campaignClears":0},"effect":"Existing one-time stage receipts and task rewards also grant this module's upgrade materials once.","classification":"SIMULATED_PROJECT_ALPHA"},
+    {"id":"recruit","label":"Chiêu Mộ","levelSource":"owned generals / recruitable roster","maxLevel":221,"unlock":{"campaignClears":0},"database":{"originalGenerals":14,"projectStageGatedGenerals":207},"effect":"Uses existing stage, renown and tavern recruitment routes with exactly-once receipts.","classification":"MIXED_REFERENCE_AND_SIMULATED"},
+    {"id":"awakening","label":"Giác Ngộ","levelSource":"Orange and Gold awakening stages","maxLevel":2,"unlock":{"campaignClears":16},"verifiedMobileGates":[{"stage":"ORANGE","mainCityLevel":300,"source":"wiki_progression_rules_v1.json#ORANGE_AWAKENING"},{"stage":"GOLD","mainCityLevel":380,"source":"wiki_progression_rules_v1.json#GOLD_AWAKENING"}],"goldMaterialNames":["Quỳnh Tương","Xích Quả","Hoàng Trung Lý"],"projectRoute":{"orangeCampaignClears":16,"goldCampaignClears":22,"orangeHeroLevel":20,"goldHeroLevel":30},"formula":{"orange":{"silver":6000,"merit":120,"gems":10,"orangeEssence":1},"gold":{"silver":12000,"merit":240,"gems":20,"quynhTuong":1,"xichQua":1,"hoangTrungLy":1}},"effect":{"orange":{"attackPct":0.06,"hpPct":0.05},"gold":{"attackPct":0.08,"defensePct":0.08,"magicAttackPct":0.08}},"classification":"SIMULATED_PROJECT_ROUTE_WITH_VERIFIED_MOBILE_REFERENCE_FACTS"}
+  ],
+  "materialCatalog": {
+    "commandManual":{"name":"Binh Thư Thống Soái","classification":"SIMULATED"},
+    "weaponCore":{"name":"Tinh Thiết Đặc Vũ","classification":"SIMULATED"},
+    "inheritanceSeal":{"name":"Ấn Kế Thừa","classification":"SIMULATED"},
+    "orangeEssence":{"name":"Tinh Phách Giác Ngộ","classification":"SIMULATED"},
+    "quynhTuong":{"name":"Quỳnh Tương","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"},
+    "xichQua":{"name":"Xích Quả","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"},
+    "hoangTrungLy":{"name":"Hoàng Trung Lý","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"},
+    "temperingStone":{"name":"Đá Tôi Luyện","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"},
+    "destinyJade":{"name":"Mệnh Hồn Luyện Ngọc","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"},
+    "blank":{"name":"Phôi","classification":"VERIFIED_NAME_SIMULATED_QUANTITY"}
+  },
+  "firstClearMaterialRewards": {
+    "2":{"commandManual":1},
+    "4":{"commandManual":1},
+    "6":{"commandManual":2},
+    "8":{"weaponCore":2},
+    "12":{"inheritanceSeal":2},
+    "16":{"orangeEssence":1},
+    "17":{"orangeEssence":1},
+    "18":{"orangeEssence":1},
+    "19":{"orangeEssence":1},
+    "20":{"orangeEssence":1},
+    "21":{"orangeEssence":1},
+    "22":{"quynhTuong":1,"xichQua":1,"hoangTrungLy":1},
+    "23":{"quynhTuong":1,"xichQua":1,"hoangTrungLy":1},
+    "24":{"temperingStone":4,"destinyJade":2,"blank":2},
+    "25":{"temperingStone":2,"destinyJade":1,"blank":1},
+    "26":{"temperingStone":2,"destinyJade":1,"blank":1},
+    "27":{"temperingStone":2,"destinyJade":1,"blank":1},
+    "28":{"temperingStone":2,"destinyJade":1,"blank":1}
+  },
+  "sourceNotes": [
+    {"id":"VNG_ORANGE_AWAKENING","url":"https://ngoalong.vnggames.com/su-kien-2022/pbm-hung-ba-thien-ha/he-thong-tuong-cam-13424.html","fact":"Orange system opens at main-city level 300; this does not prove per-hero eligibility or costs."},
+    {"id":"VNG_GOLD_AND_DESTINY","url":"https://ngoalong.vnggames.com/su-kien-2022/pbm-than-binh-pha-tran/he-thong-tuong-vang-15536.html","fact":"Gold system at main-city level 380, Destiny at 400; listed Gold material names and Destiny material names/options, exact costs remain unknown."},
+    {"id":"PROJECT_SIMULATION","url":"data/ngoalong/modules/heroes/wiki_progression_rules_v1.json","fact":"Campaign gates, currencies, material quantities, per-hero requirements and combat coefficients in this implementation are project simulations."}
+  ]
+}

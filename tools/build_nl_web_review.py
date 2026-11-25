@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Add UI window V2 to the canonical Ngọa Long HTML, preserving gameplay/Save.
+"""Add review-only D4 art to the canonical fixed-window Ngọa Long HTML.
 
-The original build chain remains the single source of gameplay. This tool adds
-an isolated, idempotent review-only UI overlay after canonical build, never
-rewrites gameplay source, and fails closed if the input shape changes.
+The production fixed-window UI is embedded by the canonical game builder.
+This tool adds original artwork used for browser review screenshots and keeps
+those review decorations out of the primary playable artifact.
 """
 from __future__ import annotations
 import argparse
@@ -14,10 +14,10 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CSS = HERE / 'nl_review_window_v2.css'
-JS = HERE / 'nl_review_window_v2.js'
-STYLE_TAG = '<style id="nl-fixed-window-style">'
-SCRIPT_TAG = '<script id="nl-fixed-window-review-script">'
+STYLE_TAG = '<style id="nl-review-art-d-style">'
+SCRIPT_TAG = '<script id="nl-review-art-d-script">'
+FIXED_STYLE_TAG = '<style id="nl-fixed-window-v2-style">'
+FIXED_SCRIPT_TAG = '<script id="nl-fixed-window-v2-script">'
 
 
 def build(html: Path) -> str:
@@ -27,9 +27,11 @@ def build(html: Path) -> str:
     raw = html.read_text(encoding='utf-8')
     if raw.count('</head>') != 1 or raw.count('</body>') != 1:
         raise ValueError('Expected a normal single-document HTML entrypoint')
-    if not all(x in raw for x in ('id="app"', 'id="view"')):
-        raise ValueError('Missing expected app/view anchors; review source change')
-    css = CSS.read_text(encoding='utf-8') + '\n' + (HERE / 'nl_art_d.css').read_text(encoding='utf-8')
+    if not all(x in raw for x in ('id="app"', 'id="view"', FIXED_STYLE_TAG, FIXED_SCRIPT_TAG)):
+        raise ValueError('Expected canonical fixed-window UI; review source change')
+    if raw.count(FIXED_STYLE_TAG) != 1 or raw.count(FIXED_SCRIPT_TAG) != 1:
+        raise ValueError('Canonical fixed-window UI must appear exactly once')
+    css = (HERE / 'nl_art_d.css').read_text(encoding='utf-8')
     # Original painted scene assets; shared once per offline document.
     def scene_uri(path):
         raw = path.read_bytes()
@@ -59,18 +61,20 @@ def build(html: Path) -> str:
             raise ValueError(f'{portrait_manifest.get("displayName", slug)} portrait failed manifest/PNG integrity')
         d4['heroPortraits'][expected_id] = 'data:image/png;base64,' + base64.b64encode(portrait).decode('ascii')
         d4['heroPortraitTitles'][expected_id] = title
-    js = JS.read_text(encoding='utf-8') + '\nwindow.__NL_ART_D4_UI__=' + json.dumps(d4,separators=(',',':')) + ';\n' + (HERE / 'nl_art_d.js').read_text(encoding='utf-8')
-    if 'NL-WINDOW-UI-V2' not in js or 'NL FIXED WINDOW V2' not in css:
-        raise ValueError('UI V2 source markers missing')
-    # Idempotent; do not silently combine the obsolete V1 overlay with V2.
+    js = 'window.__NL_ART_D4_UI__=' + json.dumps(d4,separators=(',',':')) + ';\n' + (HERE / 'nl_art_d.js').read_text(encoding='utf-8')
+    if 'NL-ART-D-V1' not in js or 'NL ART D V1' not in css:
+        raise ValueError('Review art source markers missing')
+    # Idempotent; do not silently combine obsolete window markup with V2.
     if 'NL-WINDOW-UI-20261121:' in raw:
-        raise ValueError('Obsolete V1 overlay detected; rebuild canonical HTML before V2')
-    raw = re.sub(r'<style id="nl-fixed-window-style">.*?</style>\s*', '', raw, flags=re.S)
-    raw = re.sub(r'<script id="nl-fixed-window-review-script">.*?</script>\s*', '', raw, flags=re.S)
+        raise ValueError('Obsolete V1 overlay detected; rebuild canonical HTML first')
+    if raw.count(STYLE_TAG) > 1 or raw.count(SCRIPT_TAG) > 1:
+        raise ValueError('Duplicate review art bundle')
+    raw = re.sub(r'<style id="nl-review-art-d-style">.*?</style>\s*', '', raw, flags=re.S)
+    raw = re.sub(r'<script id="nl-review-art-d-script">.*?</script>\s*', '', raw, flags=re.S)
     raw = raw.replace('</head>', f'{STYLE_TAG}\n{css}</style>\n</head>', 1)
     raw = raw.replace('</body>', f'{SCRIPT_TAG}\n{js}</script>\n</body>', 1)
     if raw.count(STYLE_TAG) != 1 or raw.count(SCRIPT_TAG) != 1:
-        raise AssertionError('Failed to insert exactly one review overlay')
+        raise AssertionError('Failed to insert exactly one review art bundle')
     html.write_text(raw,encoding='utf-8')
     return hashlib.sha256(html.read_bytes()).hexdigest()
 
@@ -80,7 +84,7 @@ def main() -> None:
     p.add_argument('--html',type=Path,default=Path('index.html'))
     args = p.parse_args()
     sha = build(args.html)
-    print('NL UI V2 review generated:', args.html, sha)
+    print('NL D4 art review generated:', args.html, sha)
 
 
 if __name__ == '__main__':

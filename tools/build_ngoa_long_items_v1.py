@@ -196,21 +196,66 @@ def payload() -> str:
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")
-    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), city_art.rstrip(), audio.rstrip(), END])
+    # V4 heroine art is bound to stable gameplay IDs. Masters remain as source
+    # PNGs; only optimized local WebP data URLs enter the offline game bundle.
+    hero_data = json.loads((ROOT / "data/ngoalong/modules/heroes/hero_systems_v1.json").read_text(encoding="utf-8"))
+    art_manifest = json.loads((ROOT / "assets/ngoalong/nl_v1/portraits/hero_art_v5.json").read_text(encoding="utf-8"))
+    if hero_data.get("schemaVersion") != 1 or len(hero_data.get("systems", [])) != 12:
+        raise ValueError("Hero development database must contain all twelve systems")
+    if art_manifest.get("schemaVersion") != 1 or not art_manifest.get("offlineEmbedded"):
+        raise ValueError("Hero art catalogue must be versioned and offline embedded")
+    portrait_dir = ROOT / "assets/ngoalong/nl_v1/portraits"
+    hero_art = {}
+    art_kinds = ("portrait", "splash", "character")
+    for hero_id, character in art_manifest.get("heroes", {}).items():
+        compiled = {}
+        for kind in art_kinds:
+            asset = character.get(kind)
+            if not asset:
+                continue
+            source = portrait_dir / asset["sourcePng"]
+            runtime = portrait_dir / asset["runtimeWebp"]
+            source_bytes, runtime_bytes = source.read_bytes(), runtime.read_bytes()
+            if not source_bytes.startswith(b"\x89PNG\r\n\x1a\n") or runtime_bytes[:4] != b"RIFF" or runtime_bytes[8:12] != b"WEBP":
+                raise ValueError(f"Invalid hero artwork file: {hero_id}/{kind}")
+            expected_source = asset.get("sourceSha256")
+            expected_runtime = asset.get("runtimeSha256")
+            if expected_source and hashlib.sha256(source_bytes).hexdigest() != expected_source:
+                raise ValueError(f"Hero master changed without manifest update: {hero_id}/{kind}")
+            if expected_runtime and hashlib.sha256(runtime_bytes).hexdigest() != expected_runtime:
+                raise ValueError(f"Hero runtime image changed without manifest update: {hero_id}/{kind}")
+            compiled[kind] = "data:image/webp;base64," + b64encode(runtime_bytes).decode("ascii")
+        if compiled:
+            hero_art[hero_id] = compiled
+    for alias, target in art_manifest.get("aliases", {}).items():
+        if target in hero_art:
+            hero_art[alias] = hero_art[target]
+    hero_systems = (TOOLS / "nl_hero_systems_v1.js").read_text(encoding="utf-8")
+    hero_style = (TOOLS / "nl_hero_systems_v1.css").read_text(encoding="utf-8")
+    placeholders = ("__NL_HERO_SYSTEM_CONFIG__", "__NL_HERO_ART__", "__NL_HERO_SYSTEM_STYLE__")
+    if any(hero_systems.count(marker) != 1 for marker in placeholders) or "</script" in hero_systems.lower() or "</style" in hero_style.lower():
+        raise ValueError("Invalid hero systems source or art/style placeholder")
+    hero_systems = (hero_systems.replace(placeholders[0], js_json(hero_data))
+                    .replace(placeholders[1], js_json(hero_art))
+                    .replace(placeholders[2], js_json(hero_style)))
+    return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), city_art.rstrip(), audio.rstrip(), hero_systems.rstrip(), END])
 
 
 def render(html: str, insertion: str) -> str:
     from nl_content_c_native import apply_c_native
+    from nl_fixed_window_v2 import apply_fixed_window
     html = apply_c_native(html)
     if html.count(BOOT) != 1:
         raise ValueError(f"Canonical bootstrap marker mismatch: {html.count(BOOT)}")
     if html.count(BEGIN) != html.count(END) or html.count(BEGIN) > 1:
         raise ValueError("Unbalanced item block")
     if BEGIN not in html:
-        return html.replace(BOOT, insertion + "\n" + BOOT, 1)
-    start = html.index(BEGIN)
-    stop = html.index(END, start) + len(END)
-    return html[:start] + insertion + html[stop:]
+        html = html.replace(BOOT, insertion + "\n" + BOOT, 1)
+    else:
+        start = html.index(BEGIN)
+        stop = html.index(END, start) + len(END)
+        html = html[:start] + insertion + html[stop:]
+    return apply_fixed_window(html)
 
 
 def main() -> None:

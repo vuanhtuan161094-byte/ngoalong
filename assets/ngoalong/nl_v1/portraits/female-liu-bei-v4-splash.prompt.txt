@@ -1,0 +1,7 @@
+V4 production prompt record for Lưu Bị — splash.
+Record status: reconstructed from the generation brief because the original tool prompt text was not retained in the checkpoint; this is not represented as a verbatim prompt.
+Image provider: OpenAI ImageGen. Output ID: exec-13769636-2a0e-4642-adc0-96e66473d617.
+Prompt version: NL_FEMALE_HERO_ART_V4. Created during task session: 2026-11-25 (provider timestamp unavailable). Target/actual resolution: 1672x941.
+Cost: unknown; no estimate was returned.
+
+A mature adult Liu Bei (age 33+), historically recognizable through Shu green and ivory palette, phoenix hair ornament, twin ceremonial swords, and benevolent yet quietly seductive ruler identity. Luxury Oriental Fantasy, premium semi-realistic fashion editorial. She reclines naturally across a carved palace chaise in a private blossom court, relaxed asymmetrical pose, elegant legs and confident gaze; ivory silk corset gown, soft green brocade robe slipping from one shoulder, tasteful opaque coverage, high slit and subtle lace stockings. Sunset light through flowering branches, elegant palace depth, character placed right with scenic negative space left, no text, UI, watermark or logo. Horizontal 16:9 splash illustration.

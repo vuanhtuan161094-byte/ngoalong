@@ -1,0 +1,7 @@
+V4 production prompt record for Quan Vũ — splash.
+Record status: reconstructed from the generation brief because the original tool prompt text was not retained in the checkpoint; this is not represented as a verbatim prompt.
+Image provider: OpenAI ImageGen. Output ID: exec-39f2bc2b-7ea2-4716-b549-b5ef491b361c.
+Prompt version: NL_FEMALE_HERO_ART_V4. Created during task session: 2026-11-25 (provider timestamp unavailable). Target/actual resolution: 1672x941.
+Cost: unknown; no estimate was returned.
+
+A mature adult woman Guan Yu (age 35+), historically recognizable through deep jade-green palette, long dark braid, gold dragon hair ornament, red tassels, and the Green Dragon Crescent Blade. Luxury Oriental Fantasy, premium semi-realistic fashion editorial. Relaxed asymmetrical lounge on a carved lakeside palace divan beside lotus water under moonlight; one hand at her cheek, elegant crossed legs, distinctive guandao beside her, confident sensual gaze, natural balanced face. Emerald silk and lace corset gown with ornate dragon detail, sheer robe slipped at the shoulder, high slit and opaque lining, tasteful fashion-boudoir glamour. Character on the right and tranquil moonlit lotus scenery on the left, no text, UI, watermark or logo. Horizontal 16:9 splash illustration.
