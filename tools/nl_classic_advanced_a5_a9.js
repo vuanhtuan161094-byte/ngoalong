@@ -198,7 +198,7 @@ function achievement(id){
  s.claimed.push(id);gain(delta);return done(s,'achievement:'+id,delta);
 }
 // A9: consume actual built facility levels, not duplicate city production/timers.
-// Naval is offline cargo logistics only, not a claim of naval combat parity.
+// Cargo logistics; native naval battles are delegated to Content C below.
 function buildShip(){
  const s=state(),cap=Math.min(10,lv('nl_city_dock'));
  if(s.naval.ships>=cap||lv('nl_city_naval_port')<1||!pay({silver:2500,grain:600}))return false;
@@ -253,7 +253,7 @@ function claimTreasureLoot(){
  return done(settled,'treasure-loot-claim:'+pending.receipt);
 }
 let tabA='office',page=0,hero='';
-const tabs=[['office','Quan chức'],['treasure','Thám Bảo'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['family','Dinh Phủ'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải vận'],['facility','Công trình']];
+const tabs=[['office','Quan chức'],['treasure','Thám Bảo'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['family','Dinh Phủ'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải chiến'],['facility','Công trình']];
 const btn=(action,id,label,disabled=false)=>'<button class="gold-button" data-nla59-action="'+action+'" data-nla59-id="'+esc(id)+'" '+(disabled?'disabled':'')+'>'+esc(label)+'</button>';
 const row=(title,desc,actions='')=>'<div class="nla59-row"><div><b>'+esc(title)+'</b><small>'+esc(desc)+'</small></div><div>'+actions+'</div></div>';
 const countdown=j=>Date.now()>=j.until?'Có thể nhận':Math.ceil((j.until-Date.now())/60000)+' phút';
@@ -307,6 +307,7 @@ function panel(){
  }else if(tabA==='naval'){
   b=row('Đóng tàu hậu cần','Tàu '+s.naval.ships+'/'+Math.min(10,lv('nl_city_dock'))+' · cần Hải Cảng, Bến Thuyền',btn('ship','','Đóng tàu',locked||lv('nl_city_naval_port')<1||s.naval.ships>=Math.min(10,lv('nl_city_dock'))))+
   (s.naval.job?row('Vận tải biển',countdown(s.naval.job),btn('sea-collect','','Nhận',locked||Date.now()<s.naval.job.until)):row('Vận tải biển','600 Bạc + 400 Lương · cần Cảng Hàng Hóa',btn('sea','','Xuất hải',locked||!s.naval.ships||lv('nl_city_cargo_port')<1||s.daily.ship>=2)));
+  if(typeof nlContentCNaval!=='undefined'&&nlContentCNaval){const routes=nlContentCNaval.routes();b+='<h4>Hải chiến PvE · '+routes[0].attempts+'/2 lượt hôm nay</h4>'+routes.map(q=>row(q.name,'Ải '+q.gate+' · Hải Cảng '+q.port+' · '+q.ships+' tàu · Thao Trường Thủy Quân 1 · '+q.reward.silver+' Bạc / '+q.reward.merit+' Chiến công',btn('naval-fight',q.id,q.first?'Khiêu chiến':'Tái chiến',locked||!q.ready))).join('')+'<p class="tiny">Hải chiến offline, thuyền nguồn Mobile, trận pháp và phần thưởng mô phỏng. Dùng đội hình P2 hiện hữu; mỹ thuật tàu chưa sản xuất.</p>';}
  }else{
   b=pages([['nl_city_drillground','Thao Trường','XP huấn luyện'],['nl_city_manor','Dinh Phủ','XP huấn luyện'],['nl_city_state_office','Quốc Chính','Uy danh khi đầu tư'],['nl_city_bank','Tiền Trang','Lợi nhuận ủy phái'],['nl_city_trade_society','Thương Xã','Lợi nhuận ủy phái'],['nl_city_dock','Bến Thuyền','Số tàu vận tải'],['nl_city_cargo_port','Cảng Hàng Hóa','Thu nhập hải vận'],['nl_city_naval_drill','Thao Trường Thủy Quân','Chiến công hải vận'],['nl_city_navy_warehouse','Kho Hải Quân','Sức chứa hải vận'],['nl_city_lighthouse','Hải Đăng','Thời gian vận tải'],['nl_city_workshop','Công Tượng Phường','Giảm Bạc khi cường hóa'],['nl_city_engraving','Khắc Văn','Giảm Bạc khi cường hóa'],['nl_city_warehouse','Kho','+5 ô trang bị mỗi cấp']],x=>row(x[1],'Cấp '+lv(x[0])+' · '+x[2]));
  }
@@ -319,7 +320,7 @@ document.addEventListener('click',e=>{
  const k=b.dataset.nla59Action,id=b.dataset.nla59Id;
  if(k==='page'){page=Math.max(0,page+(id==='next'?1:-1));render();return;}
  if(k==='rebirth'){if(window.confirm('Chuyển sinh đưa tướng về cấp 1, tốn 2.000 Bạc và 500 Chiến công. Xác nhận?')&&!nlClassicA4Rebirth(id))toast('Chưa đủ điều kiện.');return;}
- const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,treasure:startTreasure,'treasure-collect':collectTreasure,'treasure-loot':claimTreasureLoot,join:joinGuild,donate,territory:territoryIncome,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea};
+ const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,treasure:startTreasure,'treasure-collect':collectTreasure,'treasure-loot':claimTreasureLoot,join:joinGuild,donate,territory:territoryIncome,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea,'naval-fight':id=>typeof nlContentCNaval!=='undefined'&&nlContentCNaval?.start(id)};
  if(typeof actions[k]==='function'&&!actions[k](id))toast('Chưa đủ điều kiện hoặc tài nguyên.');
 });
 document.addEventListener('change',e=>{if(e.target.matches?.('[data-nla59-hero]')&&owned(e.target.value)){hero=e.target.value;render();}});
