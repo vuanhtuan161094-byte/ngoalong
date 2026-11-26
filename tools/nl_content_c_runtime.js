@@ -415,6 +415,8 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_SOURCE_ALL_DEFENSE_UP_STATUS='mobile-source-all-defense-up',MOBILE_SOURCE_LAST_STAND_DEFENSE_STATUS='mobile-source-last-stand-defense',
  MOBILE_SOURCE_MORALE_IMMUNITY='mobile-source-morale-immunity',MOBILE_SOURCE_HEAL_RECEIVED_UP='mobile-source-heal-received-up',
  MOBILE_SOURCE_SILENCE_STATUS='mobile-source-skill-silence',
+ MOBILE_SOURCE_BOUNTY_MARK='mobile-source-bounty-mark',MOBILE_SOURCE_INSIGHT='mobile-source-insight',
+ MOBILE_SOURCE_CONFUSION='mobile-source-confusion',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
@@ -470,6 +472,12 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'SOURCE_PERCENT_WITH_DERIVED_HEAL_RECEIVED_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'74'}},
  [MOBILE_SOURCE_SILENCE_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'184',behavior:'blocks skill actions while active'}},
+ [MOBILE_SOURCE_BOUNTY_MARK]:{duration:2,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_MECHANIC_WITH_SOURCE_EXACT_DURATION_AND_TARGET_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'54',behavior:'marks target for effect 55; effect 54 alone does not change damage'}},
+ [MOBILE_SOURCE_INSIGHT]:{duration:2,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_MECHANIC_WITH_SIMULATED_DAMAGE_INTERPRETATION',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'55',behavior:'modifies damage against effect-54 targets; raw magnitude and duration remain attached'}},
+ [MOBILE_SOURCE_CONFUSION]:{duration:2,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_MECHANIC_WITH_SIMULATED_NORMAL_ATTACK_REDIRECT',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'51',behavior:'forces a normal attack against a random living ally while preserving stored morale'}},
  [MOBILE_PHYSICAL_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_MAGIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_TACTIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
@@ -537,6 +545,9 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '33':{kind:MOBILE_SOURCE_MORALE_IMMUNITY,mechanic:'negative-morale-immunity'},
  '74':{kind:MOBILE_SOURCE_HEAL_RECEIVED_UP,mechanic:'healing-received-increase'},
  '184':{kind:MOBILE_SOURCE_SILENCE_STATUS,mechanic:'skill-silence'},
+ '54':{kind:MOBILE_SOURCE_BOUNTY_MARK,mechanic:'bounty-mark'},
+ '55':{kind:MOBILE_SOURCE_INSIGHT,mechanic:'damage-to-bounty-target'},
+ '51':{kind:MOBILE_SOURCE_CONFUSION,mechanic:'random-ally-attack'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -885,6 +896,11 @@ function mobileSourceApplications(skill,effects){
   else if(['9','10','11','13','14','15'].includes(id)&&/toan phe dich|\bdich\b/.test(context))scope='enemies';
   else if(['9','10','11','13','14','15'].includes(id)&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='58'&&/(?:dong doi|tuong phe ta).{0,80}(?:linh it nhat|it linh nhat|linh thap nhat)/.test(fold))scope='lowest-ally';
+  else if(id==='54'&&/(?:tuong dich linh nhieu nhat|don vi dich linh nhieu nhat).{0,70}(?:va\s+\d+\s+tuong dich ngau nhien khac)/.test(context))scope='highest-troops-and-random';
+  else if(id==='54'&&/(?:don vi|muc tieu|tuong) dich linh (?:it|thap) nhat/.test(context))scope='least-enemy';
+  else if(id==='54'&&/\d+ ke dich ngau nhien/.test(context))scope='random-enemies';
+  else if(id==='54'&&/toan phe dich/.test(context))scope='enemies';
+  else if(id==='54'&&/(?:muc tieu|doi phuong)\s+(?:bi|nhan)\s*$/.test(context))scope='targets';
   else if(id==='21'&&/toan phe dich|\bdich\b/.test(context))scope='enemies';
   else if(id==='21'&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='18'&&/vat phong\s+toan phe dich/.test(context))scope='enemies';
@@ -910,6 +926,25 @@ function mobileSourceApplications(skill,effects){
   const percent=magnitude?Number(magnitude[1].replace(',','.'))/100:null;
   const app={sourceId:id,sourceName:sourceEffect.name,sourceDescription:catalog.ing||'',sourceEffectDescription:sourceEffect.desc||'',detail,
     kind:rule.kind,mechanic:rule.mechanic,scope,turns:instant?0:Number(duration[1]),chance,values:{}};
+  if(id==='54'&&scope==='random-enemies')app.targetCount=Number(context.match(/(\d+)\s+ke dich ngau nhien/)?.[1])||1;
+  if(id==='54'&&scope==='highest-troops-and-random')app.additionalRandomTargets=1;
+  const afterMarker=fold.slice(at+marker.length,at+marker.length+180);
+  if(['54','55'].includes(id)&&/khong the giai tru/.test(afterMarker))app.dispelPolicy='undispellable';
+  if(id==='54'){
+    const rawValue=detailFold.match(/^(\d+(?:[.,]\d+)?)\s*[·x*]\s*\d+\s*luot/);
+    if(rawValue){app.sourceMagnitude=Number(rawValue[1].replace(',','.'));app.valueEvidence={classification:'SOURCE_VALUE_OBSERVED_SEMANTICS_UNKNOWN',sourceDetail:detail,sourceValue:app.sourceMagnitude};}
+    if(!/khong the giai tru/.test(afterMarker))app.formulaClassification='SOURCE_EXACT_MARK_WITH_SOURCE_TEXT_DISPEL_POLICY';
+  }
+  if(id==='55'){
+    const rawValue=detailFold.match(/^(\d+(?:[.,]\d+)?)\s*(?:[·x*])\s*\d+\s*luot/);
+    if(rawValue){
+      const magnitude=Number(rawValue[1].replace(',','.'));
+      app.values.damageToBountyMultiplier=magnitude;
+      app.formulaClassification='SIMULATED_DIRECT_DAMAGE_MULTIPLIER_FROM_SOURCE_MAGNITUDE';
+      app.valueEvidence={classification:'SOURCE_MAGNITUDE_WITH_SIMULATED_MULTIPLIER_INTERPRETATION',sourceDetail:detail,sourceValue:magnitude};
+    }else app.unresolvedMechanics=['SOURCE_DAMAGE_MODIFIER_MAGNITUDE_OR_FORMULA_UNKNOWN'];
+  }
+  if(id==='51')app.formulaClassification='SOURCE_MECHANIC_WITH_SIMULATED_NORMAL_ATTACK_REDIRECT';
   if(id==='77'&&/neu khong/.test(context))app.condition='TARGET_SURVIVES';
   if(rule.mechanic==='damage-reduction'&&percent!==null)app.values.incomingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='attack-increase'&&percent!==null)app.values.outgoingDamageMultiplier=1+percent;
@@ -1101,7 +1136,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74','184'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74','184'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1173,6 +1208,7 @@ function applyMobileSourceStatus(unit,app){
  status.mobileSourceValues=values;
  status.mobileSource={sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:app.sourceId,
    sourceName:app.sourceName,sourceDescription:app.sourceDescription,sourceDetail:app.detail,
+   dispelPolicy:app.dispelPolicy||NL_GAME_DATA.statusEffects.effects[app.kind]?.dispelPolicy||'removable',
    formulaClassification:app.formulaClassification||'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER',valueEvidence:app.valueEvidence||null,
    unresolvedMechanics:app.unresolvedMechanics||[]};
  return true;
@@ -1460,6 +1496,12 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const bookResist=(target?.team==='p'?battle?.p:battle?.e)?.reduce((a,u)=>a+(u.hp>0?(u.nlMobileTraining?.resist?.[af]||0):0),0)||0;
  mult*=Math.max(0,1-bookResist);
  mult*=trait.outgoing*trait.incoming*mobileTechDamage(attacker,target)*(1+(ar?.finalDamage||0)+(ar?.vs?.[tf]||0))*Math.max(0,1-(tr?.resist?.[af]||0));
+ const insightEffects=(attacker?.effects||[]).filter(effect=>effect.kind===MOBILE_SOURCE_INSIGHT&&effect.turns>0);
+ const bountyMarked=(target?.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_BOUNTY_MARK&&effect.turns>0);
+ const bountyDamageMultiplier=bountyMarked?insightEffects.reduce((factor,effect)=>{
+   const value=effect.mobileSourceValues?.damageToBountyMultiplier;
+   return Number.isFinite(value)?factor*Math.max(0,value):factor;
+ },1):1;
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
  const oneHitShield=target?.effects?.find(effect=>(effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS||effect.kind===MOBILE_BOOK_SHIELD_STATUS)&&effect.turns>0);
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
@@ -1488,7 +1530,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const previousGuard=guardField?resolvedTarget?.[guardField]:undefined;
  if(Number.isFinite(previousGuard))resolvedTarget[guardField]=Math.max(0,(previousGuard+mobileBookAttribute(target))*guardFactor-(ar?.pierceFlat||0));
  let hit;
- try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier,opts);}
+ try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier*bountyDamageMultiplier,opts);}
  finally{if(Number.isFinite(previousGuard))resolvedTarget[guardField]=previousGuard;}
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
@@ -1560,6 +1602,22 @@ function mobileSourceApplicationTargets(actor,event,app,descriptor){
    const living=same.filter(unit=>unit.hp>0).sort((a,b)=>a.hp/Math.max(1,a.maxHp)-b.hp/Math.max(1,b.maxHp));
    return living.length?[living[0]]:[];
  }
+ if(app.scope==='least-enemy'){
+   const living=opposite.filter(unit=>unit.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot);
+   return living.length?[living[0]]:[];
+ }
+ if(app.scope==='random-enemies'||app.scope==='highest-troops-and-random'){
+   const living=opposite.filter(unit=>unit.hp>0).sort((a,b)=>a.slot-b.slot);
+   let picked=[];
+   if(app.scope==='highest-troops-and-random'&&living.length){
+     const ranked=[...living].sort((a,b)=>b.hp-a.hp||a.slot-b.slot);picked.push(ranked.shift());
+     if(ranked.length){const index=Math.floor(p2Random()*ranked.length);picked.push(ranked.splice(index,1)[0]);}
+   }else{
+     const pool=[...living],count=Math.max(1,Math.min(pool.length,nat(app.targetCount)||1));
+     for(let i=0;i<count;i++)picked.push(pool.splice(Math.floor(p2Random()*pool.length),1)[0]);
+   }
+   return picked.filter(Boolean);
+ }
  if(app.scope==='enemies')return opposite.filter(unit=>unit.hp>0);
  if(app.scope==='targets'&&descriptor.sourceNoHealing){const target=opposite.find(unit=>unit.hp>0);return target?[target]:[];}
  return (event.hits||[]).map(hit=>(hit.team==='e'?battle.e:battle.p).find(unit=>unit.slot===hit.slot)).filter(unit=>unit&&unit.hp>0);
@@ -1610,10 +1668,10 @@ function mobilePassivePlan(passive){
  return plan.allyMorale||plan.selfMorale||plan.enemyMorale||plan.dispel?plan:null;
 }
 function mobileBookCleanse(u,max){
- let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='harmful'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;
+ let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind],policy=e.mobileSource?.dispelPolicy||spec?.dispelPolicy;if(n<max&&spec?.polarity==='harmful'&&policy==='removable'){n++;return false;}return true;});return n;
 }
 function mobileBookRestore(u,ratio){if(mobileBookHas(u,MOBILE_SOURCE_NO_HEAL))return 0;const old=u.hp,received=(u.effects||[]).filter(effect=>effect.turns>0).reduce((factor,effect)=>{const value=effect.mobileSourceValues?.incomingHealingMultiplier;return Number.isFinite(value)?factor*Math.max(0,value):factor;},1),amount=Math.max(0,Math.round(u.maxHp*ratio*received));u.hp=Math.min(u.maxHp,u.hp+(mobileBookBroken(u)?Math.min(1,amount):amount));return u.hp-old;}
-function mobileBookDispel(u,max){let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='beneficial'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;}
+function mobileBookDispel(u,max){let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind],policy=e.mobileSource?.dispelPolicy||spec?.dispelPolicy;if(n<max&&spec?.polarity==='beneficial'&&policy==='removable'){n++;return false;}return true;});return n;}
 function mobileBookAction(actor,event){
  const b=actor?.nlMobileTraining?.book;if(!b||!battle||battle.replay||battle.mode==='cltq'||actor.hp<=0||event?.actor!==actor.name||event.mode==='stunned')return false;
  actor.nlMobileBookTurns=nat(actor.nlMobileBookTurns)+1;
@@ -1668,7 +1726,7 @@ function mobileApplyTurnPassives(actor,event){
   if(target&&p.dispel)for(const u of p.line?enemies.filter(x=>x.slot%3===target.slot%3):[target]){
     let remain=p.dispel;
     const prev=u.effects||[];
-    u.effects=prev.filter(effect=>{const spec=NL_GAME_DATA.statusEffects.effects[effect.kind];if(remain>0&&spec?.polarity==='beneficial'&&spec.dispelPolicy!=='undispellable'&&spec.dispelPolicy!=='non-removable'&&spec.dispelPolicy!=='permanent'&&spec.dispelPolicy==='removable'){remain--;return false;}return true;});
+    u.effects=prev.filter(effect=>{const spec=NL_GAME_DATA.statusEffects.effects[effect.kind],policy=effect.mobileSource?.dispelPolicy||spec?.dispelPolicy;if(remain>0&&spec?.polarity==='beneficial'&&policy==='removable'){remain--;return false;}return true;});
     if(u.effects.length!==prev.length)changed=true;
   }
   if(changed)labels.push(p.name);
@@ -1721,7 +1779,10 @@ function mobileResolveCounters(actor,event){
 }
 p2Perform=function(actor){
  // A silence blocks the morale action, not the normal action or stored morale.
- const savedMorale=actor?.morale,locked=!!actor&&savedMorale>=100&&(mobileBookHas(actor,MOBILE_BOOK_SILENCE)||(actor.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_SILENCE_STATUS&&effect.turns>0))&&battle?.mode!=='cltq'&&!battle?.replay;
+ const savedMorale=actor?.morale;
+ const silenced=!!actor&&savedMorale>=100&&(mobileBookHas(actor,MOBILE_BOOK_SILENCE)||(actor.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_SILENCE_STATUS&&effect.turns>0));
+ const confusionActive=!!actor&&mobileBookHas(actor,MOBILE_SOURCE_CONFUSION)&&battle?.mode!=='cltq'&&!battle?.replay;
+ const locked=!!actor&&savedMorale>=100&&(silenced||confusionActive)&&battle?.mode!=='cltq'&&!battle?.replay;
  if(locked)actor.morale=99;
  let moraleRestored=false;
  const restoreLockedMorale=()=>{if(locked&&!moraleRestored){actor.morale=clamp(savedMorale+(actor.morale-99),0,130);moraleRestored=true;}};
@@ -1745,6 +1806,7 @@ p2Perform=function(actor){
  }
  try{
    if(actor)actor.nlMobileSourceSkillAction=!!(d&&actor.morale>=100&&!moraleOnly);
+   if(actor&&confusionActive)actor.nlMobileConfusionRedirect=true;
    // Chước Giới blocks only the next normal action, not a morale skill.
    if(actor?.nlMobileNoNormal){
      actor.nlMobileNoNormal=false;
@@ -1758,7 +1820,8 @@ p2Perform=function(actor){
    restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
-   if(locked&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
+   if(confusionActive&&event?.actor===actor.name){event.mobileSourceConfusionRedirected=true;event.description+=' · Mê Hoặc: đánh nhầm đồng minh';event.state=p2Snapshot();battle.log=event.description;}
+   if(locked&&silenced&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
    const multi=(event?.hits||[]).filter(h=>h.mobileSourceHitCount>1);if(multi.length){event.description+=' · '+multi.map(h=>h.mobileSourceHitCount+' đòn').join(' / ');event.state=p2Snapshot();battle.log=event.description;}
    if(moraleOnly&&event?.actor===actor.name&&event.mode==='drum'){
      const audience=d.sourceMoraleScope==='OTHER_ALLIES'?'các tướng đồng minh khác':'toàn phe ta';
@@ -1795,11 +1858,15 @@ p2Perform=function(actor){
    mobileResolveCounters(actor,event);
    mobileTickPeriodic(actor,event,priorPeriodic);
    return result;
- }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
+ }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
  const plan=battle?.nlContentC;
+ if(actor?.nlMobileConfusionRedirect&&battle&&!battle.replay){
+   const allies=(actor.team==='p'?battle.p:battle.e).filter(unit=>unit!==actor&&unit.hp>0);
+   if(allies.length)return allies[Math.floor(p2Random()*allies.length)];
+ }
  if(actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)&&mobileHeroSkill(actor.id)?.sourceTargetMode==='LEAST_TROOPS')return battle.e.filter(u=>u.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot)[0]||null;
  if(actor?.team!=='e'||!plan)return nlContentCBaseTarget(actor,mode);
  if(actor.nlCDescriptor?.sourceTargetMode==='LEAST_TROOPS')
@@ -2171,6 +2238,6 @@ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-acti
  if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='book-page')bookPage=Math.max(0,bookPage+delta);else if(a==='horse-page')horsePage=Math.max(0,horsePage+delta);else if(a==='etch-page')etchPage=Math.max(0,etchPage+delta);else if(a==='child-skill-page')childSkillPage=Math.max(0,childSkillPage+delta);else if(a==='beauty-page')beautyPage=Math.max(0,beautyPage+delta);else if(a==='mobile-troop-page')mobileTroopPage=Math.max(0,mobileTroopPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,'npc-repeat':id=>startNpc(id,true),recruit,'mobile-troop':tid=>mobileTroopChoose(heroId,tid),'mobile-trait':tid=>mobileTraitChoose(heroId,tid),'mobile-tech':id=>mobileTechUpgrade(id,mobileTechLevel(id)+1),'mobile-elite-upgrade':mobileEliteUpgrade,'mobile-elite-assign':id=>mobileEliteAssign(mobileEliteHeroId,id),'mobile-elite-unassign':mobileEliteUnassign,'mobile-elite-skill-upgrade':key=>{const [eid,pos]=key.split(':');return mobileEliteSkillUpgrade(eid,Number(pos));},'mobile-elite-buy':key=>{const [mid,qty]=key.split(':');return mobileEliteBuyMaterial(mid,Number(qty));},'beauty-pendant':()=>mobileBeautyBuyPendants(1),'beauty-gift':key=>{const [id,n]=key.split(':');return mobileBeautyGift(id,'fam_9',Number(n));},'beauty-gift-owned':id=>mobileBeautyGiftOwned(id,beautyGiftId,1),'beauty-level':mobileBeautyUpgrade,'beauty-assign':id=>mobileBeautyAssign(beautyHero,id),'book-step':bookStep,'book-up':bookUpgrade,'book-equip':id=>trainingAssign('book',trainHero,id),'horse-step':horseStep,'horse-up':horseUpgrade,'horse-equip':id=>trainingAssign('horse',trainHero,id),'training-claim':id=>trainingClaim(Number(id)),'training-buy':id=>{const [k,n]=id.split(':');return trainingBuy(k,Number(n));},'etch-buy':etchBuy,'etch-up':id=>etchChange(id,'upgrade'),'etch-mix':id=>etchChange(id,'mix'),'etch-equip':id=>etchEquip(trainHero,id),'etch-remove':id=>etchRemove(trainHero,id),'child-start':id=>childStart(id),'child-birth':()=>childBirth(childName),'child-train':id=>childTrain(Number(id)),'child-train-safe':id=>childTrain(Number(id),true),'child-reroll':()=>childReroll(),'child-second':id=>childSecond(id),'child-graduate':childGraduate,'child-promote':id=>{const ok=childPromote(id);if(ok)childSkillPage=0;return ok;},tier4:tid=>choose4(heroId,tid),tower:startTower,'upgrade-seal':id=>upgradeSeal(id,sealTo),'activate-seal':activateSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
 const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:57%}.nlc-actions button{white-space:normal!important;text-align:center}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}.nlc-seal-wallet{padding:6px 8px;margin:4px 0;background:#102d28;border:1px solid #927849;border-radius:5px;font-size:11px}.nlc-seal-wallet b{color:#f0d18a}.nlc-seal-detail{margin-top:7px;padding:8px;border:1px solid #91764a;background:linear-gradient(140deg,#172c28,#17221f);border-radius:6px}.nlc-seal-detail h4{font-size:14px;margin:0 0 3px;color:#f1dcaa}.nlc-seal-detail h4 small{font-size:10px;color:#b9aa83}.nlc-seal-attr{display:grid;grid-template-columns:minmax(100px,1fr) auto;gap:2px 8px;padding:3px 0;border-bottom:1px solid #554d39;font-size:10px}.nlc-seal-attr b{color:#e7cf94}.nlc-seal-attr small{grid-column:1/-1;color:#aeb4a6;font-size:9px}.nlc-seal-attr i{font-style:normal;color:#87cdb0}.nlc-seal-calc{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:6px;padding-top:6px;border-top:1px solid #746342;font-size:10px}.nlc-seal-calc>b{flex-basis:100%;color:#edd59d}.nlc-seal-calc label{white-space:nowrap}.nlc-seal-calc input{width:48px;padding:3px;border:1px solid #806e49;border-radius:4px;background:#0b1c19;color:#fff;text-align:center}.nlc-seal-calc span{color:#e5d3a4}.nlc-seal-calc button{font-size:10px;padding:5px 7px}.nlc-tower-plan{margin:8px 0;padding:9px 11px;border:1px solid #786a47;border-radius:6px;background:linear-gradient(135deg,#29362f,#172522)}.nlc-tower-plan>b{display:block;color:#f1d797}.nlc-tower-plan>small{display:block;margin-top:3px;color:#c5b68e;font-size:10px}.nlc-tower-plan p{line-height:1.55;margin:6px 0;color:#c4cdc0}.nlc-tower-lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:3px 10px;color:#e0d4b4;font-size:10px}.nlc-tower-reward{padding:7px 9px;background:#172c27;border-left:3px solid #c3a262;color:#e5d4a9;line-height:1.6}@media(max-width:560px){.nlc-tower-lineup{grid-template-columns:1fr}}';document.head.appendChild(style);
 nlMobileHeroApi=Object.freeze({quality:mobileHeroQuality,record:mobileHeroRecord,next:mobileHeroNext,materialQuote:mobileHeroMaterialQuote,buyMaterial:mobileHeroBuyMaterial,canAwaken:mobileHeroCanAwaken,awaken:mobileHeroAwaken,resetQuote:mobileHeroResetQuote,reset:mobileHeroReset,skill:mobileHeroSkill});
-if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),skillProbe,awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,navalQuote,startNaval,navalState:()=>structuredClone(navalState()),towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,p2Hit,p2Heal,p2Morale,p2Status,p2StatusValue,p2StatusFactor,mobileSourceApplications,applyMobileSourceStatus,mobileTechLevel,mobileTechValue,mobileTechQuote,mobileTechUpgrade,mobileTechCombat,mobileTechDamage,mobileTechCount:()=>MOBILE_TECH.length,mobileBeautyLevel,mobileBeautyQuote,mobileBeautyGift,mobileBeautyGiftOwned,mobileBeautyBuyPendants,mobileBeautyUpgrade,mobileBeautyAssign,mobileBeautyBonus,mobileBeautyCount:()=>Object.keys(MOBILE_BEAUTIES.beauties).length,bookGrade,bookLevel,bookQuote,bookStepQuote,bookStep,bookUpgrade,horseTier,horseStar,horseGate,horseQuote,horseStepQuote,horseStep,horseUpgrade,trainingAssign,trainingBuy,etchCount,etchBuy,etchQuote,etchChange,etchEquip,etchRemove,trainingModifiers,trainingCombat,trainingDaily:()=>structuredClone(trainingDaily()),trainingClaim,trainingCounts:()=>[MOBILE_BOOKS.length,MOBILE_HORSES.length,MOBILE_ETCH.length],childStart,childBirth,childCards,childGrowthBonus,childTrain,childReroll,childSecond,childGraduate,childNextPhase,childPromote,childSyncRoster,childSkillDescriptor,childAllowance,childSkills,childState:()=>structuredClone(childState()),mobileHeroRecord,mobileHeroQuality,mobileHeroNext,mobileHeroMaterialQuote,mobileHeroBuyMaterial,mobileHeroCanAwaken,mobileHeroAwaken,mobileHeroSkill,mobileHeroTroopAllowed,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopRuntimeCoverage:()=>({...MOBILE_TROOP_RUNTIME_COVERAGE}),mobileTroopRuntimeProfileAudit,mobileEliteRuntimeAudit,mobileEliteUpgradeQuote,mobileEliteLevel,mobileEliteSkillLevels,mobileEliteSkillQuote,mobileEliteUpgrade,mobileEliteSkillUpgrade,mobileEliteBuyMaterial,mobileEliteAssign,mobileEliteUnassign,mobileEliteAssigned,mobileEliteCanAssign,mobileEliteForceRole,mobileEliteInventoryCount,mobileTroopAssigned,mobileTraitChoose,mobileTraitChoice,mobileTraitFactors,mobileTraitSupported:()=>[...MOBILE_TRAIT_SUPPORTED],mobileTroopChoose,mobileTroopCanSelect,mobileTroopQuote,mobileTroopCoefficients,mobileTroopPlayable:()=>MOBILE_TROOP_PLAYABLE.map(r=>r.id),mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,mobileBuffCount:()=>Object.keys(MOBILE_BUFFS.records).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,mobileRepeatHit,mobilePassivePlan,mobileApplyTurnPassives,mobileBookAction,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),mobileElitePanel(),troopPanel(),towerPanel(),sealPanel()]});
+if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),skillProbe,awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,navalQuote,startNaval,navalState:()=>structuredClone(navalState()),towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,p2Hit,p2Heal,p2Morale,p2Status,p2StatusValue,p2StatusFactor,mobileSourceApplications,applyMobileSourceStatus,mobileSourceApplicationTargets,mobileBookCleanse,mobileBookDispel,mobileTechLevel,mobileTechValue,mobileTechQuote,mobileTechUpgrade,mobileTechCombat,mobileTechDamage,mobileTechCount:()=>MOBILE_TECH.length,mobileBeautyLevel,mobileBeautyQuote,mobileBeautyGift,mobileBeautyGiftOwned,mobileBeautyBuyPendants,mobileBeautyUpgrade,mobileBeautyAssign,mobileBeautyBonus,mobileBeautyCount:()=>Object.keys(MOBILE_BEAUTIES.beauties).length,bookGrade,bookLevel,bookQuote,bookStepQuote,bookStep,bookUpgrade,horseTier,horseStar,horseGate,horseQuote,horseStepQuote,horseStep,horseUpgrade,trainingAssign,trainingBuy,etchCount,etchBuy,etchQuote,etchChange,etchEquip,etchRemove,trainingModifiers,trainingCombat,trainingDaily:()=>structuredClone(trainingDaily()),trainingClaim,trainingCounts:()=>[MOBILE_BOOKS.length,MOBILE_HORSES.length,MOBILE_ETCH.length],childStart,childBirth,childCards,childGrowthBonus,childTrain,childReroll,childSecond,childGraduate,childNextPhase,childPromote,childSyncRoster,childSkillDescriptor,childAllowance,childSkills,childState:()=>structuredClone(childState()),mobileHeroRecord,mobileHeroQuality,mobileHeroNext,mobileHeroMaterialQuote,mobileHeroBuyMaterial,mobileHeroCanAwaken,mobileHeroAwaken,mobileHeroSkill,mobileHeroTroopAllowed,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopRuntimeCoverage:()=>({...MOBILE_TROOP_RUNTIME_COVERAGE}),mobileTroopRuntimeProfileAudit,mobileEliteRuntimeAudit,mobileEliteUpgradeQuote,mobileEliteLevel,mobileEliteSkillLevels,mobileEliteSkillQuote,mobileEliteUpgrade,mobileEliteSkillUpgrade,mobileEliteBuyMaterial,mobileEliteAssign,mobileEliteUnassign,mobileEliteAssigned,mobileEliteCanAssign,mobileEliteForceRole,mobileEliteInventoryCount,mobileTroopAssigned,mobileTraitChoose,mobileTraitChoice,mobileTraitFactors,mobileTraitSupported:()=>[...MOBILE_TRAIT_SUPPORTED],mobileTroopChoose,mobileTroopCanSelect,mobileTroopQuote,mobileTroopCoefficients,mobileTroopPlayable:()=>MOBILE_TROOP_PLAYABLE.map(r=>r.id),mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,mobileBuffCount:()=>Object.keys(MOBILE_BUFFS.records).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,mobileRepeatHit,mobilePassivePlan,mobileApplyTurnPassives,mobileBookAction,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),mobileElitePanel(),troopPanel(),towerPanel(),sealPanel()]});
 })();
 // === end NL-CONTENT-C-V1 ===
