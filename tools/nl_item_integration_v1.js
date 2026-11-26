@@ -51,7 +51,23 @@ NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
 function nlMobileSourceBundles(source){
  const awakening=new Set(['Bánh Bao','Thịt','Rượu','Trân Châu','Ngọc Bôi','Kim Lô','Hổ Phách','Lam Bảo Thạch','Lang Nha Ngọc','Băng Tuyết Liên','Linh Chi Rừng','Hà Thủ Ô Trăm Năm','Thanh Liên','Bàn Đào','Nhân Sâm Quả','Quỳnh Tương','Chu Quả','Thiên Mai','Hoàng Trung Lý']);
  const bundles=[];
+ // Additional fixed source rewards are connected to existing growth wallets.
+ // Source quantities are exact; point and legacy material conversions, and merchant prices, are SIMULATED.
+ const direct={
+  '1109':{output:{name:'Thư Linh-Cao',qty:10,wallet:'book-exp',factor:1000},price:22000},
+  '1149':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:6,wallet:'weapon-core',factor:1},price:4000},
+  '1152':{output:{name:'Mệnh Hồn Luyện Ngọc',qty:1,wallet:'destiny-jade',factor:1},price:2500},
+  '1227':{output:{name:'Thanh Trĩ Thảo',qty:175000,wallet:'horse-points',factor:1},price:175000,gate:250}
+ };
  for(const row of source.items){
+  const fixed=direct[String(row.id)];
+  if(fixed){
+   bundles.push({id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'consumable',integration:'PLAYABLE',
+    sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc,sourceIcon:row.icon,provenance:{classification:'SOURCE_EXACT'},
+    acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:fixed.price},minCommander:fixed.gate||0},
+    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:[fixed.output],minCommander:fixed.gate||0,classification:'SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'}});
+   continue;
+  }
   const match=String(row.desc||'').match(/^Mở(?:.+?)? nhận:\s*(.+)$/u);if(!match)continue;
   let body=match[1].replace(/, có thể dùng để.+$/u,'').replace(/\.$/,'');
   const parts=body.split(/,\s*/),outputs=[];

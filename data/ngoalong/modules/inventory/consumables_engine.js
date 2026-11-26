@@ -99,6 +99,7 @@
       return execute(state,'BUY_SOURCE_BUNDLE',id,null,receipt,(next,m)=>{
         const row=get(id),q=row.acquisitionRule;
         requireOk(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&q?.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0,'NOT_SOURCE_BUNDLE_SHOP');
+        requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
         requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
         next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
       });
@@ -107,11 +108,20 @@
       requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
       const c=next.nlContentC;
+      requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
-        const owner=x.wallet==='awakening'?c.mobileHeroMaterials:c,key=x.wallet==='awakening'?x.name:x.wallet==='science'?'mobileTechPoints':'mobileTechTripods';
-        const previous=own(owner,key)?owner[key]:0;requireOk(safe(previous)&&safe(previous+x.qty),'SOURCE_BUNDLE_OVERFLOW');owner[key]=previous+x.qty;
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        const map={'science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade'};
+        let owner=x.wallet==='awakening'?c.mobileHeroMaterials:c;
+        if(['weapon-core','destiny-jade'].includes(x.wallet)){
+          if(!next.heroDevelopment||typeof next.heroDevelopment!=='object')next.heroDevelopment={};
+          if(!next.heroDevelopment.materials||typeof next.heroDevelopment.materials!=='object')next.heroDevelopment.materials={};
+          owner=next.heroDevelopment.materials;
+        }
+        const key=x.wallet==='awakening'?x.name:map[x.wallet],factor=x.factor??1,qty=x.qty*factor;
+        requireOk(safe(factor)&&factor>0&&safe(qty),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        const previous=own(owner,key)?owner[key]:0;requireOk(safe(previous)&&safe(previous+qty),'SOURCE_BUNDLE_OVERFLOW');owner[key]=previous+qty;
       }
     }
     function use(state,id,receipt,heroId=null){

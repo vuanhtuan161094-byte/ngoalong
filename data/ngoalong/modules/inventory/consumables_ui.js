@@ -43,12 +43,13 @@
      const sourceMaterial=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI';
      const silverCost=rule.silverCost||0;
      const canProcess=owned>=needs&&(state.silver||0)>=silverCost;
-     const action=mode==='shop'?'<button data-nli-item-action="buy-source-bundle" data-nli-item-id="'+esc(row.id)+'" '+((state.silver||0)<row.acquisitionRule.shopCost.silver?'disabled':'')+'>Mua · '+esc(row.acquisitionRule.shopCost.silver)+' Bạc</button>':mode==='wiki'||row.integration!=='PLAYABLE'||(sourceMaterial&&rule.kind!=='OPEN_SOURCE_BUNDLE')?'':rule.kind==='CRAFT_REAGENT'?
+     const sourceGate=Number(row.acquisitionRule?.minCommander||rule.minCommander||0),sourceLocked=(state.nlContentC?.mobileCommanderLevel||0)<sourceGate;
+     const action=mode==='shop'?'<button data-nli-item-action="buy-source-bundle" data-nli-item-id="'+esc(row.id)+'" '+((sourceLocked||(state.silver||0)<row.acquisitionRule.shopCost.silver)?'disabled':'')+'>Mua · '+esc(row.acquisitionRule.shopCost.silver)+' Bạc'+(sourceLocked?' · Chỉ huy '+sourceGate:'')+'</button>':mode==='wiki'||row.integration!=='PLAYABLE'||(sourceMaterial&&rule.kind!=='OPEN_SOURCE_BUNDLE')?'':rule.kind==='CRAFT_REAGENT'?
        '<button data-nli-item-action="process" data-nli-item-id="'+esc(row.id)+'" '+(!canProcess?'disabled':'')+'>Gia công ×'+needs+'</button>':
-       rule.kind==='REFINEMENT_REAGENT'?'':'<button data-nli-item-action="use" data-nli-item-id="'+esc(row.id)+'">'+
+       rule.kind==='REFINEMENT_REAGENT'?'':'<button data-nli-item-action="use" data-nli-item-id="'+esc(row.id)+'" '+(sourceLocked?'disabled':'')+'>'+
        (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
      const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':sourceMaterial?
-       (row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.'):
+       (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
          ' · '+Object.entries(rule.stacks).map(([key,value])=>esc(key)+' ×'+esc(value)).join(' · '):'') :
@@ -96,7 +97,7 @@
      const heroId=typeof options.getHeroId==='function'?options.getHeroId():null;
      const rid=receiptId(action,{id,heroId});
      if(typeof rid!=='string'||!rid)throw Error('RECEIPT_REQUIRED');
-     const result=action==='use'?engine.use(getState(),id,rid,heroId):
+     const result=action==='buy-source-bundle'?engine.buySourceBundle(getState(),id,rid):action==='use'?engine.use(getState(),id,rid,heroId):
        action==='process'?engine.process(getState(),id,rid):
        {ok:false,code:'UNKNOWN_ACTION'};
      if(result.ok&&!result.duplicate){setState(result.state,{receiptId:rid,detail:result.detail});render()}

@@ -198,3 +198,20 @@ test('A9 warehouse adds five actual equipment slots per level',()=>{
   assert.equal(s.items.length,205);
   rejected(inventory.grant(s,[{id:'b_sword',quantity:1}],'a9:full'),'EQUIPMENT_CAPACITY',s);
 });
+
+test('V9 source training items use the existing receipt ledger and growth wallets',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const rows=[
+ {id:'horse',wallet:'horse-points',qty:175000,factor:1,gate:250},
+ {id:'book',wallet:'book-exp',qty:10,factor:1000,gate:0},
+ {id:'weapon',wallet:'weapon-core',qty:6,factor:1,gate:0},
+ {id:'destiny',wallet:'destiny-jade',qty:1,factor:1,gate:0}
+ ].map(x=>({id:x.id,name:x.id,category:'consumable',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:10},minCommander:x.gate},effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:[{name:x.id,wallet:x.wallet,qty:x.qty,factor:x.factor}],minCommander:x.gate}}));
+ const api=create({items:rows},{limits:{stacksKinds:10,quantityEach:999,receipts:100}});
+ let state={version:5,silver:100,nlContentC:{mobileCommanderLevel:249},nlItemsV1:{stacks:{},receipts:{},serial:0}};
+ const bad=api.buySourceBundle(state,'horse','buy:locked');assert.equal(bad.code,'COMMANDER_LEVEL_REQUIRED');assert.equal(state.silver,100);
+ state.nlContentC.mobileCommanderLevel=250;
+ for(const row of rows){state=done(api.buySourceBundle(state,row.id,'buy:'+row.id));state=done(api.use(state,row.id,'use:'+row.id));assert.equal(api.use(state,row.id,'use:'+row.id).duplicate,true);}
+ assert.equal(state.silver,60);assert.equal(state.nlContentC.horsePoints,175000);assert.equal(state.nlContentC.bookExp,10000);
+ assert.equal(state.heroDevelopment.materials.weaponCore,6);assert.equal(state.heroDevelopment.materials.destinyJade,1);assert.equal(state.version,5);
+});
