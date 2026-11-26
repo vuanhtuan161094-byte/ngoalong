@@ -267,7 +267,7 @@
     ],
     "unknownSoldierIds": {}
   },
-  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; campaign skill names/descriptions are preserved, simple coefficient/target text is parsed into a P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and seven selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
   "fields": [
     {
       "sourcePointer": "/key",
@@ -408,7 +408,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/effects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; effect ID 3 is adapted as source damage-to-1 while remaining effect IDs stay unresolved",
+      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 7, 12, 16 and 26 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
       "runtimeStatus": "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
@@ -448,7 +448,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/activeSkill/desc/secondaryEffects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "Thiết Bích source text/detail maps to native damage-to-1 for its stated duration; other statuses, multi-hit rules, chances and conditions remain unresolved",
+      "runtimeField": "Thiết Bích source text/detail maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Ám Tế, Tăng Thường Kích/Tăng Tấn Công, Giáng Thường Kích/Giảm Tấn Công and Ngủ Say are adapted from source detail when target, chance and duration are explicit; other statuses, multi-hit rules and conditions remain unresolved",
       "runtimeStatus": "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
@@ -483,6 +483,14 @@
       "runtimeField": "map buffs",
       "runtimeStatus": "PRESERVED_EFFECT_ADAPTER_UNRESOLVED",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
+      "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    },
+    {
+      "sourcePointer": "/data/buff-page.json",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "mobileBuffCatalog.records (320 definitions, source SHA-256 verified)",
+      "runtimeStatus": "SOURCE_EXACT_BUNDLED_WITH_SELECTED_NATIVE_STATUS_ADAPTERS",
+      "sourcePage": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/buff-page.json",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     }
   ]

@@ -174,12 +174,12 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         ("/vn/npcs/formation", "all source 1-9 positions; zero-row records use an explicitly marked donor adapter", "APPLIED_OR_SIMULATED_DONOR_TO_NATIVE_P2_3X3"),
         ("/vn/npcs/formation/soldierId", "source troop ID and role", "APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/hp", "source unit HP retained; P2 battle scale adapter", "PRESERVED_AND_USED_AS_SCALE_INPUT"),
-        ("/vn/npcs/formation/effects", "exact unit effect IDs, names, descriptions and detail strings carried onto native units; effect ID 3 is adapted as source damage-to-1 while remaining effect IDs stay unresolved", "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER"),
+        ("/vn/npcs/formation/effects", "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 7, 12, 16 and 26 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved", "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER"),
         ("/vn/npcs/formation/activeSkill/name", "exact source skill name used by the native combat event", "SOURCE_EXACT_APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/activeSkill/desc", "exact source skill description preserved on the combat unit and descriptor", "SOURCE_EXACT_PRESERVED_IN_RUNTIME"),
         ("/vn/npcs/formation/activeSkill/desc/coefficient", "simple single-hit coefficient parsed from the source description into the P2 scale; unparsed or multi-stage formulas retain an explicit fallback", "PARTIALLY_DERIVED_FROM_SOURCE_WITH_SIMULATED_FALLBACK"),
         ("/vn/npcs/formation/activeSkill/desc/target", "single, row, column, back-row, all-enemy, and all-ally targets parsed when stated; other target language remains unresolved", "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_FALLBACK"),
-        ("/vn/npcs/formation/activeSkill/desc/secondaryEffects", "Thiết Bích source text/detail maps to native damage-to-1 for its stated duration; other statuses, multi-hit rules, chances and conditions remain unresolved", "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER"),
+        ("/vn/npcs/formation/activeSkill/desc/secondaryEffects", "Thiết Bích source text/detail maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Ám Tế, Tăng Thường Kích/Tăng Tấn Công, Giáng Thường Kích/Giảm Tấn Công and Ngủ Say are adapted from source detail when target, chance and duration are explicit; other statuses, multi-hit rules and conditions remain unresolved", "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER"),
         ("/vn/npcs/formation/activeSkill/moraleOnly", "fixed morale-only allied skills map to native morale events; mixed/global/status skills remain unresolved or simulated", "PARTIAL_SOURCE_MORALE_ACTION_ADAPTER"),
         ("/vn/thanhTuu", "exact supported Silver/Gold achievements granted; other reward types and Tướng Hồn pace remain separate adapters", "SOURCE_EXACT_SUPPORTED_CURRENCIES_GRANTED"),
         ("/vn/rewards", "map reward list; grant semantics not documented in snapshot", "PRESERVED_REWARD_ADAPTER_UNRESOLVED"),
@@ -188,6 +188,11 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         fields.append({"sourcePointer": pointer, "sourceClassification": "SOURCE_EXACT",
                        "runtimeField": runtime, "runtimeStatus": status,
                        "sourcePage": PAGE, "sourceEdition": data["sourceEdition"]})
+    fields.append({"sourcePointer": "/data/buff-page.json", "sourceClassification": "SOURCE_EXACT",
+                   "runtimeField": "mobileBuffCatalog.records (320 definitions, source SHA-256 verified)",
+                   "runtimeStatus": "SOURCE_EXACT_BUNDLED_WITH_SELECTED_NATIVE_STATUS_ADAPTERS",
+                   "sourcePage": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/buff-page.json",
+                   "sourceEdition": data["sourceEdition"]})
     crosswalk = {
         "schemaVersion": 1, "sourceEdition": data["sourceEdition"],
         "sourceManifest": data["sourceManifest"],
@@ -201,7 +206,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                      "legacyIdPreservation": "verified in the canonical projection against all 4,903 previously shipped NPC IDs",
                      "sourceMapNpcCount": [len(m["npcs"]) for m in maps],
                      "unknownSoldierIds": unknown_troops},
-        "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; campaign skill names/descriptions are preserved, simple coefficient/target text is parsed into a P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+        "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and seven selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
         "fields": fields,
     }
     return data, crosswalk

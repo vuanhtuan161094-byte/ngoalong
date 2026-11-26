@@ -166,6 +166,18 @@ def build(root):
     maps.sort(key=lambda m:m["wikiMapId"])
     legacy_projected=[project_map(m,i) for i,m in enumerate(maps)]
     mobile_campaign,_=normalize_mobile_campaign(root)
+    mobile_raw=root/"data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw"
+    mobile_manifest=read(mobile_raw/"capture_manifest.json")
+    mobile_file_hashes={row["file"]:row["sha256"] for row in mobile_manifest.get("files",[])}
+    buff_path=mobile_raw/"data/buff-page.json"
+    buff_hash=hashlib.sha256(buff_path.read_bytes()).hexdigest()
+    if mobile_file_hashes.get("data/buff-page.json")!=buff_hash:
+        raise ValueError("C mobile buff catalogue source hash mismatch")
+    raw_buffs=read(buff_path)
+    if len(raw_buffs)!=320:
+        raise ValueError("C mobile buff catalogue coverage drift")
+    mobile_buffs={str(key):{k:v for k,v in row.items() if k!="icon"}
+                  for key,row in raw_buffs.items()}
     if len(mobile_campaign["maps"])!=len(legacy_projected): raise ValueError("C Mobile map coverage drift")
     legacy_ids={m["id"]:{n["id"] for n in m["npcs"]} for m in legacy_projected}
     legacy_by_map={m["id"]:m for m in legacy_projected}
@@ -261,4 +273,5 @@ def build(root):
     if len(aliases)!=364 or len(set(aliases.values()))!=364: raise ValueError("C hero alias collision")
     return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
             "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
-            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
+            "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
+            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}

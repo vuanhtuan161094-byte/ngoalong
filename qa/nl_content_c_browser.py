@@ -27,7 +27,7 @@ def main():
           const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
-          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.tiers()===40,
+          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.counts.mobileBuffs===320&&c.mobileBuffCount()===320&&c.tiers()===40,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
             mobileNpcSkillAudit:skillAudit.totalUnits===25195&&skillAudit.sourceExactUnits===23944&&
@@ -35,6 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=4&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -65,6 +66,10 @@ def main():
             b.e[0].nlMobileSource?.sourceEffectsClassification==='SOURCE_EXACT';
           checks.mobileNpcSkillDiagnostics={sourceSkill:firstSourceSkill,enemySkill:b?.e?.[0]?.skill,
             descriptor:firstEnemySkill,mobileSource:b?.e?.[0]?.nlMobileSource};
+          const controlProbe=c.skillProbe('Cường Tập'),controlDescriptor=controlProbe&&c.describeSkill(controlProbe.skill,'infantry',false,controlProbe.effects),
+            guardProbe=c.skillProbe('Thủ Hộ'),guardDescriptor=guardProbe&&c.describeSkill(guardProbe.skill,'strategist',false,guardProbe.effects);
+          checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
+          checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
           const npcSkillEvent=b.events.at(-1);
@@ -134,6 +139,36 @@ def main():
               allies.every(unit=>unit.morale===45)&&moraleUnit.morale===0&&moraleEvent.description.includes('45 sĩ khí');
             q.closeBattle('city');q.setGame(beforeMoraleProbe);
           }else checks.mobileMoraleInNativeCombat=false;
+          // Source Hỗn Loạn and Thủ Hộ are applied by the real native P2 event/status/hit path.
+          q.closeBattle('city');
+          const beforeStatusProbe=q.getGame();
+          function launchStatusProbe(probe){
+            if(!probe)return null;const map=c.map(probe.mapId),g=JSON.parse(JSON.stringify(beforeStatusProbe));
+            g.nlContentC.mobileCommanderLevel=440;g.nlClassicA.orders=60;g.hero[id].troops=3000;
+            for(const prev of map.npcs.slice(0,probe.npcIndex))g.nlContentC.cleared[prev.id]=true;
+            delete g.nlContentC.cleared[probe.npcId];q.setGame(g);
+            return c.startNpc(probe.npcId)?q.debugBattle():null;
+          }
+          const cb=launchStatusProbe(controlProbe),ca=cb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Cường Tập');
+          if(cb&&ca){const app=ca.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='2');app.chance=1;ca.morale=100;q.perform(ca);
+            const event=cb.events.at(-1),hit=event?.hits?.find(row=>row.team==='p'),target=hit&&cb.p.find(unit=>unit.slot===hit.slot),control=target?.effects.find(effect=>effect.kind==='mobile-source-control');
+            checks.mobileSourceControlInNativeCombat=event?.skill==='Cường Tập'&&!!control&&control.turns===1&&control.mobileSource?.sourceEffectId==='2'&&c.p2StatusValue(control,'skipActionChance')===1;
+            if(target){target.morale=0;q.perform(target);checks.mobileSourceControlExpires=cb.events.at(-1)?.mode==='stunned'&&!target.effects.some(effect=>effect.kind==='mobile-source-control');}
+            else checks.mobileSourceControlExpires=false;
+          }else {checks.mobileSourceControlInNativeCombat=false;checks.mobileSourceControlExpires=false;}
+          q.closeBattle('city');
+          const gb=launchStatusProbe(guardProbe),ga=gb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Thủ Hộ');
+          if(gb&&ga){const app=ga.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='4');app.chance=1;ga.morale=100;q.perform(ga);
+            const guarded=gb.e.filter(unit=>unit.effects.some(effect=>effect.kind==='mobile-source-incoming')),
+              defender=guarded[0],status=defender?.effects.find(effect=>effect.kind==='mobile-source-incoming'),attacker=gb.p[0];
+            const oldRandom=window.p2Random,plain=defender&&structuredClone(defender),shielded=defender&&structuredClone(defender);window.p2Random=()=>.5;
+            if(plain&&shielded){attacker.atk=1000000;plain.effects=plain.effects.filter(effect=>effect.kind!=='mobile-source-incoming');plain.hp=plain.maxHp;shielded.hp=shielded.maxHp;
+              const plainHit=c.p2Hit(attacker,plain,'physical',1),guardedHit=c.p2Hit(attacker,shielded,'physical',1);
+              checks.mobileSourceGuardInNativeCombat=guarded.length===gb.e.filter(unit=>unit.hp>0).length&&c.p2StatusFactor(defender,'incomingDamageMultiplier')===.65&&status?.mobileSource?.sourceEffectId==='4'&&guardedHit.amount<plainHit.amount;
+            }else checks.mobileSourceGuardInNativeCombat=false;
+            window.p2Random=oldRandom;
+          }else checks.mobileSourceGuardInNativeCombat=false;
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
           document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
           const tb=q.debugBattle(),towerBefore=q.getGame(),expected=c.towerRewards(21),soulBefore=c.state().soul,towerMeritBefore=q.getGame().nlClassicA.merit;

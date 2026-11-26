@@ -41,6 +41,10 @@ def main():
     assert len({e["name"] for e in exact_effect_rows})==134
     assert len(data["heroAliases"])==len(set(data["heroAliases"].values()))==364
     assert data["counts"]["newHeroes"]==147 and data["counts"]["runtimeHeroes"]==368
+    assert data["counts"]["mobileBuffs"]==320
+    assert data["mobileBuffCatalog"]["sourceEdition"]=="CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    assert data["mobileBuffCatalog"]["records"]["2"]["name"].casefold()=="hỗn loạn"
+    assert data["mobileBuffCatalog"]["records"]["2"]["ing"]=="1 lượt không thể hành động"
     assert all(h["descriptor"]["tag"] and h["descriptor"]["pattern"] and h["descriptor"]["mult"]>0 for h in data["heroes"])
     assert len(data["awakeningSkills"])==44
     patterns={"single","double","row","column","all","back","heal"}
