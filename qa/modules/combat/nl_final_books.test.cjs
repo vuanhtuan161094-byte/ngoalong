@@ -9,6 +9,7 @@ function run(id,grade,roll,turn=2){
  const ctx={battle:{p:[ally],e:[enemy]},nat:x=>Math.max(0,Math.floor(Number(x)||0)),mobileTextKey:x=>x,p2Random:()=>roll,p2Snapshot:()=>({}),
  NL_GAME_DATA:{statusEffects:{effects:{buff:{polarity:'beneficial',dispelPolicy:'removable'}}}},
  applyMobileSourceStatus:(u,a)=>{u.effects.push({kind:a.kind,turns:a.turns,mobileSourceValues:a.values});return true;},actor:ally,ally,enemy,event:{actor:'A',mode:'normal',description:'test'}};
+ ctx.MOBILE_SOURCE_NO_HEAL='mobile-source-no-heal';
  for(const k of ['BREAK','BREAK2','SILENCE','ATTR','SPRING','MOON','IMMUNE','VITAL','MORALE_GUARD','SHIELD_STATUS'])ctx['MOBILE_BOOK_'+k]=k;
  vm.createContext(ctx);vm.runInContext(helpers+';mobileBookAction(actor,event);',ctx);return ctx;
 }

@@ -116,7 +116,7 @@ const NL_MOBILE_GIFTS=NL_MOBILE_INVENTORY.items.filter(row=>row.gift?.famousType
  provenance:{classification:'SOURCE_EXACT'},sourceGift:{effect:row.gift.effect,needScore:row.gift.needScore||0},
  acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:row.gift.effect*2}},effectRule:null
 }));
-if(NL_MOBILE_GIFTS.length!==12)throw Error('MOBILE_GIFT_COUNT_DRIFT');
+if(NL_MOBILE_GIFTS.length!==11)throw Error('MOBILE_GIFT_COUNT_DRIFT');
 for(const row of NL_MOBILE_GIFTS){const idx=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);if(idx>=0)NL_ITEM_CATALOGUE.items[idx]=row;else NL_ITEM_CATALOGUE.items.push(row);}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.

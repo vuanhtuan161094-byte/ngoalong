@@ -1143,10 +1143,13 @@ function mobileHeroSkill(id){
  d.nlMobileHeroSkill=true;d.sourceHeroId=quality.sourceId;d.sourceQuality=quality.growth.q;
  return d;
 }
+// Explicit classic morale role is a separate formation choice; do not overlay a Mobile hero skill on its native action.
+function mobileUsesLegacySupport(actor){return actor?.team==='p'&&['drum','dancer'].includes(actor.troop)&&game.troopModes?.[actor.id]===actor.troop;}
 const oldSkill=p2Skill;
 p2Skill=function(actor){
  if(actor?.team==='e'&&battle?.nlContentC&&actor.nlCDescriptor)return actor.nlCDescriptor;
  if(actor?.team!=='p'||battle?.mode==='cltq'||battle?.replay)return oldSkill(actor);
+ if(mobileUsesLegacySupport(actor))return oldSkill(actor);
  if(actor.id===MOBILE_CHILD_ID){const d=childSkillDescriptor(childState());if(d)return d;}
  const exact=mobileHeroSkill(actor.id);if(exact)return exact;
  const chosen=awakeningDescriptor(actor.id);
@@ -1414,7 +1417,7 @@ p2Perform=function(actor){
  let moraleRestored=false;
  const restoreLockedMorale=()=>{if(locked&&!moraleRestored){actor.morale=clamp(savedMorale+(actor.morale-99),0,130);moraleRestored=true;}};
  const d=actor?.team==='e'&&battle?.nlContentC?actor.nlCDescriptor:
-   actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100?mobileHeroSkill(actor.id):null;
+   actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)?mobileHeroSkill(actor.id):null;
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
  const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
@@ -1486,7 +1489,7 @@ p2Perform=function(actor){
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
  const plan=battle?.nlContentC;
- if(actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&mobileHeroSkill(actor.id)?.sourceTargetMode==='LEAST_TROOPS')return battle.e.filter(u=>u.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot)[0]||null;
+ if(actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)&&mobileHeroSkill(actor.id)?.sourceTargetMode==='LEAST_TROOPS')return battle.e.filter(u=>u.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot)[0]||null;
  if(actor?.team!=='e'||!plan)return nlContentCBaseTarget(actor,mode);
  if(actor.nlCDescriptor?.sourceTargetMode==='LEAST_TROOPS')
    return battle.p.filter(unit=>unit.hp>0).sort((a,b)=>(Number(a.troops)||Number(a.hp)||0)-(Number(b.troops)||Number(b.hp)||0)||a.slot-b.slot)[0]||null;

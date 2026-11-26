@@ -58,7 +58,9 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R4 gameplay source delta (unverified build)
 
-- 12 ordinary Tri Kỷ gifts from source have inventory purchase and gift consumption; exact EXP and minimum score, simulated price, 5 preference gifts not promoted. Five source status rules (6/17/23/32/42) added to scoped duration parser; actual coverage requires native audit. City reload gate accepts timed completion only at expected level with same receipts and debits. Legacy 24-status count remains asserted separately. No complete browser or product PASS claimed.
+- R3 Web 45841564485 passed Content C and A5–A9 but failed 2 classic drum checks. Explicitly selected classic drum/dancer now retains native role skill rather than overlaying Mobile hero skill. Raw item validation corrected ordinary gifts to 11 of 17, total Mobile playable material/consumable count 75 expected.
+
+- 11 ordinary Tri Kỷ gifts from source have inventory purchase and gift consumption; exact EXP and minimum score, simulated price, 6 preference gifts not promoted. Five source status rules (6/17/23/32/42) added to scoped duration parser; actual coverage requires native audit. City reload gate accepts timed completion only at expected level with same receipts and debits. Legacy 24-status count remains asserted separately. No complete browser or product PASS claimed.
 
 ## R3 gameplay source delta (unverified build)
 
