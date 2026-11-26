@@ -95,6 +95,15 @@ function npcReward(row,repeat=false){
  return repeat?{silver:Math.floor(base.silver*.4),grain:Math.floor(base.grain*.4),prestige:0}:base;
 }
 function mapBonus(m){return {silver:800+m.gate*180,grain:300+m.gate*50,prestige:50+m.gate*8,soul:20+m.gate*2};}
+// Compress Mobile source progression into the native 28-stage stat curve.
+function npcBaseStage(scale){return clamp(1+Math.floor((scale-1)*27/89),1,28);}
+function enemyScale(o,units,scale,raw){
+ const stage=o.kind==='npc'?npcBaseStage(scale):clamp(scale,1,28);
+ const soldier=x=>Math.max(1,Number(Array.isArray(x)?x[4]:x.troops)||1);
+ const avg=units.reduce((sum,u)=>sum+soldier(u),0)/Math.max(1,units.length);
+ const ratio=o.kind==='npc'?clamp(Math.sqrt(soldier(raw)/avg),.82,1.22):clamp(Math.sqrt(soldier(raw)/Math.max(200,250+scale*90)),.75,1.45);
+ return {stage,ratio,difficulty:clamp(1+Math.max(0,scale-28)*.025,1,2.8)};
+}
 function openObjective(o,units,scale){
  if(battle||nlAState().orders<1||!game.cleared.includes(1)||!game.slots.some(id=>id&&game.hero[id]?.troops>=30))return false;
  // Existing cleared stage 1 provides native launch, grain, order, turn and animation authority.
@@ -104,12 +113,11 @@ function openObjective(o,units,scale){
  battle.e=units.map((raw,i)=>{
   const u=Array.isArray(raw)?{slot:raw[0],name:raw[1],label:raw[2],skill:raw[3],troops:raw[4],level:raw[5]}:raw;
   const role=u.role||family(u.label),slot=u.slot,boss=!!o.boss&&i===units.length-1;
-  const e=p2Unit('e','e',boss?4:i,Math.min(28,Math.max(1,u.level||scale)));
+  const power=enemyScale(o,units,scale,raw),e=p2Unit('e','e',boss?4:i,power.stage);
   e.id='c-'+i;e.slot=slot;delete e.nlTroopV2;delete e.nlA1BossSkill;delete e.skillId;delete e.skillKey;delete e.npcUnitId;delete e.npcProfileId;e.name=u.name;e.troop=role;e.type=role==='spear'?'infantry':(['drum','dancer','support'].includes(role)?'support':role);
   e.icon=({archer:'🏹',cavalry:'🐎',spear:'🔱',strategist:'🪶',support:'📜',drum:'🥁',dancer:'💃'})[role]||'🛡️';
   e.skill=u.skill;e.nlCDescriptor=descriptor(u.skill,role,boss);
-  const ratio=clamp(Math.sqrt(Math.max(1,u.troops)/Math.max(200,250+scale*90)),.75,1.45);
-  const difficulty=clamp(1+Math.max(0,scale-28)*.025,1,2.8);
+  const {ratio,difficulty}=power;
   for(const k of ['atk','catk','matk','def','tdef','mdef'])e[k]=Math.max(1,Math.round(e[k]*ratio*difficulty*(ROLE_COEFFICIENTS[role]?.[k]||1)*(boss?1.12:1)));
   e.hp=e.maxHp=Math.max(1,Math.round(e.maxHp*ratio*difficulty*(boss?1.18:1)));e.effects=[];e.morale=boss?60:40;
   return e;
@@ -294,6 +302,6 @@ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-acti
  if(a==='map-page'){mapPage=Math.max(0,mapPage+delta);const list=MAPS.filter(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(list[mapPage*20]){mapId=list[mapPage*20].id;npcPage=0;}render();return;}
  if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,'npc-repeat':id=>startNpc(id,true),recruit,tier4:tid=>choose4(heroId,tid),tower:startTower,'unlock-seal':unlockSeal,'equip-seal':equipSeal,'upgrade-seal':upgradeSeal,'activate-seal':activateSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
 const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:57%}.nlc-actions button{white-space:normal!important;text-align:center}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}.nlc-tower-plan{margin:8px 0;padding:9px 11px;border:1px solid #786a47;border-radius:6px;background:linear-gradient(135deg,#29362f,#172522)}.nlc-tower-plan>b{display:block;color:#f1d797}.nlc-tower-plan>small{display:block;margin-top:3px;color:#c5b68e;font-size:10px}.nlc-tower-plan p{line-height:1.55;margin:6px 0;color:#c4cdc0}.nlc-tower-lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:3px 10px;color:#e0d4b4;font-size:10px}.nlc-tower-reward{padding:7px 9px;background:#172c27;border-left:3px solid #c3a262;color:#e5d4a9;line-height:1.6}@media(max-width:560px){.nlc-tower-lineup{grid-template-columns:1fr}}';document.head.appendChild(style);
-if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,towerTarget:p2Target,recruit,choose4,unlockSeal,equipSeal,upgradeSeal,activateSeal,sealActivation:id=>sealActivation(state(),id),sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEALS.find(x=>x[0]===id);return r&&sealLevel(state(),id)?sealValue(r,state()):0;},floor,descriptor,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,panels:()=>[campaignPanel(),heroPanel(),troopPanel(),towerPanel(),sealPanel()]});
+if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,towerTarget:p2Target,recruit,choose4,unlockSeal,equipSeal,upgradeSeal,activateSeal,sealActivation:id=>sealActivation(state(),id),sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEALS.find(x=>x[0]===id);return r&&sealLevel(state(),id)?sealValue(r,state()):0;},floor,descriptor,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,panels:()=>[campaignPanel(),heroPanel(),troopPanel(),towerPanel(),sealPanel()]});
 })();
 // === end NL-CONTENT-C-V1 ===
