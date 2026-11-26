@@ -115,7 +115,7 @@ function nlhUpgrade(id,heroId,sub=''){
  if(battle||!nlhOwned(heroId)||(id==='specialWeapon'&&nlhSourceWeapon(heroId))||(id==='destiny'&&nlhSourceOptions(heroId).length)||(id==='awakening'&&typeof nlMobileHeroApi!=='undefined'&&nlMobileHeroApi?.quality(heroId)))return false;const state=nlhsState(),h=nlhsHero(heroId),next=0;let current=0,max=0,key=id;
  if(id==='commander'){current=h.commanderLevel;max=SYS[id].maxLevel;}
  else if(id==='specialWeapon'){current=h.weaponLevel;max=SYS[id].maxLevel;}
- else if(id==='inheritance'){current=h.inheritanceLevel;max=SYS[id].maxLevel;}
+ else if(id==='inheritance'){current=h.inheritanceLevel;max=nlhSourceSeal(heroId)?.skillDescs.length||SYS[id].maxLevel;}
  else if(id==='destiny'){current=h.destinyLevel;max=SYS[id].maxLevel;if(!h.destinyId){toast('Hãy chọn một Mệnh Cách trước.');return false;}}
  else if(id==='awakening'&&sub==='orange'){current=Number(h.awakening.orange);max=1;key='awakening-orange';if(nlhStage()<16||(game.hero[heroId]?.level||1)<20){toast('Mở lộ trình SIMULATED sau ải 16 và tướng cấp 20.');return false;}}
  else if(id==='awakening'&&sub==='gold'){current=Number(h.awakening.gold);max=1;key='awakening-gold';if(!h.awakening.orange||nlhStage()<22||(game.hero[heroId]?.level||1)<30){toast('Cần Giác Ngộ Cam, vượt ải 22 và tướng cấp 30.');return false;}}
@@ -206,6 +206,11 @@ function nlhSourceOptions(id){
  const stages=nlhSourceRecord(id)?.stages||[];
  return q?(stages.filter(x=>x.q<=q.growth.q&&x.kismets?.length).sort((a,b)=>b.q-a.q)[0]?.kismets||[]):[];
 }
+function nlhSourceSeal(id){
+ const q=typeof nlMobileHeroApi!=='undefined'?nlMobileHeroApi?.quality(id):null;
+ const stage=(nlhSourceRecord(id)?.stages||[]).filter(x=>x.q<=(q?.growth.q||0)&&x.seals?.some(y=>!y.isChild&&y.skillDescs?.length)).sort((a,b)=>b.q-a.q)[0];
+ return stage?.seals?.find(x=>!x.isChild&&x.skillDescs?.length)||null;
+}
 function nlhSourceWeapon(id){const w=nlhSourceRecord(id)?.weapon;return w?.name&&Array.isArray(w.stats)&&w.stats.length?w:null;}
 function nlhSourceProgress(id){const h=nlhsHero(id);if(!h.mobileBuild||typeof h.mobileBuild!=='object')h.mobileBuild={weapon:Math.min(10,h.weaponLevel||0),destiny:null,ranks:{},migration:'legacy-weapon-rank-preserved'};const m=h.mobileBuild;if(!m.ranks||typeof m.ranks!=='object')m.ranks={};m.weapon=Number.isSafeInteger(m.weapon)?Math.max(0,Math.min(10,m.weapon)):0;return m;}
 function nlhSourceRank(id,name){const v=nlhSourceProgress(id).ranks[name];return Number.isSafeInteger(v)?Math.max(0,Math.min(10,v)):0;}
@@ -232,7 +237,7 @@ function nlhSourceEquip(id,name){
 }
 function nlhSourceModifiers(id){
  const m=nlhSourceProgress(id),w=nlhSourceWeapon(id),option=nlhSourceOptions(id).find(x=>x.name===m.destiny),rank=option?nlhSourceRank(id,option.name):0;
- const out={flat:{},pct:{},lead:0,war:0,intellect:0,dodge:0,critDamage:0,finalDamage:0,patterns:{},troopAttack:{},troopDefense:{},unresolved:[]};
+ const out={flat:{},pct:{},lead:0,war:0,intellect:0,dodge:0,critDamage:0,finalDamage:0,patterns:{},troopAttack:{},troopDefense:{},unresolved:[],passives:[]};
  const stat={'Vật Công':'atk','Pháp Công':'catk','C.C':'catk','Mưu Công':'matk','Vật Phòng':'def','Pháp Phòng':'tdef','Mưu Phòng':'mdef'};
  function apply(label,raw,pct){
   const v=typeof raw==='number'?raw:Number(String(raw).replace('%','').replaceAll(' ','').replace(',','.'));if(!Number.isFinite(v))return;
@@ -254,6 +259,14 @@ function nlhSourceModifiers(id){
  }
  if(w&&m.weapon)for(const x of w.stats){const i=x.ranks?.indexOf(m.weapon)??-1;if(i>=0)apply(x.name,x.series[i],x.pct);}
  if(rank)for(const x of option.effects)apply(x.label,x.series[rank-1]);
+ const seal=nlhSourceSeal(id),sealRank=nlhsHero(id).inheritanceLevel;
+ if(seal&&sealRank>0)out.passives.push({kind:'seal',name:seal.name,desc:seal.skillDescs[Math.min(sealRank,seal.skillDescs.length)-1]});
+ if(w&&m.weapon)for(const slot of w.slots||[]){
+   // Fractional source thresholds have no published star-equivalence. Use the next integer
+   // as the offline unlock; thresholds above ten remain unresolved, never silently unlocked.
+   const active=(slot.tiers||[]).filter(t=>Number.isFinite(t.rank)&&Math.ceil(t.rank)<=m.weapon).sort((a,b)=>b.rank-a.rank)[0];
+   if(active)out.passives.push({kind:'weapon',name:active.name,desc:active.desc});
+ }
  return out;
 }
 function nlhSourcePanel(id,system){
@@ -275,8 +288,9 @@ function nlhCombatGrowth(id){
  const weaponLevel=nlhSourceWeapon(id)?0:h.weaponLevel;
  bonus.attackPct+=h.commanderLevel*.012+weaponLevel*.025+orange*.06+gold*.08;
  bonus.tacticAttackPct+=weaponLevel*.025;bonus.magicAttackPct+=weaponLevel*.025+gold*.08;
- bonus.defensePct+=h.commanderLevel*.012+h.inheritanceLevel*.015+gold*.08;
- bonus.hpPct+=h.inheritanceLevel*.035+orange*.05;
+ const inheritanceLevel=nlhSourceSeal(id)?0:h.inheritanceLevel;
+ bonus.defensePct+=h.commanderLevel*.012+inheritanceLevel*.015+gold*.08;
+ bonus.hpPct+=inheritanceLevel*.035+orange*.05;
  bonus.speedFlat+=h.commanderLevel;
  if(h.destinyId&&!nlhSourceProgress(id).destiny){
    if(h.destinyId==='war')bonus.attackPct+=h.destinyLevel*.028;
@@ -385,6 +399,10 @@ function nlhSystemBody(system,id){
  if(system==='commander')return '<div class="nlh-section-head"><span>Thống Soái · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div>'+nlhQuotePanel(system,id,dev.commanderLevel,skill.maxLevel,'Mỗi cấp: +1,2% Công/Thủ và +1 Tốc. SIMULATED.')+'<p class="nlh-source-note">Cần vượt 6 ải, Binh Thư Thống Soái và tài nguyên. Hệ này là thiết kế mới của dự án, không gán cho nguồn chính thức.</p>';
  if(system==='specialWeapon'&&nlhSourceWeapon(id))return nlhSourcePanel(id,'weapon');
  if(system==='specialWeapon')return '<div class="nlh-section-head"><span>Vũ Khí Đặc Biệt · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div><h3 class="nlh-section-title">'+hsEsc(({guan:'Thanh Long Yển Nguyệt Đao',zhao:'Long Đảm Lượng Ngân Thương',zhang:'Trượng Bát Xà Mâu',cao:'Ỷ Thiên Kiếm',liu:'Song Cổ Kiếm',lu:'Phương Thiên Họa Kích','wiki-mobile-hero-083':'Bạch Vũ Phiến'})[id]||'Bảo Binh Bản Mệnh')+'</h3><p class="nlh-copy">Vũ khí riêng gắn theo ID tướng, tăng Vật Công/Chiến Công/Mưu Công đồng thời. SIMULATED; không chiếm ô trang bị thường.</p>'+nlhQuotePanel(system,id,dev.weaponLevel,skill.maxLevel,'Mỗi cấp: +2,5% Công và hiệu lực Chiến/Mưu Công.')+'<p class="nlh-source-note">Mở sau ải 8; Tinh Thiết Đặc Vũ và phí nâng cấp đều là dữ liệu dự án.</p>';
+ if(system==='inheritance'&&nlhSourceSeal(id)){
+ const seal=nlhSourceSeal(id),rank=dev.inheritanceLevel,cap=seal.skillDescs.length;
+ return '<div class="nlh-section-head"><span>Ấn Kế Thừa · '+hsEsc(h.name)+'</span></div><div class="nlh-feature-panel"><b>'+hsEsc(seal.name)+'</b><p>'+seal.skillDescs.map((x,i)=>'<small>Lv '+(i+1)+(rank===i+1?' · Đang dùng':'')+' · '+hsEsc(x)+'</small>').join(' · ')+'</p>'+nlhQuotePanel(system,id,rank,cap,'Hiệu ứng theo cấp nguồn; phí nâng mô phỏng. Chỉ các mẫu hiệu ứng đã có adapter mới tác động combat.')+'</div>';
+ }
  if(system==='inheritance')return '<div class="nlh-section-head"><span>Ấn Kế Thừa · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div><h3 class="nlh-section-title">Dấu ấn truyền thừa</h3><p class="nlh-copy">Ấn riêng từng võ tướng, tăng sinh lực và phòng ngự trong trận thật. Lộ trình, cấp tối đa và hệ số đều SIMULATED.</p>'+nlhQuotePanel(system,id,dev.inheritanceLevel,skill.maxLevel,'Mỗi cấp: +3,5% HP và +1,5% Thủ.')+'<p class="nlh-source-note">Mở sau ải 12. Ấn Kế Thừa được cấp qua thưởng lần đầu vượt ải.</p>';
  if(system==='destiny'){
   const source=nlhSourcePanel(id,'destiny');if(source)return source;
