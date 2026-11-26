@@ -93,6 +93,14 @@ def main():
           trainFixture.silver=1000000000;q.setGame(trainFixture);
           const trainingOwner=trainFixture.roster[0],bookBefore=c.state();
           checks.mobileTrainingCoverage=c.trainingCounts().join(',')==='11,19,129';
+          checks.mobileBookStep=c.bookStepQuote('1').exp===4800&&c.bookStep('1')&&c.bookLevel('1')===1&&c.bookQuote('1').exp===103200;
+          checks.mobileHorseStep=c.horseStep('1')&&c.horseStar('1')===1&&c.horseTier('1')===0&&c.horseQuote('1').points===69664;
+          const dailyFixture=q.getGame(),daily=c.trainingDaily();
+          dailyFixture.nlContentC.trainingDaily={day:daily.day,wins:3,claimed:{}};q.setGame(dailyFixture);
+          const dailyBefore=c.state(),stackBefore=q.getGame().nlItemsV1?.stacks?.['mobile-vng-resource-res_16']||0;
+          checks.mobileDailyClaim=c.trainingClaim(0)&&c.state().bookFragments===dailyBefore.bookFragments+15&&(q.getGame().nlItemsV1?.stacks?.['mobile-vng-resource-res_16']||0)===stackBefore+100&&!c.trainingClaim(0);
+          q.setGame(trainFixture);
+
           checks.mobileBookSource=Array.from({length:5},()=>c.bookUpgrade('1')).every(Boolean)&&!c.bookUpgrade('1')&&bookBefore.bookFragments-c.state().bookFragments===2350&&bookBefore.bookExp-c.state().bookExp===897360&&c.trainingAssign('book',trainingOwner,'1');
           checks.mobileHorseSource=!c.horseGate('2',0)&&c.horseUpgrade('1')&&c.horseTier('1')===1&&c.horseGate('2',0)&&c.trainingAssign('horse',trainingOwner,'1');
           checks.mobileEtchSource=c.etchBuy('1')&&c.etchChange('1-1-1','upgrade')&&c.etchEquip(trainingOwner,'1-1-2')&&c.trainingModifiers(trainingOwner).flat.atk>0;
