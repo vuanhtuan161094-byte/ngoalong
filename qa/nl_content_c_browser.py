@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=10&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=17&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -70,7 +70,12 @@ def main():
             guardProbe=c.skillProbe('Thủ Hộ'),guardDescriptor=guardProbe&&c.describeSkill(guardProbe.skill,'strategist',false,guardProbe.effects),
             noBuffProbe=c.skillProbe('Bách Lý Truy Hồn'),noBuffDescriptor=noBuffProbe&&c.describeSkill(noBuffProbe.skill,'infantry',false,noBuffProbe.effects),
             defenseProbe=c.skillProbe('Chấn Kích'),defenseDescriptor=defenseProbe&&c.describeSkill(defenseProbe.skill,'strategist',false,defenseProbe.effects),
-            deathProbe=c.skillProbe('Tử Thần'),deathDescriptor=deathProbe&&c.describeSkill(deathProbe.skill,'strategist',false,deathProbe.effects);
+            deathProbe=c.skillProbe('Tử Thần'),deathDescriptor=deathProbe&&c.describeSkill(deathProbe.skill,'strategist',false,deathProbe.effects),
+            physicalBuffProbe=c.skillProbe('Lợi Nhẫn'),physicalBuffDescriptor=physicalBuffProbe&&c.describeSkill(physicalBuffProbe.skill,'support',false,physicalBuffProbe.effects),
+            magicBuffProbe=c.skillProbe('Phấn Đẩu'),magicBuffDescriptor=magicBuffProbe&&c.describeSkill(magicBuffProbe.skill,'strategist',false,magicBuffProbe.effects),
+            tacticBuffProbe=c.skillProbe('Chuyên Chú'),tacticBuffDescriptor=tacticBuffProbe&&c.describeSkill(tacticBuffProbe.skill,'support',false,tacticBuffProbe.effects),
+            attackDebuffProbe=c.skillProbe('Chiết Binh'),attackDebuffDescriptor=attackDebuffProbe&&c.describeSkill(attackDebuffProbe.skill,'strategist',false,attackDebuffProbe.effects),
+            dragonBuffProbe=c.skillProbe('Chúa Lâm'),dragonBuffDescriptor=dragonBuffProbe&&c.describeSkill(dragonBuffProbe.skill,'support',false,dragonBuffProbe.effects);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
@@ -81,6 +86,13 @@ def main():
           checks.mobileSourceConditionalControlDescriptor=deathDescriptor?.sourceConditionalMorale?.onKill===500&&deathDescriptor?.sourceConditionalMorale?.onSurvival===0&&
             deathDescriptor?.sourceConditionalMorale?.onAction===50&&deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.sourceId==='2'&&
             deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.turns===1;
+          const appOf=(descriptor,id)=>descriptor?.sourceApplications?.find(app=>app.sourceId===id);
+          checks.mobileSourceAttackVectorDescriptors=appOf(physicalBuffDescriptor,'9')?.scope==='allies'&&appOf(physicalBuffDescriptor,'9')?.turns===2&&appOf(physicalBuffDescriptor,'9')?.values.physicalDamageMultiplier===1.25&&
+            appOf(magicBuffDescriptor,'10')?.scope==='self'&&appOf(magicBuffDescriptor,'10')?.values.magicDamageMultiplier===1.25&&
+            appOf(tacticBuffDescriptor,'11')?.scope==='allies'&&appOf(tacticBuffDescriptor,'11')?.values.tacticDamageMultiplier===1.25&&
+            appOf(attackDebuffDescriptor,'13')?.scope==='targets'&&appOf(attackDebuffDescriptor,'13')?.chance===.75&&appOf(attackDebuffDescriptor,'13')?.values.physicalDamageMultiplier===.75;
+          checks.mobileSourceDragonBuffDescriptor=appOf(dragonBuffDescriptor,'70')?.scope==='allies'&&appOf(dragonBuffDescriptor,'70')?.turns===2&&
+            appOf(dragonBuffDescriptor,'70')?.values.outgoingDamageMultiplier===1.2&&appOf(dragonBuffDescriptor,'70')?.unresolvedMechanics?.includes('SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED');
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -229,6 +241,23 @@ def main():
             checks.mobileSourceConditionalKillInNativeCombat=killEvent?.skill==='Tử Thần'&&victim?.hp===0&&
               !victim.effects.some(effect=>effect.kind==='mobile-source-control')&&ka.morale===130;
           }else checks.mobileSourceConditionalKillInNativeCombat=false;
+          q.closeBattle('city');
+          const vb=launchStatusProbe(physicalBuffProbe),va=vb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Lợi Nhẫn');
+          if(vb&&va){va.morale=100;q.perform(va);const vectorEvent=vb.events.at(-1),vectorStatuses=vb.e.flatMap(unit=>unit.effects.filter(effect=>effect.mobileSource?.sourceEffectId==='9'));
+            const vectorStatus=va.effects.find(effect=>effect.mobileSource?.sourceEffectId==='9'),baseActor=structuredClone(va);
+            va.atk=baseActor.atk=1000000;va.crit=baseActor.crit=0;baseActor.effects=baseActor.effects.filter(effect=>effect.mobileSource?.sourceEffectId!=='9');
+            const testTarget=structuredClone(vb.p[0]);testTarget.hp=testTarget.maxHp=1000000000;testTarget.def=testTarget.tdef=testTarget.mdef=0;
+            const buffedHit=c.p2Hit(va,structuredClone(testTarget),'physical',1),plainHit=c.p2Hit(baseActor,structuredClone(testTarget),'physical',1);
+            checks.mobileSourceAttackVectorInNativeCombat=vectorEvent?.skill==='Lợi Nhẫn'&&vectorStatuses.length===vb.e.filter(unit=>unit.hp>0).length&&
+              vectorStatus?.turns===2&&vectorStatus.mobileSourceValues?.physicalDamageMultiplier===1.25&&buffedHit.amount>plainHit.amount;
+          }else checks.mobileSourceAttackVectorInNativeCombat=false;
+          q.closeBattle('city');
+          const dragonBattle=launchStatusProbe(dragonBuffProbe),dragonActor=dragonBattle?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Chúa Lâm');
+          if(dragonBattle&&dragonActor){dragonActor.morale=100;q.perform(dragonActor);const dragonEvent=dragonBattle.events.at(-1),dragonStatuses=dragonBattle.e.flatMap(unit=>unit.effects.filter(effect=>effect.mobileSource?.sourceEffectId==='70')),
+              dragonStatus=dragonActor.effects.find(effect=>effect.mobileSource?.sourceEffectId==='70');
+            checks.mobileSourceDragonBuffInNativeCombat=dragonEvent?.skill==='Chúa Lâm'&&dragonStatuses.length===dragonBattle.e.filter(unit=>unit.hp>0).length&&
+              dragonStatus?.turns===2&&dragonStatus.mobileSourceValues?.outgoingDamageMultiplier===1.2&&c.p2StatusFactor(dragonActor,'outgoingDamageMultiplier')===1.2;
+          }else checks.mobileSourceDragonBuffInNativeCombat=false;
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
