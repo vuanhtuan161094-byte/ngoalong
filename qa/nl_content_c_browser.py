@@ -46,11 +46,11 @@ def main():
             for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
               const npc=map.npcs[npcIndex];
               for(const unit of npc.units||[]){
-                for(const id of ['33','50','58','74','184','54','55','51']){
+                for(const id of ['33','50','58','74','184','54','55','51','108']){
                   const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                   const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
                   const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
-                  if(app){const sample={mapId,npcId:npc.id,npcIndex,slot:unit.slot,skill:unit.skill,effect,app};sourceStatusSamples[id]||=sample;sourceStatusSamples[id+'-'+app.scope]||=sample;}
+                  if(app){const sample={mapId,npcId:npc.id,npcIndex,slot:unit.slot,skill:unit.skill,effect,app};sourceStatusSamples[id]||=sample;sourceStatusSamples[id+'-'+app.scope]||=sample;if(id==='108'&&Number.isFinite(app.sourceMagnitude))sourceStatusSamples['108-exact']||=sample;}
                 }
                 if(sourceStatusSamples['58']?.app?.scope==='lowest-ally')continue;
                 if(String(unit.effects?.find(row=>String(row.id)==='58')?.id)==='58'&&unit.skill?.desc){
@@ -260,6 +260,7 @@ def main():
           const silence184=sourceStatusSamples['184'],silenceTurns=Number(silence184?.skill?.desc.match(/\\[Vô Ngôn\\][\\s\\S]{0,45}?duy trì\\s+(\\d+)\\s*lượt/i)?.[1]);
           const bounty54=sourceStatusSamples['54'],insight55=sourceStatusSamples['55'];
           const confusion51=sourceStatusSamples['51'];
+          const shield108=sourceStatusSamples['108'],shieldExact108=sourceStatusSamples['108-exact'];
           const bountyRawMagnitude=Number(bounty54?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           const insightRawMagnitude=Number(insight55?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           checks.mobileSourceBountySelectors=sourceStatusSamples['54-least-enemy']?.app?.scope==='least-enemy'&&
@@ -274,6 +275,10 @@ def main():
             insight55?.app?.turns===Number(insight55.effect.detail.match(/(\\d+)\\s*lượt/i)?.[1]);
           checks.mobileSourceConfusionDescriptor=confusion51?.app?.scope==='enemies'&&confusion51?.app?.chance===Number(confusion51.effect.detail.match(/(\\d+(?:[.,]\\d+)?)%/)?.[1]?.replace(',','.'))/100&&
             confusion51?.app?.turns===Number(confusion51.effect.detail.match(/(\\d+)\\s*lượt/i)?.[1])&&confusion51?.app?.kind==='mobile-source-confusion';
+          checks.mobileSourceShieldDescriptor=!!shield108&&['self','allies'].includes(shield108.app.scope)&&shield108.app.turns>0&&
+            shield108.app.kind==='mobile-source-max-hp-shield'&&shield108.app.values.maxHpShieldRatio>0;
+          checks.mobileSourceShieldExactRatio=!!shieldExact108&&shieldExact108.app.values.maxHpShieldRatio===shieldExact108.app.sourceMagnitude/100&&
+            shieldExact108.app.formulaClassification==='SOURCE_MAX_HP_SHIELD_RATIO';
           checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
             silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
@@ -443,6 +448,24 @@ def main():
               checks.mobileSourceConfusionDiagnostics={sample:confusion51,confusionEvent,confusedSlots:confusedTargets.map(unit=>unit.slot),redirectEvent,confusedTarget:{slot:confusedTarget.slot,morale:confusedTarget.morale}};
             }else {checks.mobileSourceConfusionInNativeCombat=false;checks.mobileSourceConfusionDiagnostics={confusionEvent,players:confusionBattle.p.map(unit=>({slot:unit.slot,effects:unit.effects}))};}
           }else {checks.mobileSourceConfusionInNativeCombat=false;checks.mobileSourceConfusionDiagnostics={battle:!!confusionBattle,caster:!!confusionCaster,sample:confusion51};}
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
+          const hpShieldBattle=launchStatusProbe(shield108,true),hpShieldCaster=hpShieldBattle?.e?.find(unit=>unit.slot===shield108?.slot);
+          if(hpShieldBattle&&hpShieldCaster){
+            const application=hpShieldCaster.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='108');if(application)application.chance=1;
+            hpShieldCaster.morale=100;q.perform(hpShieldCaster);
+            const hpShieldFriendly=hpShieldBattle[hpShieldCaster.team].filter(unit=>unit.hp>0),hpShieldedUnits=hpShieldFriendly.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='108'));
+            const expectedShieldTargets=shield108.app.scope==='self'?1:hpShieldFriendly.length;
+            checks.mobileSourceShieldInNativeCombat=hpShieldBattle.events.at(-1)?.skill===shield108.skill.name&&hpShieldedUnits.length===expectedShieldTargets&&
+              hpShieldedUnits.every(unit=>{const status=unit.effects.find(effect=>effect.mobileSource?.sourceEffectId==='108');return status.turns===shield108.app.turns&&
+                status.mobileSourceValues.shieldMaximum===Math.round(unit.maxHp*shield108.app.values.maxHpShieldRatio)&&status.mobileSourceValues.shieldRemaining===status.mobileSourceValues.shieldMaximum;});
+            const probeTarget={team:'p',slot:0,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',def:1,tdef:1,mdef:1,effects:[]};
+            const shieldApplied=c.applyMobileSourceStatus(probeTarget,shield108.app),poolBefore=probeTarget.effects[0]?.mobileSourceValues?.shieldRemaining;
+            const attacker={team:'e',slot:4,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',atk:1000000,catk:1000000,matk:1000000,crit:0,def:1,tdef:1,mdef:1,effects:[]};
+            const hpBefore=probeTarget.hp,shieldHit=shieldApplied?c.p2Hit(attacker,probeTarget,'physical',1):null;
+            checks.mobileSourceShieldDamageAbsorption=shieldHit?.mobileSourceShieldAbsorbed>0&&probeTarget.hp===hpBefore&&
+              probeTarget.effects[0]?.mobileSourceValues?.shieldRemaining<poolBefore&&shieldHit.amount===0;
+            checks.mobileSourceShieldDiagnostics={sample:shield108,exactSample:shieldExact108,shielded:hpShieldedUnits.map(unit=>({slot:unit.slot,hp:unit.hp,effects:unit.effects.filter(effect=>effect.mobileSource?.sourceEffectId==='108')})),shieldHit,poolBefore,poolAfter:probeTarget.effects[0]?.mobileSourceValues?.shieldRemaining};
+          }else {checks.mobileSourceShieldInNativeCombat=false;checks.mobileSourceShieldDamageAbsorption=false;checks.mobileSourceShieldDiagnostics={battle:!!hpShieldBattle,caster:!!hpShieldCaster,sample:shield108};}
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
           if(silenceBattle&&silenceCaster){
