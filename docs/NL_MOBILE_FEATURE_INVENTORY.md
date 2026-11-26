@@ -58,6 +58,8 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R6 gameplay source delta (unverified build)
 
+- 136 valid source promotion edges tested using raw source equipment fixtures: missing material rejects, one material consumed, same UID/slot, destination and duplicate receipt correct. School growth now feeds native P2 attributes per earned hero level (growth hundredths × level−1; simulated). Added scoped source freeze ID41 and morale-on-damage ID35; actual NPC application coverage remains pending.
+
 - 82 destination equipment identities matched by exact item description name and level; 49 material identities support native upgrade paths. One material per promotion and fallback merchant price/gate simulated; existing drop routes preserved. Ambiguous series-only descriptions not auto-mapped. No second item owner. No native browser acceptance yet.
 
 ## R5 gameplay source delta (unverified build)

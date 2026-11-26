@@ -176,3 +176,18 @@ test('missing Tranh Ngọc and Bạc failures are atomic; valid late-game batch 
   assert.equal(failure.code,'INSUFFICIENT_RESOURCES');
   assert.deepEqual(failure.state,poor);
 });
+
+test('R6 exact-name and level craft source links consume materials on all valid promotions',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const src=fs.readFileSync(path.join(__dirname,'../tools/nl_item_integration_v1.js'),'utf8');
+ const links=new Function('source',src.slice(src.indexOf('function nlMobileCraftLinks('),src.indexOf('const NL_MOBILE_CRAFT_LINKS='))+'return nlMobileCraftLinks(source);')(source);
+ assert.equal(links.length,82);assert.equal(new Set(links.map(x=>x.id)).size,49);
+ const all=new Function('source',src.slice(src.indexOf('function nlMobileFallbackEquipment('),src.indexOf('const NL_MOBILE_FALLBACK_GEAR='))+'return nlMobileFallbackEquipment(source);')({...source,runtimeEquipment:[]});
+ const by=new Map(all.map(g=>[g.sourceId,g])),pairs=[];
+ for(const g of source.equipment){const a=by.get(String(g.id)),b=by.get(String(g.upgradeTo?.id)),l=links.find(x=>x.to===b?.id);if(!l||!b||a.slot!==b.slot||!(b.displayedLevel>a.displayedLevel||b.displayedLevel===a.displayedLevel&&b.sourceQuality>a.sourceQuality))continue;a.mobilePromotion={to:b.id,kind:'upgrade',materials:[{id:l.id,name:l.name,quantity:1}]};pairs.push({a,b,l});}
+ const mats=[...new Map(links.map(l=>[l.id,{id:l.id,name:l.name,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'MOBILE_DROP'},effectRule:null}])).values()];
+ const api=createModule({equipment:all,items:mats},rules);assert.equal(pairs.length,136);
+ for(const {a,b,l} of pairs){let state={...fresh(),nlContentC:{mobileCommanderLevel:440},items:[{uid:'r6',base:a.id,lv:1}],gear:{liu:{[a.slot]:'r6'}},nlItemsV1:{stacks:{},receipts:{},serial:0}};
+ assert.equal(api.mobilePromote(state,'r6','r6:promote').code,'INSUFFICIENT_MATERIAL');
+ state.nlItemsV1.stacks[l.id]=1;let out=ok(api.mobilePromote(state,'r6','r6:promote'));assert.equal(out.items[0].base,b.id);assert.equal(out.nlItemsV1.stacks[l.id],undefined);assert.equal(out.gear.liu[a.slot],'r6');assert.equal(api.mobilePromote(out,'r6','r6:promote').duplicate,true);}
+});
