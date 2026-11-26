@@ -61,12 +61,22 @@ def main():
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.mobileTroopSave=c.mobileTroopAssigned(mobileOwner)?.id==='2'&&q.getGame().version===5;
           checks.mobileExcludeNpcShip=!c.mobileTroopChoose(id,'112')&&!c.mobileTroopChoose(id,'103');
-          checks.mobileTraitCatalog=c.mobileTraitSupported().length===17;
+          checks.mobileTraitCatalog=c.mobileTraitSupported().length===21;
           checks.mobileTraitRank=c.mobileTraitChoose(mobileOwner,'2')&&c.mobileTraitChoose(mobileOwner,'2')&&!c.mobileTraitChoose(mobileOwner,'2')&&c.mobileTraitChoice(mobileOwner).rank===2;
           const techState=q.getGame();techState.nlContentC.mobileCommanderLevel=440;techState.nlContentC.mobileTechPoints=100000;techState.nlContentC.mobileTechTripods=10000;q.setGame(techState);
           const technologyQuote=c.mobileTechQuote('10',20),techBefore=c.state();
           checks.mobileTechnology=c.mobileTechCount()===14&&technologyQuote?.point>0&&c.mobileTechUpgrade('10',20)&&c.mobileTechLevel('10')===20&&c.mobileTechValue('10')===15&&c.state().mobileTechPoints===techBefore.mobileTechPoints-technologyQuote.point&&!c.mobileTechUpgrade('10',21);
           checks.mobileHeroSource=Object.values(selectBefore.roster).some(h=>c.mobileHeroRecord(h)?.name&&c.mobileHeroQuality(h)?.growth);
+          const v3=q.getGame();v3.silver=100000000;v3.nlClassicA.merit=100000;v3.nlContentC.mobileCommanderLevel=440;
+          v3.nlCity.levels.nl_city_manor=1;q.setGame(v3);
+          const sourceOwner=v3.roster.find(h=>c.mobileHeroNext(h)?.valid);
+          if(sourceOwner){
+            const quote=c.mobileHeroNext(sourceOwner),before=c.mobileHeroQuality(sourceOwner).growth.q;
+            checks.mobileAwakeningSource=Object.entries(quote.material).every(([name,n])=>c.mobileHeroBuyMaterial(sourceOwner,name,n))&&c.mobileHeroAwaken(sourceOwner)&&c.mobileHeroQuality(sourceOwner).growth.q===quote.to&&quote.from===before;
+          }else checks.mobileAwakeningSource=false;
+          checks.mobileBeautySource=c.mobileBeautyCount()===47&&c.mobileBeautyGift('55','fam_9',1)&&c.mobileBeautyUpgrade('55')&&c.mobileBeautyAssign(mobileOwner,'55')&&c.mobileBeautyBonus(mobileOwner)?.raw===3;
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.mobileBeautySave=c.mobileBeautyLevel('55')===1&&c.mobileBeautyBonus(mobileOwner)?.raw===3;
           q.setGame(troopBefore);
           const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders,firstMerit=q.getGame().nlClassicA.merit;
           checks.difficultyRange=c.npcDifficulty(n.id)===1&&m.npcs.every(x=>c.npcDifficulty(x.id)>=1&&c.npcDifficulty(x.id)<=90);
@@ -498,7 +508,7 @@ def main():
           checks.endgameSave=hs.state().heroes[id].ancientLevel===1&&hs.state().heroes[id].illusionMode==='assault'&&hs.state().materialShop.counts.commandManual===5;
           const sk=q.getGame();sk.hero[id].level=60;sk.silver=100000;sk.nlClassicA.merit=10000;sk.heroDevelopment.heroes[id].skillLevel=1;q.setGame(sk);
           const base={tag:'QA',mult:1,drainMorale:20,applyChance:.3},beforeSkill=q.getGame();
-          checks.skillUpgrade=hs.skillUpgrade(id)&&hs.state().heroes[id].skillLevel===2&&q.getGame().silver===beforeSkill.silver-500&&q.getGame().nlClassicA.merit===beforeSkill.nlClassicA.merit-20;
+          checks.skillUpgrade=c.mobileHeroSkill(id)?!hs.skillUpgrade(id)&&q.getGame().silver===beforeSkill.silver:hs.skillUpgrade(id)&&hs.state().heroes[id].skillLevel===2&&q.getGame().silver===beforeSkill.silver-500&&q.getGame().nlClassicA.merit===beforeSkill.nlClassicA.merit-20;
           checks.skillScaling=hs.skillDescriptor(id,base).mult===1.035&&hs.skillDescriptor(id,base).drainMorale===21&&base.mult===1;
           const train=q.getGame();train.hero[id].level=1;train.hero[id].xp=0;train.silver=100000;q.setGame(train);
           const cost=hs.trainQuote(id),trainingBefore=q.getGame().silver;
