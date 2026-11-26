@@ -121,7 +121,7 @@ function childSkillDescriptor(c){
  return {...d,nlMobileHeroSkill:true};
 }
 function childSyncRoster(){
- const c=game.nlContentC?.mobileChild;if(c?.stage!=='graduated')return false;
+ const c=game.nlContentC?.mobileChild;if(c?.stage!=='graduated'){delete HEROES[MOBILE_CHILD_ID];delete P2_SKILLS[MOBILE_CHILD_ID];return false;}
  const current=MOBILE_CHILDREN.stages?.[c.phase||'xuatSu']?.[c.skillId];if(!current)return false;
  const role=({'Hỗ Trợ':'support','Vật Lý':'infantry','Chiến Pháp':'cavalry','Kế Sách':'strategist'})[current.category]||'infantry';
  const attrs=c.base||{},p={id:MOBILE_CHILD_ID,name:c.name||'Quý Tử',role:current.category,type:role,rarity:'Quý Tử',icon:'📜',lead:Math.max(20,nat(attrs.lead)),atk:Math.max(20,nat(attrs.war)),int:Math.max(20,nat(attrs.intellect)),def:Math.max(20,Math.round((nat(attrs.lead)+nat(attrs.war))/2)),agi:60,skill:current.name,skillDesc:current.desc,provenance:{classification:'SIMULATED_CHILD_UNIT_WITH_SOURCE_SKILL'}};
