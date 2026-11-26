@@ -29,7 +29,7 @@
       assert(['VERIFIED', 'DERIVED', 'SIMULATED', 'UNKNOWN', 'SOURCE_EXACT', 'DERIVED_FROM_SOURCE'].includes(row.provenance?.classification), 'BAD_PROVENANCE');
       if (row.integration === 'PLAYABLE') {
         const sourceEnabled=row.provenance.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
-          (row.acquisitionRule?.kind==='MOBILE_DROP'||row.acquisitionRule?.kind==='SOURCE_CURRENCY'||
+          (row.acquisitionRule?.kind==='MOBILE_DROP'||row.acquisitionRule?.kind==='SOURCE_CURRENCY'||row.acquisitionRule?.kind==='MATERIAL_EXCHANGE'||
            (row.acquisitionRule?.kind==='SHOP'&&['SOURCE_EXACT','SIMULATED_FALLBACK'].includes(row.acquisitionRule.classification)&&
             row.acquisitionRule.shopCost&&typeof row.acquisitionRule.shopCost==='object'));
         assert(row.provenance.classification === 'SIMULATED'||sourceEnabled, 'UNAPPROVED_WIKI_ACTIVATION');

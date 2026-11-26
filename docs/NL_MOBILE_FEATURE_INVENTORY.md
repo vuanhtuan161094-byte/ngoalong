@@ -58,6 +58,8 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R3 gameplay source delta (unverified build)
 
+- Six exact material exchange ratios (2:1), nine involved material records. Three raw materials have simulated merchant acquisition at commander 100; six derived links are processed through the shared inventory ledger. Terminal material uses outside these recipes remain unresolved.
+
 - Three offline naval objectives reuse native P2 launch, formation, ship coefficients, battle report and settlement. Ship identities/coefficients source-backed; gates, opponents, roles, first/repeat rewards and daily cap simulated. Existing cargo and city facilities preserved. No dedicated naval visuals or native browser PASS yet.
 
 ## R2 gameplay source delta (unverified build)

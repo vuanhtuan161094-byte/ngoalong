@@ -215,3 +215,17 @@ test('V9 source training items use the existing receipt ledger and growth wallet
  assert.equal(state.silver,60);assert.equal(state.nlContentC.horsePoints,175000);assert.equal(state.nlContentC.bookExp,10000);
  assert.equal(state.heroDevelopment.materials.weaponCore,6);assert.equal(state.heroDevelopment.materials.destinyJade,1);assert.equal(state.version,5);
 });
+
+test('R3 source material conversion purchases base and exchanges 2:1 atomically',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const row=(id,acq,effectRule)=>({id,name:id,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:acq,effectRule});
+ const pack={items:[row('raw',{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:1200},minCommander:100},{kind:'CRAFT_REAGENT',output:'middle',needPieces:2,silverCost:0,outputQuantity:1}),row('middle',{kind:'MATERIAL_EXCHANGE',classification:'SOURCE_EXACT'},{kind:'CRAFT_REAGENT',output:'final',needPieces:2,silverCost:0,outputQuantity:1}),row('final',{kind:'MATERIAL_EXCHANGE',classification:'SOURCE_EXACT'},null)]};
+ const api=create(pack,{limits:{stacksKinds:10,quantityEach:10,receipts:100}});
+ let s={version:5,silver:5000,nlContentC:{mobileCommanderLevel:99},nlItemsV1:{stacks:{},receipts:{},serial:0}};
+ assert.equal(api.buySourceMaterial(s,'raw','locked').code,'COMMANDER_LEVEL_REQUIRED');s.nlContentC.mobileCommanderLevel=100;
+ for(let i=0;i<4;i++)s=done(api.buySourceMaterial(s,'raw','buy:'+i));
+ assert.equal(s.silver,200);assert.equal(api.buySourceMaterial(s,'middle','blocked').code,'NOT_SOURCE_MATERIAL_SHOP');
+ s=done(api.process(s,'raw','x1'));assert.equal(api.process(s,'raw','x1').duplicate,true);
+ s=done(api.process(s,'raw','x2'));s=done(api.process(s,'middle','x3'));assert.equal(s.nlItemsV1.stacks.final,1);assert.equal(s.nlItemsV1.stacks.raw,undefined);
+ assert.equal(api.process(s,'middle','empty').code,'NOT_ENOUGH_ITEMS');assert.equal(s.version,5);
+});

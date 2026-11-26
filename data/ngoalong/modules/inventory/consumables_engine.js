@@ -27,16 +27,17 @@
         row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
         ['MOBILE_DROP','SOURCE_CURRENCY'].includes(row.acquisitionRule?.kind)&&
         row.category==='material'&&row.effectRule==null;
+      const mobileExchange=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.category==='material'&&(row.acquisitionRule?.kind==='MATERIAL_EXCHANGE'||row.acquisitionRule?.kind==='SHOP'&&row.acquisitionRule?.classification==='SIMULATED_FALLBACK')&&(row.effectRule==null||row.effectRule.kind==='CRAFT_REAGENT');
       const mobileSourceBundle=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.category==='consumable'&&row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&row.acquisitionRule?.classification==='SIMULATED_FALLBACK';
       requireOk(['VERIFIED','SIMULATED','SOURCE_EXACT'].includes(row.provenance?.classification),'BAD_PROVENANCE');
       if(row.integration==='REFERENCE_ONLY'){
         requireOk(row.effectRule==null,'REFERENCE_EFFECT_FORBIDDEN');
       }else{
-        requireOk(row.provenance.classification==='SIMULATED'||mobileSourceMaterial||mobileSourceBundle,'ACTIVE_NOT_PROJECT_ORIGINAL');
+        requireOk(row.provenance.classification==='SIMULATED'||mobileSourceMaterial||mobileSourceBundle||mobileExchange,'ACTIVE_NOT_PROJECT_ORIGINAL');
         requireOk(row.category==='consumable'||row.category==='material','BAD_PLAYABLE_KIND');
         if(row.category==='consumable')requireOk(row.effectRule&&
           ['GRANT_RESOURCE','OPEN_BUNDLE','OPEN_SOURCE_BUNDLE','TRAIN_HERO_XP'].includes(row.effectRule.kind),'BAD_CONSUMABLE_RULE');
-        else if(!mobileSourceMaterial)requireOk(row.effectRule?.kind==='CRAFT_REAGENT'||
+        else if(!mobileSourceMaterial&&!mobileExchange)requireOk(row.effectRule?.kind==='CRAFT_REAGENT'||
           row.effectRule?.kind==='REFINEMENT_REAGENT','BAD_MATERIAL_RULE');
       }
       lookup[row.id]=row;
@@ -99,6 +100,15 @@
       return execute(state,'BUY_SOURCE_BUNDLE',id,null,receipt,(next,m)=>{
         const row=get(id),q=row.acquisitionRule;
         requireOk(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&q?.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0,'NOT_SOURCE_BUNDLE_SHOP');
+        requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
+        requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
+        next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
+      });
+    }
+    function buySourceMaterial(state,id,receipt){
+      return execute(state,'BUY_SOURCE_MATERIAL',id,null,receipt,(next,m)=>{
+        const row=get(id),q=row.acquisitionRule;
+        requireOk(row.category==='material'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&q?.kind==='SHOP'&&q.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0,'NOT_SOURCE_MATERIAL_SHOP');
         requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
         requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
         next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
@@ -191,7 +201,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });

@@ -90,6 +90,25 @@ for(const row of NL_MOBILE_BUNDLES){
  const i=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);
  if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
 }
+// Promote the six explicit source exchange links; only base ingredients are sold.
+function nlMobileExchangeMaterials(source){
+ const byId=new Map(source.items.map(x=>[String(x.id),x])),recipes=new Map(),ids=new Set(),outputs=new Set();
+ for(const row of source.items)for(const link of row.usage?.exchangeFrom||[]){
+  const from=String(link.from),to=String(row.id),need=Number(link.scale);
+  if(!from.startsWith('mat_')||!to.startsWith('mat_')||!byId.has(from)||from===to||!Number.isSafeInteger(need)||need<2||recipes.has(from))continue;
+  recipes.set(from,{output:'mobile-vng-item-'+to,needPieces:need,silverCost:0,outputQuantity:1,kind:'CRAFT_REAGENT',classification:'SOURCE_RATIO_WITH_SIMULATED_ZERO_FEE'});ids.add(from);ids.add(to);outputs.add(to);
+ }
+ return [...ids].map(id=>{const row=byId.get(id),base=!outputs.has(id);return {id:'mobile-vng-item-'+id,sourceId:id,name:row.name,category:'material',integration:'PLAYABLE',
+  sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc||'',sourceIcon:row.icon,provenance:{classification:'SOURCE_EXACT'},
+  acquisitionRule:base?{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:1200},minCommander:100}:{kind:'MATERIAL_EXCHANGE',classification:'SOURCE_EXACT'},
+  effectRule:recipes.get(id)||null};});
+}
+const NL_MOBILE_EXCHANGE=nlMobileExchangeMaterials(NL_MOBILE_INVENTORY);
+if(NL_MOBILE_EXCHANGE.length!==9||NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length!==6)throw Error('MOBILE_MATERIAL_EXCHANGE_DRIFT');
+for(const row of NL_MOBILE_EXCHANGE){
+ const i=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);
+ if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
+}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -389,7 +408,7 @@ document.addEventListener('click',function(ev){
   const id=control.getAttribute('data-nli-item-id');
   const nonce=nlItemHydrate().actionNonce+1,receipt='nli:ui:'+nonce;
   if(battle)return;
-  const result=action==='buy-source-bundle'?nlItemConsumableApi.buySourceBundle(game,id,receipt):action==='use'?nlItemConsumableApi.use(game,id,receipt,nlItemHeroId()):
+  const result=action==='buy-source-material'?nlItemConsumableApi.buySourceMaterial(game,id,receipt):action==='buy-source-bundle'?nlItemConsumableApi.buySourceBundle(game,id,receipt):action==='use'?nlItemConsumableApi.use(game,id,receipt,nlItemHeroId()):
     action==='process'?nlItemConsumableApi.process(game,id,receipt):
     {ok:false,code:'UNKNOWN_ITEM_ACTION'};
   nlItemApply(result,{actionNonce:nonce});

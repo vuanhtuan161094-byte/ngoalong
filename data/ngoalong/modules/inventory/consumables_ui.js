@@ -34,7 +34,7 @@
    const stacks=state?.nlItemsV1?.stacks||{};
    const mode=['wiki','shop'].includes(options.mode)?options.mode:'bag';
    const rows=pack.items.filter(row=>mode==='wiki'?row.integration==='REFERENCE_ONLY':
-     row.integration==='PLAYABLE'&&(mode==='shop'?row.effectRule?.kind==='OPEN_SOURCE_BUNDLE':(stacks[row.id]||0)>0));
+     row.integration==='PLAYABLE'&&(mode==='shop'?(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'||row.category==='material'&&row.acquisitionRule?.kind==='SHOP'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'):(stacks[row.id]||0)>0));
    const filtered=rows.filter(row=>(category==='all'||row.sourceCategory===category)&&
      (!search||row.name.toLocaleLowerCase('vi-VN').includes(search)));
    const pages=Math.max(1,Math.ceil(filtered.length/perPage)),current=Math.min(page,pages-1);
@@ -44,11 +44,12 @@
      const silverCost=rule.silverCost||0;
      const canProcess=owned>=needs&&(state.silver||0)>=silverCost;
      const sourceGate=Number(row.acquisitionRule?.minCommander||rule.minCommander||0),sourceLocked=(state.nlContentC?.mobileCommanderLevel||0)<sourceGate;
-     const action=mode==='shop'?'<button data-nli-item-action="buy-source-bundle" data-nli-item-id="'+esc(row.id)+'" '+((sourceLocked||(state.silver||0)<row.acquisitionRule.shopCost.silver)?'disabled':'')+'>Mua · '+esc(row.acquisitionRule.shopCost.silver)+' Bạc'+(sourceLocked?' · Chỉ huy '+sourceGate:'')+'</button>':mode==='wiki'||row.integration!=='PLAYABLE'||(sourceMaterial&&rule.kind!=='OPEN_SOURCE_BUNDLE')?'':rule.kind==='CRAFT_REAGENT'?
+     const action=mode==='shop'?'<button data-nli-item-action="'+(row.category==='material'?'buy-source-material':'buy-source-bundle')+'" data-nli-item-id="'+esc(row.id)+'" '+((sourceLocked||(state.silver||0)<row.acquisitionRule.shopCost.silver)?'disabled':'')+'>Mua · '+esc(row.acquisitionRule.shopCost.silver)+' Bạc'+(sourceLocked?' · Chỉ huy '+sourceGate:'')+'</button>':mode==='wiki'||row.integration!=='PLAYABLE'||(sourceMaterial&&!['OPEN_SOURCE_BUNDLE','CRAFT_REAGENT'].includes(rule.kind))?'':rule.kind==='CRAFT_REAGENT'?
        '<button data-nli-item-action="process" data-nli-item-id="'+esc(row.id)+'" '+(!canProcess?'disabled':'')+'>Gia công ×'+needs+'</button>':
        rule.kind==='REFINEMENT_REAGENT'?'':'<button data-nli-item-action="use" data-nli-item-id="'+esc(row.id)+'" '+(sourceLocked?'disabled':'')+'>'+
        (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
-     const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':sourceMaterial?
+     const outputName=pack.items.find(x=>x.id===rule.output)?.name||rule.output||'tinh khoáng';
+     const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ Wiki, phí mô phỏng':sourceMaterial?
        (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
@@ -71,7 +72,7 @@
    return '<style data-nli-items-style>'+STYLE+'</style><section class="nli-items-panel" data-nli-items-panel="1">'+
      '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Rương nguồn giữ nguyên số lượng thưởng. Giá thương nhân bổ sung là mô phỏng; vật phẩm chưa rõ tác dụng giữ tham chiếu.</p>'+
      '<div class="nli-items-switch"><button data-nli-item-mode="bag" '+(mode==='bag'?'aria-pressed="true"':'')+'>Kho của tôi</button>'+
-     '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button><button data-nli-item-mode="shop" '+(mode==='shop'?'aria-pressed="true"':'')+'>Rương nguyên liệu</button></div>'+
+     '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button><button data-nli-item-mode="shop" '+(mode==='shop'?'aria-pressed="true"':'')+'>Rương và nguyên liệu</button></div>'+
      '<div class="nli-items-cats">'+CATEGORIES.map(c=>'<button data-nli-item-category="'+esc(c)+'" '+(c===category?'aria-pressed="true"':'')+'>'+esc(c==='all'?'Tất cả':c)+'</button>').join('')+'</div>'+
      '<input data-nli-item-search type="search" aria-label="Tìm vật phẩm" value="'+esc(options.search||'')+'" placeholder="Tìm vật phẩm..."/>'+
      '<div class="nli-items-summary"><span data-nli-items-results="'+filtered.length+'">'+
@@ -97,7 +98,7 @@
      const heroId=typeof options.getHeroId==='function'?options.getHeroId():null;
      const rid=receiptId(action,{id,heroId});
      if(typeof rid!=='string'||!rid)throw Error('RECEIPT_REQUIRED');
-     const result=action==='buy-source-bundle'?engine.buySourceBundle(getState(),id,rid):action==='use'?engine.use(getState(),id,rid,heroId):
+     const result=action==='buy-source-material'?engine.buySourceMaterial(getState(),id,rid):action==='buy-source-bundle'?engine.buySourceBundle(getState(),id,rid):action==='use'?engine.use(getState(),id,rid,heroId):
        action==='process'?engine.process(getState(),id,rid):
        {ok:false,code:'UNKNOWN_ACTION'};
      if(result.ok&&!result.duplicate){setState(result.state,{receiptId:rid,detail:result.detail});render()}
