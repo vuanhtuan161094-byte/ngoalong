@@ -56,6 +56,10 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 | SAVE-01 Cài đặt / Save / transfer | Mobile UX reference; existing persistence is project-owned | schema v5, migration chain and transfer format | One save authority, import/export and receipt guard | Journal/settings windows | `muu_dinh_tam_quoc_v1` | PARTIAL | Test new/old/import-failure/reload/reward idempotence across origins. |
 | AND-01 Android package | Mobile is the product benchmark | No verified APK artifact | No Android wrapper/build pipeline; this environment has Java but no `gradle`, `sdkmanager`, `adb`, or configured Android SDK | Browser mobile layout is not an APK | Browser Save only | MISSING · TOOLCHAIN UNAVAILABLE | Add a shared-runtime wrapper/build instructions when an Android SDK/Gradle environment is available, then produce and checksum a real APK. |
 
+## R2 gameplay source delta (unverified build)
+
+- Native normal-hit counter adapter consumes source strikeBack probability; damage .60, once per defender/action and no chained counter are SIMULATED. Added five Tử Long Ngọc to ten-win daily reward through existing atomic ledger (SIMULATED acquisition); source currency identity unchanged. Browser gate skillScaling now independently tests source rank lock and legacy rank scaling, preserving both assertions. No native browser or earned-only balance PASS claimed.
+
 ## V9 gameplay source delta (unverified build)
 
 - 11/11 Binh Thư have action adapters; attribute scaling, round-end timing, Hồi Xuân duration and morale-lock adapter are project implementation choices. No native browser PASS claimed. Four additional fixed consumables connect existing book, horse, weapon and destiny wallets; quantities preserved, prices and wallet equivalences simulated. Full CI, Web, and remaining effect coverage are open.

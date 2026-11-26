@@ -552,7 +552,13 @@ def main():
           const sk=q.getGame();sk.hero[id].level=60;sk.silver=100000;sk.nlClassicA.merit=10000;sk.heroDevelopment.heroes[id].skillLevel=1;q.setGame(sk);
           const base={tag:'QA',mult:1,drainMorale:20,applyChance:.3},beforeSkill=q.getGame();
           checks.skillUpgrade=c.mobileHeroSkill(id)?!hs.skillUpgrade(id)&&q.getGame().silver===beforeSkill.silver:hs.skillUpgrade(id)&&hs.state().heroes[id].skillLevel===2&&q.getGame().silver===beforeSkill.silver-500&&q.getGame().nlClassicA.merit===beforeSkill.nlClassicA.merit-20;
-          checks.skillScaling=hs.skillDescriptor(id,base).mult===1.035&&hs.skillDescriptor(id,base).drainMorale===21&&base.mult===1;
+          // Exact Mobile skills reject paid simulated ranks; independently exercise the legacy scaling function.
+          const exactSkill=c.mobileHeroSkill(id),afterSkill=q.getGame(),paidRank=hs.state().heroes[id].skillLevel;
+          const paidDescriptor=hs.skillDescriptor(id,base);
+          const scaleFixture=structuredClone(afterSkill);scaleFixture.heroDevelopment.heroes[id].skillLevel=2;q.setGame(scaleFixture);
+          const scaled=hs.skillDescriptor(id,base),unscaled=hs.skillDescriptor(id,{...base,nlMobileHeroSkill:true});
+          checks.skillScaling=paidRank===(exactSkill?1:2)&&paidDescriptor.mult===(exactSkill?1:1.035)&&scaled.mult===1.035&&scaled.drainMorale===21&&unscaled.mult===1&&unscaled.drainMorale===20&&base.mult===1;
+          q.setGame(afterSkill);
           const train=q.getGame();train.hero[id].level=1;train.hero[id].xp=0;train.silver=100000;q.setGame(train);
           const cost=hs.trainQuote(id),trainingBefore=q.getGame().silver;
           checks.batchTrain=hs.trainBatch(id,5)&&q.getGame().silver===trainingBefore-cost.cost.silver*5&&q.getGame().hero[id].level>1&&!hs.trainBatch(id,99);

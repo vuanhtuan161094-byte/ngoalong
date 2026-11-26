@@ -210,7 +210,7 @@ function trainingBuy(kind,n){
  const pair=rates[kind];if(!pair||!payment({silver:n*pair[1]}))return false;s[pair[0]]+=n;save();render();return true;
 }
 // Earned-only daily training rewards: single claim per milestone and day.
-const DAILY_TRAINING=[{wins:3,fragment:15,exp:15000,horse:50000,ngoc:100,stone:1},{wins:6,fragment:25,exp:25000,horse:100000,ngoc:200,stone:2},{wins:10,fragment:40,exp:40000,horse:200000,ngoc:350,stone:3}];
+const DAILY_TRAINING=[{wins:3,fragment:15,exp:15000,horse:50000,ngoc:100,stone:1},{wins:6,fragment:25,exp:25000,horse:100000,ngoc:200,stone:2},{wins:10,fragment:40,exp:40000,horse:200000,ngoc:350,stone:3,tuLong:5}];
 function trainingDaily(){const s=state(),day=dayId();if(s.trainingDaily?.day!==day)s.trainingDaily={day,wins:0,claimed:{}};return s.trainingDaily;}
 function trainingVictory(){const d=trainingDaily();d.wins=Math.min(10,nat(d.wins)+1);}
 function trainingClaim(index){
@@ -218,7 +218,10 @@ function trainingClaim(index){
  if(battle||!q||d.wins<q.wins||d.claimed[index]||typeof nlItemApi==='undefined')return false;
  // Inventory grant is the atomic owner. A failed capacity check leaves the entire reward pending.
  const receipt='nl-training:'+d.day+':'+index;
- const result=nlItemApi.grant(game,[{id:MOBILE_NGOC,quantity:q.ngoc},{id:'mobile-vng-resource-res_62',quantity:q.stone}],receipt);
+ const entries=[{id:MOBILE_NGOC,quantity:q.ngoc},{id:'mobile-vng-resource-res_62',quantity:q.stone}];
+ // Source currency is known, public acquisition is unresolved. Original daily route, no premium purchase.
+ if(q.tuLong)entries.push({id:'mobile-vng-resource-res_15',quantity:q.tuLong});
+ const result=nlItemApi.grant(game,entries,receipt);
  if(!result.ok||result.duplicate)return false;
  Object.assign(game,result.state);
  const s=state();s.bookFragments+=q.fragment;s.bookExp+=q.exp;s.horsePoints+=q.horse;trainingDaily().claimed[index]=true;
@@ -850,6 +853,7 @@ function skillProbe(name){
 }
 const nlContentCMobileBaseStatus=p2Status;
 p2Status=function(unit,kind,turns,...rest){
+ if(mobileBookHas(unit,MOBILE_BOOK_IMMUNE)&&NL_GAME_DATA.statusEffects.effects[kind]?.polarity==='harmful')return false;
  if(unit?.nlMobileControlCharges>0&&['daze','sleep','fear',MOBILE_CONTROL_STATUS,MOBILE_SLEEP_STATUS,MOBILE_NO_NORMAL].includes(kind)){unit.nlMobileControlCharges--;return false;}
  if(unit?.effects?.some(effect=>effect.kind===MOBILE_NO_BUFFS_STATUS&&effect.turns>0)&&
     NL_GAME_DATA.statusEffects.effects[kind]?.polarity==='beneficial')return false;
@@ -1310,6 +1314,25 @@ function mobileApplyTurnPassives(actor,event){
  if(labels.length){event.description+=' · '+labels.join(' · ');event.state=p2Snapshot();battle.log=event.description;}
  return labels;
 }
+// Source strikeBack is a probability, not an additional turn. Original counter rule:
+ // normal positive hits only; living defenders, one counter per defender/action,
+ // 60% physical attack, no counter chains, use the same seeded RNG and native hit owner.
+function mobileCounterChance(unit){const rate=Number(unit?.nlMobileTroop?.strikeBack)||0;return Math.max(0,Math.min(1,rate));}
+function mobileResolveCounters(actor,event){
+ if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name||event.mode!=='normal')return [];
+ const enemies=actor.team==='p'?battle.e:battle.p,seen=new Set(),out=[];
+ for(const hit of (event.hits||[]).slice()){
+  if(actor.hp<=0)break;
+  if(hit.team===actor.team||!(hit.amount>0)||hit.heal||seen.has(hit.slot))continue;
+  seen.add(hit.slot);
+  const u=enemies.find(x=>x.slot===hit.slot&&x.hp>0),chance=mobileCounterChance(u);
+  if(!u||!chance||mobileBookHas(u,MOBILE_CONTROL_STATUS)||mobileBookHas(u,MOBILE_SLEEP_STATUS)||p2Random()>=chance)continue;
+  const counter=mobileSingleHit(u,actor,'physical',.6,{});
+  if(counter)out.push({...counter,mobileCounter:true,counterActorTeam:u.team,counterActorSlot:u.slot,counterActor:u.name});
+ }
+ if(out.length){event.hits.push(...out);event.description+=' · Phản kích: '+out.map(h=>h.counterActor+' '+h.amount).join(', ');event.state=p2Snapshot();battle.log=event.description;}
+ return out;
+}
 p2Perform=function(actor){
  // A silence blocks the morale action, not the normal action or stored morale.
  const savedMorale=actor?.morale,locked=!!actor&&savedMorale>=100&&mobileBookHas(actor,MOBILE_BOOK_SILENCE)&&battle?.mode!=='cltq'&&!battle?.replay;
@@ -1382,6 +1405,7 @@ p2Perform=function(actor){
      if(actor.nlMobilePierceActive)label='Kình Nỏ';
      if(label){event.description+=' · '+label;event.state=p2Snapshot();battle.log=event.description;}
    }
+   mobileResolveCounters(actor,event);
    return result;
  }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
@@ -1653,7 +1677,7 @@ function trainingPanel(){
  return row(h.name,'Bậc '+t+' · '+horseStar(id)+' Sao · '+(h.tiers[0].unlock||'Mở ngay')+' · '+h.tiers[t].stats.map(x=>x.label+' '+x.base+' / '+x.pct+'%').join(' · '),(step?btn('horse-step',id,(step.complete?'Lên bậc '+(step.tier+1):'Luyện sao '+step.star)+' · '+fmt(step.points)+' điểm',!!battle||!step.gate||s.horsePoints<step.points):'')+(q?btn('horse-up',id,'Nâng · '+fmt(q.points)+' điểm',!!battle||!q.gate||s.horsePoints<q.points):'')+btn('horse-equip',id,s.horseAssigned[trainHero]===id?'Đang dùng':'Cưỡi',!!battle||!horseGate(id,0)||used||s.horseAssigned[trainHero]===id));},'horse-page');
  const own=MOBILE_ETCH.filter(x=>etchCount(x.id));etchPage=clamp(etchPage,0,Math.max(0,Math.ceil(own.length/4)-1));
  const etch=pages(own,etchPage,x=>{const up=etchQuote(x.id,'upgrade'),mix=etchQuote(x.id,'mix');return row(x.qname+' '+x.stat+' Lv'+x.level,'×'+etchCount(x.id)+' · '+fmt(x.value),(up?btn('etch-up',x.id,'Nâng · '+fmt(up.silver)+' Bạc / '+fmt(up.ngoc)+' Ngọc',!!battle||game.silver<up.silver||(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)<up.ngoc):'')+(mix?btn('etch-mix',x.id,'Ghép '+mix.count,!!battle||etchCount(x.id)<mix.count):'')+btn('etch-equip',x.id,'Khảm',!!battle));},'etch-page');
- return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá',btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; 11 Binh Thư có adapter theo lượt 3/6; Vỡ Trận, Hồi Xuân, khóa chiến pháp và tăng thuộc tính dùng P2. Quy đổi thuộc tính và thời hạn là mô phỏng; chờ kiểm thử trận thực.</p>');
+ return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá'+(q.tuLong?' · '+q.tuLong+' Tử Long Ngọc':''),btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; 11 Binh Thư có adapter theo lượt 3/6; Vỡ Trận, Hồi Xuân, khóa chiến pháp và tăng thuộc tính dùng P2. Quy đổi thuộc tính và thời hạn là mô phỏng; chờ kiểm thử trận thực.</p>');
 }
 function mobileTechPanel(){
  const s=state();

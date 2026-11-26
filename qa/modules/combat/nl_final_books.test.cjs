@@ -16,3 +16,14 @@ test('Dao Duc grades and sixth action duration',()=>{assert.equal(run('7',1,.25)
 test('Thanh Linh removes buffs and locks only highest morale target',()=>{const c=run('10',5,0);assert.equal(c.enemy.effects.length,1);assert.equal(c.enemy.effects[0].kind,'SILENCE');assert.equal(c.enemy.effects[0].turns,1);});
 test('attribute book uses bounded temporary flat modifier',()=>{const c=run('11',5,0);assert.equal(c.ally.effects[0].mobileSourceValues.attributeFlat,20);assert.equal(vm.runInContext('mobileBookAttribute(ally)',c),20);});
 test('Spring consumes a layer, heals actual HP and respects Break',()=>{const c=run('7',5,0);assert.equal(vm.runInContext('mobileBookSpring(ally)',c),41);assert.equal(c.ally.hp,91);assert.equal(c.ally.effects[0].mobileSourceValues.layers,1);});
+
+test('counter uses source chance, one response per defender, no recursive turns or replay',()=>{
+ const source=extract('function mobileCounterChance(','p2Perform=function(actor){\n // A silence');
+ const a={name:'A',team:'p',slot:0,hp:100},b={name:'B',team:'e',slot:0,hp:100,nlMobileTroop:{strikeBack:.5}};
+ const event={actor:'A',mode:'normal',description:'normal',hits:[{team:'e',slot:0,amount:20},{team:'e',slot:0,amount:10}]};
+ const ctx={actor:a,event,battle:{p:[a],e:[b]},p2Random:()=>.49,p2Snapshot:()=>({}),mobileBookHas:()=>false,MOBILE_CONTROL_STATUS:'control',MOBILE_SLEEP_STATUS:'sleep',
+ mobileSingleHit:(attacker,target,kind,mult)=>{assert.equal(mult,.6);target.hp-=20;return {team:target.team,slot:target.slot,amount:20};}};
+ vm.createContext(ctx);vm.runInContext(source+';mobileResolveCounters(actor,event);',ctx);
+ assert.equal(a.hp,80);assert.equal(event.hits.length,3);assert.equal(event.hits[2].mobileCounter,true);
+ ctx.battle.replay=true;vm.runInContext('mobileResolveCounters(actor,event);',ctx);assert.equal(a.hp,80);
+});
