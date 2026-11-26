@@ -83,7 +83,7 @@ const ROLE_COEFFICIENTS={
 function npcRepeatCount(id){return nat(state().npcRepeat[id]);}
 function canReplayNpc(id){return NPC.has(id)&&!!state().cleared[id]&&npcRepeatCount(id)<REPEAT_LIMIT;}
 function npcReward(row,repeat=false){
- const scale=row.map.gate,boss=!!row.n.boss;
+ const scale=npcDifficulty(row),boss=!!row.n.boss;
  const base={silver:350+scale*85,grain:120+scale*25,prestige:boss?30+scale*3:10+scale};
  return repeat?{silver:Math.floor(base.silver*.4),grain:Math.floor(base.grain*.4),prestige:0}:base;
 }
@@ -98,7 +98,7 @@ function openObjective(o,units,scale){
   const u=Array.isArray(raw)?{slot:raw[0],name:raw[1],label:raw[2],skill:raw[3],troops:raw[4],level:raw[5]}:raw;
   const role=u.role||family(u.label),slot=u.slot,boss=!!o.boss&&i===units.length-1;
   const e=p2Unit('e','e',boss?4:i,Math.min(28,Math.max(1,u.level||scale)));
-  e.id='c-'+i;e.slot=slot;e.name=u.name;e.troop=role;e.type=role==='spear'?'infantry':(['drum','dancer','support'].includes(role)?'support':role);
+  e.id='c-'+i;e.slot=slot;delete e.nlTroopV2;delete e.nlA1BossSkill;delete e.skillId;delete e.skillKey;delete e.npcUnitId;delete e.npcProfileId;e.name=u.name;e.troop=role;e.type=role==='spear'?'infantry':(['drum','dancer','support'].includes(role)?'support':role);
   e.icon=({archer:'🏹',cavalry:'🐎',spear:'🔱',strategist:'🪶',support:'📜',drum:'🥁',dancer:'💃'})[role]||'🛡️';
   e.skill=u.skill;e.nlCDescriptor=descriptor(u.skill,role,boss);
   const ratio=clamp(Math.sqrt(Math.max(1,u.troops)/Math.max(200,250+scale*90)),.75,1.45);
@@ -107,6 +107,7 @@ function openObjective(o,units,scale){
   e.hp=e.maxHp=Math.max(1,Math.round(e.maxHp*ratio*difficulty*(boss?1.18:1)));e.effects=[];e.morale=boss?60:40;
   return e;
  });
+ delete battle.nlA1;delete battle.nlA1Focus;
  battle.order=null;battle.orderIndex=0;battle.opening=p2Snapshot();
  if(o.kind==='tower'){game.activity.towerTries--;battleLastTab='tower';}
  save();renderBattleShell();return true;
@@ -165,8 +166,15 @@ nlContentCSettle=function(o){
 const oldSkill=p2Skill;
 p2Skill=function(actor){
  if(actor?.team==='e'&&battle?.nlContentC&&actor.nlCDescriptor)return actor.nlCDescriptor;
- const awake=actor?.team==='p'&&battle?.mode!=='cltq'&&game.nlClassicAdvanced?.growth?.[actor.id]?.awakened&&NL_CONTENT_C.awakeningSkills?.[actor.id];
- return awake?{...awake.descriptor}:oldSkill(actor);
+ if(actor?.team!=='p'||battle?.mode==='cltq'||battle?.replay)return oldSkill(actor);
+ const record=NL_CONTENT_C.awakeningSkills?.[actor.id],growth=game.heroDevelopment?.heroes?.[actor.id]?.awakening;
+ if(record){
+   const chosen=growth?.gold?(record.stages?.GOLD||record.stages?.ORANGE||record.stages?.PURPLE):
+     growth?.orange?(record.stages?.ORANGE||record.stages?.PURPLE):
+     game.nlClassicAdvanced?.growth?.[actor.id]?.awakened?record.stages?.PURPLE:null;
+   if(chosen?.descriptor)return {...chosen.descriptor};
+ }
+ return oldSkill(actor);
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
