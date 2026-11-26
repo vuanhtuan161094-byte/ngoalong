@@ -44,7 +44,9 @@ def main():
     assert data["counts"]["mobileHeroDetails"]==373 and data["counts"]["mobileExtraRosterHeroes"]==6
     extras=[h for h in data["heroes"] if h.get("sourceHeroId")]
     assert {h["sourceHeroId"] for h in extras}=={"3488","3531","3972","3973","3974","3975"}
-    assert all(h["skillDesc"] and h["skillAdapterClassification"]=="SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED" for h in extras)
+    assert all(h["skillDesc"] and h["skillAdapterClassification"]=="SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED" and
+               h["mobileSourceTopQuality"]==8 and "mobileStartingQuality" not in h and
+               h["fieldProvenance"]["startingQuality"]=="SIMULATED_ACCESS_ADAPTER" for h in extras)
     assert data["counts"]["mobileBuffs"]==320
     assert data["mobileBuffCatalog"]["sourceEdition"]=="CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     assert data["mobileBuffCatalog"]["records"]["2"]["name"].casefold()=="hỗn loạn"

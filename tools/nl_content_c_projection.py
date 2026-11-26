@@ -405,12 +405,13 @@ def build(root):
             "agi":max(30,round((stats["lead"]+stats["war"]+stats["intellect"])/7)),
             "sourceStats":stats,"sourceSkillName":skill_name,"skill":skill_name,"skillDesc":skill_desc,
             "descriptor":descriptor,"skillAdapterClassification":"SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED",
-            "mobileStartingQuality":raw.get("quality"),"gate":14+idx*2,"silver":2200+idx*300,
+            "mobileSourceTopQuality":raw.get("quality"),"gate":14+idx*2,"silver":2200+idx*300,
             "towerGate":None,"soulCost":0,"provenance":"SOURCE_IDENTITY_WITH_SIMULATED_RECRUIT_AND_P2_ADAPTER",
             "fieldProvenance":{"name":"SOURCE_EXACT","faction":"SOURCE_EXACT","skill":"SOURCE_EXACT",
                 "skillDesc":"SOURCE_EXACT","lead":"SOURCE_EXACT","atk":"SOURCE_EXACT","int":"SOURCE_EXACT",
                 "def":"SIMULATED_ADAPTER","agi":"SIMULATED_ADAPTER","gate":"SIMULATED_ADAPTER",
-                "silver":"SIMULATED_ADAPTER","descriptor":"SIMULATED_ADAPTER"}})
+                "silver":"SIMULATED_ADAPTER","descriptor":"SIMULATED_ADAPTER",
+                "sourceTopQuality":"SOURCE_EXACT","startingQuality":"SIMULATED_ACCESS_ADAPTER"}})
         source_hero_aliases[hid]=source_id
     if len(set(source_hero_aliases.values()))!=len(source_hero_aliases):
         raise ValueError("Mobile hero alias collision")

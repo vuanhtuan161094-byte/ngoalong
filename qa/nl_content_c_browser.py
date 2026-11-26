@@ -19,8 +19,8 @@ def main():
           const extraBought=extraIds.map(id=>c.recruit(id)),extraRows=extraIds.map(id=>({id,record:c.mobileHeroRecord(id),quality:c.mobileHeroQuality(id)}));
           let extraUnits=true;
           for(const id of extraIds){const roster=q.getGame();roster.slots=[id,...roster.slots.slice(1)];q.setGame(roster);
-            const unit=c.p2Unit(id,'p',0,1),row=extraRows.find(x=>x.id===id);
-            if(!unit||unit.nlMobileHero?.sourceId!==row.record?.id||unit.skill!==row.record?.skill?.name)extraUnits=false;
+            const unit=c.p2Unit(id,'p',0,1),row=extraRows.find(x=>x.id===id),sourceSkill=c.mobileHeroSkill(id)?.tag||row.record?.skill?.name;
+            if(!unit||unit.nlMobileHero?.sourceId!==row.record?.id||!sourceSkill||unit.skill!==sourceSkill)extraUnits=false;
           }
           const extraSave=structuredClone(q.getGame());q.setGame(extraSave);
           const extraSaveOk=extraIds.every(id=>q.getGame().roster.includes(id)&&c.mobileHeroRecord(id)?.id===id.split('-').at(-1))&&q.getGame().version===5;
