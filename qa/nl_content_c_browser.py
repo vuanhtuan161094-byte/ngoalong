@@ -87,6 +87,18 @@ def main():
           checks.mobileBeautySource=c.mobileBeautyCount()===47&&c.mobileBeautyGift('55','fam_9',1)&&c.mobileBeautyUpgrade('55')&&c.mobileBeautyAssign(mobileOwner,'55')&&c.mobileBeautyBonus(mobileOwner)?.raw===3;
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.mobileBeautySave=c.mobileBeautyLevel('55')===1&&c.mobileBeautyBonus(mobileOwner)?.raw===3;
+          const childFixture=q.getGame();
+          childFixture.nlContentC.mobileCommanderLevel=440;childFixture.silver=100000000;childFixture.nlClassicA.merit=100000;
+          childFixture.nlContentC.mobileChild={stage:'chooseSkill',name:'Quý Tử QA',base:{lead:87,war:90,intellect:30},mastery:{'Chiến Pháp':48}};
+          q.setGame(childFixture);
+          const childChoice=c.childSkills()[0];
+          checks.childGraduateNative=!!childChoice&&c.childGraduate(childChoice[0])&&q.getGame().roster.includes('mobile-quy-tu')&&!!c.p2Unit('mobile-quy-tu','p',0,1);
+          const childTrained=q.getGame();childTrained.hero['mobile-quy-tu'].level=40;q.setGame(childTrained);
+          let childPhases=0;
+          for(let i=0;i<4;i++){const p=c.childNextPhase();if(!p?.choices?.length||!c.childPromote(p.choices[0].id))break;childPhases++;}
+          checks.childSourcePhases=childPhases===4&&c.childState().phase==='giamQuoc'&&c.childNextPhase()===null;
+          const childReload=JSON.parse(JSON.stringify(q.getGame()));q.setGame(childReload);
+          checks.childSourceSave=c.childSyncRoster()&&q.getGame().roster.filter(h=>h==='mobile-quy-tu').length===1&&c.childState().phase==='giamQuoc';
           q.setGame(troopBefore);
           const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders,firstMerit=q.getGame().nlClassicA.merit;
           checks.difficultyRange=c.npcDifficulty(n.id)===1&&m.npcs.every(x=>c.npcDifficulty(x.id)>=1&&c.npcDifficulty(x.id)<=90);
