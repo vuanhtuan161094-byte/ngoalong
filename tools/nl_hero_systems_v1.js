@@ -150,7 +150,7 @@ function nlhTrainBatch(id,requested=1){
 }
 function nlhSkillQuote(level){return {silver:250*level,merit:10*level};}
 function nlhSkillUpgrade(id){
- if(battle||!nlhOwned(id))return false;
+ if(battle||!nlhOwned(id)||(typeof nlMobileHeroApi!=='undefined'&&nlMobileHeroApi?.skill(id)))return false;
  const h=nlhsHero(id),next=h.skillLevel+1,cost=nlhSkillQuote(next);
  if(next>SKILL_MAX||nlhStage()<3||(game.hero[id]?.level||0)<next*4||!nlhPay(cost,{}))return false;
  h.skillLevel=next;return nlhEndgameReceipt('skill',id,next,cost,{});
@@ -201,10 +201,11 @@ function nlhMaterialBuy(id){
 }
 function nlhCombatGrowth(id){
  const h=nlhsHero(id),bonus={attackPct:0,tacticAttackPct:0,magicAttackPct:0,defensePct:0,hpPct:0,speedFlat:0};
- bonus.attackPct+=h.commanderLevel*.012+h.weaponLevel*.025+Number(h.awakening.orange)*.06+Number(h.awakening.gold)*.08;
- bonus.tacticAttackPct+=h.weaponLevel*.025;bonus.magicAttackPct+=h.weaponLevel*.025+Number(h.awakening.gold)*.08;
- bonus.defensePct+=h.commanderLevel*.012+h.inheritanceLevel*.015+Number(h.awakening.gold)*.08;
- bonus.hpPct+=h.inheritanceLevel*.035+Number(h.awakening.orange)*.05;
+ const sourceRank=typeof nlMobileHeroApi!=='undefined'&&nlMobileHeroApi?.quality(id),orange=sourceRank?0:Number(h.awakening.orange),gold=sourceRank?0:Number(h.awakening.gold);
+ bonus.attackPct+=h.commanderLevel*.012+h.weaponLevel*.025+orange*.06+gold*.08;
+ bonus.tacticAttackPct+=h.weaponLevel*.025;bonus.magicAttackPct+=h.weaponLevel*.025+gold*.08;
+ bonus.defensePct+=h.commanderLevel*.012+h.inheritanceLevel*.015+gold*.08;
+ bonus.hpPct+=h.inheritanceLevel*.035+orange*.05;
  bonus.speedFlat+=h.commanderLevel;
  if(h.destinyId){
    if(h.destinyId==='war')bonus.attackPct+=h.destinyLevel*.028;
@@ -291,6 +292,8 @@ function nlhMobileSourcePanel(id){
  '<p class="nlh-source-note">Thuộc tính và chi phí giác ngộ có bảng nguồn đã nối runtime. Chiến pháp phức hợp, tăng trưởng theo cấp và nguồn chiêu mộ còn cần đối soát.</p></div>';
 }
 function nlhSkillPanel(id){
+ const exact=typeof nlMobileHeroApi!=='undefined'?nlMobileHeroApi?.skill(id):null;
+ if(exact)return '<div class="nlh-feature-panel"><b>Chiến pháp theo phẩm chất Mobile · '+hsEsc(exact.tag)+'</b><p class="nlh-copy">'+hsEsc(exact.sourceDescription||'')+'</p><p>Không bán cấp chiến pháp mô phỏng cho chiến pháp nguồn; phát triển qua Giác Ngộ. Hiệu ứng phức hợp đang đối soát.</p></div>';
  const h=nlhsHero(id),level=h.skillLevel,next=level+1,cost=nlhSkillQuote(next),base=P2_SKILLS[id],skill=nlhSkillDescriptor(id,base);
  const can=nlhStage()>=3&&(game.hero[id]?.level||0)>=next*4&&next<=SKILL_MAX&&!battle&&nlhCanPay(cost,{});
  return '<div class="nlh-feature-panel"><b>Chiến pháp · Cấp '+level+'/'+SKILL_MAX+'</b><p class="nlh-copy">'+hsEsc(skill?.tag||nlhHero(id).skill||'Chiến pháp')+' · '+(Number.isFinite(skill?.mult)?'Hệ số '+Math.round(skill.mult*100)+'% · ':'')+'Mỗi cấp +3,5% hệ số gốc, cải thiện hiệu ứng có sẵn. SIMULATED.</p><button class="nlh-button" data-nlh-action="skillUpgrade" '+(can?'':'disabled')+'>'+(next>SKILL_MAX?'Tối đa':'Nâng cấp · '+hsEsc(nlhCostText(cost,{}))+' · cần tướng cấp '+next*4)+'</button></div>';
