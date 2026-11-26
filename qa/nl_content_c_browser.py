@@ -86,6 +86,17 @@ def main():
           checks.sealMax=c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.sealLevel('sword')===5&&c.sealValue('sword')===40&&!c.upgradeSeal('sword');
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.sealSave=c.sealLevel('sword')===5&&c.state().soul===600&&q.getGame().version===5;
+          const adv=window.__NL_ADVANCED_QA__,hs=window.__NL_HERO_SYSTEMS_QA__,fg=q.getGame();
+          fg.silver=100000;fg.grain=100000;fg.nlClassicA.merit=10000;
+          fg.nlCity.levels.nl_city_manor=2;fg.hero[id].level=60;
+          q.setGame(fg);
+          const initialAtk=hs.unit(id).atk;
+          checks.familyLocked=!adv.trainHeir(id,'martial')&&!adv.visitBond('unknown','martial');
+          checks.bond=adv.visitBond(id,'martial')&&adv.visitBond(id,'martial')&&adv.visitBond(id,'martial')&&adv.familyProfile(id).bond.level===3&&!adv.visitBond(id,'strategy');
+          checks.heir=adv.trainHeir(id,'martial')&&adv.familyProfile(id).heir.level===1&&adv.familyBonus(id).atk===.035;
+          checks.familyCombat=hs.unit(id).atk>initialAtk;
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.familySave=adv.familyProfile(id).bond.level===3&&adv.familyProfile(id).heir.level===1&&q.getGame().version===5;
           return checks;
         }""")
         print(out,flush=True)
