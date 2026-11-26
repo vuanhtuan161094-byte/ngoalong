@@ -10,7 +10,7 @@
  const chooser=bar.querySelector('#nl-screen-select');
  const prev=bar.querySelector('#nl-screen-prev');const next=bar.querySelector('#nl-screen-next');
  const count=bar.querySelector('#nl-screen-count');const title=bar.querySelector('#nl-screen-title');
- const hidden='nl-pane-hidden';const pageIndex=Object.create(null);
+ const hidden='nl-pane-hidden';const pageIndex=Object.create(null),pageKey=Object.create(null);
  let pages=[],activeTab='',busy=false,pending=false,ready=false,requestedCityDetail=false,visibleRoot=null;
  const nav=()=>document.querySelector('.nav.active[data-tab]');
  const currentTab=()=>nav()?.dataset.tab||'city';
@@ -21,7 +21,7 @@
    view.querySelectorAll('.'+hidden).forEach(el=>el.classList.remove(hidden));
    view.querySelectorAll('.nl-pane-scaling').forEach(el=>{el.classList.remove('nl-pane-scaling');el.style.transform='';el.style.transformOrigin='';el.style.width=''});
  }
- function pushPage(root,label,choices=[]){pages.push({root,label,choices})}
+ function pushPage(root,label,choices=[]){const kind=root?.getAttribute('data-nlc-panel')||root?.getAttribute('data-nlw-b4-panel')||root?.id||'';pages.push({root,label,choices,key:kind+'|'+label});}
  function makeChunks(root,holder,items,chunkSize,label){
     for(let i=0;i<items.length;i+=chunkSize){
       const allowed=items.slice(i,i+chunkSize);
@@ -151,8 +151,9 @@
        if(board&&picker){pages=[board,picker,...pages.filter(p=>p!==board&&p!==picker)];}
      }
      if(pages.length===0)pages=[{root:null,label:'Tổng quan',choices:[]}];
-     chooser.replaceChildren(...pages.map((p,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=`${i+1} · ${p.label.slice(0,29)}`;return opt}));
+     chooser.replaceChildren(...pages.map((p,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=`${i+1} · ${p.label}`;opt.title=p.label;return opt}));
      let idx=Math.min(Math.max(0,pageIndex[tab]||0),pages.length-1);
+     const stable=pageKey[tab]?pages.findIndex(p=>p.key===pageKey[tab]):-1;if(stable>=0)idx=stable;
      if(requestedCityDetail&&tab==='city'){
        const hit=pages.findIndex(p=>p.root?.contains(document.querySelector('#detail-building')));
        if(hit>=0)idx=hit;
@@ -163,12 +164,12 @@
  }
  function showPage(index){
    if(!pages.length)return;
-   const idx=Math.max(0,Math.min(pages.length-1,index));const p=pages[idx];pageIndex[activeTab]=idx;
+   const idx=Math.max(0,Math.min(pages.length-1,index));const p=pages[idx];pageIndex[activeTab]=idx;pageKey[activeTab]=p.key||'';
    restore();
    const roots=children(view),head=roots.find(el=>el.classList.contains('head'));
    for(const root of roots)if(root!==head&&root!==p.root&&root!==p.preLabel)root.classList.add(hidden);
    for(const pick of p.choices){for(const item of pick.items)if(!pick.allowed.includes(item))item.classList.add(hidden)}
-   count.textContent=`${idx+1}/${pages.length}`;chooser.value=String(idx);prev.disabled=idx===0;next.disabled=idx===pages.length-1;
+   count.textContent=`${idx+1}/${pages.length}`;chooser.value=String(idx);chooser.title=p.label;prev.disabled=idx===0;next.disabled=idx===pages.length-1;
    // Fit a complete semantic component, never break a battle grid or hide all its cells.
    const budget=Math.max(100,view.clientHeight-(head?head.getBoundingClientRect().height+12:0));
    for(const root of [p.root]){
@@ -187,6 +188,8 @@
    if(!ready||ev.defaultPrevented||ev.altKey||ev.ctrlKey||ev.metaKey||/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||''))return;
    if(ev.key==='PageDown'){ev.preventDefault();showPage((pageIndex[activeTab]||0)+1)}
    if(ev.key==='PageUp'){ev.preventDefault();showPage((pageIndex[activeTab]||0)-1)}
+   if(ev.key==='Home'){ev.preventDefault();showPage(0)}
+   if(ev.key==='End'){ev.preventDefault();showPage(pages.length-1)}
  });
  let swipe=null;
  view.addEventListener('touchstart',ev=>{if(ev.touches.length===1)swipe={x:ev.touches[0].clientX,y:ev.touches[0].clientY}},{passive:true});
@@ -200,9 +203,9 @@
  observer.observe(view,{childList:true});
  document.addEventListener('click',ev=>{
    const tabButton=ev.target.closest?.('.nav[data-tab]');
-   if(tabButton&&tabButton.dataset.tab!==activeTab)pageIndex[tabButton.dataset.tab]=0;
+   if(tabButton&&tabButton.dataset.tab!==activeTab){pageIndex[tabButton.dataset.tab]=0;delete pageKey[tabButton.dataset.tab];}
    if(ev.target.closest?.('[data-focus-building]'))requestedCityDetail=true;
-   if(viewportNarrow()&&ev.target.closest?.('[data-choose-hero]'))pageIndex.formation=0;
+   if(viewportNarrow()&&ev.target.closest?.('[data-choose-hero]')){pageIndex.formation=0;delete pageKey.formation;}
    if(!ev.target.closest?.('#nl-screen-toolbar'))schedule();
  },true);
  document.addEventListener('change',ev=>{if(!ev.target.closest?.('#nl-screen-toolbar'))schedule()},true);

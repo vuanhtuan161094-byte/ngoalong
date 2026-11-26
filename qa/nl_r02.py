@@ -27,6 +27,12 @@ def open_page(browser, width=1280, height=720, stored=None):
     page.on("pageerror", lambda error: errors.append(str(error)))
     storage = {} if stored is None else {SAVE_KEY: stored}
     stub = STUB.replace("__NL_STORE__", json.dumps(storage, ensure_ascii=False))
+    # Freeze only the isolated migration page's wall clock at its saved tick.
+    # The real income and migration code still run; prevent 60 s HTML transfer from accruing income.
+    if stored is not None:
+        saved_tick = json.loads(stored).get('lastTick')
+        if isinstance(saved_tick, int):
+            stub = stub.replace('</script>', f'Date.now=()=>{saved_tick};</script>')
     page.set_content(HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
     return page
 
@@ -203,7 +209,7 @@ def main():
         check("stage-5 recommendation matches its playable same-seed five-general level and formation setup", puzzle["recommendation"].get("recommendedPreset") == puzzle["win"] == puzzle["expected"]["winningPreset"] and puzzle["recommendation"]["minimumGenerals"] == 5 and puzzle["recommendation"]["averageHeroLevel"] == puzzle["expected"]["heroLevel"] == 5)
         loss_rows = puzzle["lossSettlement"]["troopLosses"] if puzzle["lossSettlement"] else []
         check("loss settlement records exact per-general troop casualties without granting rewards", len(loss_rows) == 5 and all(row["initial"] == puzzle["expected"]["soldiersPerHero"] and row["casualties"] == row["initial"] - row["remaining"] and row["casualties"] > 0 for row in loss_rows) and puzzle["lossSettlement"]["rewards"] == {})
-        print(f"PUZZLE A/B: loss={puzzle['loss']} win={puzzle['win']} seed={puzzle['expected']['seed']}", flush=True)
+        print(f"PUZZLE A/B: loss={puzzle['loss']} win={puzzle['win']} seed={puzzle['expected']['seed']} power={puzzle['expected']['enemyPower']} rows={json.dumps(puzzle['rows'], ensure_ascii=False)}", flush=True)
 
         # One settlement, immutable replay, and v1-v4 save migration.
         settle = page.evaluate(f"""() => {{

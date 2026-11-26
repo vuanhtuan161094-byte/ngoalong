@@ -9,6 +9,7 @@ const nlClassicGrowthPolicy=(()=>{
  return {cap:id=>advanced(id)?Math.min(110,60+5*n(id)):40,rebirthGate:id=>advanced(id)?60+5*n(id):Infinity,limit:10,
   bonus:id=>Math.min(10,n(id))*.03,trainingBonus:()=>Math.min(.18,Math.max(0,(game.nlCity?.levels?.nl_city_drillground||0)*.03+(game.nlCity?.levels?.nl_city_manor||0)*.02))};
 })();
+let nlAdvancedSettle;
 (()=>{
 'use strict';
 const VERSION=1, HOUR=3600000;
@@ -99,6 +100,36 @@ function donate(){
  const s=state();if(!s.guild.level||s.daily.donate>=5||s.guild.level>=10||!pay({silver:500}))return false;
  s.guild.contribution+=100;s.daily.donate++;s.guild.level=Math.min(10,1+Math.floor(s.guild.contribution/500));return done(s,'guild-donate:'+today()+':'+s.daily.donate,{silver:-500});
 }
+// Single native report/settlement route for offline war, defence and trial.
+function attachAdvancedObjective(o,t){
+ battle.nlAdvancedObjective=o;
+ if(typeof nlContentCSettle==='function'){
+   battle.nlContentC={kind:'advanced',id:'advanced:'+o.kind+':'+o.id+':'+Date.now(),advancedKind:o.kind,targetId:o.id,nation:o.nation,day:o.day||today(),title:({war:'Công thành',defend:'Thủ thành',trial:'Thí luyện'})[o.kind]+' · '+t[1],xp:95+t[2]*12};
+ }
+}
+nlAdvancedSettle=function(o){
+ const s=state(),t=TARGETS.find(x=>x[0]===o.targetId);
+ if(!t||typeof o.id!=='string'||s.receipts.some(r=>r.id===o.id))return {};
+ let reward,merit;
+ if(o.advancedKind==='war'){
+   if(s.territories[o.targetId]||o.nation!==nation())return {};
+   reward={silver:500+t[2]*65,grain:120+t[2]*18,prestige:20+t[2]*3};merit=30+t[2]*4;
+ }else if(o.advancedKind==='defend'){
+   const terr=s.territories[o.targetId];
+   if(!terr||terr.nation!==o.nation||terr.defenseDay!==o.day||terr.defenseWonDay===o.day)return {};
+   reward={silver:300+t[2]*35};merit=20+t[2]*3;
+ }else if(o.advancedKind==='trial'){
+   reward={silver:350+t[2]*45,grain:80+t[2]*15,prestige:10+t[2]};merit=15+t[2]*3;
+ }else return {};
+ if(!canGain({...reward,merit}))return {};
+ if(o.advancedKind==='war'){s.territories[o.targetId]={nation:o.nation,at:Date.now(),fortLevel:1};mark(s,'capture');}
+ else if(o.advancedKind==='defend'){s.territories[o.targetId].defenseWonDay=o.day;mark(s,'defend');}
+ else if(!s.milestones['trial:'+o.targetId]){s.milestones['trial:'+o.targetId]=1;mark(s,'trial');}
+ nlAState().merit+=merit;o.meritAward=merit;
+ // Do not save intermediate state: finishBattle credits the returned reward, records report and saves once.
+ s.receipts.push({id:o.id,at:Date.now(),delta:{...reward,merit}});s.receipts=s.receipts.slice(-200);
+ return reward;
+};
 function challenge(kind,id){
  const s=state(),t=TARGETS.find(x=>x[0]===id);
  if(battle||!t||!completed(t[2])||!Array.isArray(game.slots)||!game.slots.some(Boolean)||nlAState().orders<1)return false;
@@ -107,14 +138,14 @@ function challenge(kind,id){
  if(!['war','trial'].includes(kind))return false;
  const prior=battle;beginBattle(t[2],'campaign');
  if(prior||!battle||battle.replay||battle.mode!=='campaign'||battle.stage!==t[2]||battle.finished)return false;
- battle.nlAdvancedObjective={kind,id,nation:nation(),stage:t[2]};
+ attachAdvancedObjective({kind,id,nation:nation(),stage:t[2]},t);
  s.daily[kind]++;record(s,kind+'-start:'+id);return true;
 }
 const priorFinish=finishBattle;
 finishBattle=function(){
  const b=battle,o=b?.nlAdvancedObjective,live=b&&!b.finished&&!b.replay&&o;
  const result=priorFinish.apply(this,arguments);
- if(!live||battle!==b||!b.finished||!b.won||b.nlAdvancedSettled)return result;
+ if(!live||battle!==b||!b.finished||!b.won||b.nlAdvancedSettled||b.nlContentC?.kind==='advanced')return result;
  b.nlAdvancedSettled=true;const s=state();
  // Native first-clear/loot settlement has already happened. This is a distinct one-time objective reward.
  if(o.kind==='war'&&!s.territories[o.id]){s.territories[o.id]={nation:o.nation,at:Date.now()};mark(s,'capture');}
@@ -143,7 +174,7 @@ function defend(id){
  const s=state(),q=territoryQuote(id),t=TARGETS.find(x=>x[0]===id);if(!q?.canDefend||!t)return false;
  beginBattle(t[2],'campaign');
  if(!battle||battle.replay||battle.finished||battle.stage!==t[2]||battle.mode!=='campaign')return false;
- battle.nlAdvancedObjective={kind:'defend',id,nation:nation(),stage:t[2],day:today()};
+ attachAdvancedObjective({kind:'defend',id,nation:nation(),stage:t[2],day:today()},t);
  // Defence is a new challenge, not a second capture. Forts improve actual physical defence.
  for(const u of battle.p||[])for(const k of ['def','tdef','mdef'])if(Number.isFinite(u[k]))u[k]=Math.max(1,Math.round(u[k]*(1+.04*(q.level-1))));
  if(typeof p2Snapshot==='function')battle.opening=p2Snapshot();

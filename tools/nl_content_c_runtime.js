@@ -1157,6 +1157,7 @@ function startTower(){
 // report and replay are still the sole settlement owner; no legacy stage reward/loot.
 nlContentCSettle=function(o){
  const s=state();
+ if(o.kind==='advanced')return typeof nlAdvancedSettle==='function'?nlAdvancedSettle(o):{};
  if(o.kind==='naval')return settleNaval(o);
  if(o.kind==='npc'){
   const r=NPC.get(o.id);if(!r)return {};
