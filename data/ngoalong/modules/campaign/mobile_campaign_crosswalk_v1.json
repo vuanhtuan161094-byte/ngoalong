@@ -267,7 +267,7 @@
     ],
     "unknownSoldierIds": {}
   },
-  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and eighteen selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and nineteen selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
   "fields": [
     {
       "sourcePointer": "/key",
@@ -408,7 +408,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/effects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 26, 49, 70 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
+      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 21, 26, 49, 70 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
       "runtimeStatus": "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"

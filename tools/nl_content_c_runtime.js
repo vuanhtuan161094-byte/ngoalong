@@ -22,7 +22,7 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_PHYSICAL_ATTACK_UP_STATUS='mobile-source-physical-attack-up',MOBILE_MAGIC_ATTACK_UP_STATUS='mobile-source-magic-attack-up',
  MOBILE_TACTIC_ATTACK_UP_STATUS='mobile-source-tactic-attack-up',MOBILE_PHYSICAL_ATTACK_DOWN_STATUS='mobile-source-physical-attack-down',
  MOBILE_MAGIC_ATTACK_DOWN_STATUS='mobile-source-magic-attack-down',MOBILE_TACTIC_ATTACK_DOWN_STATUS='mobile-source-tactic-attack-down',
- MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',
+ MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
  MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs';
 for(const [kind,spec] of Object.entries({
@@ -45,6 +45,8 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'DERIVED_FROM_SOURCE_WITH_UNRESOLVED_BUFF_COUNT_SCALING',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'70'}},
  [MOBILE_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'18'}},
+ [MOBILE_ALL_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'21'}},
  [MOBILE_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_NO_BUFFS_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'unremovable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false}
 }))NL_GAME_DATA.statusEffects.effects[kind]={...spec,provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition}};
@@ -62,6 +64,7 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '14':{kind:MOBILE_MAGIC_ATTACK_DOWN_STATUS,mechanic:'magic-attack-reduction'},
  '15':{kind:MOBILE_TACTIC_ATTACK_DOWN_STATUS,mechanic:'tactic-attack-reduction'},
  '18':{kind:MOBILE_DEFENSE_DOWN_STATUS,mechanic:'defense-reduction'},
+ '21':{kind:MOBILE_ALL_DEFENSE_DOWN_STATUS,mechanic:'all-defense-reduction'},
  '49':{kind:MOBILE_ATTACK_STACK_STATUS,mechanic:'stackable-attack-increase'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
@@ -157,6 +160,9 @@ function mobileSourceApplications(skill,effects){
   const name=mobileTextKey(sourceEffect.name),marker='['+name+']';let at=fold.indexOf(marker),context='';
   if(at>=0)context=fold.slice(Math.max(0,at-110),at);
   else if(statPattern[id]?.test(fold)){at=fold.search(statPattern[id]);context=fold.slice(at,at+200);}
+  else if(id==='21'&&/(?:tat ca phong|tat ca nang luc phong thu)/.test(fold)){
+    at=fold.search(/(?:tat ca phong|tat ca nang luc phong)/);context=fold.slice(Math.max(0,at-100),at+140);
+  }
   else if(id==='18'&&/vat phong.{0,100}giam/.test(fold)){at=fold.search(/vat phong/);context=fold.slice(at,at+180);}
   else if(id==='16'&&/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/.test(fold)){at=fold.search(/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/);context=fold.slice(Math.max(0,at-45),at+110);}
   else if(id==='12'&&/tang.{0,60}(?:tan cong|cong)/.test(fold)){at=fold.search(/tang.{0,60}(?:tan cong|cong)/);context=fold.slice(Math.max(0,at-45),at+100);}
@@ -168,6 +174,8 @@ function mobileSourceApplications(skill,effects){
   else if(['9','10','11','13','14','15'].includes(id)&&/ban than|tu than/.test(context))scope='self';
   else if(['9','10','11','13','14','15'].includes(id)&&/toan phe dich|\bdich\b/.test(context))scope='enemies';
   else if(['9','10','11','13','14','15'].includes(id)&&/muc tieu|doi phuong/.test(context))scope='targets';
+  else if(id==='21'&&/toan phe dich|\bdich\b/.test(context))scope='enemies';
+  else if(id==='21'&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='18'&&/vat phong\s+toan phe dich/.test(context))scope='enemies';
   else if(id==='18'&&/(?:vat phong.{0,70}muc tieu|muc tieu.{0,70}vat phong)/.test(context))scope='targets';
   else if(/toan phe dich\s+(?:bi|nhan)\s*$/.test(context))scope='enemies';
@@ -177,7 +185,7 @@ function mobileSourceApplications(skill,effects){
   else if(id==='12'&&/muc tieu|doi phuong/.test(context))scope='targets';
   if(!scope)continue;
   const detail=String(sourceEffect.detail||''),detailFold=mobileTextKey(detail);
-  const following=id==='18'?fold.slice(at,at+260):fold.slice(at+marker.length,at+marker.length+140);
+  const following=['18','21'].includes(id)?fold.slice(at,at+260):fold.slice(at+marker.length,at+marker.length+140);
   const duration=detailFold.match(/(\d+)\s*luot/)||following.match(/duy tri\s+(\d+)\s*luot/);
   if(!duration)continue;
   const chanceText=detailFold.match(/(?:ti le|xac suat)\s*(\d+(?:[.,]\d+)?)\s*%/);
@@ -201,10 +209,11 @@ function mobileSourceApplications(skill,effects){
   if(rule.mechanic==='dragon-attack-increase'&&percent!==null){app.values.outgoingDamageMultiplier=1+percent;app.unresolvedMechanics=['SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED'];}
   if(rule.mechanic==='critical-increase'&&percent!==null)app.values.criticalChanceAdd=percent;
   if(rule.mechanic==='defense-reduction'&&percent!==null)app.values.incomingDefenseMultiplier=Math.max(0,1-percent);
+  if(rule.mechanic==='all-defense-reduction'&&percent!==null)app.values.incomingDefenseMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='attack-reduction'&&percent!==null)app.values.outgoingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='one-action-control'||rule.mechanic==='sleep-wakes-on-damage')app.values.skipActionChance=1;
   if(rule.mechanic==='no-morale-gain')app.values.moraleGainMultiplier=0;
-  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','dragon-attack-increase',
+  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','all-defense-reduction','dragon-attack-increase',
    'physical-attack-increase','magic-attack-increase','tactic-attack-increase','physical-attack-reduction','magic-attack-reduction','tactic-attack-reduction'].includes(rule.mechanic);
   if(needsValue&&percent===null)continue;
   rows.push(app);

@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=17&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=18&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -75,7 +75,8 @@ def main():
             magicBuffProbe=c.skillProbe('Phấn Đẩu'),magicBuffDescriptor=magicBuffProbe&&c.describeSkill(magicBuffProbe.skill,'strategist',false,magicBuffProbe.effects),
             tacticBuffProbe=c.skillProbe('Chuyên Chú'),tacticBuffDescriptor=tacticBuffProbe&&c.describeSkill(tacticBuffProbe.skill,'support',false,tacticBuffProbe.effects),
             attackDebuffProbe=c.skillProbe('Chiết Binh'),attackDebuffDescriptor=attackDebuffProbe&&c.describeSkill(attackDebuffProbe.skill,'strategist',false,attackDebuffProbe.effects),
-            dragonBuffProbe=c.skillProbe('Chúa Lâm'),dragonBuffDescriptor=dragonBuffProbe&&c.describeSkill(dragonBuffProbe.skill,'support',false,dragonBuffProbe.effects);
+            dragonBuffProbe=c.skillProbe('Chúa Lâm'),dragonBuffDescriptor=dragonBuffProbe&&c.describeSkill(dragonBuffProbe.skill,'support',false,dragonBuffProbe.effects),
+            allDefenseProbe=c.skillProbe('Đoạn Lương Phá Trận'),allDefenseDescriptor=allDefenseProbe&&c.describeSkill(allDefenseProbe.skill,'strategist',false,allDefenseProbe.effects);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
@@ -93,6 +94,8 @@ def main():
             appOf(attackDebuffDescriptor,'13')?.scope==='targets'&&appOf(attackDebuffDescriptor,'13')?.chance===.75&&appOf(attackDebuffDescriptor,'13')?.values.physicalDamageMultiplier===.75;
           checks.mobileSourceDragonBuffDescriptor=appOf(dragonBuffDescriptor,'70')?.scope==='allies'&&appOf(dragonBuffDescriptor,'70')?.turns===2&&
             appOf(dragonBuffDescriptor,'70')?.values.outgoingDamageMultiplier===1.2&&appOf(dragonBuffDescriptor,'70')?.unresolvedMechanics?.includes('SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED');
+          checks.mobileSourceAllDefenseDescriptor=appOf(allDefenseDescriptor,'21')?.scope==='enemies'&&appOf(allDefenseDescriptor,'21')?.turns===3&&
+            appOf(allDefenseDescriptor,'21')?.values.incomingDefenseMultiplier===.25;
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -258,6 +261,12 @@ def main():
             checks.mobileSourceDragonBuffInNativeCombat=dragonEvent?.skill==='Chúa Lâm'&&dragonStatuses.length===dragonBattle.e.filter(unit=>unit.hp>0).length&&
               dragonStatus?.turns===2&&dragonStatus.mobileSourceValues?.outgoingDamageMultiplier===1.2&&c.p2StatusFactor(dragonActor,'outgoingDamageMultiplier')===1.2;
           }else checks.mobileSourceDragonBuffInNativeCombat=false;
+          q.closeBattle('city');
+          const allDefenseBattle=launchStatusProbe(allDefenseProbe),allDefenseActor=allDefenseBattle?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Đoạn Lương Phá Trận');
+          if(allDefenseBattle&&allDefenseActor){allDefenseActor.morale=100;q.perform(allDefenseActor);const defenseEvent=allDefenseBattle.events.at(-1),reduced=allDefenseBattle.p.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='21'));
+            checks.mobileSourceAllDefenseInNativeCombat=defenseEvent?.skill==='Đoạn Lương Phá Trận'&&reduced.length===allDefenseBattle.p.filter(unit=>unit.hp>0).length&&
+              reduced.every(unit=>unit.effects.find(effect=>effect.mobileSource?.sourceEffectId==='21')?.turns===3&&c.p2StatusFactor(unit,'incomingDefenseMultiplier')===.25);
+          }else checks.mobileSourceAllDefenseInNativeCombat=false;
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
