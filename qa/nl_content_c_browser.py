@@ -12,8 +12,13 @@ def main():
                                   args=["--no-sandbox","--disable-dev-shm-usage"])
         page=open_page(browser)
         out=page.evaluate("""()=>{
-          const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__;
+          const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__,itemQa=window.__NL_ITEM_QA__,itemCounts=itemQa?.getItemCounts();
           if(!q||!c)return {loaded:false};
+          [...document.querySelectorAll('.nav')].find(x=>x.textContent.includes('Trang Bị'))?.click();
+          document.querySelector('[data-nli-item-mode="wiki"]')?.click();
+          const wikiResults=Number(document.querySelector('[data-nli-items-results]')?.getAttribute('data-nli-items-results'));
+          const wikiPageCards=document.querySelectorAll('[data-nl-consumables-bridge] [data-nl-art-item]').length;
+          document.querySelector('[data-nli-item-mode="bag"]')?.click();
           const g=q.getGame(),id=g.roster[0];
           g.lastTick=Date.now()+86400000;g.cleared=Array.from({length:28},(_,i)=>i+1);g.silver=1000000;g.grain=1000000;
           g.slots=[id,null,null,null,null,null,null,null,null];
@@ -28,6 +33,8 @@ def main():
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
           const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.counts.mobileBuffs===320&&c.mobileBuffCount()===320&&c.tiers()===40,
+            mobileItemSourceCatalogue:itemCounts?.mobileSourceCatalogueIds===746&&wikiResults===746,
+            mobileItemCatalogueUI:wikiResults===746&&wikiPageCards===25,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
             mobileNpcSkillAudit:skillAudit.totalUnits===25195&&skillAudit.sourceExactUnits===23944&&
@@ -38,7 +45,19 @@ def main():
               skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.legacySourceStatusIds===24&&skillAudit.sourceStatusIds>=24&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
+          checks.mobileItemSourceCatalogueStats=itemCounts;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
+          const troopRuntimeCoverage=c.mobileTroopRuntimeCoverage();
+          checks.mobileTroopRuntimeCoverage=troopRuntimeCoverage.sourceProfiles===408&&troopRuntimeCoverage.playerSelectableProfiles===225&&
+            troopRuntimeCoverage.campaignFormationUnits===23944&&troopRuntimeCoverage.campaignResolvedSourceIds===346&&
+            troopRuntimeCoverage.campaignUnknownSourceIds===0&&troopRuntimeCoverage.campaignMaps===249&&
+            troopRuntimeCoverage.campaignNpcs===5063&&troopRuntimeCoverage.sourceTraitsBound===21&&
+            troopRuntimeCoverage.sourceCatalogueOnlyProfiles===43;
+          checks.mobileTroopRuntimeCounts=troopRuntimeCoverage;
+          const troopProfileAudit=c.mobileTroopRuntimeProfileAudit();
+          checks.mobileTroopProfileRuntimeAll=troopProfileAudit.profiles===408&&troopProfileAudit.applied===408&&
+            troopProfileAudit.attackDefenseExact&&troopProfileAudit.criticalExact&&troopProfileAudit.counterChanceExact;
+          checks.mobileTroopProfileRuntimeAudit=troopProfileAudit;
           const mobileProbe={troop:'archer',type:'archer',atk:100,catk:100,matk:100,def:100,tdef:100,mdef:100,crit:.2};
           c.applyMobileTroopProfile(mobileProbe,'p');
           checks.mobileTroopSource= c.mobileTroopCount()===408&&Object.entries(mobileRoles).every(([role,id])=>c.mobileTroopSourceId(role)===id&&c.mobileTroopProfile(role)?.id===id);

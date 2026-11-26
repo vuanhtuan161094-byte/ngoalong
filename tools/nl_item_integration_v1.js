@@ -202,6 +202,29 @@ const NL_MOBILE_RESET_ITEMS=NL_MOBILE_INVENTORY.items.filter(row=>['842','1235']
 }));
 if(NL_MOBILE_RESET_ITEMS.length!==2)throw Error('MOBILE_RESET_SOURCE_DRIFT');
 for(const row of NL_MOBILE_RESET_ITEMS){const index=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);}
+function nlMobileWikiRecord(row){
+ return {id:String(row.id),type:row.type,typeName:row.typeName,quality:row.quality,qualityName:row.qualityName,
+  series:row.series,level:row.level,cost:row.cost,costType:row.costType,costName:row.costName,sell:row.sell,
+  upgradeKind:row.upgradeKind,flag:row.flag,cuongHoa:row.cuongHoa,gift:row.gift,upgradeFrom:row.upgradeFrom,
+  upgradeTo:row.upgradeTo,stats:row.stats,refundGold:row.refundGold,refundTiers:row.refundTiers,
+  usage:row.usage,desc:row.desc||''};
+}
+function nlExposeMobileWikiCatalogue(source){
+ const bySourceId=new Map(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null)
+  .map(x=>[String(x.sourceId),x]));
+ const added=[];
+ for(const row of source.items){
+  const sourceId=String(row.id),existing=bySourceId.get(sourceId),record=nlMobileWikiRecord(row);
+  if(existing){existing.sourceReference=record;continue;}
+  const reference={id:'mobile-vng-reference-'+sourceId,sourceId,name:row.name,category:'material',integration:'REFERENCE_ONLY',
+   sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc||'',sourceIcon:row.icon,
+   sourceReference:record,provenance:{classification:'SOURCE_EXACT'},effectRule:null};
+  NL_ITEM_CATALOGUE.items.push(reference);bySourceId.set(sourceId,reference);added.push(reference);
+ }
+ if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
+ return added;
+}
+const NL_MOBILE_WIKI_REFERENCES=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -523,6 +546,8 @@ if(window.__P2_ENABLE_QA__){
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
       projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceResetItems:NL_MOBILE_RESET_ITEMS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
+      mobileSourceCatalogueIds:new Set(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null).map(x=>String(x.sourceId))).size,
+      mobileSourceReferenceOnly:NL_MOBILE_WIKI_REFERENCES.length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{

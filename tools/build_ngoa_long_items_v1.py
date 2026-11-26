@@ -276,8 +276,15 @@ def main() -> None:
         raise SystemExit("NL Items canonical HTML is missing or differs from source")
     if changed:
         INDEX.write_text(after, encoding="utf-8", newline="")
+    mobile_source=json.loads((DATA / "mobile_wiki_v1.json").read_text(encoding="utf-8"))
+    catalogue=json.loads((DATA / "catalogue.json").read_text(encoding="utf-8"))
+    mobile_counts=mobile_source["sourceCounts"]
+    group_item_rows=catalogue["items"]
     print(
-        "NL_ITEMS: source gear 392, playable gear 411; source items 674, playable items 669, "
+        f"NL_ITEMS: Mobile Wiki gear {mobile_counts['equipment']}, playable gear 411; "
+        f"Mobile Wiki items {mobile_counts['items']}, Group04 playable items "
+        f"{sum(x['integration']=='PLAYABLE' for x in group_item_rows)}, "
+        f"Group04 reference items {sum(x['integration']=='REFERENCE_ONLY' for x in group_item_rows)}, "
         f"sha256={hashlib.sha256(after.encode('utf-8')).hexdigest()} "
         f"changed={changed} check={args.check}"
     )
