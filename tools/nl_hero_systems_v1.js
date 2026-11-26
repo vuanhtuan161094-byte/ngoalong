@@ -78,12 +78,12 @@ function nlhMaterials(rows){return '<div class="nlh-materials">'+Object.entries(
 function nlhNeedText(id){const need=SYS[id]?.unlock?.campaignClears||0;return nlhStage()>=need?'Đã mở · ải '+nlhFmt(need):'Mở sau '+nlhFmt(need)+' ải';}
 function nlhGateText(id){const def=SYS[id],need=def?.unlock?.campaignClears||0;return nlhStage()>=need?'Đã mở ở mốc chiến dịch '+need:'Còn '+Math.max(0,need-nlhStage())+' ải để mở';}
 function nlhCurrency(level,id){
- if(id==='commander')return {silver:1000*level,iron:80*level,merit:30*level};
- if(id==='specialWeapon')return {silver:1300*level,iron:95*level};
- if(id==='inheritance')return {silver:1500*level,gems:4*level};
+ if(id==='commander')return {silver:1000*level,merit:60*level};
+ if(id==='specialWeapon')return {silver:1300*level,merit:45*level};
+ if(id==='inheritance')return {silver:1500*level,merit:50*level};
  if(id==='destiny')return {silver:3000*level,merit:50*level};
- if(id==='awakening-orange')return {silver:6000,merit:120,gems:10};
- if(id==='awakening-gold')return {silver:12000,merit:240,gems:20};
+ if(id==='awakening-orange')return {silver:6000,merit:250};
+ if(id==='awakening-gold')return {silver:12000,merit:500};
  return {};
 }
 function nlhMaterialCost(level,id){
@@ -93,7 +93,7 @@ function nlhMaterialCost(level,id){
  if(id==='awakening-gold')return {quynhTuong:1,xichQua:1,hoangTrungLy:1};return {};
 }
 function nlhCostText(currency,materials){const names={silver:'Bạc',iron:'Sắt',gems:'Ngọc',merit:'Chiến công'};const a=Object.entries(currency||{}).map(([k,v])=>nlhFmt(v)+' '+(names[k]||k));const b=Object.entries(materials||{}).map(([k,v])=>nlhFmt(v)+' '+(NL_HS.materialCatalog[k]?.name||k));return [...a,...b].join(' · ')||'Miễn phí';}
-function nlhCanPay(currency,materials){const a=nlhsState();for(const [k,v] of Object.entries(currency||{})){const current=k==='merit'?(game.nlClassicA?.merit||0):Number(game[k]||0);if(current<v)return false;}for(const [k,v] of Object.entries(materials||{}))if((a.materials[k]||0)<v)return false;return true;}
+function nlhCanPay(currency,materials){const a=nlhsState();for(const [k,v] of Object.entries(currency||{})){const current=k==='merit'?(game.nlClassicA?.merit||0):Number(game[k]||0);if(!Number.isSafeInteger(current)||!Number.isSafeInteger(v)||v<0||current<v)return false;}for(const [k,v] of Object.entries(materials||{}))if(!Object.hasOwn(NL_HS.materialCatalog,k)||!Number.isSafeInteger(v)||v<0||(a.materials[k]||0)<v)return false;return true;}
 function nlhPay(currency,materials){if(!nlhCanPay(currency,materials))return false;for(const [k,v] of Object.entries(currency||{})){if(k==='merit'){game.nlClassicA.merit-=v;game.nlClassicA.meritSpent=(game.nlClassicA.meritSpent||0)+v;}else game[k]-=v;}for(const [k,v] of Object.entries(materials||{}))nlhsState().materials[k]-=v;return true;}
 function nlhQuotePanel(id,heroId,level,max,extra=''){
  const next=level+1,open=nlhIsOpen(id)&&nlhOwned(heroId)&&!battle&&next<=max,cost=nlhCurrency(next,id),mats=nlhMaterialCost(next,id),afford=nlhCanPay(cost,mats);
@@ -113,7 +113,7 @@ function nlhUpgrade(id,heroId,sub=''){
  else return false;
  if(current>=max||!nlhIsOpen(id))return false;
  const level=current+1,cost=nlhCurrency(level,key),materials=nlhMaterialCost(level,key);
- if(!nlhPay(cost,materials)){toast('Chưa đủ bạc, sắt, ngọc, chiến công hoặc nguyên liệu.');return false;}
+ if(!nlhPay(cost,materials)){toast('Chưa đủ Bạc, Chiến công hoặc nguyên liệu.');return false;}
  if(id==='commander')h.commanderLevel=level;else if(id==='specialWeapon')h.weaponLevel=level;else if(id==='inheritance')h.inheritanceLevel=level;
  else if(id==='destiny')h.destinyLevel=level;else if(sub==='orange')h.awakening.orange=true;else h.awakening.gold=true;
  state.receipts.push({id:'hero-system:'+key+':'+heroId+':'+level+':'+Date.now(),system:key,heroId,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});state.receipts=state.receipts.slice(-500);
@@ -263,7 +263,7 @@ function nlhSystemBody(system,id){
   const a=typeof nlARecruitPanel==='function'?nlARecruitPanel():'<p class="nlh-copy">Tửu Quán giữ luồng chiêu mộ hiện tại.</p>';const b=typeof nlHero207Panel==='function'?nlHero207Panel():'';return '<div class="nlh-section-head"><span>Chiêu Mộ</span><span class="nlh-status">'+(game.roster.length)+'/'+(typeof NL_CONTENT_C!=='undefined'?NL_CONTENT_C.counts.runtimeHeroes:221)+'</span></div><p class="nlh-copy">Chiêu mộ theo chiến dịch, Uy danh và Tháp. Không đổi ID hoặc Save. Điều kiện dự án được ghi SIMULATED.</p>'+a+b+(typeof nlContentCHeroPanel==='function'?nlContentCHeroPanel():'');
  }
  if(system==='awakening'){
-  const orange=dev.awakening.orange,gold=dev.awakening.gold,lv=game.hero?.[id]?.level||1,opened=nlhIsOpen('awakening');return '<div class="nlh-section-head"><span>Giác Ngộ · '+hsEsc(h.name)+'</span><span class="nlh-status">'+Number(orange+gold)+'/2</span></div><h3 class="nlh-section-title">Giác Ngộ và tiến hóa cao cấp</h3><p class="nlh-copy">Wiki Mobile xác nhận mở hệ Cam ở cấp Thành Chính 300, Vàng ở 380; vật liệu Vàng có ba tên bên dưới. Điều kiện từng tướng và số lượng không được nguồn xác nhận.</p><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Cam · '+(orange?'Đã đạt':'Cấp '+lv+' · cần 20')+'</b><p class="nlh-copy">Dự án: mở sau ải 16 · +6% Công, +5% Binh · cần Tinh Phách Giác Ngộ ×1, 6.000 Bạc, 120 Chiến công, 10 Ngọc.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="orange" '+(!opened||orange||nlhStage()<16||lv<20||!nlhCanPay(nlhCurrency(1,'awakening-orange'),nlhMaterialCost(1,'awakening-orange'))||battle?'disabled':'')+'>'+(orange?'Đã Giác Ngộ Cam':!opened?'Mở sau ải 16':'Kích hoạt Cam')+'</button></div><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Vàng · '+(gold?'Đã đạt':'Cấp '+lv+' · cần 30')+'</b><p class="nlh-copy">Dự án: cần Cam, vượt ải 22 · +8% Công/Thủ/Mưu · chi phí SIMULATED.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="gold" '+(!orange||gold||nlhStage()<22||lv<30||!nlhCanPay(nlhCurrency(1,'awakening-gold'),nlhMaterialCost(1,'awakening-gold'))||battle?'disabled':'')+'>'+(gold?'Đã Giác Ngộ Vàng':!orange?'Cần Cam trước':'Kích hoạt Vàng')+'</button></div><p class="nlh-source-note">Ngưỡng Mobile chính thức khác với mốc chiến dịch mô phỏng. Tên vật liệu Vàng: Quỳnh Tương, Xích Quả, Hoàng Trung Lý; số lượng áp dụng là dự án thiết kế.</p>'+nlhEndgamePanel(id);
+  const orange=dev.awakening.orange,gold=dev.awakening.gold,lv=game.hero?.[id]?.level||1,opened=nlhIsOpen('awakening');return '<div class="nlh-section-head"><span>Giác Ngộ · '+hsEsc(h.name)+'</span><span class="nlh-status">'+Number(orange+gold)+'/2</span></div><h3 class="nlh-section-title">Giác Ngộ và tiến hóa cao cấp</h3><p class="nlh-copy">Wiki Mobile xác nhận mở hệ Cam ở cấp Thành Chính 300, Vàng ở 380; vật liệu Vàng có ba tên bên dưới. Điều kiện từng tướng và số lượng không được nguồn xác nhận.</p><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Cam · '+(orange?'Đã đạt':'Cấp '+lv+' · cần 20')+'</b><p class="nlh-copy">Dự án: mở sau ải 16 · +6% Công, +5% Binh · cần Tinh Phách Giác Ngộ ×1, 6.000 Bạc, 250 Chiến công.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="orange" '+(!opened||orange||nlhStage()<16||lv<20||!nlhCanPay(nlhCurrency(1,'awakening-orange'),nlhMaterialCost(1,'awakening-orange'))||battle?'disabled':'')+'>'+(orange?'Đã Giác Ngộ Cam':!opened?'Mở sau ải 16':'Kích hoạt Cam')+'</button></div><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Vàng · '+(gold?'Đã đạt':'Cấp '+lv+' · cần 30')+'</b><p class="nlh-copy">Dự án: cần Cam, vượt ải 22 · +8% Công/Thủ/Mưu · chi phí SIMULATED.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="gold" '+(!orange||gold||nlhStage()<22||lv<30||!nlhCanPay(nlhCurrency(1,'awakening-gold'),nlhMaterialCost(1,'awakening-gold'))||battle?'disabled':'')+'>'+(gold?'Đã Giác Ngộ Vàng':!orange?'Cần Cam trước':'Kích hoạt Vàng')+'</button></div><p class="nlh-source-note">Ngưỡng Mobile chính thức khác với mốc chiến dịch mô phỏng. Tên vật liệu Vàng: Quỳnh Tương, Xích Quả, Hoàng Trung Lý; số lượng áp dụng là dự án thiết kế.</p>'+nlhEndgamePanel(id);
  }
  return '<div class="nlh-section-head"><span>'+hsEsc(skill?.label||system)+'</span></div>';
 }
