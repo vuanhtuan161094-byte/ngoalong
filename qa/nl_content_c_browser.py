@@ -46,7 +46,7 @@ def main():
             for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
               const npc=map.npcs[npcIndex];
               for(const unit of npc.units||[]){
-                for(const id of ['33','50','58','74','184','54','55','51','108','29','65']){
+                for(const id of ['33','50','58','74','184','54','55','51','108','29','65','68']){
                   const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                   const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
                   const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
@@ -263,6 +263,7 @@ def main():
           const shield108=sourceStatusSamples['108'],shieldExact108=sourceStatusSamples['108-exact'];
           const progressive29=sourceStatusSamples['29'];
           const fortune65=sourceStatusSamples['65'];
+          const heavenlyFire68=sourceStatusSamples['68'];
           const bountyRawMagnitude=Number(bounty54?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           const insightRawMagnitude=Number(insight55?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           checks.mobileSourceBountySelectors=sourceStatusSamples['54-least-enemy']?.app?.scope==='least-enemy'&&
@@ -291,6 +292,10 @@ def main():
           checks.mobileSourceFortuneDescriptor=!!fortune65&&fortune65.app.scope==='self'&&fortune65.app.values.maxDamageMultiplier===fortuneMaximum&&
             fortune65.app.sourceMagnitude===fortuneMaximum&&fortune65.app.turns===fortuneTurns&&
             fortune65.app.formulaClassification==='SOURCE_MAX_MULTIPLIER_WITH_SIMULATED_UNIFORM_INTEGER_PICK';
+          const fireDuration=Number(heavenlyFire68?.effect?.detail?.match(/(\\d+)\\s*lượt/i)?.[1]||heavenlyFire68?.skill?.desc?.match(/Thiên Hỏa[^.]{0,45}?duy trì\\s+(\\d+)\\s*lượt/i)?.[1]);
+          checks.mobileSourceHeavenlyFireDescriptor=!!heavenlyFire68&&heavenlyFire68.app.scope==='targets'&&heavenlyFire68.app.turns===fireDuration&&
+            heavenlyFire68.app.values.currentTroopLossRatio>0&&heavenlyFire68.app.values.spreadChance===.25&&
+            heavenlyFire68.app.dispelPolicy==='unremovable'&&heavenlyFire68.app.formulaClassification.startsWith('SIMULATED_');
           checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
             silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
@@ -519,6 +524,36 @@ def main():
               Math.abs(Number(fateHit?.amount)/Math.max(1,Number(plainHit?.amount))-draw)<.02;
             checks.mobileSourceFortuneDiagnostics={sample:fortune65,sourceEvent,actionEvent:{mode:actionEvent?.mode,draw:actionEvent?.mobileSourceFateDamageMultiplier,hit:actionEvent?.hits?.[0]},fortuneStatus,maximum,plainHit,fateHit};
           }else {checks.mobileSourceFortuneInNativeCombat=false;checks.mobileSourceFortuneDiagnostics={battle:!!fortuneBattle65,caster:!!fortuneCaster65,sample:fortune65};}
+          q.closeBattle('city');
+          const heavenlyFireBattle=launchStatusProbe(heavenlyFire68,true),heavenlyFireCaster=heavenlyFireBattle?.e?.find(unit=>unit.slot===heavenlyFire68?.slot);
+          if(heavenlyFireBattle&&heavenlyFireCaster){
+            for(const unit of heavenlyFireBattle.p){unit.hp=unit.maxHp=1000000000000;unit.alive=true;}
+            for(const unit of heavenlyFireBattle.e)if(unit.nlMobileTroop)unit.nlMobileTroop.strikeBack=0;
+            const fireApplication=heavenlyFireCaster.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='68');
+            if(fireApplication)fireApplication.chance=1;
+            heavenlyFireCaster.morale=100;q.perform(heavenlyFireCaster);
+            const fireSourceEvent=heavenlyFireBattle.events.at(-1),fireTargets=heavenlyFireBattle.p.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='68'));
+            const fireTarget=fireTargets[0],fireStatus=fireTarget?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='68');
+            const fireAppliedTurns=fireStatus?.turns;
+            const cleanseRemoved=fireTarget?c.mobileBookCleanse(fireTarget,99):null;
+            if(fireStatus)fireStatus.mobileSourceValues.spreadChance=1;
+            const fireHpBefore=fireTarget?.hp;
+            if(fireTarget){fireTarget.morale=40;q.perform(fireTarget);}
+            const fireActionEvent=heavenlyFireBattle.events.at(-1),periodicHit=fireActionEvent?.hits?.find(hit=>hit.mobilePeriodic&&hit.team===fireTarget?.team&&hit.slot===fireTarget?.slot);
+            const fireSide=fireTarget?.team==='p'?heavenlyFireBattle.p:heavenlyFireBattle.e;
+            const spreadTarget=fireSide?.find(unit=>unit!==fireTarget&&unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='68'));
+            checks.mobileSourceHeavenlyFireInNativeCombat=fireSourceEvent?.skill===heavenlyFire68?.skill?.name&&fireSourceEvent?.mode==='skill'&&
+              fireTargets.length>0&&fireAppliedTurns===heavenlyFire68?.app?.turns&&periodicHit?.amount>0&&fireTarget.hp<fireHpBefore&&
+              periodicHit.amount===Math.floor(fireHpBefore*heavenlyFire68.app.values.currentTroopLossRatio);
+            checks.mobileSourceHeavenlyFireUnremovable=!!fireTarget&&cleanseRemoved===0&&fireTarget.effects.includes(fireStatus)&&
+              fireStatus?.mobileSource?.dispelPolicy==='unremovable';
+            checks.mobileSourceHeavenlyFireSpreads=!!fireTarget&&!!spreadTarget&&fireActionEvent?.description?.includes('Thiên Hỏa lây sang')&&
+              spreadTarget.effects.find(effect=>effect.mobileSource?.sourceEffectId==='68')?.mobileSource?.dispelPolicy==='unremovable';
+            checks.mobileSourceHeavenlyFireDiagnostics={sample:{mapId:heavenlyFire68.mapId,npcId:heavenlyFire68.npcId,skill:heavenlyFire68.skill,app:heavenlyFire68.app},
+              fireSourceEvent,fireTargets:fireTargets.map(unit=>unit.slot),cleanseRemoved,fireActionEvent:{mode:fireActionEvent?.mode,periodicHit,description:fireActionEvent?.description},
+              fireHpBefore,fireHpAfter:fireTarget?.hp,spreadSlots:fireSide?.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='68')).map(unit=>unit.slot)};
+          }else {checks.mobileSourceHeavenlyFireInNativeCombat=false;checks.mobileSourceHeavenlyFireUnremovable=false;checks.mobileSourceHeavenlyFireSpreads=false;
+            checks.mobileSourceHeavenlyFireDiagnostics={battle:!!heavenlyFireBattle,caster:!!heavenlyFireCaster,sample:heavenlyFire68};}
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
           if(silenceBattle&&silenceCaster){
