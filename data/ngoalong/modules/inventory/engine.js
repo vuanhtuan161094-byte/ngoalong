@@ -11,7 +11,7 @@
   const STATS = ['atk', 'def', 'int', 'hp', 'tdef', 'mdef'];
   const MOBILE_STATS = ['catk', 'matk', 'crit', 'counter', 'dodge'];
   const LANES = ['weaponAtk', 'horseAtk'];
-  const RESOURCES = new Set(['silver', 'iron', 'grain', 'prestige']);
+  const RESOURCES = new Set(['silver', 'gold', 'iron', 'grain', 'prestige']);
   const SLOT_ALIASES = { banner: 'artifact' };
   const owned = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   function problem(code) { const e = new Error(code); e.code = code; throw e; }
@@ -28,7 +28,10 @@
       assert(['PLAYABLE', 'REFERENCE_ONLY'].includes(row.integration), 'BAD_INTEGRATION_STATUS');
       assert(['VERIFIED', 'DERIVED', 'SIMULATED', 'UNKNOWN', 'SOURCE_EXACT', 'DERIVED_FROM_SOURCE'].includes(row.provenance?.classification), 'BAD_PROVENANCE');
       if (row.integration === 'PLAYABLE') {
-        const sourceEnabled=row.provenance.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.acquisitionRule?.kind==='MOBILE_DROP';
+        const sourceEnabled=row.provenance.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
+          (row.acquisitionRule?.kind==='MOBILE_DROP'||row.acquisitionRule?.kind==='SOURCE_CURRENCY'||
+           (row.acquisitionRule?.kind==='SHOP'&&row.acquisitionRule.classification==='SOURCE_EXACT'&&
+            row.acquisitionRule.shopCost&&typeof row.acquisitionRule.shopCost==='object'));
         assert(row.provenance.classification === 'SIMULATED'||sourceEnabled, 'UNAPPROVED_WIKI_ACTIVATION');
         if (row.category === 'equipment') {
           assert(typeof row.slot === 'string' && row.stats && STATS.every(k => integer(row.stats[k])) &&
@@ -158,11 +161,21 @@
           acquisition.shopCost, 'EQUIPMENT_NOT_FOR_SALE');
         assert(next.items.length < equipmentCapacity(next), 'EQUIPMENT_CAPACITY');
         pay(next, acquisition.shopCost);
+        for(const material of acquisition.shopMaterials||[]){
+          available(material.id,'material');
+          assert(integer(material.quantity,1)&&integer(m.stacks[material.id]||0)&&
+            (m.stacks[material.id]||0)>=material.quantity,'INSUFFICIENT_MATERIAL');
+        }
+        for(const material of acquisition.shopMaterials||[]){
+          m.stacks[material.id]-=material.quantity;
+          if(m.stacks[material.id]===0)delete m.stacks[material.id];
+        }
         const uids = new Set(next.items.map(x => String(x.uid)));
         let uid;
         do { m.serial++; uid = 'nli-' + m.serial; } while (uids.has(uid));
         next.items.push({ uid, base: id, lv: 1 });
-        return { purchased: id, uid, cost: { ...acquisition.shopCost } };
+        return { purchased: id, uid, cost: { ...acquisition.shopCost,
+          materials:jsonCopy(acquisition.shopMaterials||[]) } };
       });
     }
     function equipmentInstance(state, uid) {

@@ -59,7 +59,7 @@
   const escape=s=>String(s??'').replace(/[&<>"']/g,
     x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   const money=(n)=>Number.isFinite(n)?Math.round(n).toLocaleString('vi-VN'):'0';
-  const priceNames={silver:'bạc',grain:'lương',iron:'sắt',prestige:'uy danh'};
+  const priceNames={silver:'bạc',gold:'vàng',grain:'lương',iron:'sắt',prestige:'uy danh'};
   const priceText=(cost,separator=' / ')=>{
     const parts=Object.entries(cost||{}).filter(([k])=>!['materials','sourceExact','sourceBaseExact','discount','discountClassification'].includes(k))
       .map(([k,n])=>money(n)+' '+(priceNames[k]||k));
@@ -116,7 +116,7 @@
       const canRefine=!sourceEnhancement&&fc!=null&&state.silver>=fc&&haveMat>=needMat;
       const sourceStats=(row.sourceStats||[]).map(x=>escape(x.label)+': '+money(x.base||0)+(x.growth?(' +'+money(x.growth)+'/Lv'):'')).join(' · ');
       const sourceRefine=row.mobileRefinement?.sourcePools;
-      const sourceRefineDetail=sourceRefine?'<details class="nli-source-refine"><summary>Bảng thuộc tính Tinh Luyện Wiki (dữ liệu nguồn)</summary>'+Object.entries(sourceRefine).map(([pool,entries])=>
+      const sourceRefineDetail=sourceRefine?'<details class="nli-source-refine"><summary>Bảng thuộc tính Tinh Luyện Wiki (dữ liệu nguồn)</summary>'+Object.entries(sourceRefine).filter(([,entries])=>Array.isArray(entries)).map(([pool,entries])=>
         '<div><b>'+escape(pool)+'</b><ul>'+entries.map(x=>'<li>'+escape(x.name)+' · '+Math.round(x.rate*100)+'% · giá trị '+escape(x.value)+'</li>').join('')+'</ul></div>').join('')+
         '<small>Chưa kết nối thành thao tác vì nguồn có hai bảng tỉ lệ vượt 100% và chưa công bố chi phí/hiệu ứng combat đầy đủ.</small></details>':'';
       return '<article class="nli-gear" data-uid="'+escape(uid)+'" data-nl-art-item="'+escape(row.id)+'" data-nl-art-kind="'+escape(row.slot)+'" data-nl-art-rarity="'+escape(row.rarity)+'">'+
@@ -139,10 +139,10 @@
         (sourceRefine?sourceRefineDetail:'<div class="nli-meta">Tinh khoáng: '+haveMat+' · '+(canRefine?'Đủ nguyên liệu':'Chưa đủ điều kiện tinh luyện')+'</div>')+'</article>';
     }).join('');
     const shopCards=(shop?visible:[]).map(row=>{
-        const cost=row.acquisitionRule.shopCost;
+        const cost={...(row.acquisitionRule.shopCost||{}),materials:row.acquisitionRule.shopMaterials||[]};
         return '<article class="nli-gear" data-nl-art-item="'+escape(row.id)+'" data-nl-art-kind="'+escape(row.slot)+'" data-nl-art-rarity="'+escape(row.rarity)+'"><header><strong>'+escape(row.name)+'</strong><span>'+
           escape(row.rarity)+'</span></header><small>'+escape(SLOTS.find(s=>s[0]===row.slot)?.[1]||row.slot)+
-          ' · Cấp '+row.requiredLevel+'</small><p>'+byStat(row.stats)+'</p>'+
+          (row.mobileEnhancement?' · Cấp Wiki '+money(row.displayedLevel||0)+' · yêu cầu Chỉ huy Lv1 (mô phỏng)':' · Cấp '+row.requiredLevel)+'</small><p>'+byStat(row.stats)+'</p>'+
           '<div class="nli-buttons"><span>'+priceText(cost,' · ')+'</span>'+
           '<button data-nli-action="buy" data-item="'+escape(row.id)+'" '+
           (!affordable(state,cost)?'disabled':'')+'>Mua</button></div></article>';
@@ -151,6 +151,7 @@
       '<section class="nli-panel" data-nli-root="1" aria-label="Trang bị">'+
       '<header class="nli-heading"><h2>Trang bị · Kho chiến cụ</h2>'+
       '<div class="nli-balance">Bạc: '+money(state.silver)+
+      ' · Vàng: '+money(state.gold||0)+
       (pack.rules?.classicA3?' · Lương: '+money(state.grain):' · Sắt: '+money(state.iron))+
       ' · Trang bị: '+owned.length+'</div></header>'+
       '<div class="nli-tabs" role="group" aria-label="Loại trang bị">'+

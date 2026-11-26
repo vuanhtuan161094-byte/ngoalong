@@ -66,6 +66,20 @@ def main():
           checks.sealCurrencySettlement=report?.rewards?.chienTich===650+c.npcDifficulty(n.id)*240+(n.boss?500:0)&&c.state().chienTich===report.rewards.chienTich&&c.state().hoPhu===0;
           checks.firstMerit=s.nlClassicA.merit-firstMerit>=c.npcMerit(n.id)&&report?.nlContentC?.meritAward===s.nlClassicA.merit-firstMerit;
           const balance=s.silver,meritBalance=s.nlClassicA.merit;q.finishBattle();checks.noDuplicate=q.getGame().silver===balance&&q.getGame().nlClassicA.merit===meritBalance;
+          // Exercise the source-priced shop through the visible production screen.
+          const shopState=q.getGame();shopState.silver=1000000;shopState.gold=1000;q.setGame(shopState);
+          document.querySelector('.nav[data-tab="equipment"]')?.click();
+          document.querySelector('[data-nl-item-bridge] [data-nli-shop="1"]')?.click();
+          const shopSearch=document.querySelector('[data-nl-item-bridge] [data-nli-search]');
+          if(shopSearch){shopSearch.value='Thiết Kiếm';shopSearch.dispatchEvent(new InputEvent('input',{bubbles:true}));}
+          const shopItem=document.querySelector('[data-nl-item-bridge] [data-nl-art-item="mobile-vng-equipment-1"]');
+          const shopBalance=q.getGame().silver,shopCount=q.getGame().items.length;
+          const shopPrice=shopItem?.innerText.includes('400 bạc');
+          shopItem?.querySelector('[data-nli-action="buy"]')?.click();
+          const afterShop=q.getGame();
+          checks.mobileShopPurchase=!!shopPrice&&afterShop.silver===shopBalance-400&&
+            afterShop.items.length===shopCount+1&&afterShop.items.some(x=>x.base==='mobile-vng-equipment-1')&&afterShop.version===5;
+          document.querySelector('.nav[data-tab="city"]')?.click();
           q.closeBattle('city');
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
           const tb=q.debugBattle(),towerBefore=q.getGame(),expected=c.towerRewards(21),soulBefore=c.state().soul,towerMeritBefore=q.getGame().nlClassicA.merit;

@@ -7,7 +7,9 @@ const NL_ITEM_CATALOGUE = window.NLItemBalanceV1.apply(__NL_ITEMS_CATALOGUE__);
 window.NLItemBalanceV1.economicAudit(NL_ITEM_CATALOGUE);
 const NL_MOBILE_INVENTORY=NL_ITEM_CATALOGUE.mobileSource;
 if(NL_MOBILE_INVENTORY?.sourceCounts?.equipment!==399||NL_MOBILE_INVENTORY?.sourceCounts?.items!==746||
-   NL_MOBILE_INVENTORY.runtimeEquipment?.length!==36||NL_MOBILE_INVENTORY.runtimeMaterials?.length!==33)
+   NL_MOBILE_INVENTORY.runtimeCounts?.activeSourceEquipment!==114||
+   NL_MOBILE_INVENTORY.runtimeCounts?.activeSourceMaterials!==34||
+   NL_MOBILE_INVENTORY.runtimeEquipment?.length!==114||NL_MOBILE_INVENTORY.runtimeMaterials?.length!==34)
   throw new Error('NL_MOBILE_INVENTORY_SOURCE_COVERAGE_MISMATCH');
 NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment);
 NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
@@ -19,10 +21,10 @@ const nlItemConsumableApi=window.NLItemConsumables.createModule(NL_ITEM_CATALOGU
 const nlItemWarehouseView={mode:'bag',category:'all',search:'',page:0};
 const nlItemApi = window.NLItemInventory.createModule(NL_ITEM_CATALOGUE, NL_ITEM_RULES);
 const nlItemModels = NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'PLAYABLE');
-if (nlItemModels.length !== 447 ||
+if (nlItemModels.length !== 525 ||
     NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='PLAYABLE'&&x.provenance?.classification==='SIMULATED').length!==411||
     NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'REFERENCE_ONLY').length !== 392) {
-  throw new Error('NL_ITEMS_411_PROJECT_PLUS_36_MOBILE_OR_392_REFERENCE_COVERAGE_MISMATCH');
+  throw new Error('NL_ITEMS_411_PROJECT_PLUS_114_MOBILE_OR_392_REFERENCE_COVERAGE_MISMATCH');
 }
 for (const item of nlItemModels) {
   // Old 19 IDs and stats stay byte-for-byte equivalent to their R03 pack.
@@ -344,7 +346,9 @@ if(window.__P2_ENABLE_QA__){
     equipOwned:nlItemQaEquipOwned,
     mobileSource:()=>({equipment:NL_MOBILE_INVENTORY.sourceCounts.equipment,items:NL_MOBILE_INVENTORY.sourceCounts.items,
       drops:NL_MOBILE_INVENTORY.sourceCounts.campaignDropRows,activeEquipment:NL_MOBILE_INVENTORY.runtimeEquipment.length,
-      activeMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length}),
+      activeMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceShopCosts:NL_MOBILE_INVENTORY.equipmentPurchaseCostCounts.sourceExactShopRows,
+      unresolvedCostTypes:NL_MOBILE_INVENTORY.equipmentPurchaseCostCounts.unresolvedCostRows,
+      reverseDropAudit:NL_MOBILE_INVENTORY.equipmentUsageDropCounts}),
     settleMobileDrops:nlItemSettleMobileDrops
   };
 }

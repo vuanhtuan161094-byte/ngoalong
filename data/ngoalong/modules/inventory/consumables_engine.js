@@ -8,7 +8,7 @@
   else root.NLItemConsumables=api;
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
-  const RESOURCE=new Set(['silver','iron','grain','prestige']);
+  const RESOURCE=new Set(['silver','gold','iron','grain','prestige']);
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   const safe=n=>Number.isSafeInteger(n)&&n>=0;
   const goodId=id=>typeof id==='string'&&id.length>0&&id.length<=160;
@@ -24,7 +24,8 @@
       requireOk(row&&goodId(row.id)&&!own(lookup,row.id),'INVALID_OR_DUPLICATE_ITEM_ID');
       requireOk(row.integration==='PLAYABLE'||row.integration==='REFERENCE_ONLY','BAD_INTEGRATION');
       const mobileSourceMaterial=row.provenance?.classification==='SOURCE_EXACT'&&
-        row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.acquisitionRule?.kind==='MOBILE_DROP'&&
+        row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
+        ['MOBILE_DROP','SOURCE_CURRENCY'].includes(row.acquisitionRule?.kind)&&
         row.category==='material'&&row.effectRule==null;
       requireOk(['VERIFIED','SIMULATED','SOURCE_EXACT'].includes(row.provenance?.classification),'BAD_PROVENANCE');
       if(row.integration==='REFERENCE_ONLY'){

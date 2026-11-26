@@ -5,6 +5,7 @@ const { createModule, validateCatalogue } = require('../data/ngoalong/modules/in
 const base = require('../data/ngoalong/modules/inventory/catalogue.json');
 const rules = require('../data/ngoalong/modules/inventory/rules.json');
 const source = require('../data/ngoalong/modules/inventory/mobile_wiki_v1.json');
+const { createModule: createConsumables } = require('../data/ngoalong/modules/inventory/consumables_engine.js');
 const pack = structuredClone(base);
 pack.equipment.push(...source.runtimeEquipment);
 pack.items.push(...source.runtimeMaterials);
@@ -32,12 +33,58 @@ test('Mobile Wiki inventory source rows are exact, stable and separately playabl
   assert.equal(source.sourceCounts.campaignDropRows,893);
   assert.deepEqual(source.equipmentUsageDropCounts,{total:680,matchedNpcAndDrop:618,matchedNpcDropAndRate:613,
     rateDrift:5,npcNotCaptured:29,npcFoundDropNotMatched:33});
-  assert.equal(source.runtimeEquipment.length,36);
-  assert.equal(source.runtimeMaterials.length,33);
+  assert.equal(source.runtimeEquipment.length,114);
+  assert.equal(source.runtimeMaterials.length,34);
+  assert.deepEqual(source.runtimeCounts,{activeSourceEquipment:114,activeSourceMaterials:34,
+    campaignDropEquipment:36,sourceExactShopEquipment:96,dropBoundMaterials:30,
+    dropBoundResourceCurrencies:3,currencyWithUnresolvedEarningRoute:1});
+  assert.deepEqual(source.equipmentPurchaseCostCounts,{total:118,sourceExactShopRows:96,
+    unresolvedCostRows:22,byCostType:{'0':22,'1':50,'2':20,'15':10,'16':16}});
   assert.equal(source.unresolvedCampaignDrops.length,12);
   const rows=validateCatalogue(pack);
   assert.equal(rows['mobile-vng-equipment-1'].sourceEdition,'CURRENT_VNG_MOBILE_WIKI');
   assert.equal(rows['mobile-vng-resource-res_16'].name,'Tranh ngọc');
+  assert.equal(rows['mobile-vng-resource-res_15'].name,'Tử Long Ngọc');
+});
+
+test('source shop purchases debit exact Bạc, Vàng and material prices atomically',()=>{
+  const silver=source.runtimeEquipment.find(x=>x.sourceId==='1');
+  const gold=source.runtimeEquipment.find(x=>x.sourceId==='187');
+  const tranh=source.runtimeEquipment.find(x=>x.sourceId==='286');
+  const tuLong=source.runtimeEquipment.find(x=>x.sourceId==='32');
+  let state=fresh();state.gold=1000;
+  const silverBefore=state.silver;
+  state=ok(engine.buy(state,silver.id,'mobile-shop:silver'));
+  assert.equal(state.silver,silverBefore-silver.acquisitionRule.shopCost.silver);
+  const goldBefore=state.gold;
+  state=ok(engine.buy(state,gold.id,'mobile-shop:gold'));
+  assert.equal(state.gold,goldBefore-gold.acquisitionRule.shopCost.gold);
+  state=ok(engine.grant(state,[{id:'mobile-vng-resource-res_16',quantity:999}], 'mobile-shop:tranh-fund'));
+  const tranhCost=tranh.acquisitionRule.shopMaterials[0].quantity;
+  state=ok(engine.buy(state,tranh.id,'mobile-shop:tranh'));
+  assert.equal(state.nlItemsV1.stacks['mobile-vng-resource-res_16'],999-tranhCost);
+  state=ok(engine.grant(state,[{id:'mobile-vng-resource-res_15',quantity:400}], 'mobile-shop:tulong-fund'));
+  const tuLongCost=tuLong.acquisitionRule.shopMaterials[0].quantity;
+  state=ok(engine.buy(state,tuLong.id,'mobile-shop:tulong'));
+  assert.equal(state.nlItemsV1.stacks['mobile-vng-resource-res_15'],400-tuLongCost);
+  const poor=JSON.parse(JSON.stringify(state));poor.gold=0;
+  const failed=engine.buy(poor,gold.id,'mobile-shop:poor-gold');
+  assert.equal(failed.code,'INSUFFICIENT_RESOURCES');
+  assert.deepEqual(failed.state,poor);
+});
+
+test('gold item rewards settle through the shared currency Save v5 field',()=>{
+  const pack={items:[{id:'qa-gold-bundle',name:'QA',category:'consumable',
+    integration:'PLAYABLE',provenance:{classification:'SIMULATED'},
+    effectRule:{kind:'GRANT_RESOURCE',resource:'gold',amount:15}}]};
+  const api=createConsumables(pack,{limits:{stacksKinds:20,quantityEach:999,receipts:100}});
+  const state={version:5,gold:5,hero:{},items:[],gear:{},
+    nlItemsV1:{stacks:{'qa-gold-bundle':1},receipts:{},serial:0}};
+  const result=api.use(state,'qa-gold-bundle','qa:gold');
+  assert.equal(result.ok,true,result.code);
+  assert.equal(result.state.gold,20);
+  assert.equal(result.state.nlItemsV1.stacks['qa-gold-bundle'],undefined);
+  assert.equal(result.state.version,5);
 });
 
 test('source gear grant, equip, actual P2 bonus adapter and receipt survive Save v5 reload',()=>{

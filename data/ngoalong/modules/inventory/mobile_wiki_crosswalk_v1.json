@@ -21,7 +21,8 @@
     "qualityTiers": 19,
     "refinementSlots": 7,
     "campaignDropRows": 893,
-    "equipmentReverseDropRows": 680
+    "equipmentReverseDropRows": 680,
+    "equipmentPurchaseCostRows": 118
   },
   "runtimeBinding": {
     "campaignDropsBoundToEquipment": 36,
@@ -35,6 +36,13 @@
       "rateDrift": 5,
       "npcNotCaptured": 29,
       "npcFoundDropNotMatched": 33
+    },
+    "equipmentShopCostRows": {
+      "total": 118,
+      "sourceExact": 96,
+      "unresolved": 22,
+      "runtimeSourceEquipment": 114,
+      "runtimeSourceMaterials": 34
     }
   },
   "refinementRateSums": {
@@ -162,6 +170,14 @@
       "runtimeField": "reverse NPC/map drop reference; compared with NPC-owned source drop",
       "runtimeClassification": "SOURCE_EXACT",
       "runtimeStatus": "REVERSE_SOURCE_CROSSWALK_ONLY_NPC_OWNED_DROP_IS_RUNTIME_AUTHORITY"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/cost,costType,costName",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "source shop cost using verified resource IDs or unresolved ledger",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "96_EXACT_RESOURCE_BINDINGS_APPLIED;_22_COST_TYPE_ZERO_ROWS_UNRESOLVED"
     },
     {
       "sourcePointer": "/equip-detail/equipRefine",
@@ -314,6 +330,184 @@
       "name": "Nguyên liệu",
       "category": "",
       "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    }
+  ],
+  "unresolvedEquipmentPurchaseCosts": [
+    {
+      "equipmentId": "94",
+      "name": "Hắc Long",
+      "cost": 580,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "150",
+      "name": "Binh Võ Kinh",
+      "cost": 580,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "105",
+      "name": "Đằng Vân",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "115",
+      "name": "Đoạn Giang",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "119",
+      "name": "Hoàng Đỉnh",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "109",
+      "name": "Lạc Phượng",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "111",
+      "name": "Lạc Tinh",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "112",
+      "name": "Long Tường",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "118",
+      "name": "Mộng Cảnh Sa",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "102",
+      "name": "Ngự Phong",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "107",
+      "name": "Oanh Minh",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "116",
+      "name": "Tam Tài",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "110",
+      "name": "Thất Tuyệt",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "122",
+      "name": "Thiên Diểu",
+      "cost": 460,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "120",
+      "name": "Thương Huyền",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "101",
+      "name": "Trích Tinh",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "103",
+      "name": "Trường Hà",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "104",
+      "name": "Truy Nguyệt",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "114",
+      "name": "Tử Hà",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "113",
+      "name": "Vãn Khê",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "108",
+      "name": "Vọng Nguyệt",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "117",
+      "name": "Xích Ngấn",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
     }
   ]
 }
