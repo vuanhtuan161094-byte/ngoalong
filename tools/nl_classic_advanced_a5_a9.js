@@ -118,12 +118,40 @@ finishBattle=function(){
  b.nlAdvancedSettled=true;const s=state();
  // Native first-clear/loot settlement has already happened. This is a distinct one-time objective reward.
  if(o.kind==='war'&&!s.territories[o.id]){s.territories[o.id]={nation:o.nation,at:Date.now()};mark(s,'capture');}
+ if(o.kind==='defend'&&s.territories[o.id]?.nation===o.nation&&s.territories[o.id].defenseDay===o.day&&s.territories[o.id].defenseWonDay!==o.day){
+  const t=TARGETS.find(x=>x[0]===o.id),reward={silver:300+t[2]*35,merit:20+t[2]*3};
+  if(canGain(reward)){s.territories[o.id].defenseWonDay=o.day;gain(reward);mark(s,'defend');record(s,'defend-reward:'+o.id+':'+o.day,reward);}
+ }
  if(o.kind==='trial'&&!s.milestones['trial:'+o.id]){s.milestones['trial:'+o.id]=1;mark(s,'trial');}
  record(s,o.kind+'-victory:'+o.id);return result;
 };
+// A captured city is a persistent asset: fort level and optional native defence.
+ // All costs/rewards are original offline balance, not a Mobile server contract.
+function territoryQuote(id){
+ const s=state(),t=TARGETS.find(x=>x[0]===id),owned=s.territories[id];
+ if(!t||!owned||owned.nation!==nation())return null;
+ const level=clamp(nat(owned.fortLevel)||1,1,5),next=level+1;
+ return {id,level,max:5,upgrade:next<=5?{silver:800*next+t[2]*50,grain:200*next}:null,
+  income:{silver:350+120*(level-1),prestige:15+3*(level-1)},defended:owned.defenseDay===today(),
+  canDefend:!battle&&owned.defenseDay!==today()&&s.daily.war<3&&nlAState().orders>=1&&game.slots.some(Boolean)};
+}
+function fortify(id){
+ const s=state(),q=territoryQuote(id);if(!q?.upgrade||!pay(q.upgrade))return false;
+ s.territories[id].fortLevel=q.level+1;return done(s,'fort:'+id+':'+(q.level+1),Object.fromEntries(Object.entries(q.upgrade).map(([k,v])=>[k,-v])));
+}
+function defend(id){
+ const s=state(),q=territoryQuote(id),t=TARGETS.find(x=>x[0]===id);if(!q?.canDefend||!t)return false;
+ beginBattle(t[2],'campaign');
+ if(!battle||battle.replay||battle.finished||battle.stage!==t[2]||battle.mode!=='campaign')return false;
+ battle.nlAdvancedObjective={kind:'defend',id,nation:nation(),stage:t[2],day:today()};
+ // Defence is a new challenge, not a second capture. Forts improve actual physical defence.
+ for(const u of battle.p||[])for(const k of ['def','tdef','mdef'])if(Number.isFinite(u[k]))u[k]=Math.max(1,Math.round(u[k]*(1+.04*(q.level-1))));
+ if(typeof p2Snapshot==='function')battle.opening=p2Snapshot();
+ s.daily.war++;s.territories[id].defenseDay=today();record(s,'defend-start:'+id+':'+today());return true;
+}
 function territoryIncome(){
  const s=state(),count=Object.keys(s.territories).filter(id=>TARGETS.some(t=>t[0]===id)&&s.territories[id]?.nation===nation()).length;
- const delta={silver:count*350,prestige:count*15};
+ const delta=Object.keys(s.territories).map(territoryQuote).filter(Boolean).reduce((sum,q)=>({silver:sum.silver+q.income.silver,prestige:sum.prestige+q.income.prestige}),{silver:0,prestige:0});
  if(battle||!count||s.territoryDay===today()||!canGain(delta))return false;
  s.territoryDay=today();gain(delta);return done(s,'territory-income:'+today(),delta);
 }
@@ -285,6 +313,7 @@ function panel(){
   const war=tabA==='war';
   b='<p class="tiny">'+(war?'Quốc chiến PvE offline · quân địch mô phỏng từ ải đã thắng.':'Thử thách bổ sung trên P2 · không thay Tháp Thí Luyện gốc.')+' Lượt '+s.daily[tabA]+'/3 · tốn 1 Quân lệnh theo lõi.</p>'+
   pages(TARGETS,t=>row(t[1],(s.territories[t[0]]&&war?'Đã chiếm':s.milestones['trial:'+t[0]]&&!war?'Đã thắng':'Ải đối thủ '+t[2]),btn(tabA,t[0],war?'Công thành':'Thử sức',locked||!completed(t[2])||s.daily[tabA]>=3||(war&&(!s.guild.level||t[3]===nation()||!!s.territories[t[0]])))));
+  if(war){const forts=Object.keys(s.territories).map(territoryQuote).filter(Boolean);b+=forts.length?'<h4>Lãnh địa đã chiếm</h4>'+forts.map(q=>row(TARGETS.find(t=>t[0]===q.id)[1]+' · Thành phòng '+q.level+'/5','Thu mỗi ngày '+q.income.silver+' Bạc / '+q.income.prestige+' Uy danh', (q.upgrade?btn('fortify',q.id,'Nâng · '+q.upgrade.silver+' Bạc / '+q.upgrade.grain+' Lương',locked):'')+btn('defend',q.id,q.defended?'Đã phòng thủ':'Thủ thành',locked||!q.canDefend))).join(''):'';}
  }else if(tabA==='growth'){
   const h=owned(hero)?game.hero[hero]:null,g=h?growth(hero):null,n=nat(game.nlClassicWorldA4?.rebirth?.[hero]);
   b='<label>Võ tướng <select data-nla59-hero>'+game.roster.filter(owned).map(id=>'<option value="'+esc(id)+'" '+(id===hero?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select></label>';
@@ -320,11 +349,11 @@ document.addEventListener('click',e=>{
  const k=b.dataset.nla59Action,id=b.dataset.nla59Id;
  if(k==='page'){page=Math.max(0,page+(id==='next'?1:-1));render();return;}
  if(k==='rebirth'){if(window.confirm('Chuyển sinh đưa tướng về cấp 1, tốn 2.000 Bạc và 500 Chiến công. Xác nhận?')&&!nlClassicA4Rebirth(id))toast('Chưa đủ điều kiện.');return;}
- const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,treasure:startTreasure,'treasure-collect':collectTreasure,'treasure-loot':claimTreasureLoot,join:joinGuild,donate,territory:territoryIncome,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea,'naval-fight':id=>typeof nlContentCNaval!=='undefined'&&nlContentCNaval?.start(id)};
+ const actions={rank:rankUp,salary,relief,invest,dispatch,'dispatch-collect':collectDispatch,treasure:startTreasure,'treasure-collect':collectTreasure,'treasure-loot':claimTreasureLoot,join:joinGuild,donate,territory:territoryIncome,fortify,defend,war:id=>challenge('war',id),trial:id=>challenge('trial',id),breakthrough,train:advancedTrain,awaken,event,achievement,ship:buildShip,sea:seaTrade,'sea-collect':collectSea,'naval-fight':id=>typeof nlContentCNaval!=='undefined'&&nlContentCNaval?.start(id)};
  if(typeof actions[k]==='function'&&!actions[k](id))toast('Chưa đủ điều kiện hoặc tài nguyên.');
 });
 document.addEventListener('change',e=>{if(e.target.matches?.('[data-nla59-hero]')&&owned(e.target.value)){hero=e.target.value;render();}});
 const css=document.createElement('style');css.textContent='.nla59-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}.nla59-tabs button,.nla59-row button{font-size:11px;padding:5px 8px}.nla59-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #665e43;padding:5px 0}.nla59-row b,.nla59-row small{display:block}.nla59-row small{font-size:10px;color:#c4bda8}.nla59 p{font-size:11px;margin:5px 0}.nla59 select{max-width:100%}@media(max-width:480px){.nla59{padding:6px}.nla59-row{padding:3px 0}.nla59-tabs button{padding:4px 6px}}';document.head.appendChild(css);
-if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,startTreasure,collectTreasure,claimTreasureLoot,treasureRoutes:TREASURE_ROUTES,joinGuild,donate,challenge,territoryIncome,breakthrough,advancedTrain,awaken,visitBond,trainHeir,familyProfile,familyBonus,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
+if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,startTreasure,collectTreasure,claimTreasureLoot,treasureRoutes:TREASURE_ROUTES,joinGuild,donate,challenge,territoryIncome,territoryQuote,fortify,defend,breakthrough,advancedTrain,awaken,visitBond,trainHeir,familyProfile,familyBonus,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
 })();
 // === end NL-CLASSIC-A5-A9-V1 ===

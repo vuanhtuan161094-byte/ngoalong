@@ -54,6 +54,14 @@ function nlMobileSourceBundles(source){
  // Additional fixed source rewards are connected to existing growth wallets.
  // Source quantities are exact; point and legacy material conversions, and merchant prices, are SIMULATED.
  const direct={
+  '1063':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:4,wallet:'weapon-core'},price:2800},
+  '1062':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:2,wallet:'weapon-core'},price:1400},
+  '1061':{output:{name:'Lăng La',qty:2,wallet:'stack',itemId:'mobile-vng-item-fam_10'},price:4200},
+  '1055':{output:{name:'Cỏ Khô',qty:1,wallet:'horse-points',factor:700000},price:700000,gate:250},
+  '1059':{output:{name:'Chiến Tích',qty:50000,wallet:'seal-credit'},price:100000,gate:100},
+  '1072':{output:{name:'Phôi Vạn Năng',qty:1,wallet:'blank'},price:1500,gate:100},
+  'res_79':{output:{name:'Cỏ Khô',qty:1,wallet:'horse-points',factor:700000},price:700000,gate:250},
+  'res_96':{output:{name:'Cỏ Khô Nhỏ',qty:1,wallet:'horse-points',factor:10000},price:10000,gate:250},
   '1109':{output:{name:'Thư Linh-Cao',qty:10,wallet:'book-exp',factor:1000},price:22000},
   '1149':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:6,wallet:'weapon-core',factor:1},price:4000},
   '1152':{output:{name:'Mệnh Hồn Luyện Ngọc',qty:1,wallet:'destiny-jade',factor:1},price:2500},

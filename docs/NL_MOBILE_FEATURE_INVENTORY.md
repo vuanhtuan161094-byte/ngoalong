@@ -56,6 +56,10 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 | SAVE-01 Cài đặt / Save / transfer | Mobile UX reference; existing persistence is project-owned | schema v5, migration chain and transfer format | One save authority, import/export and receipt guard | Journal/settings windows | `muu_dinh_tam_quoc_v1` | PARTIAL | Test new/old/import-failure/reload/reward idempotence across origins. |
 | AND-01 Android package | Mobile is the product benchmark | No verified APK artifact | No Android wrapper/build pipeline; this environment has Java but no `gradle`, `sdkmanager`, `adb`, or configured Android SDK | Browser mobile layout is not an APK | Browser Save only | MISSING · TOOLCHAIN UNAVAILABLE | Add a shared-runtime wrapper/build instructions when an Android SDK/Gradle environment is available, then produce and checksum a real APK. |
 
+## R5 gameplay source delta (unverified build)
+
+- Eight more source consumables use shared receipt ledger: weapon cores, actual Lăng La gift stacks, horse feed, seal currency and blank. Source quantities exact, wallet equivalences and prices simulated; no commander XP or hero reset introduced. Fortification 1–5, optional daily native defence and increased territory income extend existing offline war state. Defence costs a native order, bonuses/rewards original; no online claim. Isolated actual bundle transactions 24/24 passed; full native CI pending.
+
 ## R4 gameplay source delta (unverified build)
 
 - R3 Web 45841564485 passed Content C and A5–A9 but failed 2 classic drum checks. Explicitly selected classic drum/dancer now retains native role skill rather than overlaying Mobile hero skill. Raw item validation corrected ordinary gifts to 11 of 17, total Mobile playable material/consumable count 75 expected.
