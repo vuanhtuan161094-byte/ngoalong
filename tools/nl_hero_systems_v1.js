@@ -8,6 +8,18 @@ if(!document.getElementById('nlh-system-style')){
   const style=document.createElement('style');style.id='nlh-system-style';style.textContent=__NL_HERO_SYSTEM_STYLE__;document.head.appendChild(style);
 }
 const SYS=Object.fromEntries(NL_HS.systems.map(x=>[x.id,x]));
+// Original offline endgame progression; formulas and unlocks are SIMULATED.
+const ANCIENT_MAX=5;
+const ILLUSIONS={
+ assault:{name:'Phá Quân',attackPct:.09,tacticAttackPct:.06,defensePct:-.04,hpPct:-.03,magicAttackPct:0,speedFlat:0},
+ guardian:{name:'Hộ Thành',attackPct:-.04,tacticAttackPct:0,defensePct:.10,hpPct:.08,magicAttackPct:0,speedFlat:0},
+ strategist:{name:'Thiên Cơ',attackPct:-.04,tacticAttackPct:0,defensePct:-.02,hpPct:0,magicAttackPct:.16,speedFlat:4}
+};
+const MATERIAL_SHOP={
+ commandManual:[6,400,15],weaponCore:[8,550,20],inheritanceSeal:[12,650,25],orangeEssence:[16,1800,70],
+ quynhTuong:[22,2200,90],xichQua:[22,2200,90],hoangTrungLy:[22,2200,90],
+ temperingStone:[24,500,25],destinyJade:[24,900,40],blank:[24,800,30]
+};
 const PICKABLE=['hero','training','troops','commander','specialWeapon','inheritance','destiny','equipment','formation','rewards','recruit','awakening'];
 function nlhsState(){
   if(!game.heroDevelopment||typeof game.heroDevelopment!=='object'||Array.isArray(game.heroDevelopment))
@@ -16,6 +28,10 @@ function nlhsState(){
   if(!s.heroes||typeof s.heroes!=='object'||Array.isArray(s.heroes))s.heroes={};
   if(!s.materials||typeof s.materials!=='object'||Array.isArray(s.materials))s.materials={};
   if(!Array.isArray(s.receipts))s.receipts=[];
+  if(!s.firstClearClaims||typeof s.firstClearClaims!=='object'||Array.isArray(s.firstClearClaims))s.firstClearClaims={};
+  for(const r of s.receipts)if(r?.system==='rewards'&&Number.isInteger(r.stage))s.firstClearClaims[r.stage]=true;
+  if(!s.materialShop||typeof s.materialShop!=='object'||Array.isArray(s.materialShop)||s.materialShop.day!==dayId())s.materialShop={day:dayId(),counts:{}};
+  if(!s.materialShop.counts||typeof s.materialShop.counts!=='object'||Array.isArray(s.materialShop.counts))s.materialShop.counts={};
   if(!s.artModes||typeof s.artModes!=='object'||Array.isArray(s.artModes))s.artModes={};
   for(const id of Object.keys(NL_HS.materialCatalog))if(!Number.isSafeInteger(s.materials[id])||s.materials[id]<0)s.materials[id]=0;
   for(const id of game.roster||[])nlhsHero(id);
@@ -29,6 +45,10 @@ function nlhsHero(id){
   const h=s.heroes[id];for(const k of ['commanderLevel','weaponLevel','inheritanceLevel','destinyLevel'])if(!Number.isSafeInteger(h[k])||h[k]<0)h[k]=0;
   if(!h.awakening||typeof h.awakening!=='object')h.awakening={orange:false,gold:false};
   h.awakening.orange=!!h.awakening.orange;h.awakening.gold=!!h.awakening.gold;
+  h.ancientLevel=Number.isSafeInteger(h.ancientLevel)&&h.awakening.gold?Math.max(0,Math.min(ANCIENT_MAX,h.ancientLevel)):0;
+  if(!Array.isArray(h.illusionUnlocked))h.illusionUnlocked=[];
+  h.illusionUnlocked=h.ancientLevel?[...new Set(h.illusionUnlocked.filter(k=>Object.hasOwn(ILLUSIONS,k)))]:[];
+  if(!h.illusionUnlocked.includes(h.illusionMode))h.illusionMode=null;
   if(!['war','guard','tactic',null].includes(h.destinyId))h.destinyId=null;
   return h;
 }
@@ -99,6 +119,34 @@ function nlhUpgrade(id,heroId,sub=''){
  log('Phát triển '+nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level+' (SIMULATED).');save();render();toast(nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level);return true;
 }
 function nlhPickDestiny(id,heroId){if(!['war','guard','tactic'].includes(id)||!nlhIsOpen('destiny')||!nlhOwned(heroId))return false;const h=nlhsHero(heroId);h.destinyId=id;save();render();return true;}
+function nlhEndgameReady(id){return nlhOwned(id)&&nlhStage()>=28&&nlhsHero(id).awakening.gold&&(game.hero[id]?.level||0)>=40;}
+function nlhAncientQuote(level){return {currency:{silver:5000*level,merit:150*level},materials:{quynhTuong:level,xichQua:level,hoangTrungLy:level}};}
+function nlhIllusionQuote(){return {currency:{silver:8000,merit:250},materials:{destinyJade:2,blank:2}};}
+function nlhEndgameReceipt(system,id,level,cost,materials){
+ const s=nlhsState();s.receipts.push({id:'hero-endgame:'+system+':'+id+':'+level+':'+Date.now(),system,heroId:id,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});s.receipts=s.receipts.slice(-500);save();render();return true;
+}
+function nlhAncientUpgrade(id){
+ if(battle||!nlhEndgameReady(id))return false;
+ const h=nlhsHero(id),next=h.ancientLevel+1,q=nlhAncientQuote(next);
+ if(next>ANCIENT_MAX||!nlhPay(q.currency,q.materials))return false;
+ h.ancientLevel=next;return nlhEndgameReceipt('ancient',id,next,q.currency,q.materials);
+}
+function nlhIllusionChoose(id,mode){
+ if(battle||!nlhOwned(id))return false;
+ const h=nlhsHero(id);
+ if(mode==='none'){if(!h.illusionMode)return false;h.illusionMode=null;save();render();return true;}
+ if(!nlhEndgameReady(id)||!h.ancientLevel||!Object.hasOwn(ILLUSIONS,mode)||h.illusionMode===mode)return false;
+ if(h.illusionUnlocked.includes(mode)){h.illusionMode=mode;save();render();return true;}
+ const q=nlhIllusionQuote();if(!nlhPay(q.currency,q.materials))return false;
+ h.illusionUnlocked.push(mode);h.illusionMode=mode;return nlhEndgameReceipt('illusion:'+mode,id,1,q.currency,q.materials);
+}
+function nlhMaterialBuy(id){
+ if(battle||!Object.hasOwn(MATERIAL_SHOP,id))return false;
+ const s=nlhsState(),[gate,silver,merit]=MATERIAL_SHOP[id],count=Number(s.materialShop.counts[id])||0;
+ if(nlhStage()<gate||count>=5||!nlhPay({silver,merit},{}))return false;
+ s.materialShop.counts[id]=count+1;s.materials[id]++;
+ return nlhEndgameReceipt('material:'+id,'shop',count+1,{silver,merit},{});
+}
 function nlhCombatGrowth(id){
  const h=nlhsHero(id),bonus={attackPct:0,tacticAttackPct:0,magicAttackPct:0,defensePct:0,hpPct:0,speedFlat:0};
  bonus.attackPct+=h.commanderLevel*.012+h.weaponLevel*.025+Number(h.awakening.orange)*.06+Number(h.awakening.gold)*.08;
@@ -111,6 +159,8 @@ function nlhCombatGrowth(id){
    else if(h.destinyId==='guard'){bonus.hpPct+=h.destinyLevel*.04;bonus.defensePct+=h.destinyLevel*.015;}
    else if(h.destinyId==='tactic'){bonus.magicAttackPct+=h.destinyLevel*.03;bonus.speedFlat+=h.destinyLevel*2;}
  }
+ bonus.attackPct+=h.ancientLevel*.02;bonus.defensePct+=h.ancientLevel*.02;bonus.hpPct+=h.ancientLevel*.025;
+ const illusion=ILLUSIONS[h.illusionMode];if(illusion)for(const k of Object.keys(bonus))bonus[k]+=illusion[k]||0;
  return bonus;
 }
 const nlhPriorUnit=p2Unit;p2Unit=function(id,team,slot,stage){
@@ -119,18 +169,19 @@ const nlhPriorUnit=p2Unit;p2Unit=function(id,team,slot,stage){
  factor('atk',b.attackPct);factor('catk',b.attackPct+b.tacticAttackPct);factor('matk',b.attackPct+b.magicAttackPct);
  factor('def',b.defensePct);factor('tdef',b.defensePct);factor('mdef',b.defensePct);factor('maxHp',b.hpPct);factor('hp',b.hpPct);
  if(Number.isFinite(unit.speed))unit.speed+=b.speedFlat;
- unit.nlhDevelopment={...b,commanderLevel:nlhsHero(id).commanderLevel,weaponLevel:nlhsHero(id).weaponLevel,inheritanceLevel:nlhsHero(id).inheritanceLevel,destinyId:nlhsHero(id).destinyId,destinyLevel:nlhsHero(id).destinyLevel,awakening:structuredClone(nlhsHero(id).awakening)};
+ unit.nlhDevelopment={...b,commanderLevel:nlhsHero(id).commanderLevel,weaponLevel:nlhsHero(id).weaponLevel,inheritanceLevel:nlhsHero(id).inheritanceLevel,destinyId:nlhsHero(id).destinyId,destinyLevel:nlhsHero(id).destinyLevel,awakening:structuredClone(nlhsHero(id).awakening),ancientLevel:nlhsHero(id).ancientLevel,illusionMode:nlhsHero(id).illusionMode};
  return unit;
 };
 function nlhGrantStageMaterials(stage){
  if(!battle||battle.replay||!battle.won||battle.mode!=='campaign'||!game.cleared?.includes(stage))return false;
- const key='hero-system:first-clear:'+stage,state=nlhsState();if(state.receipts.some(x=>x.id===key))return false;
+ const key='hero-system:first-clear:'+stage,state=nlhsState();if(state.firstClearClaims[stage]||state.receipts.some(x=>x.id===key))return false;
+ state.firstClearClaims[stage]=true;
  const reward=NL_HS.firstClearMaterialRewards[String(stage)]||{};for(const [id,n] of Object.entries(reward))state.materials[id]=(state.materials[id]||0)+n;
  state.receipts.push({id:key,system:'rewards',stage,materials:reward,at:Date.now(),classification:'SIMULATED'});state.receipts=state.receipts.slice(-500);save();
  if(Object.keys(reward).length){const result=document.querySelector('#battle-result .reward');if(result)result.insertAdjacentHTML('beforeend','<span>Vật liệu tướng · '+hsEsc(Object.entries(reward).map(([id,n])=>(NL_HS.materialCatalog[id]?.name||id)+' ×'+n).join(' · '))+' (SIMULATED)</span>');}
  return true;
 }
-const hsPriorFinish=finishBattle;finishBattle=function(){const stage=battle?.stage,mode=battle?.mode;const result=hsPriorFinish.apply(this,arguments);if(mode==='campaign')nlhGrantStageMaterials(stage);return result;};
+const hsPriorFinish=finishBattle;finishBattle=function(){const b=battle,stage=b?.stage,first=!!b&&!b.finished&&!b.replay&&b.mode==='campaign'&&!b.nlContentC&&!b.nlAdvancedObjective&&!game.cleared?.includes(stage);const result=hsPriorFinish.apply(this,arguments);if(first&&battle===b&&b.finished&&b.won)nlhGrantStageMaterials(stage);return result;};
 function nlhHeaderTitle(system){return SYS[system]?.label||'Võ Tướng';}
 function nlhMaterialsBar(){const s=nlhsState();return '<div class="nlh-materials">'+Object.entries(NL_HS.materialCatalog).map(([id,m])=>'<span class="nlh-material">'+hsEsc(m.name)+'<b>×'+nlhFmt(s.materials[id]||0)+'</b></span>').join('')+'</div>';}
 function nlhProfile(heroId){
@@ -148,6 +199,16 @@ function nlhProfile(heroId){
 function nlhSystemMenu(system,heroId){return '<aside class="nlh-toolbar"><div class="nlh-toolbar-title">PHÁT TRIỂN TƯỚNG</div>'+NL_HS.systems.map((s,i)=>'<button class="nlh-system-button '+(system===s.id?'selected':'')+'" data-nlh-action="system" data-nlh-target="'+s.id+'"><span class="nlh-system-no">'+String(i+1).padStart(2,'0')+'</span><span>'+hsEsc(s.label)+'</span>'+(!nlhIsOpen(s.id)?'<i class="nlh-lock">'+(s.unlock.campaignClears||0)+'</i>':'')+'</button>').join('')+'</aside>';}
 function nlhRoster(heroId){const list=(game.roster||[]).filter(nlhOwned);return '<aside class="nlh-roster"><div class="nlh-roster-head"><strong>VÕ TƯỚNG</strong><small>'+list.length+' nữ tướng · chọn chân dung</small></div><div class="nlh-roster-grid">'+list.map(id=>{const h=nlhHero(id),a=nlhArt(id),src=a.portrait;return '<button class="nlh-portrait-card '+(heroId===id?'selected':'')+'" data-nlh-action="hero" data-nlh-hero="'+hsEsc(id)+'" aria-label="Chọn '+hsEsc(h.name)+'">'+(src?'<img src="'+src+'" alt="">':'<span class="nlh-portrait-fallback">'+hsEsc(String(h.name||'?').slice(0,1))+'</span>')+'<b>'+hsEsc(h.name)+'</b></button>';}).join('')+'</div></aside>';}
 function nlhProgress(level,max,label,percent){return '<div class="nlh-growth"><div class="nlh-growth-head"><span>'+hsEsc(label)+'</span><b>'+hsEsc(String(level))+' / '+hsEsc(String(max))+'</b></div><div class="nlh-bar"><i style="width:'+Math.max(0,Math.min(100,percent))+'%"></i></div></div>';}
+function nlhEndgamePanel(id){
+ const h=nlhsHero(id),next=h.ancientLevel+1,q=nlhAncientQuote(next),ready=nlhEndgameReady(id);
+ const controls=Object.entries(ILLUSIONS).map(([key,x])=>{const unlocked=h.illusionUnlocked.includes(key),price=nlhIllusionQuote(),active=h.illusionMode===key;
+ const details=Object.entries(x).filter(([k,v])=>k!=='name'&&v).map(([k,v])=>({attackPct:'Công',tacticAttackPct:'Chiến pháp',magicAttackPct:'Mưu',defensePct:'Thủ',hpPct:'Binh',speedFlat:'Tốc'}[k]||k)+' '+(v>0?'+':'')+Math.round(k==='speedFlat'?v:v*100)+(k==='speedFlat'?'':'%')).join(' · ');
+ return '<div class="nlh-feature-panel"><b>'+hsEsc(x.name)+(active?' · Đang dùng':'')+'</b><p class="nlh-copy">'+hsEsc(details)+'</p><button class="nlh-button" data-nlh-action="illusion" data-nlh-mode="'+key+'" '+(!ready||!h.ancientLevel||active||battle||(!unlocked&&!nlhCanPay(price.currency,price.materials))?'disabled':'')+'>'+(active?'Đang dùng':unlocked?'Chuyển dạng':'Mở · '+hsEsc(nlhCostText(price.currency,price.materials)))+'</button></div>';}).join('');
+ return '<div class="nlh-feature-panel"><b>Thượng Cổ · '+h.ancientLevel+'/'+ANCIENT_MAX+'</b><p class="nlh-copy">Sau ải 28, tướng Vàng cấp 40. Mỗi cấp +2% Công/Thủ, +2,5% Binh. SIMULATED.</p><button class="nlh-button" data-nlh-action="ancient" '+(!ready||next>ANCIENT_MAX||battle||!nlhCanPay(q.currency,q.materials)?'disabled':'')+'>'+(next>ANCIENT_MAX?'Tối đa':'Nâng cấp · '+hsEsc(nlhCostText(q.currency,q.materials)))+'</button></div><h3 class="nlh-section-title">Huyễn Tướng · chọn một chiến thể</h3>'+controls+(h.illusionMode?'<button class="nlh-button secondary" data-nlh-action="illusion" data-nlh-mode="none" '+(battle?'disabled':'')+'>Về dạng gốc</button>':'')+'<p class="nlh-source-note">Các chiến thể là mô phỏng offline có ưu/nhược điểm; giữ ID và ngoại hình hiện tại.</p>';
+}
+function nlhMaterialShopPanel(){
+ const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
+}
 function nlhSystemBody(system,id){
  const h=nlhHero(id),d=nlhHeroStats(id),state=nlhsState(),dev=nlhsHero(id),skill=SYS[system];
  if(system==='hero')return '<div class="nlh-section-head"><span>Võ Tướng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhNeedText('hero'))+'</span></div><h3 class="nlh-section-title">Tăng trưởng và quan hệ võ tướng</h3><p class="nlh-copy">'+hsEsc(h.role||h.type||'')+' · Danh tính lịch sử, phe phái, kỹ năng và ID dữ liệu được giữ nguyên. Cân bằng cấp/công thức hiện tại là thiết kế dự án SIMULATED.</p>'+nlhProgress(d.level,40,'Cấp tướng',d.level/40*100)+nlhProgress(dev.commanderLevel,5,'Thống Soái',dev.commanderLevel/5*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>CHIẾN PHÁP GỐC</small><b>'+hsEsc(h.skill||'Chưa có nguồn mô tả')+'</b></div><div class="nlh-fact"><small>BINH CHỦNG HIỆN TẠI</small><b>'+hsEsc(nlhCurrentTroop(id).name)+'</b></div></div><p class="nlh-source-note">Mobile/H5 is the primary system reference; this panel preserves existing Save IDs and does not claim parity for project formulas.</p>';
@@ -167,13 +228,13 @@ function nlhSystemBody(system,id){
   const f=FORMATIONS?.[game.formation]||{};return '<div class="nlh-section-head"><span>Trận Pháp · '+hsEsc(h.name)+'</span><span class="nlh-status">'+game.slots.filter(Boolean).length+'/5 tướng</span></div><h3 class="nlh-section-title">'+hsEsc(f.name||game.formation)+'</h3><p class="nlh-copy">'+hsEsc(f.desc||'')+' · chỉ số hiện tại: Công '+Math.round((f.atk||0)*100)+'% · Thủ '+Math.round((f.def||0)*100)+'% · Mưu '+Math.round((f.int||0)*100)+'%.</p><div class="nlh-facts"><div class="nlh-fact"><small>TRẬN PHÁP NỀN ĐANG CHẠY</small><b>10 ID tương thích</b></div><div class="nlh-fact"><small>PRESET CHIẾN THUẬT DỰ ÁN</small><b>24 phương án</b></div></div><button class="nlh-button" data-tab="formation">Mở bàn Bày Trận</button><p class="nlh-source-note">Đây là hệ thống nền được giữ tương thích Save; chưa khẳng định cùng cơ chế Mobile. Giao diện không nhân đôi hiệu ứng.</p>';
  }
  if(system==='rewards'){
-  const s=nlhsState(),recent=NL_HS.firstClearMaterialRewards[String(Math.min(28,nlhStage()+1))]||{};return '<div class="nlh-section-head"><span>Thưởng Võ Tướng</span><span class="nlh-status">'+nlhStage()+'/28 ải</span></div><h3 class="nlh-section-title">Thưởng phát triển theo mốc</h3><p class="nlh-copy">Vật liệu chỉ nhận một lần khi vượt chiến dịch lần đầu. Các số lượng vật liệu này là SIMULATED.</p><div class="nlh-facts"><div class="nlh-fact"><small>MỐC TIẾP THEO</small><b>Ải '+(Math.min(28,nlhStage()+1))+'</b></div><div class="nlh-fact"><small>GIAO DỊCH VẬT LIỆU</small><b>'+s.receipts.filter(x=>x.system==='rewards').length+'</b></div></div>'+nlhMaterials(recent)+'<button class="nlh-button" data-tab="quests">Mở nhiệm vụ và thưởng</button>';
+  const s=nlhsState(),recent=NL_HS.firstClearMaterialRewards[String(Math.min(28,nlhStage()+1))]||{};return '<div class="nlh-section-head"><span>Thưởng Võ Tướng</span><span class="nlh-status">'+nlhStage()+'/28 ải</span></div><h3 class="nlh-section-title">Thưởng phát triển theo mốc</h3><p class="nlh-copy">Vật liệu thưởng lần đầu theo mốc chiến dịch; có thể đổi thêm bằng tài nguyên kiếm được. Các số lượng vật liệu này là SIMULATED.</p><div class="nlh-facts"><div class="nlh-fact"><small>MỐC TIẾP THEO</small><b>Ải '+(Math.min(28,nlhStage()+1))+'</b></div><div class="nlh-fact"><small>GIAO DỊCH VẬT LIỆU</small><b>'+s.receipts.filter(x=>x.system==='rewards').length+'</b></div></div>'+nlhMaterials(recent)+'<button class="nlh-button" data-tab="quests">Mở nhiệm vụ và thưởng</button>'+nlhMaterialShopPanel();
  }
  if(system==='recruit'){
   const a=typeof nlARecruitPanel==='function'?nlARecruitPanel():'<p class="nlh-copy">Tửu Quán giữ luồng chiêu mộ hiện tại.</p>';const b=typeof nlHero207Panel==='function'?nlHero207Panel():'';return '<div class="nlh-section-head"><span>Chiêu Mộ</span><span class="nlh-status">'+(game.roster.length)+'/221</span></div><p class="nlh-copy">14 tướng cơ sở và 207 hồ sơ mở rộng qua chiến dịch. Không đổi identity hay Save ID. Các điều kiện/chi phí đang hoạt động được giữ từ hệ cũ.</p>'+a+b;
  }
  if(system==='awakening'){
-  const orange=dev.awakening.orange,gold=dev.awakening.gold,lv=game.hero?.[id]?.level||1,opened=nlhIsOpen('awakening');return '<div class="nlh-section-head"><span>Giác Ngộ · '+hsEsc(h.name)+'</span><span class="nlh-status">'+Number(orange+gold)+'/2</span></div><h3 class="nlh-section-title">Hai bậc Giác Ngộ</h3><p class="nlh-copy">Wiki Mobile xác nhận mở hệ Cam ở cấp Thành Chính 300, Vàng ở 380; vật liệu Vàng có ba tên bên dưới. Điều kiện từng tướng và số lượng không được nguồn xác nhận.</p><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Cam · '+(orange?'Đã đạt':'Cấp '+lv+' · cần 20')+'</b><p class="nlh-copy">Dự án: mở sau ải 16 · +6% Công, +5% Binh · cần Tinh Phách Giác Ngộ ×1, 6.000 Bạc, 120 Chiến công, 10 Ngọc.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="orange" '+(!opened||orange||nlhStage()<16||lv<20||!nlhCanPay(nlhCurrency(1,'awakening-orange'),nlhMaterialCost(1,'awakening-orange'))||battle?'disabled':'')+'>'+(orange?'Đã Giác Ngộ Cam':!opened?'Mở sau ải 16':'Kích hoạt Cam')+'</button></div><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Vàng · '+(gold?'Đã đạt':'Cấp '+lv+' · cần 30')+'</b><p class="nlh-copy">Dự án: cần Cam, vượt ải 22 · +8% Công/Thủ/Mưu · chi phí SIMULATED.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="gold" '+(!orange||gold||nlhStage()<22||lv<30||!nlhCanPay(nlhCurrency(1,'awakening-gold'),nlhMaterialCost(1,'awakening-gold'))||battle?'disabled':'')+'>'+(gold?'Đã Giác Ngộ Vàng':!orange?'Cần Cam trước':'Kích hoạt Vàng')+'</button></div><p class="nlh-source-note">Ngưỡng Mobile chính thức khác với mốc chiến dịch mô phỏng. Tên vật liệu Vàng: Quỳnh Tương, Xích Quả, Hoàng Trung Lý; số lượng áp dụng là dự án thiết kế.</p>';
+  const orange=dev.awakening.orange,gold=dev.awakening.gold,lv=game.hero?.[id]?.level||1,opened=nlhIsOpen('awakening');return '<div class="nlh-section-head"><span>Giác Ngộ · '+hsEsc(h.name)+'</span><span class="nlh-status">'+Number(orange+gold)+'/2</span></div><h3 class="nlh-section-title">Giác Ngộ và tiến hóa cao cấp</h3><p class="nlh-copy">Wiki Mobile xác nhận mở hệ Cam ở cấp Thành Chính 300, Vàng ở 380; vật liệu Vàng có ba tên bên dưới. Điều kiện từng tướng và số lượng không được nguồn xác nhận.</p><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Cam · '+(orange?'Đã đạt':'Cấp '+lv+' · cần 20')+'</b><p class="nlh-copy">Dự án: mở sau ải 16 · +6% Công, +5% Binh · cần Tinh Phách Giác Ngộ ×1, 6.000 Bạc, 120 Chiến công, 10 Ngọc.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="orange" '+(!opened||orange||nlhStage()<16||lv<20||!nlhCanPay(nlhCurrency(1,'awakening-orange'),nlhMaterialCost(1,'awakening-orange'))||battle?'disabled':'')+'>'+(orange?'Đã Giác Ngộ Cam':!opened?'Mở sau ải 16':'Kích hoạt Cam')+'</button></div><div class="nlh-feature-panel"><b class="nlh-feature-title">Giác Ngộ Vàng · '+(gold?'Đã đạt':'Cấp '+lv+' · cần 30')+'</b><p class="nlh-copy">Dự án: cần Cam, vượt ải 22 · +8% Công/Thủ/Mưu · chi phí SIMULATED.</p><button class="nlh-button" data-nlh-action="awakening" data-nlh-stage="gold" '+(!orange||gold||nlhStage()<22||lv<30||!nlhCanPay(nlhCurrency(1,'awakening-gold'),nlhMaterialCost(1,'awakening-gold'))||battle?'disabled':'')+'>'+(gold?'Đã Giác Ngộ Vàng':!orange?'Cần Cam trước':'Kích hoạt Vàng')+'</button></div><p class="nlh-source-note">Ngưỡng Mobile chính thức khác với mốc chiến dịch mô phỏng. Tên vật liệu Vàng: Quỳnh Tương, Xích Quả, Hoàng Trung Lý; số lượng áp dụng là dự án thiết kế.</p>'+nlhEndgamePanel(id);
  }
  return '<div class="nlh-section-head"><span>'+hsEsc(skill?.label||system)+'</span></div>';
 }
@@ -188,6 +249,9 @@ document.addEventListener('click',e=>{
  else if(action==='upgrade')nlhUpgrade(b.dataset.nlhSystem,nlhsState().selectedHero);
  else if(action==='destiny')nlhPickDestiny(b.dataset.nlhDestiny,nlhsState().selectedHero);
  else if(action==='awakening')nlhUpgrade('awakening',nlhsState().selectedHero,b.dataset.nlhStage);
+ else if(action==='ancient')nlhAncientUpgrade(nlhsState().selectedHero);
+ else if(action==='illusion')nlhIllusionChoose(nlhsState().selectedHero,b.dataset.nlhMode);
+ else if(action==='materialBuy')nlhMaterialBuy(b.dataset.nlhMaterial);
  else if(action==='artMode')nlhSetArtMode(nlhsState().selectedHero,b.dataset.nlhMode);
 });
 const NLH_NAV_ICON_PATH={
@@ -214,6 +278,6 @@ if(typeof renderSidebar==='function'){
  if(document.querySelector('#sidebar'))renderSidebar();
 }
 const nlhPriorHeroes=renderHeroes;renderHeroes=function(){return renderNlhHeroScreen();};
-if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
+if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
 })();
 // === END NL-HERO-SYSTEMS-V1 ===
