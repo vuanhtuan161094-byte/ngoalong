@@ -78,7 +78,7 @@ def main():
     page.locator('[data-nlh-action="upgrade"][data-nlh-system="commander"]').click();page.wait_for_timeout(100)
     after=page.evaluate('window.__P2_QA__.getGame()')
     after_unit=page.evaluate("window.__NL_HERO_SYSTEMS_QA__.unit('cao')")
-    check('commander upgrade charges silver, iron, nested merit and its manual once',after['heroDevelopment']['heroes']['cao']['commanderLevel']==1 and before['silver']-after['silver']==1000 and before['iron']-after['iron']==80 and before['nlClassicA']['merit']-after['nlClassicA']['merit']==30 and before['heroDevelopment']['materials']['commandManual']-after['heroDevelopment']['materials']['commandManual']==1)
+    check('commander upgrade charges silver, earned merit and manual once, preserves retired currencies',after['heroDevelopment']['heroes']['cao']['commanderLevel']==1 and before['silver']-after['silver']==1000 and before['iron']==after['iron'] and before['gems']==after['gems'] and before['nlClassicA']['merit']-after['nlClassicA']['merit']==60 and before['heroDevelopment']['materials']['commandManual']-after['heroDevelopment']['materials']['commandManual']==1)
     check('commander bonus reaches actual combat units once',after_unit.get('nlhDevelopment',{}).get('commanderLevel')==1 and after_unit['atk']>before_unit['atk'] and after_unit['atk']==page.evaluate("window.__NL_HERO_SYSTEMS_QA__.unit('cao').atk"))
     check('Save v5 stores the art choice, level, receipt and material balance',after['version']==5 and after['heroDevelopment']['artModes']['cao']=='character' and after['heroDevelopment']['receipts'][-1]['system']=='commander' and '"version":5' in (page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')") or ''))
     saved=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
