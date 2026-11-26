@@ -38,7 +38,15 @@ function nlMobileFallbackEquipment(source){
 }
 const NL_MOBILE_FALLBACK_GEAR=nlMobileFallbackEquipment(NL_MOBILE_INVENTORY);
 if(NL_MOBILE_FALLBACK_GEAR.length!==285)throw Error('MOBILE_FALLBACK_GEAR_COUNT_DRIFT');
-NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment,...NL_MOBILE_FALLBACK_GEAR);
+const NL_MOBILE_GEAR_ALL=[...NL_MOBILE_INVENTORY.runtimeEquipment,...NL_MOBILE_FALLBACK_GEAR];
+const nlMobileGearRaw=new Map(NL_MOBILE_INVENTORY.equipment.map(x=>[String(x.id),x]));
+for(const row of NL_MOBILE_GEAR_ALL){
+ const raw=nlMobileGearRaw.get(String(row.sourceId)),to=nlMobileGearRaw.get(String(raw?.upgradeTo?.id));
+ if(raw&&to&&raw.type===to.type&&(to.level>raw.level||to.level===raw.level&&to.quality>raw.quality)){
+  row.mobilePromotion={to:'mobile-vng-equipment-'+to.id,sourceName:to.name,kind:raw.upgradeKind||'upgrade',sourceRelation:'SOURCE_EXACT',costClassification:'SIMULATED'};
+ }
+}
+NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_GEAR_ALL);
 NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
 function nlMobileSourceBundles(source){
  const awakening=new Set(['Bánh Bao','Thịt','Rượu','Trân Châu','Ngọc Bôi','Kim Lô','Hổ Phách','Lam Bảo Thạch','Lang Nha Ngọc','Băng Tuyết Liên','Linh Chi Rừng','Hà Thủ Ô Trăm Năm','Thanh Liên','Bàn Đào','Nhân Sâm Quả','Quỳnh Tương','Chu Quả','Thiên Mai','Hoàng Trung Lý']);
@@ -194,6 +202,7 @@ function nlItemAction(action,arg){
     action==='unequip'?nlItemApi.unequip(game,heroId,arg.slot,receipt):
     action==='reinforce'?nlItemApi.reinforce(game,arg.uid,receipt,arg.targetLevel):
     action==='refine'?nlItemApi.refine(game,arg.uid,receipt):
+    action==='mobile-promote'&&!battle?nlItemApi.mobilePromote(game,arg.uid,receipt):
     action==='mobile-refine'&&!battle?nlItemApi.mobileRefine(game,arg.uid,arg.pool,receipt):
     {ok:false,code:'UNSUPPORTED_ACTION'};
   return nlItemApply(result,{actionNonce:nonce});
