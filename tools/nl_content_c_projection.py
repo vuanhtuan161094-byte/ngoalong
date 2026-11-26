@@ -51,6 +51,43 @@ def project_map(m,index):
     return {"id":m["id"],"name":m.get("name") or m["id"],"sourceLevel":m.get("mapLevel"),
             "gate":min(28,1+index*28//249),"npcs":rows}
 
+# Translate source targeting and effect intent to the existing P2 descriptor only.
+# Raw Mobile coefficients use a different scale; never apply them directly.
+def project_stage_skill(f):
+    label=f["skillName"]
+    operations=f.get("events") or f.get("operations") or []
+    damage=[e for e in operations if e.get("op")=="DAMAGE"]
+    heals=[e for e in operations if str(e.get("op","")).startswith("HEAL")]
+    primary=damage[0] if damage else {}
+    lane=(primary.get("lane") or f.get("lane") or "").upper()
+    kind="magic" if lane in ("STRATEGY","MAGIC","SUPPORT") else "tactic" if lane=="TACTIC" else "physical"
+    pattern={"ENEMY_COLUMN":"column","ENEMY_ROW":"row","ONE_ENEMY_BACK_ROW":"back","ALL_ENEMIES":"all"}.get(primary.get("target"),"single")
+    if heals and not damage:
+        pattern="heal";kind="magic"
+    elif pattern=="single" and positive(primary.get("hits"),1)>=2:
+        pattern="double"
+    base={"single":1.65,"double":.94,"row":1.04,"column":1.04,"back":1.48,"all":.78,"heal":1.15}[pattern]
+    d={"tag":label,"pattern":pattern,"kind":kind,"mult":base}
+    if pattern=="heal": d["healCount"]=3 if any(e.get("target")=="ALL_ALLIES" for e in heals) else 2
+    # Preserve representable intents, not unsupported conditional rates/secondary hits.
+    for e in operations:
+        op=e.get("op"); target=str(e.get("target",""));effect=str(e.get("effect","")).casefold()
+        if op=="MORALE" and isinstance(e.get("base"),(int,float)):
+            if e["base"]<0 and "ENEMY" in target:d["drainMorale"]=min(25,max(8,round(-e["base"]/4)))
+            elif e["base"]>0 and ("ALLY" in target or "ALLIES" in target):d["bonusMorale"]=min(18,max(5,round(e["base"]/5)))
+        if op=="DEFENSE_REDUCTION" and "ENEMY" in target:
+            d.setdefault("apply","break");d.setdefault("applyChance",.65)
+        if op=="STATUS":
+            if "ENEMY" in target:
+                status=next((v for k,v in [("thiêu","burn"),("hỏa","burn"),("ngủ","sleep"),("choáng","daze"),("hỗn loạn","daze"),("khóa vây","morale-seal"),("sợ hãi","fear")] if k in effect),None)
+                if status:
+                    d.setdefault("apply",status);d.setdefault("applyChance",min(.8,max(.15,(e.get("probabilityPct") or 50)/100)))
+            elif target=="SELF":
+                status=next((v for k,v in [("thiết bích","ironwall"),("hộ thuẫn","ward"),("thủ hộ","guard")] if k in effect),None)
+                if status:d.setdefault("applyAlly",status)
+    if pattern=="heal" and "bonusMorale" not in d:d["bonusMorale"]=6
+    return d
+
 def build(root):
     base=root/"data/ngoalong/modules"
     folder=base/"campaign/source_shards"
@@ -83,10 +120,14 @@ def build(root):
         facts=handoff.get(h["id"],{}).get("stageSkills") or []
         dated=sorted([f for f in facts if f.get("skillName")],key=lambda f:str(f.get("sourceDate") or ""),reverse=True)
         if dated:
-            f=dated[0]; operations=f.get("events") or f.get("operations") or []
-            damage=next((e for e in operations if e.get("op")=="DAMAGE"),{})
-            awakenings[h["id"]]={"descriptor":authored_skill(f["skillName"],f.get("lane"),damage.get("target")),
-                                  "sourceDate":f.get("sourceDate"),"sourceUrl":f.get("sourceUrl"),"status":"DATED_MOBILE_LABEL_PROJECT_EFFECT"}
+            f=dated[0]
+            stages={}
+            for fact in dated:
+                stage=str(fact.get("stage") or "").upper()
+                if stage in ("ORANGE","GOLD","PURPLE") and stage not in stages:
+                    stages[stage]={"descriptor":project_stage_skill(fact),"sourceDate":fact.get("sourceDate"),"sourceUrl":fact.get("sourceUrl")}
+            awakenings[h["id"]]={"descriptor":project_stage_skill(f),"stages":stages,
+                                  "sourceDate":f.get("sourceDate"),"sourceUrl":f.get("sourceUrl"),"status":"DATED_MOBILE_INTENT_PROJECT_EFFECT"}
 
     if len(wiki)!=364 or len(existing)!=207: raise ValueError("C hero source drift")
     for index,h in enumerate(wiki):
@@ -111,12 +152,39 @@ def build(root):
         if source_skill:
             label=source_skill
             desc["tag"]=label
+        # Distinct tactical variants within the five archetypes, deterministic by ID.
+        variant=(digest>>16)%4
+        if kind=="infantry":
+            if variant==0:desc.update(apply="break",applyChance=.5)
+            elif variant==1:desc.update(applyAlly="guard")
+            elif variant==2:desc.update(pierce=.12)
+            else:desc.update(crit=.10)
+        elif kind=="cavalry":
+            if variant==0:desc.update(drainMorale=15)
+            elif variant==1:desc.update(pattern="single",mult=1.65,crit=.12)
+            elif variant==2:desc.update(apply="daze",applyChance=.25)
+            else:desc.update(pattern="double",mult=.88)
+        elif kind=="archer":
+            if variant==0:desc.update(crit=.15)
+            elif variant==1:desc.update(pierce=.15)
+            elif variant==2:desc.update(pattern="row",mult=.95)
+            else:desc.update(apply="break",applyChance=.35)
+        elif kind=="strategist":
+            if variant==0:desc.update(apply="burn",applyChance=.55)
+            elif variant==1:desc.update(pattern="single",mult=1.55,apply="sleep",applyChance=.35)
+            elif variant==2:desc.update(pattern="all",mult=.75)
+            else:desc.update(apply="morale-seal",applyChance=.45)
+        else:
+            if variant==0:desc.update(cleanseNegative=1)
+            elif variant==1:desc.update(applyAlly="ward")
+            elif variant==2:desc.update(healCount=3,mult=.98)
+            else:desc.update(bonusMorale=15)
         tower_gate=acquisition.get("minFloor") if acquisition.get("type")=="TRIAL_TOWER" else None
         if not isinstance(tower_gate,int) or not 1<=tower_gate<=100: tower_gate=None
         additions.append({"id":hid,"name":h["name"],"faction":h.get("faction"),"sourceGrade":h.get("indexGrade"),
                           "type":kind,"role":role,"rarity":"Danh tướng","icon":["🛡️","🐎","🏹","🪶","📜"][digest%5],
                           "lead":round(positive(attrs.get("leadership"),65+digest%25)),"atk":round(positive(attrs.get("martial"),48+digest%40)),"def":45+(digest>>4)%40,"int":round(positive(attrs.get("intelligence"),48+(digest>>8)%40)),"agi":45+(digest>>12)%35,
-                          "skill":label,"skillDesc":"Chiến pháp thiết kế mô phỏng: "+pattern,"descriptor":desc,
+                          "skill":label,"skillDesc":"Chiến pháp thiết kế mô phỏng: "+desc["pattern"],"descriptor":desc,
                           "gate":1+index%28,"silver":650+50*(index%28),"towerGate":tower_gate,"soulCost":max(100,round(positive(acquisition.get("soulCost"),1000)/10)) if tower_gate else 0,"classicReference":record.get("sourceUrl"),"provenance":"PROJECT_SIMULATED"})
         aliases[hid]=hid
     if len(aliases)!=364 or len(set(aliases.values()))!=364: raise ValueError("C hero alias collision")
