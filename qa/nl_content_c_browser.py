@@ -23,12 +23,18 @@ def main():
           const plans=Array.from({length:80},(_,i)=>c.towerPlan(i+21));
           const styles=new Set(plans.map(p=>p?.aiStyle)),arcs=new Set(plans.map(p=>p?.arcId));
           const counts=plans.map(p=>p?.units.length),keys=plans.map(p=>p?.id);
+          const skillAudit=c.skillAudit();
           const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
           const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.tiers()===40,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
-            towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul};
+            towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
+            mobileNpcSkillAudit:skillAudit.totalUnits===25195&&skillAudit.sourceExactUnits===23944&&
+              skillAudit.sourceExactWithNameAndDescription===23944&&skillAudit.sourceExactSkillNames===694&&
+              skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
+              skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
+          checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
           const mobileProbe={troop:'archer',type:'archer',atk:100,catk:100,matk:100,def:100,tdef:100,mdef:100,crit:.2};
           c.applyMobileTroopProfile(mobileProbe,'p');
@@ -47,9 +53,23 @@ def main():
           checks.nativeStart=c.startNpc(n.id);checks.oneOrder=q.getGame().nlClassicA.orders===orders-1;
           let b=q.debugBattle();
           checks.formation=b?.e.length===n.units.length&&b.e.every((e,i)=>e.slot===n.units[i].slot&&e.name===n.units[i].name);
+          const firstSourceSkill=n.units[0]?.skill,firstEnemySkill=b?.e?.[0]?.nlCDescriptor;
+          checks.mobileNpcSkillDescriptor=!!firstSourceSkill&&b?.e?.[0]?.skill===firstSourceSkill.name&&
+            firstEnemySkill?.sourceSkillClassification==='SOURCE_DAMAGE_COEFFICIENT_AND_TARGET_ADAPTED'&&
+            firstEnemySkill?.tag===firstSourceSkill.name&&firstEnemySkill?.pattern==='single'&&
+            firstEnemySkill?.kind==='magic'&&firstEnemySkill?.mult===.35&&
+            b.e[0].nlMobileSource?.sourceSkillDescription===firstSourceSkill.desc;
+          checks.mobileNpcSkillDiagnostics={sourceSkill:firstSourceSkill,enemySkill:b?.e?.[0]?.skill,
+            descriptor:firstEnemySkill,mobileSource:b?.e?.[0]?.nlMobileSource};
           if(!b)return checks;
-          const enemy=b.e[0];enemy.morale=100;q.perform(enemy);
-          checks.nativeAction=b.events.length===1;
+          const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
+          const npcSkillEvent=b.events.at(-1);
+          checks.nativeAction=b.events.length===beforeNpcSkillEvents+1;
+          checks.mobileNpcSkillInNativeCombat=npcSkillEvent?.skill===firstSourceSkill.name&&
+            npcSkillEvent?.kind==='magic'&&npcSkillEvent?.hits?.length===1&&npcSkillEvent.hits[0].amount>0&&
+            npcSkillEvent?.actorTeam==='e'&&npcSkillEvent?.actor===enemy.name;
+          checks.mobileNpcSkillEvent=npcSkillEvent?{skill:npcSkillEvent.skill,kind:npcSkillEvent.kind,
+            mode:npcSkillEvent.mode,hits:npcSkillEvent.hits}:null;
           // Deterministic forced victory exercises the real native finish owner, not balance.
           for(const u of b.e)u.hp=0;
           if(!b.finished)q.finishBattle();

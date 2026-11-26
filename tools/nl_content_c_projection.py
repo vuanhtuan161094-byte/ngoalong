@@ -85,12 +85,13 @@ def project_mobile_map(m,index,legacy_map):
             source_hp=u.get("sourceHp")
             default_troops=positive(n["source"].get("troops"),1)/max(1,len(source_units))
             units.append({"slot":u["slot"],"name":u["name"],"role":u["role"],
-                          "skill":(u.get("skill") or {}).get("name") or "Chiến pháp",
+                          "skill":u.get("skill") or {"name":"Chiến pháp"},
                           "troops":positive(source_hp,default_troops),
                           "level":round(positive(u.get("level"),positive(n["source"].get("level"),1))),
                           "sourceTroopId":u.get("sourceTroopId"),"sourceTroopType":u.get("sourceTroopType"),
                           "sourceHp":source_hp,"sourceSkillName":(u.get("skill") or {}).get("name"),
-                          "provenance":u.get("provenance","SOURCE_EXACT_WITH_P2_ADAPTER")})
+                          "provenance":u.get("provenance") or
+                            ("SIMULATED_DONOR_FORMATION" if incomplete else "SOURCE_EXACT_WITH_P2_ADAPTER")})
         rows.append({"id":n["id"],"name":n["name"],"level":round(positive(n["source"].get("level"),1)),
                      "boss":n["boss"],"kind":n["source"].get("type"),"units":units,
                      "source":source_summary(n),"sourceUrl":n["sourceUrl"],"donor":donor,
@@ -256,5 +257,6 @@ def build(root):
                           "gate":1+index%28,"silver":650+50*(index%28),"towerGate":tower_gate,"soulCost":max(100,round(positive(acquisition.get("soulCost"),1000)/10)) if tower_gate else 0,"classicReference":record.get("sourceUrl"),"provenance":"PROJECT_SIMULATED"})
         aliases[hid]=hid
     if len(aliases)!=364 or len(set(aliases.values()))!=364: raise ValueError("C hero alias collision")
-    return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER","maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
+    return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
+            "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
             "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}

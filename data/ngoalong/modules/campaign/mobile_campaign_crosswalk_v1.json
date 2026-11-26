@@ -263,7 +263,7 @@
     ],
     "unknownSoldierIds": {}
   },
-  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; P2 scale and unsupported drop, soul, buff and active-skill adapters are called out separately.",
+  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; campaign skill names/descriptions are preserved, simple coefficient/target text is parsed into a P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
   "fields": [
     {
       "sourcePointer": "/key",
@@ -402,10 +402,42 @@
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     },
     {
-      "sourcePointer": "/vn/npcs/formation/activeSkill",
+      "sourcePointer": "/vn/npcs/formation/activeSkill/name",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "exact source skill name/description in normalized source DB; name and P2 effect adapter in runtime",
-      "runtimeStatus": "SOURCE_DB_EXACT_SKILL_EFFECT_ADAPTER_SIMULATED",
+      "runtimeField": "exact source skill name used by the native combat event",
+      "runtimeStatus": "SOURCE_EXACT_APPLIED_TO_NATIVE_P2",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
+      "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    },
+    {
+      "sourcePointer": "/vn/npcs/formation/activeSkill/desc",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "exact source skill description preserved on the combat unit and descriptor",
+      "runtimeStatus": "SOURCE_EXACT_PRESERVED_IN_RUNTIME",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
+      "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    },
+    {
+      "sourcePointer": "/vn/npcs/formation/activeSkill/desc/coefficient",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "simple single-hit coefficient parsed from the source description into the P2 scale; unparsed or multi-stage formulas retain an explicit fallback",
+      "runtimeStatus": "PARTIALLY_DERIVED_FROM_SOURCE_WITH_SIMULATED_FALLBACK",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
+      "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    },
+    {
+      "sourcePointer": "/vn/npcs/formation/activeSkill/desc/target",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "single, row, column, back-row, all-enemy, and all-ally targets parsed when stated; other target language remains unresolved",
+      "runtimeStatus": "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_FALLBACK",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
+      "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
+    },
+    {
+      "sourcePointer": "/vn/npcs/formation/activeSkill/desc/secondaryEffects",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "secondary statuses, multi-hit rules, durations, chances, and conditions preserved verbatim; no runtime adapter unless explicitly supported",
+      "runtimeStatus": "SOURCE_TEXT_PRESERVED_EFFECT_ADAPTER_UNRESOLVED",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     },
