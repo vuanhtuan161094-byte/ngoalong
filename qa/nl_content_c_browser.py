@@ -93,7 +93,7 @@ def main():
           const initialAtk=hs.unit(id).atk;
           checks.familyLocked=!adv.trainHeir(id,'martial')&&!adv.visitBond('unknown','martial');
           checks.bond=adv.visitBond(id,'martial')&&adv.visitBond(id,'martial')&&adv.visitBond(id,'martial')&&adv.familyProfile(id).bond.level===3&&!adv.visitBond(id,'strategy');
-          checks.heir=adv.trainHeir(id,'martial')&&adv.familyProfile(id).heir.level===1&&adv.familyBonus(id).atk===.035;
+          checks.heir=adv.trainHeir(id,'martial')&&adv.familyProfile(id).heir.level===1&&Math.abs(adv.familyBonus(id).atk-.035)<1e-9;
           checks.familyCombat=hs.unit(id).atk>initialAtk;
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.familySave=adv.familyProfile(id).bond.level===3&&adv.familyProfile(id).heir.level===1&&q.getGame().version===5;
