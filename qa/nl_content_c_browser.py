@@ -11,7 +11,7 @@ def main():
           const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__;
           if(!q||!c)return {loaded:false};
           const g=q.getGame(),id=g.roster[0];
-          g.cleared=Array.from({length:28},(_,i)=>i+1);g.silver=1000000;g.grain=1000000;
+          g.lastTick=Date.now()+86400000;g.cleared=Array.from({length:28},(_,i)=>i+1);g.silver=1000000;g.grain=1000000;
           g.slots=[id,null,null,null,null,null,null,null,null];
           g.hero[id].troops=3000;g.hero[id].level=60;
           g.nlClassicA.orders=60;g.towerFloor=20;g.activity.towerTries=3;
@@ -97,6 +97,23 @@ def main():
           checks.familyCombat=hs.unit(id).atk>initialAtk;
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.familySave=adv.familyProfile(id).bond.level===3&&adv.familyProfile(id).heir.level===1&&q.getGame().version===5;
+          const end=q.getGame();end.silver=500000;end.grain=500000;end.nlClassicA.merit=100000;
+          end.hero[id].level=60;end.heroDevelopment.heroes[id].awakening={orange:true,gold:false};
+          for(const k of Object.keys(end.heroDevelopment.materials))end.heroDevelopment.materials[k]=100;
+          q.setGame(end);
+          checks.ancientLocked=!hs.ancientUpgrade(id)&&!hs.illusionChoose(id,'assault');
+          const eg=q.getGame();eg.heroDevelopment.heroes[id].awakening.gold=true;q.setGame(eg);
+          const oldUnit=hs.unit(id),oldSilver=q.getGame().silver;
+          checks.ancient=hs.ancientUpgrade(id)&&hs.state().heroes[id].ancientLevel===1&&q.getGame().silver===oldSilver-5000&&hs.unit(id).atk>oldUnit.atk;
+          const ancient=hs.unit(id),beforeMode=q.getGame().silver;
+          checks.illusion=hs.illusionChoose(id,'assault')&&hs.unit(id).atk>ancient.atk&&hs.unit(id).def<ancient.def&&q.getGame().silver===beforeMode-8000;
+          checks.illusionSwitch=hs.illusionChoose(id,'guardian')&&hs.unit(id).def>ancient.def&&hs.illusionChoose(id,'none');
+          const beforeFree=q.getGame().silver;
+          checks.illusionReuse=hs.illusionChoose(id,'assault')&&q.getGame().silver===beforeFree&&!hs.illusionChoose(id,'assault');
+          const oldManual=hs.materials().commandManual;
+          checks.renewableMaterials=Array.from({length:5},()=>hs.materialBuy('commandManual')).every(Boolean)&&hs.materials().commandManual===oldManual+5&&!hs.materialBuy('commandManual')&&!hs.materialBuy('unknown');
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.endgameSave=hs.state().heroes[id].ancientLevel===1&&hs.state().heroes[id].illusionMode==='assault'&&hs.state().materialShop.counts.commandManual===5;
           return checks;
         }""")
         print(out,flush=True)
