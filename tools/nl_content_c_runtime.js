@@ -8,6 +8,12 @@ let nlContentCSettle,nlContentCHeroPanel,nlMobileHeroApi,nlMobileHeroBuildModifi
 const obj=x=>x&&typeof x==='object'&&!Array.isArray(x), nat=x=>Number.isSafeInteger(x)&&x>=0?x:0, clamp=(v,l,h)=>Math.min(h,Math.max(l,v));
 const owned=id=>game.roster.includes(id)&&!!game.hero[id];
 const MOBILE_TROOPS=NL_CONTENT_C.mobileTroops;
+const MOBILE_ELITE=NL_CONTENT_C.mobileElite;
+const MOBILE_ELITE_APPEARANCES=new Map();
+const MOBILE_ELITE_FORCES=new Map((MOBILE_ELITE?.forces||[]).map(force=>[String(force.id),force]));
+for(const force of MOBILE_ELITE_FORCES.values())for(const appearance of force.appearances||[])MOBILE_ELITE_APPEARANCES.set(String(appearance.id),{force,appearance});
+const MOBILE_ELITE_ROLE_TYPES=Object.freeze({infantry:1,spear:2,cavalry:3,archer:4});
+const MOBILE_ELITE_MATERIAL_NAMES=Object.freeze({'mat_63':'Quỷ Cốc Thư','mat_73':'Sách Dũng Khí','mat_74':'Sách Ý Chí','mat_75':'Sách Sức Bền','mat_76':'Sách Võ Kỹ','mat_77':'Sách Nhanh Nhẹn'});
 const MOBILE_HERO_SOURCE=NL_CONTENT_C.mobileHeroSource;
 const MOBILE_BEAUTIES=NL_CONTENT_C.mobileBeauties||{beauties:{},exp:{},gifts:[]};
 const BEAUTY_STAT={'Tăng Vật Công':'atk','Tăng Pháp Công':'catk','Tăng Mưu Công':'matk','Tăng Vật Phòng':'def','Tăng Pháp Phòng':'tdef','Tăng Mưu Phòng':'mdef'};
@@ -521,6 +527,7 @@ const MOBILE_DROP_BINDINGS=new Map((MOBILE_ITEM_SOURCE?.campaignDropBindings||[]
  [String(x.mapId),String(x.npcId),String(x.sourceId),String(x.category||''),String(x.name||'')].join('|'),x.binding
 ]));
 if(!MOBILE_TROOPS||Object.keys(MOBILE_TROOPS.units||{}).length!==408||Object.keys(MOBILE_TROOPS.baseRuntimeProfiles||{}).length!==5)throw Error('MOBILE_TROOP_SOURCE_COVERAGE_MISMATCH');
+if(!MOBILE_ELITE||MOBILE_ELITE.forces?.length!==16||MOBILE_ELITE_APPEARANCES.size!==20||Object.keys(MOBILE_ELITE.levelStats||{}).length!==20)throw Error('MOBILE_ELITE_SOURCE_COVERAGE_MISMATCH');
 const MOBILE_TROOP_ATTACK=Object.freeze({strengthAtk:'atk',leaderAtk:'catk',intellectAtk:'matk'});
 const MOBILE_TROOP_DEFENSE=Object.freeze({strengthDef:'def',leaderDef:'tdef',intellectDef:'mdef'});
 function mobileTroopSourceId(role){return MOBILE_TROOPS.baseRuntimeRoleMap?.[role]||null;}
@@ -587,9 +594,112 @@ function mobileTraitFactors(a,t,kind,pattern,round){
  if(tn==='Ẩn Nấp'&&round<=3)incoming*=1-mobileTraitRate(t,[.09,.15,.24]);
  return {outgoing,incoming};
 }
-function mobileTroopCoefficients(u,sourceId){
+function mobileEliteMultiplier(){const mode=state().mobileEliteNationMode;return MOBILE_ELITE.meta.nationMult[mode]||1;}
+function mobileEliteItemId(id){return 'mobile-vng-item-'+String(id);}
+function mobileEliteInventoryCount(id){return nat(game.nlItemsV1?.stacks?.[mobileEliteItemId(id)]);}
+function mobileEliteUpgradeQuote(id){
+ const entry=MOBILE_ELITE_APPEARANCES.get(String(id));if(!entry)return null;
+ const s=state(),appearance=entry.appearance,pending=s.mobileElitePending[id],level=nat(s.mobileEliteLevels[id]);
+ if(pending)return {kind:'PENDING',id:String(id),from:pending.from,to:pending.to,readyAt:pending.readyAt,
+  timeMinutes:pending.timeMinutes,classification:'SOURCE_EXACT_TIME_AND_COST'};
+ if(!s.mobileEliteUnlocked[id]){
+  const first=appearance.levels[0],factor=mobileEliteMultiplier();
+  return {kind:'UNLOCK',id:String(id),from:0,to:1,openLevel:appearance.openLevel,
+   material:{id:'mat_63',quantity:Math.round(first.cost*factor)},silver:0,timeMinutes:first.time,
+   multiplier:factor,classification:'SOURCE_EXACT_WITH_SIMULATED_NATION_SELECTION'};
+ }
+ if(level<1||level>=20)return null;
+ const next=level+1,rows=appearance.levels.slice(level,next),factor=mobileEliteMultiplier();
+ return {kind:'UPGRADE',id:String(id),from:level,to:next,openLevel:appearance.openLevel,
+  material:{id:'mat_63',quantity:Math.round(rows.reduce((sum,row)=>sum+row.cost,0)*factor)},silver:0,
+  timeMinutes:Math.max(0,appearance.levels[next-1].time-appearance.levels[level-1].time),
+  multiplier:factor,classification:'SOURCE_EXACT_WITH_SIMULATED_NATION_SELECTION'};
+}
+function mobileEliteSettleTimers(){
+ const s=state(),now=Date.now();let changed=false;
+ for(const [id,pending] of Object.entries(s.mobileElitePending))if(pending&&Number.isFinite(pending.readyAt)&&pending.readyAt<=now){
+  s.mobileEliteLevels[id]=clamp(nat(pending.to),1,20);delete s.mobileElitePending[id];changed=true;
+ }
+ if(changed)save();return changed;
+}
+function mobileEliteLevel(id){mobileEliteSettleTimers();return clamp(nat(state().mobileEliteLevels[String(id)]),0,20);}
+function mobileEliteSkillLevels(id){
+ const entry=MOBILE_ELITE_APPEARANCES.get(String(id));if(!entry)return [];
+ const s=state(),saved=s.mobileEliteSkills[id];
+ return entry.appearance.skills.map((skill,pos)=>clamp(nat(Array.isArray(saved)?saved[pos]:undefined)||(pos===0?1:0),0,skill.levels.length));
+}
+function mobileEliteSkillQuote(id,pos){
+ const entry=MOBILE_ELITE_APPEARANCES.get(String(id)),skill=entry?.appearance.skills[pos],track=MOBILE_ELITE.meta.skillUpgrades.find(x=>x.pos===pos);
+ if(!entry||!skill||!track||mobileEliteLevel(id)<1)return null;
+ const current=mobileEliteSkillLevels(id)[pos],next=current+1;if(next>skill.levels.length)return null;
+ const rule=track.levels.find(x=>x.level===next);if(!rule)return null;
+ const exclusive=new Set(entry.appearance.exclusiveMaterialIds||[]),costs=Object.entries(MOBILE_ELITE.meta.materials).map(([mid,name])=>({id:'mat_'+mid,name,
+  quantity:exclusive.has(Number(mid))?rule.exclusiveItemNum:rule.itemNum})).filter(x=>x.quantity>0);
+ return {appearanceId:String(id),pos,next,current,requiredEliteLevel:rule.reqEliteLevel,costs,
+  text:skill.levels[next-1],name:skill.name,icon:skill.icon,classification:'SOURCE_EXACT'};
+}
+function mobileEliteCanPayMaterials(costs){return (costs||[]).every(x=>mobileEliteInventoryCount(x.id)>=x.quantity);}
+function mobileEliteBuyMaterial(id,quantity){
+ if(battle||!Object.hasOwn(MOBILE_ELITE_MATERIAL_NAMES,String(id))||!Number.isSafeInteger(quantity)||quantity<1||quantity>10000)return false;
+ const nonce=nlItemHydrate().actionNonce+1,result=nlItemConsumableApi.buySourceMaterials(game,mobileEliteItemId(id),quantity,'nli:ui:'+nonce);
+ return nlItemApply(result,{actionNonce:nonce,noRender:true});
+}
+function mobileEliteConsumeMaterials(costs,scope){
+ const rows=(costs||[]).filter(x=>x.quantity>0).map(x=>({id:mobileEliteItemId(x.id),quantity:x.quantity}));
+ if(!rows.length)return true;
+ const nonce=nlItemHydrate().actionNonce+1;
+ const result=nlItemConsumableApi.consumeSourceMaterials(game,rows,'nli:ui:'+nonce,'mobile-elite:'+scope);
+ return nlItemApply(result,{actionNonce:nonce,noRender:true});
+}
+function mobileEliteUpgrade(id){
+ const q=mobileEliteUpgradeQuote(id),hall=nat(game.nlCity?.levels?.nl_city_hall);
+ if(battle||!q||q.kind==='PENDING'||hall<q.openLevel||!mobileEliteCanPayMaterials([q.material]))return false;
+ if(!mobileEliteConsumeMaterials([q.material],q.kind.toLowerCase()+':'+id+':'+q.to))return false;
+ const current=state(),now=Date.now();current.mobileEliteUnlocked[id]=true;
+ current.mobileElitePending[id]={from:q.from,to:q.to,readyAt:now+q.timeMinutes*60000,timeMinutes:q.timeMinutes,
+  sourceMaterialId:q.material.id,sourceMaterialCount:q.material.quantity,classification:'SOURCE_EXACT_TIME_AND_COST'};
+ save();render();return true;
+}
+function mobileEliteForceRole(id){
+ const selected=mobileTroopAssigned(id),type=selected?.type;
+ return Number.isInteger(type)?MOBILE_TROOP_ROLES[type]:(game.troopModes?.[id]||HEROES[id]?.type||null);
+}
+function mobileEliteCanAssign(heroId,id){
+ const entry=MOBILE_ELITE_APPEARANCES.get(String(id)),role=entry&&MOBILE_ELITE.runtimeAdapter.roleByAppearanceId[String(id)],roleType=MOBILE_ELITE_ROLE_TYPES[role];
+ if(battle||!owned(heroId)||!entry||!state().mobileEliteUnlocked[id]||mobileEliteLevel(id)<1||!roleType)return false;
+ const heroRole=mobileEliteForceRole(heroId);if(heroRole!==role)return false;
+ if(!mobileHeroTroopAllowed(heroId,roleType))return false;
+ return !Object.entries(state().mobileEliteAssigned).some(([other,assigned])=>other!==heroId&&String(assigned)===String(id));
+}
+function mobileEliteAssign(heroId,id){
+ if(!mobileEliteCanAssign(heroId,id))return false;
+ state().mobileEliteAssigned[heroId]=String(id);save();render();return true;
+}
+function mobileEliteUnassign(heroId){if(battle||!state().mobileEliteAssigned[heroId])return false;delete state().mobileEliteAssigned[heroId];save();render();return true;}
+function mobileEliteAssigned(heroId){
+ const id=state().mobileEliteAssigned[heroId],entry=id&&MOBILE_ELITE_APPEARANCES.get(String(id));
+ if(!entry||mobileEliteLevel(id)<1)return null;
+ return {id:String(id),name:entry.appearance.name,forceName:entry.force.name,role:MOBILE_ELITE.runtimeAdapter.roleByAppearanceId[String(id)],level:mobileEliteLevel(id)};
+}
+function mobileEliteSkillUpgrade(id,pos){
+ const q=mobileEliteSkillQuote(id,pos),level=mobileEliteLevel(id);
+ if(battle||!q||level<q.requiredEliteLevel||!mobileEliteCanPayMaterials(q.costs))return false;
+ if(!mobileEliteConsumeMaterials(q.costs,'skill:'+id+':'+pos+':'+q.next))return false;
+ const prior=mobileEliteSkillLevels(id),next=[...prior];next[pos]=q.next;state().mobileEliteSkills[id]=next;save();render();return true;
+}
+function mobileEliteRuntimeAudit(){
+ let rows=0,axes=0,allFinite=true,costRows=0,timeRows=0,skillTracks=0;
+ for(const [id,entry] of MOBILE_ELITE_APPEARANCES){
+  const role=MOBILE_ELITE.runtimeAdapter.roleByAppearanceId[id],baseId=MOBILE_TROOPS.baseRuntimeRoleMap?.[role],base=baseId&&MOBILE_TROOPS.units[baseId]?.stats;
+  const levels=MOBILE_ELITE.levelStats[id]||[];rows+=levels.length;costRows+=entry.appearance.levels?.length||0;skillTracks+=entry.appearance.skills?.length||0;
+  timeRows+=(entry.appearance.levels||[]).every((x,i,a)=>Number.isFinite(x.time)&&x.time>=0&&(!i||x.time>=a[i-1].time))?entry.appearance.levels.length:0;
+  for(const row of levels)for(const key of ['leaderAtk','leaderDef','strengthAtk','strengthDef','intellectAtk','intellectDef']){axes++;allFinite=allFinite&&Number.isFinite(row[key])&&Number.isFinite(base?.[key]);}
+ }
+ return {forces:MOBILE_ELITE_FORCES.size,appearances:MOBILE_ELITE_APPEARANCES.size,levelRows:rows,coefficientAxes:axes,costRows,timeRows,skillTracks,sourceStatsFinite:allFinite};
+}
+function mobileTroopCoefficients(u,sourceId,statsOverride=null){
  const source=MOBILE_TROOPS.units[String(sourceId)];if(!u||!source)return u;
- const stats=source.stats;
+ const stats=statsOverride?{...source.stats,...statsOverride}:source.stats;
  for(const [key,target] of Object.entries(MOBILE_TROOP_ATTACK))if(Number.isFinite(u[target]))u[target]=Math.max(1,Math.round(u[target]*stats[key]));
  for(const [key,target] of Object.entries(MOBILE_TROOP_DEFENSE))if(Number.isFinite(u[target]))u[target]=Math.max(1,Math.round(u[target]*stats[key]));
  const classCrit=u.type==='archer'?.10:.04;u.crit=Math.max(0,(Number(u.crit)||0)-classCrit+(Number(stats.critical)||0));
@@ -615,7 +725,12 @@ function applyMobileTroopProfile(u,team){
  if(!u||team!=='p'||battle?.mode==='cltq'||u.nlClassicWebUnit||game.nlr03?.evolutions?.[u.id])return u;
  const assigned=mobileTroopAssigned(u.id),sourceId=assigned?.id||mobileTroopSourceId(u.troop);
  if(assigned){u.troop=MOBILE_TROOP_ROLES[assigned.type];u.type=u.troop==='spear'?'infantry':u.troop;}
- const result=mobileTroopCoefficients(u,sourceId),trait=assigned&&mobileTraitChoice(u.id);
+ const elite=mobileEliteAssigned(u.id),eliteData=elite&&MOBILE_ELITE.levelStats[elite.id]?.[elite.level-1],eliteRole=elite&&MOBILE_ELITE.runtimeAdapter.roleByAppearanceId[elite.id];
+ const eliteStats=elite&&u.troop===eliteRole?eliteData:null;
+ const result=mobileTroopCoefficients(u,sourceId,eliteStats),trait=assigned&&mobileTraitChoice(u.id);
+ if(eliteStats)result.nlMobileElite={id:elite.id,name:elite.name,force:elite.forceName,level:elite.level,
+  sourceStats:{...eliteStats},criticalRetainedFromStandardTroop:true,strikeBackRetainedFromStandardTroop:true,
+  classification:'SOURCE_EXACT_COEFFICIENTS_WITH_NATIVE_P2_ROUNDING'};
  if(trait){result.nlMobileTrait={...trait};
    if(trait.name==='Can Đảm')result.nlMobileControlCharges=mobileTraitRate(result,[2,3,5]);
    if(trait.name==='Vững Chắc')result.nlMobileAbsorb=Math.floor((result.maxHp||0)*mobileTraitRate(result,[.09,.15,.24]));
@@ -671,6 +786,8 @@ function state(){
  if(!obj(s.mobileTroopAssigned))s.mobileTroopAssigned={};
  if(!obj(s.mobileTroopLegacy))s.mobileTroopLegacy={};
  if(!obj(s.mobileTroopTraits))s.mobileTroopTraits={};
+ for(const k of ['mobileEliteUnlocked','mobileEliteLevels','mobileEliteAssigned','mobileElitePending','mobileEliteSkills'])if(!obj(s[k]))s[k]={};
+ if(!['same','quan','diff'].includes(s.mobileEliteNationMode))s.mobileEliteNationMode='same';
  if(!obj(s.mobileTechLevels))s.mobileTechLevels={};
  for(const k of ['mobileHeroRanks','mobileHeroMaterials','mobileHeroRankReceipts','mobileBeautyLevels','mobileBeautyExp','mobileBeautyAssigned'])if(!obj(s[k]))s[k]={};
  s.mobileBeautyPendants=nat(s.mobileBeautyPendants);
@@ -1805,6 +1922,68 @@ function mobileTroopPanel(){
   return row(t.name,desc,selectable?btn('mobile-troop',t.id,on?'Đang dùng':'Chuyển quân',on||!mobileTroopCanSelect(heroId,t.id)):'');
  },'mobile-troop-page')+'<p class="tiny">Hệ số gốc SOURCE_EXACT. Xác suất phản kích lấy từ Wiki; sát thương phản kích 60% là quy đổi P2 SIMULATED. Điều kiện và giá chuyển quân SIMULATED; hồ sơ chưa rõ điều kiện tuyển được giữ ở chế độ tham chiếu.</p>'+mobileTraitPanel());
 }
+let mobileEliteForcePage=0,mobileEliteForceId=String(MOBILE_ELITE.forces[0].id),mobileEliteAppearanceId=String(MOBILE_ELITE.forces[0].appearances[0].id),mobileEliteHeroId='';
+function mobileEliteMaterialShortages(costs){
+ return (costs||[]).map(x=>({...x,missing:Math.max(0,x.quantity-mobileEliteInventoryCount(x.id))})).filter(x=>x.missing>0);
+}
+function mobileEliteBuyButtons(costs){
+ return mobileEliteMaterialShortages(costs).map(x=>{
+  const entry=NL_ITEM_CATALOGUE.items.find(item=>item.id===mobileEliteItemId(x.id)),unit=nat(entry?.acquisitionRule?.shopCost?.silver),price=unit*x.missing;
+  return btn('mobile-elite-buy',x.id+':'+x.missing,'Mua '+esc(x.name||MOBILE_ELITE_MATERIAL_NAMES[x.id])+' ×'+fmt(x.missing)+' · '+fmt(price)+' Bạc',!!battle||!price||game.silver<price);
+ }).join('');
+}
+function mobileEliteSkillPanel(id,appearance){
+ const ranks=mobileEliteSkillLevels(id),level=mobileEliteLevel(id);
+ return appearance.skills.map((skill,pos)=>{
+  const current=ranks[pos],quote=mobileEliteSkillQuote(id,pos),currentText=current?skill.levels[current-1]:'Chưa mở cấp kỹ năng';
+  const costs=quote?.costs||[],can=!!quote&&level>=quote.requiredEliteLevel&&mobileEliteCanPayMaterials(costs),shortage=mobileEliteBuyButtons(costs);
+  const materials=costs.map(x=>esc(x.name)+' ×'+fmt(x.quantity)).join(' · ')||'Không cần vật liệu';
+  const skillButton=quote?btn('mobile-elite-skill-upgrade',id+':'+pos,'Nâng Lv'+quote.next+' · cần Tinh Nhuệ Lv'+quote.requiredEliteLevel,!!battle||!can):'<small>Đã đạt tối đa</small>';
+  return row(skill.name+' · Lv'+current+'/'+skill.levels.length,
+   '<span>'+esc(currentText)+'</span>'+(quote?'<br><small>Tiếp theo: '+esc(quote.text)+'<br>Chi phí nguồn: '+materials+'</small>':'')+skillButton+shortage);
+ }).join('');
+}
+function mobileElitePanel(){
+ const s=state();mobileEliteSettleTimers();
+ if(!game.roster.includes(mobileEliteHeroId)||!owned(mobileEliteHeroId))mobileEliteHeroId=game.roster[0]||'';
+ if(!MOBILE_ELITE_FORCES.has(mobileEliteForceId)){mobileEliteForceId=String(MOBILE_ELITE.forces[0].id);mobileEliteAppearanceId=String(MOBILE_ELITE.forces[0].appearances[0].id);}
+ let force=MOBILE_ELITE_FORCES.get(mobileEliteForceId);
+ if(!force.appearances.some(x=>String(x.id)===mobileEliteAppearanceId))mobileEliteAppearanceId=String(force.appearances[0].id);
+ let appearance=MOBILE_ELITE_APPEARANCES.get(mobileEliteAppearanceId)?.appearance;
+ const hall=nat(game.nlCity?.levels?.nl_city_hall),quote=mobileEliteUpgradeQuote(appearance.id),level=mobileEliteLevel(appearance.id),pending=s.mobileElitePending[appearance.id];
+ const selected=mobileEliteAssigned(mobileEliteHeroId),role=MOBILE_ELITE.runtimeAdapter.roleByAppearanceId[appearance.id],roleType=MOBILE_ELITE_ROLE_TYPES[role];
+ const stats=MOBILE_ELITE.levelStats[appearance.id]||[],activeStats=stats[Math.max(0,level-1)],nextStats=stats[Math.min(19,level)];
+ const costText=q=>q?.kind==='UNLOCK'?'Mở khóa · '+fmt(q.material.quantity)+' Quỷ Cốc Thư':q?.kind==='UPGRADE'?'Lv'+q.from+' → Lv'+q.to+' · '+fmt(q.material.quantity)+' Quỷ Cốc Thư':q?.kind==='PENDING'?'Đang nâng Lv'+q.from+' → Lv'+q.to:'Đã đạt Lv20';
+ const pendingText=pending?' · còn '+fmt(Math.max(0,Math.ceil((pending.readyAt-Date.now())/60000)))+' phút':'';
+ const qCost=quote?.material?[quote.material]:[];
+ const quoteMaterial={id:quote?.material?.id||'mat_63',name:MOBILE_ELITE_MATERIAL_NAMES[quote?.material?.id||'mat_63'],quantity:quote?.material?.quantity||0};
+ const upgradeReady=quote&&quote.kind!=='PENDING'&&hall>=quote.openLevel&&mobileEliteCanPayMaterials([quote.material]);
+ const upgradeLabel=quote?.kind==='PENDING'?'Đang nghiên cứu'+pendingText:quote?costText(quote)+' · '+fmt(quote.timeMinutes)+' phút':'Đã đạt giới hạn';
+ const upgradeButton=quote&&quote.kind!=='PENDING'?btn('mobile-elite-upgrade',appearance.id,quote.kind==='UNLOCK'?'Mở khóa Lv1':'Nâng lên Lv'+quote.to,!!battle||hall<quote.openLevel||!upgradeReady):'';
+ const shortages=mobileEliteBuyButtons(qCost);
+ const forceRows=pages(MOBILE_ELITE.forces,mobileEliteForcePage,f=>row(f.name,f.camp+' · '+f.appearances.length+' ngoại hình · Thành Chính Lv'+Math.min(...f.appearances.map(a=>a.openLevel)),
+  btn('mobile-elite-force',String(f.id),String(f.id)===mobileEliteForceId?'Đang chọn':'Chọn')),'mobile-elite-force-page');
+ const appearanceOptions=force.appearances.map(a=>'<option value="'+esc(a.id)+'" '+(String(a.id)===mobileEliteAppearanceId?'selected':'')+'>'+esc(a.name)+' · '+esc(a.troopType||'')+'</option>').join('');
+ const heroOptions=game.roster.filter(id=>owned(id)).map(id=>'<option value="'+esc(id)+'" '+(id===mobileEliteHeroId?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('');
+ const modeOptions=[['same','Cùng nước ×1'],['quan','Quần ×1,5'],['diff','Khác nước ×2']].map(([id,label])=>'<option value="'+id+'" '+(s.mobileEliteNationMode===id?'selected':'')+'>'+label+'</option>').join('');
+ const currentStats=activeStats?Object.entries({leaderAtk:'Công Chỉ Huy',leaderDef:'Thủ Chỉ Huy',strengthAtk:'Công Võ',strengthDef:'Thủ Võ',intellectAtk:'Công Trí',intellectDef:'Thủ Trí'}).map(([key,label])=>label+' '+fmt(activeStats[key])).join(' · '):'Chưa mở cấp';
+ const nextPreview=level<20&&nextStats?'Tiếp theo Lv'+(level+1)+': '+Object.entries({leaderAtk:'C.C',strengthAtk:'V.C',intellectAtk:'M.C',leaderDef:'C.P',strengthDef:'V.P',intellectDef:'M.P'}).map(([key,label])=>label+' '+fmt(nextStats[key])).join(' · '):'';
+ const selectedRole=mobileEliteForceRole(mobileEliteHeroId),compatible=selectedRole===role&&mobileHeroTroopAllowed(mobileEliteHeroId,roleType);
+ const assignLabel=selected?.id===appearance.id?'Đang dùng':selected?'Thay Tinh Nhuệ':'Gán cho tướng';
+ const assignAction=selected?.id===appearance.id?btn('mobile-elite-unassign',mobileEliteHeroId,'Gỡ tướng',!!battle):btn('mobile-elite-assign',appearance.id,assignLabel,!!battle||!mobileEliteCanAssign(mobileEliteHeroId,appearance.id));
+ const materialWallet=Object.entries(MOBILE_ELITE_MATERIAL_NAMES).map(([id,name])=>row(name,'Trong kho: '+fmt(mobileEliteInventoryCount(id))+' · Giá mua mô phỏng 12 Bạc/đơn vị',btn('mobile-elite-buy',id+':10','Mua ×10 · 120 Bạc',!!battle||game.silver<120))).join('');
+ return pane('mobile-elite','Thống Soái · '+MOBILE_ELITE.forces.length+' lực lượng / '+MOBILE_ELITE_APPEARANCES.size+' ngoại hình',
+  '<p>Thành Chính Lv'+hall+' · 20 cấp/ngoại hình · hệ số P2 đọc từ bảng Wiki. Thời gian và số Quỷ Cốc Thư theo từng cấp là SOURCE_EXACT.</p>'+forceRows+
+  '<label>Lực lượng <select data-nlc-elite-force>'+MOBILE_ELITE.forces.map(f=>'<option value="'+esc(f.id)+'" '+(String(f.id)===mobileEliteForceId?'selected':'')+'>'+esc(f.name)+' · '+esc(f.camp)+'</option>').join('')+'</select></label> '+
+  '<label>Ngoại hình <select data-nlc-elite-appearance>'+appearanceOptions+'</select></label> '+
+  '<label>Hệ số nước <select data-nlc-elite-mode>'+modeOptions+'</select></label>'+
+  '<div class="nlc-elite-detail"><b>'+esc(force.name)+' · '+esc(appearance.name)+'</b><small>'+esc(force.camp)+' · '+esc(appearance.troopType||'')+' · Mở ở Thành Chính Lv'+appearance.openLevel+'</small><p>'+esc(appearance.desc||'')+'</p><div class="nlc-elite-wallet">Tinh Nhuệ Lv'+level+'/20 · '+currentStats+(nextPreview?'<br>'+nextPreview:'')+'</div>'+row('Nâng cấp',upgradeLabel,upgradeButton+shortages)+
+  '<label>Tướng <select data-nlc-elite-hero>'+heroOptions+'</select></label> '+row('Đội hình hiện tại',selectedRole||'Chưa chọn binh chủng','')+
+  row('Gắn Tinh Nhuệ',compatible?'Tương thích '+role:'Cần chọn tướng có binh chủng '+role,assignAction)+
+  '<h4>Kỹ năng nguồn · '+appearance.skills.length+'</h4>'+mobileEliteSkillPanel(appearance.id,appearance)+
+  '<h4>Vật liệu Tinh Nhuệ</h4>'+materialWallet+
+  '<p class="tiny">Thời gian và chi phí nâng cấp, điều kiện Thành Chính, ngoại hình, hệ số và chữ kỹ năng được giữ từ Wiki. Giá mua vật liệu 12 Bạc/đơn vị, chế độ hệ số nước, một ngoại hình cho mỗi tướng và không gán trùng ngoại hình là SIMULATED. Hệ số Tinh Nhuệ có hiệu lực trong P2; 60 nhánh kỹ năng hiện lưu đúng cấp/chi phí/mô tả nhưng chưa có adapter hiệu ứng P2, không được tính vào trận.</p></div>');
+}
 function troopPanel(){if(!owned(heroId))heroId=game.roster[0]||'';return pane('troops','Quân WEB cấp 4 · '+tier4.size,'<p>Nhánh WEB 2011 · yêu cầu 10 lần chuyển sinh, Tháp 40, Doanh Trại 4 · 300 Tướng Hồn + 5.000 Bạc.</p><select data-nlc-hero>'+game.roster.map(id=>'<option value="'+esc(id)+'" '+(id===heroId?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select>'+pages(NL_C_TIER4,unitPage,t=>row(t.name,t.sourceName+' · '+t.familyName,btn('tier4',t.id,nlwB4Active(heroId)?.id===t.id?'Đang dùng':'Chuyển quân',!!battle||!owned(heroId)||floor()<40||nat(game.nlClassicWorldA4?.rebirth?.[heroId])<10||game.buildings.barracks<4||state().soul<300||game.silver<5000)),'unit-page'));}
 function towerPanel(){
  const completed=floor(),locked=completed<NL_CONTENT_C_TOWER.nativeFloors,done=completed>=NL_CONTENT_C_TOWER.maxFloor,
@@ -1905,8 +2084,8 @@ function campaignPreparationPanel(){
 }
 const c0=renderCampaign,h0=renderHeroes,b0=renderBarracks,t0=renderTower,f0=renderFormation,city0=renderCity;
 renderCity=function(){return city0()+mobileTechPanel()+mobileBeautyPanel()+childPanel()+trainingPanel();};
-renderCampaign=function(){return c0()+campaignPreparationPanel()+campaignPanel();};renderHeroes=function(){return h0()+heroPanel();};renderBarracks=function(){return b0()+troopPanel()+mobileTroopPanel();};renderTower=function(){return t0()+towerPanel();};renderFormation=function(){return f0()+sealPanel();};
-document.addEventListener('change',e=>{if(e.target.matches?.('[data-nlc-map]')&&MAP.has(e.target.value)){mapId=e.target.value;npcPage=0;render();}else if(e.target.matches?.('[data-nlc-train-hero]')){trainHero=e.target.value;render();}else if(e.target.matches?.('[data-nlc-child-name]')){childName=e.target.value;}else if(e.target.matches?.('[data-nlc-beauty-gift]')){beautyGiftId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-beauty-hero]')){beautyHero=e.target.value;render();}else if(e.target.matches?.('[data-nlc-mobile-troop-search]')){mobileTroopSearch=e.target.value;mobileTroopPage=0;render();}else if(e.target.matches?.('[data-nlc-mobile-troop-type]')){mobileTroopType=e.target.value;mobileTroopPage=0;render();}else if(e.target.matches?.('[data-nlc-hero-search]')){heroSearch=e.target.value;heroPage=0;render();}else if(e.target.matches?.('[data-nlc-hero]')){heroId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-search]')){search=e.target.value;mapPage=0;const match=MAPS.find(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(match){mapId=match.id;npcPage=0;}render();}else if(e.target.matches?.('[data-nlc-seal-search]')){sealSearch=e.target.value;sealPage=0;render();}else if(e.target.matches?.('[data-nlc-seal-from]')){sealFrom=clamp(Math.trunc(Number(e.target.value)||1),1,SEAL_MAX);render();}else if(e.target.matches?.('[data-nlc-seal-to]')){sealTo=clamp(Math.trunc(Number(e.target.value)||1),1,SEAL_MAX);render();}});
+renderCampaign=function(){return c0()+campaignPreparationPanel()+campaignPanel();};renderHeroes=function(){return h0()+heroPanel();};renderBarracks=function(){return b0()+troopPanel()+mobileTroopPanel()+mobileElitePanel();};renderTower=function(){return t0()+towerPanel();};renderFormation=function(){return f0()+sealPanel();};
+document.addEventListener('change',e=>{if(e.target.matches?.('[data-nlc-map]')&&MAP.has(e.target.value)){mapId=e.target.value;npcPage=0;render();}else if(e.target.matches?.('[data-nlc-train-hero]')){trainHero=e.target.value;render();}else if(e.target.matches?.('[data-nlc-child-name]')){childName=e.target.value;}else if(e.target.matches?.('[data-nlc-beauty-gift]')){beautyGiftId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-beauty-hero]')){beautyHero=e.target.value;render();}else if(e.target.matches?.('[data-nlc-mobile-troop-search]')){mobileTroopSearch=e.target.value;mobileTroopPage=0;render();}else if(e.target.matches?.('[data-nlc-mobile-troop-type]')){mobileTroopType=e.target.value;mobileTroopPage=0;render();}else if(e.target.matches?.('[data-nlc-elite-force]')){mobileEliteForceId=e.target.value;const f=MOBILE_ELITE_FORCES.get(mobileEliteForceId);mobileEliteAppearanceId=String(f?.appearances?.[0]?.id||'');render();}else if(e.target.matches?.('[data-nlc-elite-appearance]')){mobileEliteAppearanceId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-elite-hero]')){mobileEliteHeroId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-elite-mode]')){state().mobileEliteNationMode=e.target.value;save();render();}else if(e.target.matches?.('[data-nlc-hero-search]')){heroSearch=e.target.value;heroPage=0;render();}else if(e.target.matches?.('[data-nlc-hero]')){heroId=e.target.value;render();}else if(e.target.matches?.('[data-nlc-search]')){search=e.target.value;mapPage=0;const match=MAPS.find(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(match){mapId=match.id;npcPage=0;}render();}else if(e.target.matches?.('[data-nlc-seal-search]')){sealSearch=e.target.value;sealPage=0;render();}else if(e.target.matches?.('[data-nlc-seal-from]')){sealFrom=clamp(Math.trunc(Number(e.target.value)||1),1,SEAL_MAX);render();}else if(e.target.matches?.('[data-nlc-seal-to]')){sealTo=clamp(Math.trunc(Number(e.target.value)||1),1,SEAL_MAX);render();}});
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-action]');if(!b||b.disabled)return;const a=b.dataset.nlcAction,id=b.dataset.nlcId,delta=id==='next'?1:-1;
  if(a==='next-objective'){jumpNextNpc();return;}
  if(a==='prepare-enlist'){if(!battle)enlist();return;}
@@ -1915,9 +2094,11 @@ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-acti
  if(a==='prepare-train'){if(!battle&&owned(id)&&typeof nlCampaignTrainBatch==='function')nlCampaignTrainBatch(id,5);return;}
  if(a==='select-seal'){sealId=id;const lv=sealLevel(state(),id)||1;sealFrom=lv;sealTo=Math.min(SEAL_MAX,lv+1);render();requestAnimationFrame(()=>setTimeout(()=>document.querySelector('#nl-screen-next')?.click(),0));return;}
  if(a==='map-page'){mapPage=Math.max(0,mapPage+delta);const list=MAPS.filter(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(list[mapPage*20]){mapId=list[mapPage*20].id;npcPage=0;}render();return;}
- if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='book-page')bookPage=Math.max(0,bookPage+delta);else if(a==='horse-page')horsePage=Math.max(0,horsePage+delta);else if(a==='etch-page')etchPage=Math.max(0,etchPage+delta);else if(a==='child-skill-page')childSkillPage=Math.max(0,childSkillPage+delta);else if(a==='beauty-page')beautyPage=Math.max(0,beautyPage+delta);else if(a==='mobile-troop-page')mobileTroopPage=Math.max(0,mobileTroopPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,'npc-repeat':id=>startNpc(id,true),recruit,'mobile-troop':tid=>mobileTroopChoose(heroId,tid),'mobile-trait':tid=>mobileTraitChoose(heroId,tid),'mobile-tech':id=>mobileTechUpgrade(id,mobileTechLevel(id)+1),'beauty-pendant':()=>mobileBeautyBuyPendants(1),'beauty-gift':key=>{const [id,n]=key.split(':');return mobileBeautyGift(id,'fam_9',Number(n));},'beauty-gift-owned':id=>mobileBeautyGiftOwned(id,beautyGiftId,1),'beauty-level':mobileBeautyUpgrade,'beauty-assign':id=>mobileBeautyAssign(beautyHero,id),'book-step':bookStep,'book-up':bookUpgrade,'book-equip':id=>trainingAssign('book',trainHero,id),'horse-step':horseStep,'horse-up':horseUpgrade,'horse-equip':id=>trainingAssign('horse',trainHero,id),'training-claim':id=>trainingClaim(Number(id)),'training-buy':id=>{const [k,n]=id.split(':');return trainingBuy(k,Number(n));},'etch-buy':etchBuy,'etch-up':id=>etchChange(id,'upgrade'),'etch-mix':id=>etchChange(id,'mix'),'etch-equip':id=>etchEquip(trainHero,id),'etch-remove':id=>etchRemove(trainHero,id),'child-start':id=>childStart(id),'child-birth':()=>childBirth(childName),'child-train':id=>childTrain(Number(id)),'child-train-safe':id=>childTrain(Number(id),true),'child-reroll':()=>childReroll(),'child-second':id=>childSecond(id),'child-graduate':childGraduate,'child-promote':id=>{const ok=childPromote(id);if(ok)childSkillPage=0;return ok;},tier4:tid=>choose4(heroId,tid),tower:startTower,'upgrade-seal':id=>upgradeSeal(id,sealTo),'activate-seal':activateSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
+ if(a==='mobile-elite-force'){mobileEliteForceId=id;const f=MOBILE_ELITE_FORCES.get(id);mobileEliteAppearanceId=String(f?.appearances?.[0]?.id||'');render();return;}
+ if(a==='mobile-elite-force-page'){mobileEliteForcePage=Math.max(0,mobileEliteForcePage+delta);render();return;}
+ if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='book-page')bookPage=Math.max(0,bookPage+delta);else if(a==='horse-page')horsePage=Math.max(0,horsePage+delta);else if(a==='etch-page')etchPage=Math.max(0,etchPage+delta);else if(a==='child-skill-page')childSkillPage=Math.max(0,childSkillPage+delta);else if(a==='beauty-page')beautyPage=Math.max(0,beautyPage+delta);else if(a==='mobile-troop-page')mobileTroopPage=Math.max(0,mobileTroopPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,'npc-repeat':id=>startNpc(id,true),recruit,'mobile-troop':tid=>mobileTroopChoose(heroId,tid),'mobile-trait':tid=>mobileTraitChoose(heroId,tid),'mobile-tech':id=>mobileTechUpgrade(id,mobileTechLevel(id)+1),'mobile-elite-upgrade':mobileEliteUpgrade,'mobile-elite-assign':id=>mobileEliteAssign(mobileEliteHeroId,id),'mobile-elite-unassign':mobileEliteUnassign,'mobile-elite-skill-upgrade':key=>{const [eid,pos]=key.split(':');return mobileEliteSkillUpgrade(eid,Number(pos));},'mobile-elite-buy':key=>{const [mid,qty]=key.split(':');return mobileEliteBuyMaterial(mid,Number(qty));},'beauty-pendant':()=>mobileBeautyBuyPendants(1),'beauty-gift':key=>{const [id,n]=key.split(':');return mobileBeautyGift(id,'fam_9',Number(n));},'beauty-gift-owned':id=>mobileBeautyGiftOwned(id,beautyGiftId,1),'beauty-level':mobileBeautyUpgrade,'beauty-assign':id=>mobileBeautyAssign(beautyHero,id),'book-step':bookStep,'book-up':bookUpgrade,'book-equip':id=>trainingAssign('book',trainHero,id),'horse-step':horseStep,'horse-up':horseUpgrade,'horse-equip':id=>trainingAssign('horse',trainHero,id),'training-claim':id=>trainingClaim(Number(id)),'training-buy':id=>{const [k,n]=id.split(':');return trainingBuy(k,Number(n));},'etch-buy':etchBuy,'etch-up':id=>etchChange(id,'upgrade'),'etch-mix':id=>etchChange(id,'mix'),'etch-equip':id=>etchEquip(trainHero,id),'etch-remove':id=>etchRemove(trainHero,id),'child-start':id=>childStart(id),'child-birth':()=>childBirth(childName),'child-train':id=>childTrain(Number(id)),'child-train-safe':id=>childTrain(Number(id),true),'child-reroll':()=>childReroll(),'child-second':id=>childSecond(id),'child-graduate':childGraduate,'child-promote':id=>{const ok=childPromote(id);if(ok)childSkillPage=0;return ok;},tier4:tid=>choose4(heroId,tid),tower:startTower,'upgrade-seal':id=>upgradeSeal(id,sealTo),'activate-seal':activateSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
 const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:57%}.nlc-actions button{white-space:normal!important;text-align:center}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}.nlc-seal-wallet{padding:6px 8px;margin:4px 0;background:#102d28;border:1px solid #927849;border-radius:5px;font-size:11px}.nlc-seal-wallet b{color:#f0d18a}.nlc-seal-detail{margin-top:7px;padding:8px;border:1px solid #91764a;background:linear-gradient(140deg,#172c28,#17221f);border-radius:6px}.nlc-seal-detail h4{font-size:14px;margin:0 0 3px;color:#f1dcaa}.nlc-seal-detail h4 small{font-size:10px;color:#b9aa83}.nlc-seal-attr{display:grid;grid-template-columns:minmax(100px,1fr) auto;gap:2px 8px;padding:3px 0;border-bottom:1px solid #554d39;font-size:10px}.nlc-seal-attr b{color:#e7cf94}.nlc-seal-attr small{grid-column:1/-1;color:#aeb4a6;font-size:9px}.nlc-seal-attr i{font-style:normal;color:#87cdb0}.nlc-seal-calc{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:6px;padding-top:6px;border-top:1px solid #746342;font-size:10px}.nlc-seal-calc>b{flex-basis:100%;color:#edd59d}.nlc-seal-calc label{white-space:nowrap}.nlc-seal-calc input{width:48px;padding:3px;border:1px solid #806e49;border-radius:4px;background:#0b1c19;color:#fff;text-align:center}.nlc-seal-calc span{color:#e5d3a4}.nlc-seal-calc button{font-size:10px;padding:5px 7px}.nlc-tower-plan{margin:8px 0;padding:9px 11px;border:1px solid #786a47;border-radius:6px;background:linear-gradient(135deg,#29362f,#172522)}.nlc-tower-plan>b{display:block;color:#f1d797}.nlc-tower-plan>small{display:block;margin-top:3px;color:#c5b68e;font-size:10px}.nlc-tower-plan p{line-height:1.55;margin:6px 0;color:#c4cdc0}.nlc-tower-lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:3px 10px;color:#e0d4b4;font-size:10px}.nlc-tower-reward{padding:7px 9px;background:#172c27;border-left:3px solid #c3a262;color:#e5d4a9;line-height:1.6}@media(max-width:560px){.nlc-tower-lineup{grid-template-columns:1fr}}';document.head.appendChild(style);
 nlMobileHeroApi=Object.freeze({quality:mobileHeroQuality,record:mobileHeroRecord,next:mobileHeroNext,materialQuote:mobileHeroMaterialQuote,buyMaterial:mobileHeroBuyMaterial,canAwaken:mobileHeroCanAwaken,awaken:mobileHeroAwaken,resetQuote:mobileHeroResetQuote,reset:mobileHeroReset,skill:mobileHeroSkill});
-if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),skillProbe,awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,navalQuote,startNaval,navalState:()=>structuredClone(navalState()),towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,p2Hit,p2Heal,p2Status,p2StatusValue,p2StatusFactor,mobileTechLevel,mobileTechValue,mobileTechQuote,mobileTechUpgrade,mobileTechCombat,mobileTechDamage,mobileTechCount:()=>MOBILE_TECH.length,mobileBeautyLevel,mobileBeautyQuote,mobileBeautyGift,mobileBeautyGiftOwned,mobileBeautyBuyPendants,mobileBeautyUpgrade,mobileBeautyAssign,mobileBeautyBonus,mobileBeautyCount:()=>Object.keys(MOBILE_BEAUTIES.beauties).length,bookGrade,bookLevel,bookQuote,bookStepQuote,bookStep,bookUpgrade,horseTier,horseStar,horseGate,horseQuote,horseStepQuote,horseStep,horseUpgrade,trainingAssign,trainingBuy,etchCount,etchBuy,etchQuote,etchChange,etchEquip,etchRemove,trainingModifiers,trainingCombat,trainingDaily:()=>structuredClone(trainingDaily()),trainingClaim,trainingCounts:()=>[MOBILE_BOOKS.length,MOBILE_HORSES.length,MOBILE_ETCH.length],childStart,childBirth,childCards,childGrowthBonus,childTrain,childReroll,childSecond,childGraduate,childNextPhase,childPromote,childSyncRoster,childSkillDescriptor,childAllowance,childSkills,childState:()=>structuredClone(childState()),mobileHeroRecord,mobileHeroQuality,mobileHeroNext,mobileHeroMaterialQuote,mobileHeroBuyMaterial,mobileHeroCanAwaken,mobileHeroAwaken,mobileHeroSkill,mobileHeroTroopAllowed,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopRuntimeCoverage:()=>({...MOBILE_TROOP_RUNTIME_COVERAGE}),mobileTroopRuntimeProfileAudit,mobileTroopAssigned,mobileTraitChoose,mobileTraitChoice,mobileTraitFactors,mobileTraitSupported:()=>[...MOBILE_TRAIT_SUPPORTED],mobileTroopChoose,mobileTroopCanSelect,mobileTroopQuote,mobileTroopCoefficients,mobileTroopPlayable:()=>MOBILE_TROOP_PLAYABLE.map(r=>r.id),mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,mobileBuffCount:()=>Object.keys(MOBILE_BUFFS.records).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,mobileRepeatHit,mobilePassivePlan,mobileApplyTurnPassives,mobileBookAction,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),troopPanel(),towerPanel(),sealPanel()]});
+if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),skillProbe,awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,navalQuote,startNaval,navalState:()=>structuredClone(navalState()),towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,p2Hit,p2Heal,p2Status,p2StatusValue,p2StatusFactor,mobileTechLevel,mobileTechValue,mobileTechQuote,mobileTechUpgrade,mobileTechCombat,mobileTechDamage,mobileTechCount:()=>MOBILE_TECH.length,mobileBeautyLevel,mobileBeautyQuote,mobileBeautyGift,mobileBeautyGiftOwned,mobileBeautyBuyPendants,mobileBeautyUpgrade,mobileBeautyAssign,mobileBeautyBonus,mobileBeautyCount:()=>Object.keys(MOBILE_BEAUTIES.beauties).length,bookGrade,bookLevel,bookQuote,bookStepQuote,bookStep,bookUpgrade,horseTier,horseStar,horseGate,horseQuote,horseStepQuote,horseStep,horseUpgrade,trainingAssign,trainingBuy,etchCount,etchBuy,etchQuote,etchChange,etchEquip,etchRemove,trainingModifiers,trainingCombat,trainingDaily:()=>structuredClone(trainingDaily()),trainingClaim,trainingCounts:()=>[MOBILE_BOOKS.length,MOBILE_HORSES.length,MOBILE_ETCH.length],childStart,childBirth,childCards,childGrowthBonus,childTrain,childReroll,childSecond,childGraduate,childNextPhase,childPromote,childSyncRoster,childSkillDescriptor,childAllowance,childSkills,childState:()=>structuredClone(childState()),mobileHeroRecord,mobileHeroQuality,mobileHeroNext,mobileHeroMaterialQuote,mobileHeroBuyMaterial,mobileHeroCanAwaken,mobileHeroAwaken,mobileHeroSkill,mobileHeroTroopAllowed,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopRuntimeCoverage:()=>({...MOBILE_TROOP_RUNTIME_COVERAGE}),mobileTroopRuntimeProfileAudit,mobileEliteRuntimeAudit,mobileEliteUpgradeQuote,mobileEliteLevel,mobileEliteSkillLevels,mobileEliteSkillQuote,mobileEliteUpgrade,mobileEliteSkillUpgrade,mobileEliteBuyMaterial,mobileEliteAssign,mobileEliteUnassign,mobileEliteAssigned,mobileEliteCanAssign,mobileEliteForceRole,mobileEliteInventoryCount,mobileTroopAssigned,mobileTraitChoose,mobileTraitChoice,mobileTraitFactors,mobileTraitSupported:()=>[...MOBILE_TRAIT_SUPPORTED],mobileTroopChoose,mobileTroopCanSelect,mobileTroopQuote,mobileTroopCoefficients,mobileTroopPlayable:()=>MOBILE_TROOP_PLAYABLE.map(r=>r.id),mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,mobileBuffCount:()=>Object.keys(MOBILE_BUFFS.records).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,mobileRepeatHit,mobilePassivePlan,mobileApplyTurnPassives,mobileBookAction,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),mobileElitePanel(),troopPanel(),towerPanel(),sealPanel()]});
 })();
 // === end NL-CONTENT-C-V1 ===

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "system": "VNG Mobile Thống Soái / Tinh Nhuệ",
+  "source": {
+    "classification": "SOURCE_EXACT",
+    "sourceEdition": "CURRENT_VNG_MOBILE_PUBLIC_WIKI",
+    "retrievedAtUtc": "2026-11-26T03:09:42.199454+00:00",
+    "page": "https://ngoalong.vnggames.com/ngoa-long-wiki/thong-soai",
+    "dataUrl": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/elite-detail.json",
+    "rawSha256": "7b97173bf520ed91cc4723465ee80be2a5cda7d3363e914c331e9a0335593bff"
+  },
+  "fields": [
+    {
+      "field": "force.id/name/camp/openLevel",
+      "classification": "SOURCE_EXACT",
+      "coverage": 16
+    },
+    {
+      "field": "appearance.id/name/troopType/desc/openLevel/skins",
+      "classification": "SOURCE_EXACT",
+      "coverage": 20
+    },
+    {
+      "field": "appearance.stats and levelStats",
+      "classification": "SOURCE_EXACT",
+      "coverage": "20 appearances × 20 levels × six coefficients"
+    },
+    {
+      "field": "appearance.levels cost/time",
+      "classification": "SOURCE_EXACT",
+      "coverage": "20 appearances × 20 levels; costs apply by destination level"
+    },
+    {
+      "field": "nation multiplier same/quan/diff",
+      "classification": "SOURCE_EXACT",
+      "coverage": {
+        "same": 1,
+        "quan": 1.5,
+        "diff": 2
+      }
+    },
+    {
+      "field": "skill descriptions/rank text",
+      "classification": "SOURCE_EXACT",
+      "coverage": "20 appearances × three skill tracks"
+    },
+    {
+      "field": "skill upgrade rank requirements/item quantities",
+      "classification": "SOURCE_EXACT",
+      "coverage": "all three skill-position tables"
+    },
+    {
+      "field": "material ids/names/descriptions",
+      "classification": "SOURCE_EXACT",
+      "coverage": [
+        "mat_63",
+        "mat_73",
+        "mat_74",
+        "mat_75",
+        "mat_76",
+        "mat_77"
+      ]
+    },
+    {
+      "field": "offline role/assignment restriction",
+      "classification": "SIMULATED",
+      "coverage": "one appearance per hero; no appearance duplicated across heroes; matching troop role"
+    },
+    {
+      "field": "offline material acquisition price",
+      "classification": "SIMULATED",
+      "coverage": "silver shop; no source acquisition cost exists in item detail"
+    },
+    {
+      "field": "P2 elite stat coefficient replacement",
+      "classification": "DERIVED_FROM_SOURCE",
+      "coverage": "six source coefficient axes; retain base crit/counter"
+    },
+    {
+      "field": "unmapped elite skill behavior",
+      "classification": "UNRESOLVED",
+      "coverage": "preserved in UI/source data; no generic rank effect"
+    }
+  ]
+}

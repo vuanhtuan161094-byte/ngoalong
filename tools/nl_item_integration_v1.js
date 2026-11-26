@@ -130,6 +130,25 @@ for(const row of NL_MOBILE_EXCHANGE){
  const i=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);
  if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
 }
+// Exact Thống Soái book identities; shop price is an explicit offline fallback
+// because the public Wiki item rows publish no acquisition route or currency.
+function nlMobileEliteMaterials(source){
+ const wanted=new Map([['mat_63','Quỷ Cốc Thư'],['mat_73','Sách Dũng Khí'],['mat_74','Sách Ý Chí'],['mat_75','Sách Sức Bền'],['mat_76','Sách Võ Kỹ'],['mat_77','Sách Nhanh Nhẹn']]);
+ const byId=new Map(source.items.map(x=>[String(x.id),x]));
+ return [...wanted].map(([id,name])=>{
+  const raw=byId.get(id);if(!raw||raw.name!==name)throw Error('MOBILE_ELITE_MATERIAL_SOURCE_DRIFT:'+id);
+  return {id:'mobile-vng-item-'+id,sourceId:id,name:raw.name,category:'material',integration:'PLAYABLE',
+   sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:raw.typeName,sourceDesc:raw.desc||'',sourceIcon:raw.icon,
+   provenance:{classification:'SOURCE_EXACT'},sourceAcquisition:{classification:'UNRESOLVED_NO_PUBLIC_WIKI_ROUTE'},
+   stackLimit:1000000,fieldProvenance:{stackLimit:'SIMULATED_CAPACITY_ADAPTER'},
+   acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:1,shopCost:{silver:12}},effectRule:null};
+ });
+}
+const NL_MOBILE_ELITE_MATERIALS=nlMobileEliteMaterials(NL_MOBILE_INVENTORY);
+for(const row of NL_MOBILE_ELITE_MATERIALS){
+ const i=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);
+ if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
+}
 // Ordinary Tri Kỷ gifts: exact XP/score gate; merchant price follows existing gift adapter.
 const NL_MOBILE_GIFTS=NL_MOBILE_INVENTORY.items.filter(row=>[0,1].includes(row.gift?.famousType)&&Number.isSafeInteger(row.gift.effect)&&row.gift.effect>0).map(row=>({
  id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'material',integration:'PLAYABLE',

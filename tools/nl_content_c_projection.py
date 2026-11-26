@@ -148,9 +148,11 @@ def build(root):
     base=root/"data/ngoalong/modules"
     from nl_mobile_seal_v2 import normalize as normalize_seal_v2
     from nl_mobile_troops_v1 import normalize as normalize_mobile_troops
+    from nl_mobile_elite_v1 import normalize as normalize_mobile_elite
     from nl_mobile_campaign_v1 import normalize as normalize_mobile_campaign
     mobile_seals,_=normalize_seal_v2(root)
     mobile_troops,_=normalize_mobile_troops()
+    mobile_elite,_=normalize_mobile_elite(root)
     folder=base/"campaign/source_shards"
     manifest=read(folder/"manifest.json")
     maps=[]; seen=set(); npc_ids=set()
@@ -348,6 +350,6 @@ def build(root):
             "mobileBeauties":mobile_beauties,
             "mobileChildren":mobile_children,
             "mobileBooks":mobile_books,"mobileHorses":mobile_horses,"mobileEtch":mobile_etch,
-            "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
+            "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,"mobileElite":mobile_elite,
             "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
-            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
+            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileEliteForces":mobile_elite["forceCount"],"mobileEliteAppearances":mobile_elite["appearanceCount"],"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}

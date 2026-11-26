@@ -80,10 +80,10 @@
     }
     function addStack(m,id,qty){
       requireOk(safe(qty)&&qty>0,'INVALID_GRANT_QUANTITY');
-      get(id);
+      const row=get(id),stackLimit=safe(row.stackLimit)&&row.stackLimit>=limit.quantityEach?row.stackLimit:limit.quantityEach;
       const current=m.stacks[id]||0;
       requireOk(safe(current),'CORRUPT_STACK');
-      requireOk(current+qty<=limit.quantityEach,'STACK_CAPACITY');
+      requireOk(current+qty<=stackLimit,'STACK_CAPACITY');
       const keys=new Set(Object.keys(m.stacks).filter(k=>m.stacks[k]>0));
       keys.add(id);
       requireOk(keys.size<=limit.stacksKinds,'STACK_KIND_CAPACITY');
@@ -112,6 +112,31 @@
         requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
         requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
         next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
+      });
+    }
+    function buySourceMaterials(state,id,quantity,receipt){
+      return execute(state,'BUY_SOURCE_MATERIALS',id,[quantity],receipt,(next,m)=>{
+        const row=get(id),q=row.acquisitionRule;
+        requireOk(row.category==='material'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&q?.kind==='SHOP'&&q.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0&&safe(quantity)&&quantity>0&&quantity<=10000,'NOT_SOURCE_MATERIAL_SHOP');
+        requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
+        const cost=q.shopCost.silver*quantity;
+        requireOk(safe(cost)&&safe(next.silver)&&next.silver>=cost,'INSUFFICIENT_RESOURCES');
+        next.silver-=cost;addStack(m,id,quantity);return {id,quantity,silver:cost,classification:'SIMULATED_FALLBACK'};
+      });
+    }
+    function consumeSourceMaterials(state,costs,receipt,scope){
+      const rows=Array.isArray(costs)?costs:[];
+      const normalized=rows.map(x=>({id:x?.id,quantity:x?.quantity})).sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+      return execute(state,'CONSUME_SOURCE_MATERIALS',scope,normalized,receipt,(next,m)=>{
+        requireOk(goodId(scope)&&normalized.length>0&&normalized.length<=12,'BAD_SOURCE_MATERIAL_COSTS');
+        const seen=new Set();
+        for(const x of normalized){
+          const row=get(x.id);
+          requireOk(!seen.has(x.id)&&row.category==='material'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.provenance?.classification==='SOURCE_EXACT'&&safe(x.quantity)&&x.quantity>0,'BAD_SOURCE_MATERIAL_COSTS');
+          seen.add(x.id);
+        }
+        for(const x of normalized)debitStack(m,x.id,x.quantity);
+        return {scope,costs:normalized,classification:'SOURCE_EXACT_QUANTITIES'};
       });
     }
     function giveBeautyGift(state,id,receipt,beautyId,qty,score){
@@ -245,7 +270,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,buySourceMaterial,giveBeautyGift,resetMobileQuality,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,buySourceMaterials,consumeSourceMaterials,giveBeautyGift,resetMobileQuality,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });
