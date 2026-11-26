@@ -317,6 +317,66 @@
         return { uid: instance.uid, level: instance.lv, cost };
       });
     }
+    // Exact source pool values. Unknown prices and weights above 100% use explicit offline adapters.
+    const MOBILE_REFINE_POOLS=['so','cao','dacKy'], MOBILE_REFINE_STONE='mobile-vng-resource-res_62';
+    function mobileRefineQuote(state,uid,pool){
+      const instance=state.items.find(x=>String(x.uid)===String(uid)),row=instance&&catalog[instance.base],p=row?.mobileRefinement?.sourcePools;
+      if(!p||!MOBILE_REFINE_POOLS.includes(pool)||!Array.isArray(p[pool])||!p[pool].length)return null;
+      const i=MOBILE_REFINE_POOLS.indexOf(pool),gate=[1,50,100][i],count=pool==='dacKy'?1:pool==='so'?p.effectNum:p.seniorEffectNum;
+      if(!integer(count,1)||count>3)return null;
+      const sum=p[pool].reduce((n,x)=>n+x.rate,0);
+      if(!Number.isFinite(sum)||sum<=0||!p[pool].every(x=>Number.isFinite(x.value)&&Number.isFinite(x.rate)&&x.rate>0))return null;
+      return {pool,gate,count,silver:600*(i+1)*Math.max(1,row.sourceQuality||1),stone:[1,2,4][i],materialId:MOBILE_REFINE_STONE,
+        weightSum:sum,classification:'SOURCE_EXACT_VALUES_SIMULATED_COST_AND_ROLL'};
+    }
+    function mobileRefineRoll(rows,seed){
+      let hash=2166136261;
+      for(const c of seed)hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
+      let weight=rows.reduce((n,x)=>n+x.rate,0)*(hash/4294967296);
+      for(const x of rows){weight-=x.rate;if(weight<0)return jsonCopy(x);}
+      return jsonCopy(rows[rows.length-1]);
+    }
+    function mobileRefine(state,uid,pool,receiptId){
+      return execute(state,'MOBILE_REFINE',receiptId,[uid,pool],(next,m)=>{
+        const instance=equipmentInstance(next,uid),row=catalog[instance.base],q=mobileRefineQuote(next,uid,pool);
+        assert(q,'MOBILE_REFINE_POOL');
+        assert(instance.lv>=q.gate,'MOBILE_REFINE_LEVEL');
+        available(q.materialId,'material');
+        assert(integer(m.stacks[q.materialId]||0)&&m.stacks[q.materialId]>=q.stone,'INSUFFICIENT_MATERIAL');
+        pay(next,{silver:q.silver});m.stacks[q.materialId]-=q.stone;
+        if(m.stacks[q.materialId]===0)delete m.stacks[q.materialId];
+        if(!instance.mobileRefines||typeof instance.mobileRefines!=='object'||Array.isArray(instance.mobileRefines))instance.mobileRefines={};
+        instance.mobileRefineSerial=integer(instance.mobileRefineSerial)?instance.mobileRefineSerial+1:1;
+        const rolls=Array.from({length:q.count},(_,i)=>mobileRefineRoll(row.mobileRefinement.sourcePools[pool],uid+':'+pool+':'+instance.mobileRefineSerial+':'+i));
+        instance.mobileRefines[pool]=rolls;
+        return {uid,pool,rolls,quote:q};
+      });
+    }
+    function mobileRefineModifiers(state,heroId){
+      const out={lead:0,war:0,intellect:0,atk:0,catk:0,matk:0,def:0,tdef:0,mdef:0,hp:0,crit:0,dodge:0,finalDamage:0,critDamage:0,pierceFlat:0,vs:{},resist:{},allDefense:0,teamDefense:0,unresolved:[]};
+      for(const uid of Object.values(state.gear?.[heroId]||{})){
+        if(uid==null)continue;
+        const item=equipmentInstance(state,uid),p=catalog[item.base]?.mobileRefinement?.sourcePools;
+        if(!p)continue;
+        for(const pool of MOBILE_REFINE_POOLS){
+          const cap=mobileRefineQuote(state,uid,pool)?.count||0;
+          for(const roll of (Array.isArray(item.mobileRefines?.[pool])?item.mobileRefines[pool]:[]).slice(0,cap)){
+            const x=p[pool].find(v=>v.code===roll.code&&v.value===roll.value&&v.name===roll.name);if(!x)continue;
+            const v=x.value,stat=({11:'atk',12:'def',13:'matk',14:'mdef',15:'catk',16:'tdef',27:'lead',28:'war',29:'intellect',55:'dodge',56:'finalDamage',58:'critDamage',60:'crit'})[x.code];
+            if(stat)out[stat]+=v;
+            else if(x.code===7)out.hp+=v*.001*.82;
+            else if(x.code===59){out.lead+=v;out.war+=v;out.intellect+=v;}
+            else if(x.code===45){for(const k of ['atk','catk','matk'])out[k]+=v;}
+            else if(x.code===46){if(/toàn phe ta/i.test(x.name))out.teamDefense+=v;else out.allDefense+=v;}
+            else if(x.code===36)out.pierceFlat+=v*.001;
+            else if(x.code>=47&&x.code<=50){const f=['Thục','Ngụy','Ngô','Quần'][x.code-47];out.vs[f]=(out.vs[f]||0)+v;}
+            else if(x.code>=51&&x.code<=54){const f=['Thục','Ngụy','Ngô','Quần'][x.code-51];out.resist[f]=(out.resist[f]||0)+v;}
+            else out.unresolved.push(x.name);
+          }
+        }
+      }
+      return out;
+    }
     function refine(state, uid, receiptId) {
       return execute(state, 'REFINE', receiptId, uid, (next, m) => {
         const instance = equipmentInstance(next, uid), r = rules.refinement;
@@ -414,7 +474,7 @@
       for (const key of STATS) result[key] += setStats[key];
       return result;
     }
-    return { grant, buy, equip, unequip, sell, reinforce, reinforcementCost, refine, use, bonuses, sets, validateState: checkOwned };
+    return { grant, buy, equip, unequip, sell, reinforce, reinforcementCost, refine, mobileRefine, mobileRefineQuote, mobileRefineModifiers, use, bonuses, sets, validateState: checkOwned };
   }
   return { createModule, validateCatalogue };
 });
