@@ -9,7 +9,7 @@ if(!document.getElementById('nlh-system-style')){
 }
 const SYS=Object.fromEntries(NL_HS.systems.map(x=>[x.id,x]));
 // Original offline endgame progression; formulas and unlocks are SIMULATED.
-const ANCIENT_MAX=5;
+const ANCIENT_MAX=5,SKILL_MAX=10;
 const ILLUSIONS={
  assault:{name:'Phá Quân',attackPct:.09,tacticAttackPct:.06,defensePct:-.04,hpPct:-.03,magicAttackPct:0,speedFlat:0},
  guardian:{name:'Hộ Thành',attackPct:-.04,tacticAttackPct:0,defensePct:.10,hpPct:.08,magicAttackPct:0,speedFlat:0},
@@ -44,6 +44,7 @@ function nlhsHero(id){
   if(!s.heroes[id]||typeof s.heroes[id]!=='object')s.heroes[id]={commanderLevel:0,weaponLevel:0,inheritanceLevel:0,destinyId:null,destinyLevel:0,awakening:{orange:false,gold:false}};
   const h=s.heroes[id];for(const k of ['commanderLevel','weaponLevel','inheritanceLevel','destinyLevel'])if(!Number.isSafeInteger(h[k])||h[k]<0)h[k]=0;
   if(!h.awakening||typeof h.awakening!=='object')h.awakening={orange:false,gold:false};
+  h.skillLevel=Number.isSafeInteger(h.skillLevel)?Math.min(SKILL_MAX,Math.max(1,h.skillLevel)):1;
   h.awakening.orange=!!h.awakening.orange;h.awakening.gold=!!h.awakening.gold;
   h.ancientLevel=Number.isSafeInteger(h.ancientLevel)&&h.awakening.gold?Math.max(0,Math.min(ANCIENT_MAX,h.ancientLevel)):0;
   if(!Array.isArray(h.illusionUnlocked))h.illusionUnlocked=[];
@@ -119,6 +120,29 @@ function nlhUpgrade(id,heroId,sub=''){
  log('Phát triển '+nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level+' (SIMULATED).');save();render();toast(nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level);return true;
 }
 function nlhPickDestiny(id,heroId){if(!['war','guard','tactic'].includes(id)||!nlhIsOpen('destiny')||!nlhOwned(heroId))return false;const h=nlhsHero(heroId);h.destinyId=id;save();render();return true;}
+function nlhSkillQuote(level){return {silver:250*level,merit:10*level};}
+function nlhSkillUpgrade(id){
+ if(battle||!nlhOwned(id))return false;
+ const h=nlhsHero(id),next=h.skillLevel+1,cost=nlhSkillQuote(next);
+ if(next>SKILL_MAX||nlhStage()<3||(game.hero[id]?.level||0)<next*4||!nlhPay(cost,{}))return false;
+ h.skillLevel=next;return nlhEndgameReceipt('skill',id,next,cost,{});
+}
+function nlhSkillDescriptor(id,source){
+ if(!source||typeof source!=='object')return source;
+ const rank=nlhsHero(id).skillLevel-1,skill={...source};
+ if(rank<=0)return skill;
+ if(Number.isFinite(skill.mult))skill.mult=Math.round(skill.mult*(1+rank*.035)*10000)/10000;
+ if(Number.isFinite(skill.drainMorale))skill.drainMorale=Math.min(50,skill.drainMorale+rank);
+ if(Number.isFinite(skill.bonusMorale))skill.bonusMorale=Math.min(35,skill.bonusMorale+Math.floor(rank/2));
+ if(Number.isFinite(skill.applyChance))skill.applyChance=Math.min(.95,skill.applyChance+rank*.015);
+ return skill;
+}
+const nlhPriorSkill=p2Skill;
+p2Skill=function(actor){
+ const skill=nlhPriorSkill.apply(this,arguments);
+ if(actor?.team!=='p'||battle?.replay||battle?.mode==='cltq'||!nlhOwned(actor.id))return skill;
+ return nlhSkillDescriptor(actor.id,skill);
+};
 function nlhEndgameReady(id){return nlhOwned(id)&&nlhStage()>=28&&nlhsHero(id).awakening.gold&&(game.hero[id]?.level||0)>=40;}
 function nlhAncientQuote(level){return {currency:{silver:5000*level,merit:150*level},materials:{quynhTuong:level,xichQua:level,hoangTrungLy:level}};}
 function nlhIllusionQuote(){return {currency:{silver:8000,merit:250},materials:{destinyJade:2,blank:2}};}
@@ -209,9 +233,14 @@ function nlhEndgamePanel(id){
 function nlhMaterialShopPanel(){
  const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
 }
+function nlhSkillPanel(id){
+ const h=nlhsHero(id),level=h.skillLevel,next=level+1,cost=nlhSkillQuote(next),base=P2_SKILLS[id],skill=nlhSkillDescriptor(id,base);
+ const can=nlhStage()>=3&&(game.hero[id]?.level||0)>=next*4&&next<=SKILL_MAX&&!battle&&nlhCanPay(cost,{});
+ return '<div class="nlh-feature-panel"><b>Chiến pháp · Cấp '+level+'/'+SKILL_MAX+'</b><p class="nlh-copy">'+hsEsc(skill?.tag||nlhHero(id).skill||'Chiến pháp')+' · '+(Number.isFinite(skill?.mult)?'Hệ số '+Math.round(skill.mult*100)+'% · ':'')+'Mỗi cấp +3,5% hệ số gốc, cải thiện hiệu ứng có sẵn. SIMULATED.</p><button class="nlh-button" data-nlh-action="skillUpgrade" '+(can?'':'disabled')+'>'+(next>SKILL_MAX?'Tối đa':'Nâng cấp · '+hsEsc(nlhCostText(cost,{}))+' · cần tướng cấp '+next*4)+'</button></div>';
+}
 function nlhSystemBody(system,id){
  const h=nlhHero(id),d=nlhHeroStats(id),state=nlhsState(),dev=nlhsHero(id),skill=SYS[system];
- if(system==='hero')return '<div class="nlh-section-head"><span>Võ Tướng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhNeedText('hero'))+'</span></div><h3 class="nlh-section-title">Tăng trưởng và quan hệ võ tướng</h3><p class="nlh-copy">'+hsEsc(h.role||h.type||'')+' · Danh tính lịch sử, phe phái, kỹ năng và ID dữ liệu được giữ nguyên. Cân bằng cấp/công thức hiện tại là thiết kế dự án SIMULATED.</p>'+nlhProgress(d.level,40,'Cấp tướng',d.level/40*100)+nlhProgress(dev.commanderLevel,5,'Thống Soái',dev.commanderLevel/5*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>CHIẾN PHÁP GỐC</small><b>'+hsEsc(h.skill||'Chưa có nguồn mô tả')+'</b></div><div class="nlh-fact"><small>BINH CHỦNG HIỆN TẠI</small><b>'+hsEsc(nlhCurrentTroop(id).name)+'</b></div></div><p class="nlh-source-note">Mobile/H5 is the primary system reference; this panel preserves existing Save IDs and does not claim parity for project formulas.</p>';
+ if(system==='hero')return '<div class="nlh-section-head"><span>Võ Tướng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhNeedText('hero'))+'</span></div><h3 class="nlh-section-title">Tăng trưởng và quan hệ võ tướng</h3><p class="nlh-copy">'+hsEsc(h.role||h.type||'')+' · Danh tính lịch sử, phe phái, kỹ năng và ID dữ liệu được giữ nguyên. Cân bằng cấp/công thức hiện tại là thiết kế dự án SIMULATED.</p>'+nlhProgress(d.level,40,'Cấp tướng',d.level/40*100)+nlhProgress(dev.commanderLevel,5,'Thống Soái',dev.commanderLevel/5*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>CHIẾN PHÁP GỐC</small><b>'+hsEsc(h.skill||'Chưa có nguồn mô tả')+'</b></div><div class="nlh-fact"><small>BINH CHỦNG HIỆN TẠI</small><b>'+hsEsc(nlhCurrentTroop(id).name)+'</b></div></div><p class="nlh-source-note">Mobile/H5 is the primary system reference; this panel preserves existing Save IDs and does not claim parity for project formulas.</p>'+nlhSkillPanel(id);
  if(system==='training'){const need=Math.max(1,d.level*90),xp=d.xp||0;return '<div class="nlh-section-head"><span>Huấn Luyện · '+hsEsc(h.name)+'</span><span class="nlh-status">Cấp '+d.level+'/40</span></div><h3 class="nlh-section-title">Tu luyện kinh nghiệm</h3><p class="nlh-copy">Huấn luyện dùng runtime hiện hữu của dự án. Mỗi lượt tốn 700 Bạc; XP nhận được dựa vào Quân Sư Phủ. Các hệ số là SIMULATED.</p>'+nlhProgress(xp,need,'Kinh nghiệm tới cấp '+(d.level+1),xp/need*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>KINH NGHIỆM</small><b>'+nlhFmt(xp)+' / '+nlhFmt(need)+'</b></div><div class="nlh-fact"><small>QUÂN SƯ PHỦ</small><b>Cấp '+(game.buildings?.academy||1)+'</b></div></div><div class="nlh-action-row"><span class="nlh-quote">+95 XP +12 XP mỗi cấp Quân Sư Phủ · 700 Bạc</span><button class="nlh-button" data-train="'+hsEsc(id)+'" '+(d.level>=40||game.silver<700||battle?'disabled':'')+'>Huấn luyện</button></div><p class="nlh-source-note">Giữ đúng giới hạn cấp 40 và Save hiện hữu; công thức Mobile chưa được xác nhận.</p>';}
  if(system==='troops'){const troop=nlhCurrentTroop(id);return '<div class="nlh-section-head"><span>Binh Chủng · '+hsEsc(h.name)+'</span><span class="nlh-status">Bậc '+troop.tier+'</span></div><h3 class="nlh-section-title">'+hsEsc(troop.name)+'</h3><p class="nlh-copy">'+hsEsc(troop.description||'')+' · '+hsEsc(troop.kind)+'. Một võ tướng vẫn là một đơn vị logic; lính đi theo chỉ là sprite trình diễn.</p><div class="nlh-facts"><div class="nlh-fact"><small>CẤP DOANH TRẠI</small><b>'+nlhFmt(game.buildings?.barracks||1)+'</b></div><div class="nlh-fact"><small>QUÂN SỐ TƯỚNG</small><b>'+nlhFmt(d.troops)+'</b></div></div><p class="nlh-copy">Kho tham chiếu: 55 quân chủng Ngọa Long WEB; 25 ID và 18 nhánh tiến hóa của dự án. Hệ số chiến đấu chưa xác minh đều gắn SIMULATED.</p><button class="nlh-button" data-tab="barracks">Mở Doanh Trại · chọn quân chủng</button>';}
  if(system==='commander')return '<div class="nlh-section-head"><span>Thống Soái · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div>'+nlhQuotePanel(system,id,dev.commanderLevel,skill.maxLevel,'Mỗi cấp: +1,2% Công/Thủ và +1 Tốc. SIMULATED.')+'<p class="nlh-source-note">Cần vượt 6 ải, Binh Thư Thống Soái và tài nguyên. Hệ này là thiết kế mới của dự án, không gán cho nguồn chính thức.</p>';
@@ -249,6 +278,7 @@ document.addEventListener('click',e=>{
  else if(action==='upgrade')nlhUpgrade(b.dataset.nlhSystem,nlhsState().selectedHero);
  else if(action==='destiny')nlhPickDestiny(b.dataset.nlhDestiny,nlhsState().selectedHero);
  else if(action==='awakening')nlhUpgrade('awakening',nlhsState().selectedHero,b.dataset.nlhStage);
+ else if(action==='skillUpgrade')nlhSkillUpgrade(nlhsState().selectedHero);
  else if(action==='ancient')nlhAncientUpgrade(nlhsState().selectedHero);
  else if(action==='illusion')nlhIllusionChoose(nlhsState().selectedHero,b.dataset.nlhMode);
  else if(action==='materialBuy')nlhMaterialBuy(b.dataset.nlhMaterial);
@@ -278,6 +308,6 @@ if(typeof renderSidebar==='function'){
  if(document.querySelector('#sidebar'))renderSidebar();
 }
 const nlhPriorHeroes=renderHeroes;renderHeroes=function(){return renderNlhHeroScreen();};
-if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
+if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,skillUpgrade:nlhSkillUpgrade,skillDescriptor:nlhSkillDescriptor,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
 })();
 // === END NL-HERO-SYSTEMS-V1 ===
