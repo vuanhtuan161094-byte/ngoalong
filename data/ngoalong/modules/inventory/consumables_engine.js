@@ -27,14 +27,15 @@
         row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
         ['MOBILE_DROP','SOURCE_CURRENCY'].includes(row.acquisitionRule?.kind)&&
         row.category==='material'&&row.effectRule==null;
+      const mobileSourceBundle=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.category==='consumable'&&row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&row.acquisitionRule?.classification==='SIMULATED_FALLBACK';
       requireOk(['VERIFIED','SIMULATED','SOURCE_EXACT'].includes(row.provenance?.classification),'BAD_PROVENANCE');
       if(row.integration==='REFERENCE_ONLY'){
         requireOk(row.effectRule==null,'REFERENCE_EFFECT_FORBIDDEN');
       }else{
-        requireOk(row.provenance.classification==='SIMULATED'||mobileSourceMaterial,'ACTIVE_NOT_PROJECT_ORIGINAL');
+        requireOk(row.provenance.classification==='SIMULATED'||mobileSourceMaterial||mobileSourceBundle,'ACTIVE_NOT_PROJECT_ORIGINAL');
         requireOk(row.category==='consumable'||row.category==='material','BAD_PLAYABLE_KIND');
         if(row.category==='consumable')requireOk(row.effectRule&&
-          ['GRANT_RESOURCE','OPEN_BUNDLE','TRAIN_HERO_XP'].includes(row.effectRule.kind),'BAD_CONSUMABLE_RULE');
+          ['GRANT_RESOURCE','OPEN_BUNDLE','OPEN_SOURCE_BUNDLE','TRAIN_HERO_XP'].includes(row.effectRule.kind),'BAD_CONSUMABLE_RULE');
         else if(!mobileSourceMaterial)requireOk(row.effectRule?.kind==='CRAFT_REAGENT'||
           row.effectRule?.kind==='REFINEMENT_REAGENT','BAD_MATERIAL_RULE');
       }
@@ -93,6 +94,26 @@
       requireOk(safe(old)&&Number.isSafeInteger(old+qty),'RESOURCE_OVERFLOW');
       next[name]=old+qty;
     }
+    // Purchases and opening use the same receipt-protected inventory ledger.
+    function buySourceBundle(state,id,receipt){
+      return execute(state,'BUY_SOURCE_BUNDLE',id,null,receipt,(next,m)=>{
+        const row=get(id),q=row.acquisitionRule;
+        requireOk(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&q?.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0,'NOT_SOURCE_BUNDLE_SHOP');
+        requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
+        next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
+      });
+    }
+    function grantSourceBundle(next,rule){
+      requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
+      if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
+      const c=next.nlContentC;
+      if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
+      for(const x of rule.outputs){
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        const owner=x.wallet==='awakening'?c.mobileHeroMaterials:c,key=x.wallet==='awakening'?x.name:x.wallet==='science'?'mobileTechPoints':'mobileTechTripods';
+        const previous=owner[key]??0;requireOk(safe(previous)&&safe(previous+x.qty),'SOURCE_BUNDLE_OVERFLOW');owner[key]=previous+x.qty;
+      }
+    }
     function use(state,id,receipt,heroId=null){
       return execute(state,'USE_ITEM',id,heroId,receipt,(next,m)=>{
         const row=get(id),rule=row.effectRule;
@@ -116,6 +137,7 @@
         }
         debitStack(m,id,1);
         if(rule.kind==='GRANT_RESOURCE')addResource(next,rule.resource,rule.amount);
+        else if(rule.kind==='OPEN_SOURCE_BUNDLE')grantSourceBundle(next,rule);
         else if(rule.kind==='OPEN_BUNDLE'){
           for(const [res,qty] of Object.entries(rule.resources))addResource(next,res,qty);
           for(const [item,qty] of Object.entries(rule.stacks))addStack(m,item,qty);
@@ -158,7 +180,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });
