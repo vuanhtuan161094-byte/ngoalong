@@ -220,7 +220,9 @@ function mobileTroopChoose(id,tid){
 }
 // Mobile source trait rates; one equipped trait and purchase/rank gates are offline design.
 const MOBILE_TRAITS=new Map(MOBILE_TROOPS.specials.map((t,i)=>[String(i),t]));
-const MOBILE_TRAIT_SUPPORTED=new Set(['Can Đảm','Khích Lệ','Lợi Nhẫn','Trọng Giáp','Vững Chắc','Bạch Nhẫn','Bất Khuất','Công Tâm','Hoành Tảo','Hãm Trận','Nhiễu Hậu','Phương Viên','Sách Phản','Trù Sách','Tật Hành','Xạ Thủ','Ẩn Nấp']);
+const MOBILE_TRAIT_SUPPORTED=new Set(MOBILE_TROOPS.specials.map(t=>t.name));
+const MOBILE_NO_NORMAL='mobile-trait-no-normal';
+NL_GAME_DATA.statusEffects.effects[MOBILE_NO_NORMAL]={duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1};
 function mobileTraitQuote(rank){return {silver:500*rank*rank,merit:30*rank};}
 function mobileTraitChoice(id){
  const chosen=state().mobileTroopTraits[id],unit=mobileTroopAssigned(id),t=MOBILE_TRAITS.get(chosen?.id);
@@ -576,7 +578,7 @@ function skillProbe(name){
 }
 const nlContentCMobileBaseStatus=p2Status;
 p2Status=function(unit,kind,turns,...rest){
- if(unit?.nlMobileControlCharges>0&&['daze','sleep','fear',MOBILE_CONTROL_STATUS,MOBILE_SLEEP_STATUS].includes(kind)){unit.nlMobileControlCharges--;return false;}
+ if(unit?.nlMobileControlCharges>0&&['daze','sleep','fear',MOBILE_CONTROL_STATUS,MOBILE_SLEEP_STATUS,MOBILE_NO_NORMAL].includes(kind)){unit.nlMobileControlCharges--;return false;}
  if(unit?.effects?.some(effect=>effect.kind===MOBILE_NO_BUFFS_STATUS&&effect.turns>0)&&
     NL_GAME_DATA.statusEffects.effects[kind]?.polarity==='beneficial')return false;
  if(unit?.team==='e'&&battle?.nlContentC&&kind===MOBILE_DAMAGE_ONE_STATUS&&
@@ -823,11 +825,12 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const defenseValueField=({physical:'incomingPhysicalDefenseMultiplier',tactic:'incomingTacticDefenseMultiplier',magic:'incomingMagicDefenseMultiplier'})[kind];
  const sourceDefenseMultiplier=guardField?(resolvedTarget?.effects||[]).filter(effect=>effect.turns>0)
    .reduce((factor,effect)=>{const value=effect.mobileSourceValues?.[defenseValueField];return Number.isFinite(value)?factor*value:factor;},1):1;
+ const guardFactor=sourceDefenseMultiplier*(attacker?.nlMobilePierceActive?.9:1);
  const previousGuard=guardField?resolvedTarget?.[guardField]:undefined;
- if(Number.isFinite(previousGuard)&&sourceDefenseMultiplier!==1)resolvedTarget[guardField]=Math.max(0,previousGuard*sourceDefenseMultiplier);
+ if(Number.isFinite(previousGuard)&&guardFactor!==1)resolvedTarget[guardField]=Math.max(0,previousGuard*guardFactor);
  let hit;
  try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier,opts);}
- finally{if(Number.isFinite(previousGuard)&&sourceDefenseMultiplier!==1)resolvedTarget[guardField]=previousGuard;}
+ finally{if(Number.isFinite(previousGuard)&&guardFactor!==1)resolvedTarget[guardField]=previousGuard;}
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
    target.effects=target.effects.filter(effect=>effect!==oneHitShield);
@@ -853,7 +856,7 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
 };
 const nlContentCBaseHeal=p2Heal;
 p2Heal=function(attacker,target,mult){
- if(attacker?.team==='e'&&battle?.nlContentC&&attacker.nlCDescriptor?.sourceNoHealing)
+ if((attacker?.team==='e'&&battle?.nlContentC&&attacker.nlCDescriptor?.sourceNoHealing)||(attacker?.team==='p'&&attacker.nlMobileSourceSkillAction&&mobileHeroSkill(attacker.id)?.sourceNoHealing))
    return {team:target.team,slot:target.slot,amount:0,number:'+0',heal:true,kind:'heal'};
  const received=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_HEAL_REDUCTION_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingHealingMultiplier)?effect.mobileSourceValues.incomingHealingMultiplier:1),1);
@@ -923,7 +926,13 @@ p2Perform=function(actor){
   };
  }
  try{
-   if(actor)actor.nlMobileSourceSkillAction=!!(actor.team==='e'&&battle?.nlContentC&&actor.morale>=100&&!moraleOnly);
+   if(actor)actor.nlMobileSourceSkillAction=!!(d&&actor.morale>=100&&!moraleOnly);
+   // Chước Giới blocks only the next normal action, not a morale skill.
+   if(actor?.nlMobileNoNormal){
+     actor.nlMobileNoNormal=false;
+     if(actor.morale<100)p2Status(actor,MOBILE_NO_NORMAL,1);
+   }
+   if(actor?.nlMobileTrait?.name==='Kình Nỏ')actor.nlMobilePierceActive=p2Random()<mobileTraitRate(actor,[.15,.24,.40]);
    if(actor?.nlMobileTrait){
      actor.nlMobileActionPattern=actor.morale>=100?(p2Skill(actor)?.pattern||'single'):'single';
    }
@@ -949,14 +958,25 @@ p2Perform=function(actor){
      if(actor.nlMobileTrait.name==='Công Tâm'&&p2Random()<mobileTraitRate(actor,[.30,.50,.80])){
        const target=(actor.team==='p'?battle.e:battle.p).find(u=>u.hp>0);if(target){p2Morale(target,-15);label='Công Tâm';}
      }
+     const enemies=(actor.team==='p'?battle.e:battle.p).filter(u=>u.hp>0);
+     const hit=(event.hits||[]).find(h=>h.team!==actor.team),target=enemies.find(u=>u.slot===hit?.slot)||enemies[0];
+     if(actor.nlMobileTrait.name==='Chước Giới'&&target&&p2Random()<mobileTraitRate(actor,[.15,.24,.40])){target.nlMobileNoNormal=true;label='Chước Giới';}
+     if(actor.nlMobileTrait.name==='Giẫm Đạp'&&target&&p2Random()<mobileTraitRate(actor,[.09,.15,.24])){
+       for(const t of enemies.filter(u=>Math.floor(u.slot/3)===Math.floor(target.slot/3))){
+         t.nlMobileTrample=(t.nlMobileTrample||0)+1;
+         if(t.nlMobileTrample>=4){t.nlMobileTrample=0;p2Status(t,MOBILE_CONTROL_STATUS,1);}
+       }label='Giẫm Đạp';
+     }
+     if(actor.nlMobilePierceActive)label='Kình Nỏ';
      if(label){event.description+=' · '+label;event.state=p2Snapshot();battle.log=event.description;}
    }
    return result;
- }finally{p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
+ }finally{p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
  const plan=battle?.nlContentC;
+ if(actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&mobileHeroSkill(actor.id)?.sourceTargetMode==='LEAST_TROOPS')return battle.e.filter(u=>u.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot)[0]||null;
  if(actor?.team!=='e'||!plan)return nlContentCBaseTarget(actor,mode);
  if(actor.nlCDescriptor?.sourceTargetMode==='LEAST_TROOPS')
    return battle.p.filter(unit=>unit.hp>0).sort((a,b)=>(Number(a.troops)||Number(a.hp)||0)-(Number(b.troops)||Number(b.hp)||0)||a.slot-b.slot)[0]||null;
@@ -1067,14 +1087,16 @@ earnedText=function(rewards){const rest={...(rewards||{})},ct=nat(rest.chienTich
 const priorUnit=p2Unit;
 p2Unit=function(id,team,slot,stage){
  const exact=team==='p'&&battle?.mode!=='cltq'?mobileHeroQuality(id):null,prior=HEROES[id];
+ const talent=team==='p'&&battle?.mode!=='cltq'?mobileTraitChoice(id):null;
+ const allRound=talent?.name==='Toàn Năng'?[9,15,24][talent.rank-1]:0;
  let u;
- if(exact&&prior){
-   // Use source attributes in the existing unit formula, retaining unresolved DEF/AGI and legacy modifiers.
-   const g=exact.growth;HEROES[id]={...prior,lead:g.lead,atk:g.war,int:g.int};
+ if((exact||allRound)&&prior){
+   // Apply the source attribute bonus before the single native stat formula.
+   const g=exact?.growth;HEROES[id]={...prior,lead:(g?.lead??prior.lead??0)+allRound,atk:(g?.war??prior.atk??0)+allRound,int:(g?.int??prior.int??0)+allRound};
    try{u=priorUnit(id,team,slot,stage);}finally{HEROES[id]=prior;}
  }else u=priorUnit(id,team,slot,stage);
  if(team!=='p'||!u||battle?.mode==='cltq')return u;
- if(exact)u.nlMobileHero={sourceId:exact.sourceId,quality:exact.growth.q,leadership:exact.growth.lead,war:exact.growth.war,intellect:exact.growth.int,skill:exact.stage?.skill?.name||null,faction:exact.faction};
+ if(exact)u.nlMobileHero={sourceId:exact.sourceId,quality:exact.growth.q,leadership:exact.growth.lead,war:exact.growth.war,intellect:exact.growth.int,traitAttributeBonus:allRound,skill:exact.stage?.skill?.name||null,faction:exact.faction};
  applyMobileTroopProfile(u,team);
  const sourceSkill=mobileHeroSkill(id),awake=awakeningDescriptor(id);if(sourceSkill)u.skill=sourceSkill.tag;else if(awake?.descriptor)u.skill=awake.descriptor.tag;
  const s=state(),flat={},pct={};let troopCapacity=0,healing=0;
@@ -1135,7 +1157,7 @@ function mobileTroopPanel(){
   const stats='V.C '+st.strengthAtk+' · C.C '+st.leaderAtk+' · M.C '+st.intellectAtk+' · V.P '+st.strengthDef+' · C.P '+st.leaderDef+' · M.P '+st.intellectDef+' · Bạo '+Math.round(st.critical*100)+'% · Phản '+Math.round(st.strikeBack*100)+'%';
   const desc=t.typeName+' · Bậc '+t.tier+(selectable&&!mobileHeroTroopAllowed(heroId,t.type)?' · Tướng không tương thích dòng quân':'')+' · '+stats+' · '+(t.desc||'')+(selectable?' · Doanh trại '+q.barracks+' / Chỉ huy '+q.commander+' / '+fmt(q.silver)+' Bạc / '+q.merit+' Chiến công':' · NPC/thuyền/đơn vị đặc biệt');
   return row(t.name,desc,selectable?btn('mobile-troop',t.id,on?'Đang dùng':'Chuyển quân',on||!mobileTroopCanSelect(heroId,t.id)):'');
- },'mobile-troop-page')+'<p class="tiny">Hệ số gốc SOURCE_EXACT; điều kiện và giá chuyển quân SIMULATED. Mô tả đặc tính được bảo toàn; phản kích và 4 đặc tính chưa đầy đủ runtime.</p>'+mobileTraitPanel());
+ },'mobile-troop-page')+'<p class="tiny">Hệ số gốc SOURCE_EXACT; điều kiện và giá chuyển quân SIMULATED. Mô tả đặc tính được bảo toàn; phản kích chưa đầy đủ runtime; 21 đặc tính có adapter, quy tắc đường thẳng/đòn thường cần nghiệm thu thực tế.</p>'+mobileTraitPanel());
 }
 function troopPanel(){if(!owned(heroId))heroId=game.roster[0]||'';return pane('troops','Quân WEB cấp 4 · '+tier4.size,'<p>Nhánh WEB 2011 · yêu cầu 10 lần chuyển sinh, Tháp 40, Doanh Trại 4 · 300 Tướng Hồn + 5.000 Bạc.</p><select data-nlc-hero>'+game.roster.map(id=>'<option value="'+esc(id)+'" '+(id===heroId?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select>'+pages(NL_C_TIER4,unitPage,t=>row(t.name,t.sourceName+' · '+t.familyName,btn('tier4',t.id,nlwB4Active(heroId)?.id===t.id?'Đang dùng':'Chuyển quân',!!battle||!owned(heroId)||floor()<40||nat(game.nlClassicWorldA4?.rebirth?.[heroId])<10||game.buildings.barracks<4||state().soul<300||game.silver<5000)),'unit-page'));}
 function towerPanel(){
