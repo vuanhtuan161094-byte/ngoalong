@@ -58,6 +58,8 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R3 gameplay source delta (unverified build)
 
+- Prior R1 startup CI 45838580915 loaded Save v5 and native unit, but failed a stale exact count (17 source bundles vs actual 21). R3 keeps exact startup coverage checks: 21 bundles, 9 exchange materials, 6 recipes, 64 Mobile playable consumables/materials and 669 legacy project items. Isolated execution of actual six source exchange recipes produced three terminal items, debited 14,400 silver for 12 base ingredients and rejected duplicate receipt; not browser acceptance.
+
 - Six exact material exchange ratios (2:1), nine involved material records. Three raw materials have simulated merchant acquisition at commander 100; six derived links are processed through the shared inventory ledger. Terminal material uses outside these recipes remain unresolved.
 
 - Three offline naval objectives reuse native P2 launch, formation, ship coefficients, battle report and settlement. Ship identities/coefficients source-backed; gates, opponents, roles, first/repeat rewards and daily cap simulated. Existing cargo and city facilities preserved. No dedicated naval visuals or native browser PASS yet.
