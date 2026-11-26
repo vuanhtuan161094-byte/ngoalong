@@ -267,7 +267,7 @@
     ],
     "unknownSoldierIds": {}
   },
-  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and seven selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and eight selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
   "fields": [
     {
       "sourcePointer": "/key",
@@ -408,7 +408,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/effects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 7, 12, 16 and 26 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
+      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 7, 12, 16, 26 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
       "runtimeStatus": "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
@@ -432,15 +432,15 @@
     {
       "sourcePointer": "/vn/npcs/formation/activeSkill/desc/coefficient",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "simple single-hit coefficient parsed from the source description into the P2 scale; unparsed or multi-stage formulas retain an explicit fallback",
-      "runtimeStatus": "PARTIALLY_DERIVED_FROM_SOURCE_WITH_SIMULATED_FALLBACK",
+      "runtimeField": "simple single-hit percentage parsed from the source description into the P2 scale; conditional low-troop damage multipliers, unparsed coefficients and multi-stage formulas remain unresolved",
+      "runtimeStatus": "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_CONDITIONS",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     },
     {
       "sourcePointer": "/vn/npcs/formation/activeSkill/desc/target",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "single, row, column, back-row, all-enemy, and all-ally targets parsed when stated; other target language remains unresolved",
+      "runtimeField": "single, row, column, back-row, all-enemy, all-ally and least-troop single targets parsed when stated; other target language remains unresolved",
       "runtimeStatus": "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_FALLBACK",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
@@ -448,7 +448,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/activeSkill/desc/secondaryEffects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "Thiết Bích source text/detail maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Ám Tế, Tăng Thường Kích/Tăng Tấn Công, Giáng Thường Kích/Giảm Tấn Công and Ngủ Say are adapted from source detail when target, chance and duration are explicit; other statuses, multi-hit rules and conditions remain unresolved",
+      "runtimeField": "Thiết Bích maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Ám Tế, Tăng Thường Kích/Tăng Tấn Công, Giáng Thường Kích/Giảm Tấn Công, Ngủ Say and Hư Nhược are adapted from source effect rows and text; Hư Nhược survivor branch and conditional 500/145 morale are read from source text; other statuses, multi-hit rules and conditions remain unresolved",
       "runtimeStatus": "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"

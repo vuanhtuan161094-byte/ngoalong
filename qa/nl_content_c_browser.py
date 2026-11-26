@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=4&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=7&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -67,9 +67,13 @@ def main():
           checks.mobileNpcSkillDiagnostics={sourceSkill:firstSourceSkill,enemySkill:b?.e?.[0]?.skill,
             descriptor:firstEnemySkill,mobileSource:b?.e?.[0]?.nlMobileSource};
           const controlProbe=c.skillProbe('Cường Tập'),controlDescriptor=controlProbe&&c.describeSkill(controlProbe.skill,'infantry',false,controlProbe.effects),
-            guardProbe=c.skillProbe('Thủ Hộ'),guardDescriptor=guardProbe&&c.describeSkill(guardProbe.skill,'strategist',false,guardProbe.effects);
+            guardProbe=c.skillProbe('Thủ Hộ'),guardDescriptor=guardProbe&&c.describeSkill(guardProbe.skill,'strategist',false,guardProbe.effects),
+            noBuffProbe=c.skillProbe('Bách Lý Truy Hồn'),noBuffDescriptor=noBuffProbe&&c.describeSkill(noBuffProbe.skill,'infantry',false,noBuffProbe.effects);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
+          checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
+            noBuffDescriptor?.sourceTargetMode==='LEAST_TROOPS'&&noBuffDescriptor?.sourceConditionalMorale?.onKill===500&&noBuffDescriptor?.sourceConditionalMorale?.onSurvival===145;
+          checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
           const npcSkillEvent=b.events.at(-1);
@@ -168,6 +172,19 @@ def main():
             }else checks.mobileSourceGuardInNativeCombat=false;
             window.p2Random=oldRandom;
           }else checks.mobileSourceGuardInNativeCombat=false;
+          q.closeBattle('city');
+          const fb=launchStatusProbe(noBuffProbe),fa=fb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Bách Lý Truy Hồn');
+          if(fb&&fa){const app=fa.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='77');app.chance=1;fa.morale=100;
+            for(const unit of fb.p){unit.hp=unit.maxHp=100000000;unit.alive=true;c.p2Status(unit,'mobile-source-incoming',2);}
+            const priorHit=fb.events.length;q.perform(fa);const ev=fb.events.at(-1),hit=ev?.hits?.find(row=>row.team==='p'),target=hit&&fb.p.find(unit=>unit.slot===hit.slot);
+            const status=target?.effects.find(effect=>effect.kind==='mobile-source-no-buffs');
+            checks.mobileSourceNoBuffInNativeCombat=ev?.actor===fa.name&&fb.events.length===priorHit+1&&!!status&&status.turns===5&&
+              status.mobileSource?.sourceEffectId==='77'&&target.effects.some(effect=>effect.kind==='mobile-source-incoming')&&
+              !c.p2Status(target,'mobile-source-attack-up',2)&&fa.morale===130&&ev.hits.some(row=>row.slot===target.slot&&row.team==='p');
+            checks.mobileSourceNoBuffCombatDiagnostics={npcId:noBuffProbe.npcId,skill:fa.nlMobileSource?.sourceSkillName,morale:fa.morale,
+              apps:fa.nlCDescriptor.sourceApplications,event:{actor:ev.actor,kind:ev.kind,mode:ev.mode,hits:ev.hits},
+              target:target?{hp:target.hp,effects:target.effects}:null};
+          }else checks.mobileSourceNoBuffInNativeCombat=false;
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
