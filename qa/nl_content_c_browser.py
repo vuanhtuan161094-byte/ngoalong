@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=9&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=10&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -68,13 +68,19 @@ def main():
             descriptor:firstEnemySkill,mobileSource:b?.e?.[0]?.nlMobileSource};
           const controlProbe=c.skillProbe('Cường Tập'),controlDescriptor=controlProbe&&c.describeSkill(controlProbe.skill,'infantry',false,controlProbe.effects),
             guardProbe=c.skillProbe('Thủ Hộ'),guardDescriptor=guardProbe&&c.describeSkill(guardProbe.skill,'strategist',false,guardProbe.effects),
-            noBuffProbe=c.skillProbe('Bách Lý Truy Hồn'),noBuffDescriptor=noBuffProbe&&c.describeSkill(noBuffProbe.skill,'infantry',false,noBuffProbe.effects);
+            noBuffProbe=c.skillProbe('Bách Lý Truy Hồn'),noBuffDescriptor=noBuffProbe&&c.describeSkill(noBuffProbe.skill,'infantry',false,noBuffProbe.effects),
+            defenseProbe=c.skillProbe('Chấn Kích'),defenseDescriptor=defenseProbe&&c.describeSkill(defenseProbe.skill,'strategist',false,defenseProbe.effects),
+            deathProbe=c.skillProbe('Tử Thần'),deathDescriptor=deathProbe&&c.describeSkill(deathProbe.skill,'strategist',false,deathProbe.effects);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
             noBuffDescriptor?.sourceTargetMode==='LEAST_TROOPS'&&noBuffDescriptor?.sourceConditionalMorale?.onKill===500&&noBuffDescriptor?.sourceConditionalMorale?.onSurvival===145;
           checks.mobileSourceBuffAdapters=!!noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='5'&&app.scope==='self'&&app.turns===3&&app.values.criticalChanceAdd===.6)&&
             !!noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='49'&&app.scope==='self'&&app.turns===3&&app.values.outgoingDamageMultiplier===1.15&&app.stackingClassification==='SIMULATED_ADDITIVE_PER_STACK');
+          checks.mobileSourceDefenseDescriptor=defenseDescriptor?.sourceApplications?.some(app=>app.sourceId==='18'&&app.kind==='mobile-source-defense-down'&&app.scope==='enemies'&&app.turns===3&&app.values.incomingDefenseMultiplier===.5);
+          checks.mobileSourceConditionalControlDescriptor=deathDescriptor?.sourceConditionalMorale?.onKill===500&&deathDescriptor?.sourceConditionalMorale?.onSurvival===0&&
+            deathDescriptor?.sourceConditionalMorale?.onAction===50&&deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.sourceId==='2'&&
+            deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.turns===1;
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -185,14 +191,13 @@ def main():
               !c.p2Status(target,'mobile-source-attack-up',2)&&fa.morale===130&&ev.hits.some(row=>row.slot===target.slot&&row.team==='p')&&
               fa.effects.some(effect=>effect.mobileSource?.sourceEffectId==='5'&&effect.turns===3)&&
               fa.effects.some(effect=>effect.mobileSource?.sourceEffectId==='49'&&effect.turns===3&&c.p2StatusValue(effect,'outgoingDamageMultiplier')===1.15);
-            const critTarget=structuredClone(target),plainTarget=structuredClone(target),plainActor=structuredClone(fa);
+            const plainTarget=structuredClone(target),plainActor=structuredClone(fa);
             plainActor.effects=plainActor.effects.filter(effect=>!['5','49'].includes(effect.mobileSource?.sourceEffectId));
-            const oldRandom=window.p2Random;window.p2Random=()=>.1;
-            const sourceBuffHit=c.p2Hit(fa,critTarget,'physical',1),plainHit=c.p2Hit(plainActor,plainTarget,'physical',1);
-            window.p2Random=oldRandom;
-            checks.mobileSourceCriticalInNativeCombat=sourceBuffHit.crit&&!plainHit.crit;
-            checks.mobileSourceAttackIncreaseInNativeCombat=sourceBuffHit.amount>plainHit.amount;
-            checks.mobileSourceCriticalCombatDiagnostics={source:{crit:sourceBuffHit.crit,amount:sourceBuffHit.amount},plain:{crit:plainHit.crit,amount:plainHit.amount},
+            plainActor.crit=0;
+            const sourceBuffHits=Array.from({length:16},()=>c.p2Hit(fa,structuredClone(target),'physical',1)),plainHit=c.p2Hit(plainActor,plainTarget,'physical',1);
+            checks.mobileSourceCriticalInNativeCombat=sourceBuffHits.some(hit=>hit.crit)&&!plainHit.crit;
+            checks.mobileSourceAttackIncreaseInNativeCombat=Math.abs(c.p2StatusFactor(fa,'outgoingDamageMultiplier')-1.15)<1e-9;
+            checks.mobileSourceCriticalCombatDiagnostics={sourceCrits:sourceBuffHits.filter(hit=>hit.crit).length,sourceAmount:sourceBuffHits[0]?.amount,plain:{crit:plainHit.crit,amount:plainHit.amount},
               sourceCrit:fa.crit,critBonus:fa.effects.find(effect=>effect.mobileSource?.sourceEffectId==='5')?.mobileSourceValues?.criticalChanceAdd,
               sourceAttack:c.p2StatusFactor(fa,'outgoingDamageMultiplier')};
             const attackStack=fa.effects.find(effect=>effect.mobileSource?.sourceEffectId==='49');
@@ -202,6 +207,28 @@ def main():
               apps:fa.nlCDescriptor.sourceApplications,event:{actor:ev.actor,kind:ev.kind,mode:ev.mode,hits:ev.hits},
               target:target?{hp:target.hp,effects:target.effects}:null};
           }else checks.mobileSourceNoBuffInNativeCombat=false;
+          q.closeBattle('city');
+          const db=launchStatusProbe(defenseProbe),da=db?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Chấn Kích');
+          if(db&&da){da.morale=100;q.perform(da);const defenseEvent=db.events.at(-1),affected=db.p.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='18'));
+            checks.mobileSourceDefenseInNativeCombat=defenseEvent?.skill==='Chấn Kích'&&affected.length===db.p.filter(unit=>unit.hp>0).length&&
+              affected.every(unit=>unit.effects.find(effect=>effect.mobileSource?.sourceEffectId==='18')?.turns===3&&c.p2StatusFactor(unit,'incomingDefenseMultiplier')===.5);
+          }else checks.mobileSourceDefenseInNativeCombat=false;
+          q.closeBattle('city');
+          const xb=launchStatusProbe(deathProbe),xa=xb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Tử Thần');
+          if(xb&&xa){xa.morale=100;for(const unit of xb.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}q.perform(xa);
+            const deathEvent=xb.events.at(-1),deathHit=deathEvent?.hits?.find(row=>row.team==='p'),survivor=deathHit&&xb.p.find(unit=>unit.slot===deathHit.slot),control=survivor?.effects.find(effect=>effect.kind==='mobile-source-control');
+            checks.mobileSourceConditionalControlInNativeCombat=deathEvent?.skill==='Tử Thần'&&survivor?.hp>0&&!!control&&control.turns===1&&
+              control.mobileSource?.sourceEffectId==='2'&&xa.morale===63;
+            checks.mobileSourceConditionalControlDiagnostics={skill:deathEvent?.skill,morale:xa.morale,branch:xa.nlCDescriptor?.sourceConditionalMorale,
+              hit:deathHit,target:survivor?{hp:survivor.hp,effects:survivor.effects}:null};
+          }else {checks.mobileSourceConditionalControlInNativeCombat=false;checks.mobileSourceConditionalControlDiagnostics={probe:deathProbe,descriptor:deathDescriptor};}
+          q.closeBattle('city');
+          const kb=launchStatusProbe(deathProbe),ka=kb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Tử Thần');
+          if(kb&&ka){ka.morale=100;for(const unit of kb.p){unit.hp=1;unit.alive=true;}q.perform(ka);
+            const killEvent=kb.events.at(-1),killHit=killEvent?.hits?.find(row=>row.team==='p'),victim=killHit&&kb.p.find(unit=>unit.slot===killHit.slot);
+            checks.mobileSourceConditionalKillInNativeCombat=killEvent?.skill==='Tử Thần'&&victim?.hp===0&&
+              !victim.effects.some(effect=>effect.kind==='mobile-source-control')&&ka.morale===130;
+          }else checks.mobileSourceConditionalKillInNativeCombat=false;
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;

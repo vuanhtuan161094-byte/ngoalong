@@ -18,7 +18,8 @@ NL_GAME_DATA.statusEffects.effects[MOBILE_DAMAGE_ONE_STATUS]={duration:1,polarit
 const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-source-sleep',
  MOBILE_MORALE_LOCK_STATUS='mobile-source-morale-lock',MOBILE_INCOMING_STATUS='mobile-source-incoming',
  MOBILE_ATTACK_UP_STATUS='mobile-source-attack-up',MOBILE_ATTACK_STACK_STATUS='mobile-source-attack-stack-up',
- MOBILE_CRIT_UP_STATUS='mobile-source-crit-up',MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
+ MOBILE_CRIT_UP_STATUS='mobile-source-crit-up',MOBILE_DEFENSE_DOWN_STATUS='mobile-source-defense-down',
+ MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
  MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs';
 for(const [kind,spec] of Object.entries({
  [MOBILE_CONTROL_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1},
@@ -30,6 +31,8 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'DERIVED_FROM_SOURCE_WITH_SIMULATED_STACK_SCALING',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'49'}},
  [MOBILE_CRIT_UP_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'5'}},
+ [MOBILE_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'18'}},
  [MOBILE_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_NO_BUFFS_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'unremovable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false}
 }))NL_GAME_DATA.statusEffects.effects[kind]={...spec,provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition}};
@@ -40,6 +43,7 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '5':{kind:MOBILE_CRIT_UP_STATUS,mechanic:'critical-increase'},
  '7':{kind:MOBILE_MORALE_LOCK_STATUS,mechanic:'no-morale-gain'},
  '12':{kind:MOBILE_ATTACK_UP_STATUS,mechanic:'attack-increase'},
+ '18':{kind:MOBILE_DEFENSE_DOWN_STATUS,mechanic:'defense-reduction'},
  '49':{kind:MOBILE_ATTACK_STACK_STATUS,mechanic:'stackable-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -129,12 +133,15 @@ function mobileSourceApplications(skill,effects){
   if(!rule||!catalog||!sourceEffect?.name)continue;
   const name=mobileTextKey(sourceEffect.name),marker='['+name+']';let at=fold.indexOf(marker),context='';
   if(at>=0)context=fold.slice(Math.max(0,at-110),at);
+  else if(id==='18'&&/vat phong.{0,100}giam/.test(fold)){at=fold.search(/vat phong/);context=fold.slice(at,at+180);}
   else if(id==='16'&&/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/.test(fold)){at=fold.search(/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/);context=fold.slice(Math.max(0,at-45),at+110);}
   else if(id==='12'&&/tang.{0,60}(?:tan cong|cong)/.test(fold)){at=fold.search(/tang.{0,60}(?:tan cong|cong)/);context=fold.slice(Math.max(0,at-45),at+100);}
   if(at<0)continue;
   let scope=null;
   if(/(?:ban than|tu than)\s+nhan(?:\s+\[[^\]]+\]\s*,?)*\s*$/.test(context))scope='self';
   else if(/toan phe ta\s+nhan(?:\s+\[[^\]]+\]\s*,?)*\s*$/.test(context))scope='allies';
+  else if(id==='18'&&/vat phong\s+toan phe dich/.test(context))scope='enemies';
+  else if(id==='18'&&/(?:vat phong.{0,70}muc tieu|muc tieu.{0,70}vat phong)/.test(context))scope='targets';
   else if(/toan phe dich\s+(?:bi|nhan)\s*$/.test(context))scope='enemies';
   else if(/(?:muc tieu|doi phuong)\s+(?:bi|nhan)\s*$/.test(context)||id==='16')scope='targets';
   else if(id==='12'&&/toan phe ta/.test(context))scope='allies';
@@ -142,7 +149,7 @@ function mobileSourceApplications(skill,effects){
   else if(id==='12'&&/muc tieu|doi phuong/.test(context))scope='targets';
   if(!scope)continue;
   const detail=String(sourceEffect.detail||''),detailFold=mobileTextKey(detail);
-  const following=fold.slice(at+marker.length,at+marker.length+140);
+  const following=id==='18'?fold.slice(at,at+260):fold.slice(at+marker.length,at+marker.length+140);
   const duration=detailFold.match(/(\d+)\s*luot/)||following.match(/duy tri\s+(\d+)\s*luot/);
   if(!duration)continue;
   const chanceText=detailFold.match(/(?:ti le|xac suat)\s*(\d+(?:[.,]\d+)?)\s*%/);
@@ -158,10 +165,11 @@ function mobileSourceApplications(skill,effects){
   if(rule.mechanic==='attack-increase'&&percent!==null)app.values.outgoingDamageMultiplier=1+percent;
   if(rule.mechanic==='stackable-attack-increase'&&percent!==null){app.values.outgoingDamageMultiplier=1+percent;app.stackingClassification='SIMULATED_ADDITIVE_PER_STACK';}
   if(rule.mechanic==='critical-increase'&&percent!==null)app.values.criticalChanceAdd=percent;
+  if(rule.mechanic==='defense-reduction'&&percent!==null)app.values.incomingDefenseMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='attack-reduction'&&percent!==null)app.values.outgoingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='one-action-control'||rule.mechanic==='sleep-wakes-on-damage')app.values.skipActionChance=1;
   if(rule.mechanic==='no-morale-gain')app.values.moraleGainMultiplier=0;
-  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase'].includes(rule.mechanic);
+  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction'].includes(rule.mechanic);
   if(needsValue&&percent===null)continue;
   rows.push(app);
  }
@@ -174,8 +182,18 @@ function descriptor(skill,role,boss,effects=[]){
  const out=inferredDescriptor(name,role,boss),sourceFold=mobileTextKey(text);
  out.tag=name;out.sourceSkillName=name;out.sourceDescription=text;
  if(/(?:don vi dich|dich).{0,40}(?:linh it nhat|it quan nhat)/.test(sourceFold))out.sourceTargetMode='LEAST_TROOPS';
- const moraleBranch=sourceFold.match(/neu diet duoc muc tieu[\s\S]{0,100}?hoi\s+(\d+)\s+si khi[\s\S]{0,220}?neu khong[\s\S]{0,220}?ban than hoi\s+(\d+)\s+si khi/);
- if(moraleBranch)out.sourceConditionalMorale={onKill:Number(moraleBranch[1]),onSurvival:Number(moraleBranch[2]),classification:'SOURCE_EXACT'};
+ const moraleBranch=sourceFold.match(/neu diet duoc muc tieu[\s\S]{0,160}?hoi\s+(\d+)\s+si khi/);
+ if(moraleBranch){
+   const tail=sourceFold.slice(moraleBranch.index+moraleBranch[0].length),survivalMorale=tail.match(/neu khong[\s\S]{0,360}?ban than hoi\s+(\d+)\s+si khi/);
+   out.sourceConditionalMorale={onKill:Number(moraleBranch[1]),onSurvival:survivalMorale?Number(survivalMorale[1]):0,classification:'SOURCE_EXACT'};
+   const onActionMorale=sourceFold.match(/(?:ban than|toan phe ta) hoi\s+(\d+)\s+si khi[\s\S]{0,80}?neu diet duoc muc tieu/);
+   if(onActionMorale)out.sourceConditionalMorale.onAction=Number(onActionMorale[1]);
+   const noKillAt=tail.indexOf('neu khong'),noKillClause=noKillAt>=0?tail.slice(noKillAt,noKillAt+280):'',
+     controlDuration=noKillClause.match(/duy tri\s+(\d+)\s+luot/),
+     survivalControl=/(?:muc tieu|don vi dich)/.test(noKillClause)&&/hon loan/.test(noKillClause)?controlDuration:null;
+   if(survivalControl)out.sourceConditionalMorale.onSurvivalStatus={sourceId:'2',sourceName:'Hỗn Loạn',sourceDescription:MOBILE_BUFFS.records?.['2']?.ing||'',
+     kind:MOBILE_CONTROL_STATUS,turns:Number(survivalControl[1]),chance:1,values:{skipActionChance:1},classification:'SOURCE_EXACT'};
+ }
  out.sourceApplications=mobileSourceApplications(source,effects);
  if(out.sourceApplications.length){out.sourceSkillClassification='SOURCE_TEXT_AND_EFFECT_ADAPTER';
    out.skillFieldProvenance={name:'SOURCE_EXACT',description:'SOURCE_EXACT',coefficient:'UNRESOLVED',target:'UNRESOLVED',secondaryEffects:'SOURCE_EFFECT_CATALOG_ADAPTED'};
@@ -552,9 +570,13 @@ function applyMobileSourceConditionalMorale(actor,event,descriptor){
  if(actor?.team!=='e'||!battle?.nlContentC||event?.actor!==actor.name||event.mode==='stunned'||!branch)return;
  const hitUnits=(event.hits||[]).filter(hit=>hit.team==='p').map(hit=>battle.p.find(unit=>unit.slot===hit.slot)).filter(Boolean);
  if(!hitUnits.length)return;
- const killed=hitUnits.some(unit=>unit.hp<=0),before=actor.morale,requested=killed?branch.onKill:branch.onSurvival;
- p2Morale(actor,requested-before);
- const gained=actor.morale-before;
+ const killed=hitUnits.some(unit=>unit.hp<=0),moraleBefore=actor.morale,requested=killed?branch.onKill:branch.onSurvival;
+ if(!killed&&branch.onSurvivalStatus){
+   for(const target of hitUnits.filter(unit=>unit.hp>0))applyMobileSourceStatus(target,branch.onSurvivalStatus);
+ }
+ if(Number.isFinite(branch.onAction))p2Morale(actor,branch.onAction);
+ p2Morale(actor,requested);
+ const gained=actor.morale-moraleBefore;
  event.description+=' '+(killed?'Diệt mục tiêu':'Mục tiêu sống sót')+', sĩ khí '+(gained>=0?'+':'')+gained+'.';
  event.state=p2Snapshot();battle.log=event.description;
  const log=document.getElementById('combat-log');if(log)log.textContent=event.description;
