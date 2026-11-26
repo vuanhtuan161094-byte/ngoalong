@@ -30,7 +30,7 @@ const today=()=>dayId();
 function state(){
  if(!obj(game.nlClassicAdvanced))game.nlClassicAdvanced={};
  const s=game.nlClassicAdvanced;s.version=VERSION;
- for(const k of ['growth','territories','milestones','daily','guild','dispatch','naval','treasure'])if(!obj(s[k]))s[k]={};
+ for(const k of ['growth','territories','milestones','daily','guild','dispatch','naval','treasure','family'])if(!obj(s[k]))s[k]={};
  if(!Array.isArray(s.treasure.discoveries))s.treasure.discoveries=[];
  s.treasure.lastTripAt=nat(s.treasure.lastTripAt);
  if(!obj(s.treasure.job))s.treasure.job=null;
@@ -38,7 +38,7 @@ function state(){
  for(const k of ['claimed','receipts'])if(!Array.isArray(s[k]))s[k]=[];
  s.rank=clamp(nat(s.rank),0,RANKS.length-1);s.happiness=Number.isFinite(s.happiness)?clamp(Math.round(s.happiness),0,100):80;
  if(s.day!==today()){s.day=today();s.daily={};}
- for(const k of ['relief','invest','event','war','trial','donate','ship','treasure'])s.daily[k]=nat(s.daily[k]);
+ for(const k of ['relief','invest','event','war','trial','donate','ship','treasure','bond','heir'])s.daily[k]=nat(s.daily[k]);
  s.guild.level=clamp(nat(s.guild.level),0,10);s.guild.contribution=nat(s.guild.contribution);
  s.naval.ships=clamp(nat(s.naval.ships),0,10);
  return s;
@@ -146,12 +146,43 @@ function awaken(id){
  if(!h||!g.advanced||g.awakened||h.level<50||nat(game.nlClassicWorldA4?.rebirth?.[id])<1||!pay({silver:5000,merit:800}))return false;
  g.awakened=true;return done(s,'awaken:'+id,{silver:-5000,merit:-800});
 }
+// Dinh Phủ / Tri kỷ / Quý tử — offline original progression (all rates SIMULATED).
+const FAMILY_PATHS=[['martial','Võ học','atk','catk'],['guardian','Hộ quốc','def','tdef'],['strategy','Mưu học','matk','mdef']];
+function familyState(){const s=state(),f=s.family;
+ if(!obj(f.bonds))f.bonds={};if(!obj(f.heirs))f.heirs={};
+ return f;
+}
+function familyPath(path){return FAMILY_PATHS.find(x=>x[0]===path);}
+function familyProfile(id){const f=familyState(),b=f.bonds[id],h=f.heirs[id];
+ return {bond:familyPath(b?.path)?{path:b.path,level:clamp(nat(b.level),1,5)}:null,heir:familyPath(h?.path)?{path:h.path,level:clamp(nat(h.level),1,10)}:null};
+}
+function familyOpen(id){return owned(id)&&completed(8)&&lv('nl_city_manor')>=1&&game.hero[id].level>=15;}
+function bondCost(level){return {silver:500*level,grain:100*level};}
+function heirCost(level){return {silver:1000*level,merit:30*level};}
+function visitBond(id,path){
+ const s=state(),f=familyState(),p=familyProfile(id),next=(p.bond?.level||0)+1,def=familyPath(path);
+ if(!def||!familyOpen(id)||s.daily.bond>=5||next>5||(p.bond&&p.bond.path!==path))return false;
+ const cost=bondCost(next);if(!pay(cost))return false;
+ f.bonds[id]={path,level:next};s.daily.bond++;return done(s,'bond:'+id+':'+next,{silver:-cost.silver,grain:-cost.grain});
+}
+function trainHeir(id,path){
+ const s=state(),f=familyState(),p=familyProfile(id),next=(p.heir?.level||0)+1,def=familyPath(path);
+ if(!def||!familyOpen(id)||!completed(16)||!p.bond||p.bond.level<3||lv('nl_city_manor')<2||s.daily.heir>=3||next>10||(p.heir&&p.heir.path!==path))return false;
+ const cost=heirCost(next);if(!pay(cost))return false;
+ f.heirs[id]={path,level:next};s.daily.heir++;return done(s,'heir:'+id+':'+next,{silver:-cost.silver,merit:-cost.merit});
+}
+function familyBonus(id){
+ const f=familyProfile(id),out={};
+ for(const [p,rate] of [[f.bond,.01],[f.heir,.005]])if(p){const def=familyPath(p.path);for(const k of def.slice(2))out[k]=(out[k]||0)+p.level*rate;}
+ return out;
+}
 const priorUnit=p2Unit;
 p2Unit=function(id,team,slot,stage){
  const u=priorUnit(id,team,slot,stage);
  if(team!=='p'||!u||!owned(id)||battle?.mode==='cltq')return u;
  const g=game.nlClassicAdvanced?.growth?.[id];
  if(g?.awakened)for(const k of ['atk','catk','matk'])if(Number.isFinite(u[k]))u[k]=Math.round(u[k]*1.05);
+ for(const [k,v] of Object.entries(familyBonus(id)))if(Number.isFinite(u[k]))u[k]=Math.round(u[k]*(1+v));
  return u;
 };
 // A8: achievements, daily activities, repeatable native battles and first-win progress.
@@ -222,7 +253,7 @@ function claimTreasureLoot(){
  return done(settled,'treasure-loot-claim:'+pending.receipt);
 }
 let tabA='office',page=0,hero='';
-const tabs=[['office','Quan chức'],['treasure','Thám Bảo'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải vận'],['facility','Công trình']];
+const tabs=[['office','Quan chức'],['treasure','Thám Bảo'],['merchant','Ủy phái'],['guild','Quân đoàn'],['war','Quốc chiến'],['growth','Dưỡng tướng'],['family','Dinh Phủ'],['trial','Thí luyện'],['events','Hoạt động'],['achieve','Thành tựu'],['naval','Hải vận'],['facility','Công trình']];
 const btn=(action,id,label,disabled=false)=>'<button class="gold-button" data-nla59-action="'+action+'" data-nla59-id="'+esc(id)+'" '+(disabled?'disabled':'')+'>'+esc(label)+'</button>';
 const row=(title,desc,actions='')=>'<div class="nla59-row"><div><b>'+esc(title)+'</b><small>'+esc(desc)+'</small></div><div>'+actions+'</div></div>';
 const countdown=j=>Date.now()>=j.until?'Có thể nhận':Math.ceil((j.until-Date.now())/60000)+' phút';
@@ -261,6 +292,14 @@ function panel(){
   row('Huấn luyện cao cấp','900 Bạc + 60 Chiến công · XP chịu ảnh hưởng Thao Trường/Dinh Phủ',btn('train',hero,'Luyện',locked||!g.advanced||h.level>=nlClassicGrowthPolicy.cap(hero)))+
   row('Chuyển sinh','Lần '+n+'/10 · yêu cầu cấp '+(g.advanced?nlClassicGrowthPolicy.rebirthGate(hero):'60 sau đột phá')+' · về cấp 1 · 2.000 Bạc + 500 Chiến công',btn('rebirth',hero,'Chuyển sinh',locked||!g.advanced||n>=10||h.level<nlClassicGrowthPolicy.rebirthGate(hero)))+
   row('Giác ngộ',g.awakened?'Đã giác ngộ':'Cấp 50, chuyển sinh ≥1 · +5% công',btn('awaken',hero,'Giác ngộ',locked||!g.advanced||g.awakened||h.level<50||n<1));
+ }else if(tabA==='family'){
+  const p=familyProfile(hero),open=familyOpen(hero),heirOpen=open&&completed(16)&&(p.bond?.level||0)>=3&&lv('nl_city_manor')>=2;
+  b='<label>Võ tướng <select data-nla59-hero>'+game.roster.map(id=>'<option value="'+esc(id)+'" '+(id===hero?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select></label>';
+  b+='<p>Tri kỷ: mở sau ải 8, tướng cấp 15, Dinh Phủ cấp 1. Thăm hỏi '+s.daily.bond+'/5 hôm nay.</p>';
+  b+=(p.bond?FAMILY_PATHS.filter(x=>x[0]===p.bond.path):FAMILY_PATHS).map(x=>{const level=p.bond?.level||0,cost=bondCost(level+1);return row('Tri kỷ · '+x[1],'Cấp '+level+'/5 · +'+level+'% hai thuộc tính '+x.slice(2).join('/')+' · '+(level>=5?'Tối đa':fmt(cost.silver)+' Bạc + '+fmt(cost.grain)+' Lương'),btn('bond',x[0],level?'Thăm hỏi':'Kết giao',locked||!open||level>=5||s.daily.bond>=5));}).join('');
+  b+='<p>Quý tử: mở sau ải 16, Tri kỷ cấp 3, Dinh Phủ cấp 2. Giáo dưỡng '+s.daily.heir+'/3 hôm nay.</p>';
+  b+=(p.heir?FAMILY_PATHS.filter(x=>x[0]===p.heir.path):FAMILY_PATHS).map(x=>{const level=p.heir?.level||0,cost=heirCost(level+1);return row('Quý tử · '+x[1],'Cấp '+level+'/10 · +'+(level*.5)+'% '+x.slice(2).join('/')+' · '+(level>=10?'Tối đa':fmt(cost.silver)+' Bạc + '+fmt(cost.merit)+' Chiến công'),btn('heir',x[0],level?'Giáo dưỡng':'Chọn hướng',locked||!heirOpen||level>=10||s.daily.heir>=3));}).join('');
+  b+='<p class="tiny">Mô phỏng Dinh Phủ offline, không có hệ thống sinh sản. Chỉ số hỗ trợ trực tiếp võ tướng đã chọn; công thức SIMULATED.</p>';
  }else if(tabA==='events'){
   b=EVENTS.map(e=>row(e[0]==='relief'?'Cứu tế':e[0]==='supply'?'Tiếp tế':'Thương mại',e[2]+' Bạc + '+e[3]+' Lương → '+e[4]+' Chiến công',btn('event',e[0],'Thực hiện',locked||s.daily.event>=3||!completed(2)))).join('')+'<p>Hoạt động '+s.daily.event+'/3 hôm nay.</p>';
  }else if(tabA==='achieve'){
@@ -285,6 +324,6 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{if(e.target.matches?.('[data-nla59-hero]')&&owned(e.target.value)){hero=e.target.value;render();}});
 const css=document.createElement('style');css.textContent='.nla59-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}.nla59-tabs button,.nla59-row button{font-size:11px;padding:5px 8px}.nla59-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #665e43;padding:5px 0}.nla59-row b,.nla59-row small{display:block}.nla59-row small{font-size:10px;color:#c4bda8}.nla59 p{font-size:11px;margin:5px 0}.nla59 select{max-width:100%}@media(max-width:480px){.nla59{padding:6px}.nla59-row{padding:3px 0}.nla59-tabs button{padding:4px 6px}}';document.head.appendChild(css);
-if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,startTreasure,collectTreasure,claimTreasureLoot,treasureRoutes:TREASURE_ROUTES,joinGuild,donate,challenge,territoryIncome,breakthrough,advancedTrain,awaken,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
+if(window.__P2_ENABLE_QA__)window.__NL_ADVANCED_QA__=Object.freeze({state:()=>structuredClone(state()),rankUp,salary,relief,invest,dispatch,collectDispatch,startTreasure,collectTreasure,claimTreasureLoot,treasureRoutes:TREASURE_ROUTES,joinGuild,donate,challenge,territoryIncome,breakthrough,advancedTrain,awaken,visitBond,trainHeir,familyProfile,familyBonus,event,achievement,buildShip,seaTrade,collectSea,panel,source:'PROJECT_SIMULATED'});
 })();
 // === end NL-CLASSIC-A5-A9-V1 ===
