@@ -17,7 +17,8 @@ NL_GAME_DATA.statusEffects.effects[MOBILE_DAMAGE_ONE_STATUS]={duration:1,polarit
  provenance:{classification:'DERIVED_FROM_SOURCE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI_VIETNAMESE',sourceEffectId:'3'}};
 const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-source-sleep',
  MOBILE_MORALE_LOCK_STATUS='mobile-source-morale-lock',MOBILE_INCOMING_STATUS='mobile-source-incoming',
- MOBILE_ATTACK_UP_STATUS='mobile-source-attack-up',MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
+ MOBILE_ATTACK_UP_STATUS='mobile-source-attack-up',MOBILE_ATTACK_STACK_STATUS='mobile-source-attack-stack-up',
+ MOBILE_CRIT_UP_STATUS='mobile-source-crit-up',MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
  MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs';
 for(const [kind,spec] of Object.entries({
  [MOBILE_CONTROL_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1},
@@ -25,6 +26,10 @@ for(const [kind,spec] of Object.entries({
  [MOBILE_MORALE_LOCK_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,moraleGainMultiplier:0},
  [MOBILE_INCOMING_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_ATTACK_UP_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
+ [MOBILE_ATTACK_STACK_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'add-stack',stackLimit:99,expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'DERIVED_FROM_SOURCE_WITH_SIMULATED_STACK_SCALING',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'49'}},
+ [MOBILE_CRIT_UP_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'5'}},
  [MOBILE_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_NO_BUFFS_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'unremovable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false}
 }))NL_GAME_DATA.statusEffects.effects[kind]={...spec,provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition}};
@@ -32,8 +37,10 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '2':{kind:MOBILE_CONTROL_STATUS,mechanic:'one-action-control'},
  '3':{kind:MOBILE_DAMAGE_ONE_STATUS,mechanic:'damage-to-one'},
  '4':{kind:MOBILE_INCOMING_STATUS,mechanic:'damage-reduction'},
+ '5':{kind:MOBILE_CRIT_UP_STATUS,mechanic:'critical-increase'},
  '7':{kind:MOBILE_MORALE_LOCK_STATUS,mechanic:'no-morale-gain'},
  '12':{kind:MOBILE_ATTACK_UP_STATUS,mechanic:'attack-increase'},
+ '49':{kind:MOBILE_ATTACK_STACK_STATUS,mechanic:'stackable-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
  '77':{kind:MOBILE_NO_BUFFS_STATUS,mechanic:'reject-new-beneficial-effects'}
@@ -126,8 +133,8 @@ function mobileSourceApplications(skill,effects){
   else if(id==='12'&&/tang.{0,60}(?:tan cong|cong)/.test(fold)){at=fold.search(/tang.{0,60}(?:tan cong|cong)/);context=fold.slice(Math.max(0,at-45),at+100);}
   if(at<0)continue;
   let scope=null;
-  if(/(?:ban than|tu than)\s+nhan\s*$/.test(context))scope='self';
-  else if(/toan phe ta\s+nhan\s*$/.test(context))scope='allies';
+  if(/(?:ban than|tu than)\s+nhan(?:\s+\[[^\]]+\]\s*,?)*\s*$/.test(context))scope='self';
+  else if(/toan phe ta\s+nhan(?:\s+\[[^\]]+\]\s*,?)*\s*$/.test(context))scope='allies';
   else if(/toan phe dich\s+(?:bi|nhan)\s*$/.test(context))scope='enemies';
   else if(/(?:muc tieu|doi phuong)\s+(?:bi|nhan)\s*$/.test(context)||id==='16')scope='targets';
   else if(id==='12'&&/toan phe ta/.test(context))scope='allies';
@@ -149,10 +156,12 @@ function mobileSourceApplications(skill,effects){
   if(id==='77'&&/neu khong/.test(context))app.condition='TARGET_SURVIVES';
   if(rule.mechanic==='damage-reduction'&&percent!==null)app.values.incomingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='attack-increase'&&percent!==null)app.values.outgoingDamageMultiplier=1+percent;
+  if(rule.mechanic==='stackable-attack-increase'&&percent!==null){app.values.outgoingDamageMultiplier=1+percent;app.stackingClassification='SIMULATED_ADDITIVE_PER_STACK';}
+  if(rule.mechanic==='critical-increase'&&percent!==null)app.values.criticalChanceAdd=percent;
   if(rule.mechanic==='attack-reduction'&&percent!==null)app.values.outgoingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='one-action-control'||rule.mechanic==='sleep-wakes-on-damage')app.values.skipActionChance=1;
   if(rule.mechanic==='no-morale-gain')app.values.moraleGainMultiplier=0;
-  const needsValue=['damage-reduction','attack-increase','attack-reduction'].includes(rule.mechanic);
+  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase'].includes(rule.mechanic);
   if(needsValue&&percent===null)continue;
   rows.push(app);
  }
@@ -293,6 +302,8 @@ p2Status=function(unit,kind,turns,...rest){
 const nlContentCMobileBaseStatusValue=p2StatusValue;
 p2StatusValue=function(effect,field){
  const sourceValue=effect?.mobileSourceValues?.[field];
+ if(field==='outgoingDamageMultiplier'&&effect?.kind===MOBILE_ATTACK_STACK_STATUS&&Number.isFinite(sourceValue))
+   return 1+((sourceValue-1)*Math.max(1,nat(effect.stacks)||1));
  return Number.isFinite(sourceValue)?sourceValue:nlContentCMobileBaseStatusValue(effect,field);
 };
 const nlContentCMobileBaseMorale=p2Morale;
@@ -485,7 +496,10 @@ p2Skill=function(actor){
 const nlContentCBaseHit=p2Hit;
 p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
- const beforeHp=target?.hp,beforeMorale=target?.morale,hit=nlContentCBaseHit(attacker,target,kind,mult,opts);
+ const beforeHp=target?.hp,beforeMorale=target?.morale;
+ const critAdd=(attacker?.effects||[]).reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.criticalChanceAdd)||0)*(effect.stacks||1),0);
+ const effectiveAttacker=critAdd?{...attacker,crit:Math.min(.95,(Number(attacker.crit)||0)+critAdd)}:attacker;
+ const hit=nlContentCBaseHit(effectiveAttacker,target,kind,mult,opts);
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
  const rawDamage=beforeHp-target.hp;let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction));

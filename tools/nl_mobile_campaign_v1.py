@@ -174,7 +174,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         ("/vn/npcs/formation", "all source 1-9 positions; zero-row records use an explicitly marked donor adapter", "APPLIED_OR_SIMULATED_DONOR_TO_NATIVE_P2_3X3"),
         ("/vn/npcs/formation/soldierId", "source troop ID and role", "APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/hp", "source unit HP retained; P2 battle scale adapter", "PRESERVED_AND_USED_AS_SCALE_INPUT"),
-        ("/vn/npcs/formation/effects", "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 7, 12, 16, 26 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved", "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER"),
+        ("/vn/npcs/formation/effects", "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 5, 7, 12, 16, 26, 49 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved", "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER"),
         ("/vn/npcs/formation/activeSkill/name", "exact source skill name used by the native combat event", "SOURCE_EXACT_APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/activeSkill/desc", "exact source skill description preserved on the combat unit and descriptor", "SOURCE_EXACT_PRESERVED_IN_RUNTIME"),
         ("/vn/npcs/formation/activeSkill/desc/coefficient", "simple single-hit percentage parsed from the source description into the P2 scale; conditional low-troop damage multipliers, unparsed coefficients and multi-stage formulas remain unresolved", "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_CONDITIONS"),
@@ -206,7 +206,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                      "legacyIdPreservation": "verified in the canonical projection against all 4,903 previously shipped NPC IDs",
                      "sourceMapNpcCount": [len(m["npcs"]) for m in maps],
                      "unknownSoldierIds": unknown_troops},
-        "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and eight selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+        "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and ten selected status IDs are parsed into a native P2 adapter, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
         "fields": fields,
     }
     return data, crosswalk

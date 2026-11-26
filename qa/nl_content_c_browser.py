@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=7&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds>=9&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -73,6 +73,8 @@ def main():
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
             noBuffDescriptor?.sourceTargetMode==='LEAST_TROOPS'&&noBuffDescriptor?.sourceConditionalMorale?.onKill===500&&noBuffDescriptor?.sourceConditionalMorale?.onSurvival===145;
+          checks.mobileSourceBuffAdapters=!!noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='5'&&app.scope==='self'&&app.turns===3&&app.values.criticalChanceAdd===.6)&&
+            !!noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='49'&&app.scope==='self'&&app.turns===3&&app.values.outgoingDamageMultiplier===1.15&&app.stackingClassification==='SIMULATED_ADDITIVE_PER_STACK');
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -180,7 +182,22 @@ def main():
             const status=target?.effects.find(effect=>effect.kind==='mobile-source-no-buffs');
             checks.mobileSourceNoBuffInNativeCombat=ev?.actor===fa.name&&fb.events.length===priorHit+1&&!!status&&status.turns===5&&
               status.mobileSource?.sourceEffectId==='77'&&target.effects.some(effect=>effect.kind==='mobile-source-incoming')&&
-              !c.p2Status(target,'mobile-source-attack-up',2)&&fa.morale===130&&ev.hits.some(row=>row.slot===target.slot&&row.team==='p');
+              !c.p2Status(target,'mobile-source-attack-up',2)&&fa.morale===130&&ev.hits.some(row=>row.slot===target.slot&&row.team==='p')&&
+              fa.effects.some(effect=>effect.mobileSource?.sourceEffectId==='5'&&effect.turns===3)&&
+              fa.effects.some(effect=>effect.mobileSource?.sourceEffectId==='49'&&effect.turns===3&&c.p2StatusValue(effect,'outgoingDamageMultiplier')===1.15);
+            const critTarget=structuredClone(target),plainTarget=structuredClone(target),plainActor=structuredClone(fa);
+            plainActor.effects=plainActor.effects.filter(effect=>!['5','49'].includes(effect.mobileSource?.sourceEffectId));
+            const oldRandom=window.p2Random;window.p2Random=()=>.1;
+            const sourceBuffHit=c.p2Hit(fa,critTarget,'physical',1),plainHit=c.p2Hit(plainActor,plainTarget,'physical',1);
+            window.p2Random=oldRandom;
+            checks.mobileSourceCriticalInNativeCombat=sourceBuffHit.crit&&!plainHit.crit;
+            checks.mobileSourceAttackIncreaseInNativeCombat=sourceBuffHit.amount>plainHit.amount;
+            checks.mobileSourceCriticalCombatDiagnostics={source:{crit:sourceBuffHit.crit,amount:sourceBuffHit.amount},plain:{crit:plainHit.crit,amount:plainHit.amount},
+              sourceCrit:fa.crit,critBonus:fa.effects.find(effect=>effect.mobileSource?.sourceEffectId==='5')?.mobileSourceValues?.criticalChanceAdd,
+              sourceAttack:c.p2StatusFactor(fa,'outgoingDamageMultiplier')};
+            const attackStack=fa.effects.find(effect=>effect.mobileSource?.sourceEffectId==='49');
+            checks.mobileSourceStackingAdapter=!!attackStack&&c.p2Status(fa,attackStack.kind,3)&&attackStack.stacks===2&&
+              Math.abs(c.p2StatusValue(attackStack,'outgoingDamageMultiplier')-1.3)<1e-9;
             checks.mobileSourceNoBuffCombatDiagnostics={npcId:noBuffProbe.npcId,skill:fa.nlMobileSource?.sourceSkillName,morale:fa.morale,
               apps:fa.nlCDescriptor.sourceApplications,event:{actor:ev.actor,kind:ev.kind,mode:ev.mode,hits:ev.hits},
               target:target?{hp:target.hp,effects:target.effects}:null};
