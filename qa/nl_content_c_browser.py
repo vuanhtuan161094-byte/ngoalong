@@ -43,19 +43,22 @@ def main():
           const sourceStatusSamples={};
           for(let mapId=1;mapId<=400;mapId++){
             const map=c.map('wiki-map-'+mapId);if(!map)continue;
-            for(const npc of map.npcs||[])for(const unit of npc.units||[]){
-              for(const id of ['33','50','58','74']){
-                if(sourceStatusSamples[id])continue;
-                const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
-                const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
-                const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
-                if(app)sourceStatusSamples[id]={mapId,npcId:npc.id,skill:unit.skill,effect,app};
-              }
-              if(sourceStatusSamples['58']?.app?.scope==='lowest-ally')continue;
-              if(String(unit.effects?.find(row=>String(row.id)==='58')?.id)==='58'&&unit.skill?.desc){
-                const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
-                const app=descriptor?.sourceApplications?.find(row=>row.sourceId==='58');
-                if(app?.scope==='lowest-ally')sourceStatusSamples['58-lowest']={mapId,npcId:npc.id,skill:unit.skill,effect:unit.effects.find(row=>String(row.id)==='58'),app};
+            for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
+              const npc=map.npcs[npcIndex];
+              for(const unit of npc.units||[]){
+                for(const id of ['33','50','58','74','184']){
+                  if(sourceStatusSamples[id])continue;
+                  const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
+                  const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
+                  const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
+                  if(app)sourceStatusSamples[id]={mapId,npcId:npc.id,npcIndex,slot:unit.slot,skill:unit.skill,effect,app};
+                }
+                if(sourceStatusSamples['58']?.app?.scope==='lowest-ally')continue;
+                if(String(unit.effects?.find(row=>String(row.id)==='58')?.id)==='58'&&unit.skill?.desc){
+                  const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
+                  const app=descriptor?.sourceApplications?.find(row=>row.sourceId==='58');
+                  if(app?.scope==='lowest-ally')sourceStatusSamples['58-lowest']={mapId,npcId:npc.id,skill:unit.skill,effect:unit.effects.find(row=>String(row.id)==='58'),app};
+                }
               }
             }
           }
@@ -255,6 +258,9 @@ def main():
             Math.abs(c.p2StatusFactor(lastStandUnit,'incomingDefenseMultiplier')-(1+lastStand58.app.values.defenseBonusAtZeroTroops*.5))<1e-9;
           checks.mobileSourceLastStandLowestAllyTarget=lastStandTarget58?.app?.scope==='lowest-ally'&&lastStandTarget58?.app?.turns===3;
           const moonSoul33=sourceStatusSamples['33'],healingVitality74=sourceStatusSamples['74'];
+          const silence184=sourceStatusSamples['184'],silenceTurns=Number(silence184?.skill?.desc.match(/\\[Vô Ngôn\\][\\s\\S]{0,45}?duy trì\\s+(\\d+)\\s*lượt/i)?.[1]);
+          checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
+            silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
           const moraleProtectedApplied=!!moonSoul33?.app&&c.applyMobileSourceStatus(moraleProtected,moonSoul33.app);
           if(moraleProtectedApplied)c.p2Morale(moraleProtected,-25);
@@ -348,12 +354,25 @@ def main():
           q.closeBattle('city');
           const beforeStatusProbe=q.getGame();
           function launchStatusProbe(probe){
-            if(!probe)return null;const map=c.map(probe.mapId),g=JSON.parse(JSON.stringify(beforeStatusProbe));
+            if(!probe)return null;const mapKey=String(probe.mapId),map=c.map(mapKey.startsWith('wiki-map-')?mapKey:'wiki-map-'+mapKey),g=JSON.parse(JSON.stringify(beforeStatusProbe));
             g.nlContentC.mobileCommanderLevel=440;g.nlClassicA.orders=60;g.hero[id].troops=3000;
             for(const prev of map.npcs.slice(0,probe.npcIndex))g.nlContentC.cleared[prev.id]=true;
             delete g.nlContentC.cleared[probe.npcId];q.setGame(g);
             return c.startNpc(probe.npcId)?q.debugBattle():null;
           }
+          const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
+          if(silenceBattle&&silenceCaster){
+            for(const unit of silenceBattle.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}
+            silenceCaster.morale=100;q.perform(silenceCaster);
+            const sourceEvent=silenceBattle.events.at(-1),silencedTarget=silenceBattle.p.find(unit=>unit.hp>0&&unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='184'));
+            if(silencedTarget){silencedTarget.morale=100;q.perform(silencedTarget);const targetEvent=silenceBattle.events.at(-1);
+              checks.mobileSourceSilenceInNativeCombat=sourceEvent?.skill===silence184.skill.name&&sourceEvent?.mode==='skill'&&
+                targetEvent?.actor===silencedTarget.name&&targetEvent?.mode==='normal'&&
+                silencedTarget.effects.some(effect=>effect.mobileSource?.sourceEffectId==='184'&&effect.turns===silence184.app.turns);
+              checks.mobileSourceSilenceDiagnostics={sample:{mapId:silence184.mapId,npcId:silence184.npcId,npcIndex:silence184.npcIndex,slot:silence184.slot,skill:silence184.skill,app:silence184.app},sourceEvent,target:{name:silencedTarget.name,morale:silencedTarget.morale,effects:silencedTarget.effects}};
+            }else {checks.mobileSourceSilenceInNativeCombat=false;checks.mobileSourceSilenceDiagnostics={sourceEvent,sample:{npcId:silence184.npcId,slot:silence184.slot,skill:silence184.skill,app:silence184.app},players:silenceBattle.p.map(unit=>({name:unit.name,hp:unit.hp,effects:unit.effects}))};}
+          }else {checks.mobileSourceSilenceInNativeCombat=false;checks.mobileSourceSilenceDiagnostics={battle:!!silenceBattle,caster:!!silenceCaster,sample:silence184};}
+          q.closeBattle('city');
           function compareSourceDefense(battleState,attacker,target,sourceId,kind,attackField,guardField){
             const plain=structuredClone(target),reduced=structuredClone(target),sourceActor=structuredClone(attacker);
             plain.effects=plain.effects.filter(effect=>effect.mobileSource?.sourceEffectId!==sourceId);

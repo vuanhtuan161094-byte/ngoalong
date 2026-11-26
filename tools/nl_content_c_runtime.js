@@ -414,6 +414,7 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_MAGIC_ATTACK_DOWN_STATUS='mobile-source-magic-attack-down',MOBILE_TACTIC_ATTACK_DOWN_STATUS='mobile-source-tactic-attack-down',
  MOBILE_SOURCE_ALL_DEFENSE_UP_STATUS='mobile-source-all-defense-up',MOBILE_SOURCE_LAST_STAND_DEFENSE_STATUS='mobile-source-last-stand-defense',
  MOBILE_SOURCE_MORALE_IMMUNITY='mobile-source-morale-immunity',MOBILE_SOURCE_HEAL_RECEIVED_UP='mobile-source-heal-received-up',
+ MOBILE_SOURCE_SILENCE_STATUS='mobile-source-skill-silence',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
@@ -467,6 +468,8 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'33',behavior:'negative morale changes blocked'}},
  [MOBILE_SOURCE_HEAL_RECEIVED_UP]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_PERCENT_WITH_DERIVED_HEAL_RECEIVED_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'74'}},
+ [MOBILE_SOURCE_SILENCE_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'184',behavior:'blocks skill actions while active'}},
  [MOBILE_PHYSICAL_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_MAGIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_TACTIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
@@ -533,6 +536,7 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '58':{kind:MOBILE_SOURCE_LAST_STAND_DEFENSE_STATUS,mechanic:'low-troop-defense'},
  '33':{kind:MOBILE_SOURCE_MORALE_IMMUNITY,mechanic:'negative-morale-immunity'},
  '74':{kind:MOBILE_SOURCE_HEAL_RECEIVED_UP,mechanic:'healing-received-increase'},
+ '184':{kind:MOBILE_SOURCE_SILENCE_STATUS,mechanic:'skill-silence'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -1097,7 +1101,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74','184'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','52','58','74','184'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1608,7 +1612,7 @@ function mobilePassivePlan(passive){
 function mobileBookCleanse(u,max){
  let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='harmful'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;
 }
-function mobileBookRestore(u,ratio){if(mobileBookHas(u,MOBILE_SOURCE_NO_HEAL))return 0;const old=u.hp,amount=Math.max(0,Math.round(u.maxHp*ratio*mobileSourceHealingMultiplier(u)));u.hp=Math.min(u.maxHp,u.hp+(mobileBookBroken(u)?Math.min(1,amount):amount));return u.hp-old;}
+function mobileBookRestore(u,ratio){if(mobileBookHas(u,MOBILE_SOURCE_NO_HEAL))return 0;const old=u.hp,received=(u.effects||[]).filter(effect=>effect.turns>0).reduce((factor,effect)=>{const value=effect.mobileSourceValues?.incomingHealingMultiplier;return Number.isFinite(value)?factor*Math.max(0,value):factor;},1),amount=Math.max(0,Math.round(u.maxHp*ratio*received));u.hp=Math.min(u.maxHp,u.hp+(mobileBookBroken(u)?Math.min(1,amount):amount));return u.hp-old;}
 function mobileBookDispel(u,max){let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='beneficial'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;}
 function mobileBookAction(actor,event){
  const b=actor?.nlMobileTraining?.book;if(!b||!battle||battle.replay||battle.mode==='cltq'||actor.hp<=0||event?.actor!==actor.name||event.mode==='stunned')return false;
@@ -1717,7 +1721,7 @@ function mobileResolveCounters(actor,event){
 }
 p2Perform=function(actor){
  // A silence blocks the morale action, not the normal action or stored morale.
- const savedMorale=actor?.morale,locked=!!actor&&savedMorale>=100&&mobileBookHas(actor,MOBILE_BOOK_SILENCE)&&battle?.mode!=='cltq'&&!battle?.replay;
+ const savedMorale=actor?.morale,locked=!!actor&&savedMorale>=100&&(mobileBookHas(actor,MOBILE_BOOK_SILENCE)||(actor.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_SILENCE_STATUS&&effect.turns>0))&&battle?.mode!=='cltq'&&!battle?.replay;
  if(locked)actor.morale=99;
  let moraleRestored=false;
  const restoreLockedMorale=()=>{if(locked&&!moraleRestored){actor.morale=clamp(savedMorale+(actor.morale-99),0,130);moraleRestored=true;}};
