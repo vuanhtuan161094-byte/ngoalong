@@ -1,0 +1,15 @@
+Sample: Diao Chan / Điêu Thuyền (wiki-mobile-hero-124)
+Status: visual style sample for review; not yet integrated into runtime manifests
+Provider: OpenAI ImageGen
+Output ID: exec-8aaeeffd-465a-45f9-ac90-af5de70effff
+Created: 2026-11-26 (UTC date; exact provider timestamp unavailable)
+Format: PNG; actual dimensions: 1024x1536
+Image SHA-256: e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f
+Cost: unknown; provider did not return an estimate
+
+Style references (style only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+
+VERBATIM GENERATION PROMPT
+Create ONE full-body vertical 2:3 character master of Diao Chan for a premium Chinese fantasy mobile game. The two input images are strict STYLE references only. Match their exact art direction: polished semi-realistic anime CG, softly idealized adult face with luminous expressive eyes, smooth luminous skin, elegant seductive glamour, sculpted but natural anatomy, lavish embroidered silk, intricate jewelry, refined fantasy details, cinematic palace lighting and rich depth. Do not copy their faces, clothes, symbols, or character identities. Diao Chan is a clearly adult 18-year-old woman, styled unmistakably as an adult; adult facial features, no youthful or school styling. Give her a curvy hourglass figure, full natural bust, long graceful model-like legs, and a confident alluring gaze with a subtle knowing smile. Character identity: elegant dancer, long dark flowing hair, crimson and rose-gold palette with ivory accents, peony hair ornaments, jade drops, delicate silk fan, embroidered crescent-moon and blossom motifs. Pose her reclining sideways on a richly carved palace chaise, asymmetrical and relaxed, torso turned toward the viewer, one knee bent and the other leg extended through a high slit. Costume: luxurious fitted crimson silk corset gown with opaque lining, deep fashion neckline showing tasteful cleavage, bare shoulders, ornate gold-thread embroidery, high side slit, sheer chiffon sleeves and floating outer drape over fully opaque coverage, elegant heels. Sensual high-fashion fantasy glamour, suggestive and bold while fully clothed; no nudity or sexual activity. Full figure from hair ornaments to shoes, filling 80% of frame. Warm candle rim light with cool moonlit fill, plush silk chamber softly blurred behind her. One woman only. Illustrated game CG, not a photograph. No text, logo, watermark, UI, chibi, western comic, rough painting, or plastic 3D.
