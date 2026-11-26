@@ -56,6 +56,10 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 | SAVE-01 Cài đặt / Save / transfer | Mobile UX reference; existing persistence is project-owned | schema v5, migration chain and transfer format | One save authority, import/export and receipt guard | Journal/settings windows | `muu_dinh_tam_quoc_v1` | PARTIAL | Test new/old/import-failure/reload/reward idempotence across origins. |
 | AND-01 Android package | Mobile is the product benchmark | No verified APK artifact | No Android wrapper/build pipeline; this environment has Java but no `gradle`, `sdkmanager`, `adb`, or configured Android SDK | Browser mobile layout is not an APK | Browser Save only | MISSING · TOOLCHAIN UNAVAILABLE | Add a shared-runtime wrapper/build instructions when an Android SDK/Gradle environment is available, then produce and checksum a real APK. |
 
+## R7 gameplay source delta (unverified build)
+
+- 89 equipment destinations across 13 group material identities mapped by unique tier, explicitly SIMULATED membership/quantity. Common material is additive to explicit craft reagent. Existing drop routes retained. 5 new source bundles (four EXP ranges and Bạc), receipt-seeded bounded EXP, simulated 1000 XP per commander level; daily wins award XP boxes. Source IDs45/52 scoped frenzy/resistance adapters. Isolated bundle tests 15/15 PASS; native browser acceptance pending. The Ứng Long group has no validated upgrade edge; remains open.
+
 ## R6 gameplay source delta (unverified build)
 
 - 136 valid source promotion edges tested using raw source equipment fixtures: missing material rejects, one material consumed, same UID/slot, destination and duplicate receipt correct. School growth now feeds native P2 attributes per earned hero level (growth hundredths × level−1; simulated). Added scoped source freeze ID41 and morale-on-damage ID35; actual NPC application coverage remains pending.

@@ -54,6 +54,11 @@ function nlMobileSourceBundles(source){
  // Additional fixed source rewards are connected to existing growth wallets.
  // Source quantities are exact; point and legacy material conversions, and merchant prices, are SIMULATED.
  const direct={
+  '539':{output:{name:'EXP chúa công',qty:100,maxQty:200,wallet:'commander-xp'},price:4000,gate:10},
+  '540':{output:{name:'EXP chúa công',qty:500,maxQty:800,wallet:'commander-xp'},price:18000,gate:30},
+  '541':{output:{name:'EXP chúa công',qty:1500,maxQty:2000,wallet:'commander-xp'},price:45000,gate:80},
+  '607':{output:{name:'EXP chúa công',qty:3200,maxQty:4000,wallet:'commander-xp'},price:90000,gate:150},
+  '1067':{output:{name:'Bạc',qty:1000000,wallet:'silver'},price:1100000,gate:100},
   '1063':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:4,wallet:'weapon-core'},price:2800},
   '1062':{output:{name:'Lệnh Phái Vũ Khí ĐB',qty:2,wallet:'weapon-core'},price:1400},
   '1061':{output:{name:'Lăng La',qty:2,wallet:'stack',itemId:'mobile-vng-item-fam_10'},price:4200},
@@ -155,6 +160,32 @@ for(const [id,link] of craftMaterials){
  if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);nlCraftNewMaterialCount++;
 }
 for(const gear of NL_MOBILE_GEAR_ALL){const link=craftByDest.get(gear.mobilePromotion?.to);if(link)gear.mobilePromotion.materials=[{id:link.id,name:link.name,quantity:link.quantity,classification:'SOURCE_IDENTITY_SIMULATED_QUANTITY'}];}
+// Series-only descriptions: the source names the set and level, not individual gear.
+ // Within each unique level band, add the common reagent to every valid promotion.
+ // This is a SIMULATED group-to-member mapping; precise single-item links remain intact.
+function nlMobileSeriesCraftLinks(source){
+ const by=new Map(source.equipment.map(x=>[String(x.id),x])),eligible=new Set(),out=[];
+ for(const g of source.equipment){const to=by.get(String(g.upgradeTo?.id));if(to&&g.type===to.type&&(to.level>g.level||to.level===g.level&&to.quality>g.quality))eligible.add(String(to.id));}
+ const groups=source.items.filter(x=>/ghép (?:Trang Bị .+|Thao ThiếtTrang Bị) \(Trang bị Lv\d+\)/iu.test(x.desc||''));
+ for(const r of groups){const level=Number(String(r.desc).match(/Lv(\d+)\)/i)?.[1]);const band=source.equipment.filter(g=>g.level===level&&eligible.has(String(g.id)));
+  if(!band.length||groups.filter(x=>Number(String(x.desc).match(/Lv(\d+)\)/i)?.[1])===level).length!==1||band.length>7)continue;
+  for(const g of band)out.push({id:'mobile-vng-item-'+r.id,sourceId:String(r.id),name:r.name,to:'mobile-vng-equipment-'+g.id,toName:g.name,level,quantity:1,classification:'SIMULATED_SERIES_MEMBERSHIP_AND_QUANTITY'});
+ }
+ return out;
+}
+const NL_MOBILE_SERIES_CRAFT=nlMobileSeriesCraftLinks(NL_MOBILE_INVENTORY);
+const seriesMaterials=new Map(NL_MOBILE_SERIES_CRAFT.map(x=>[x.id,x])),seriesByDest=new Map(NL_MOBILE_SERIES_CRAFT.map(x=>[x.to,x]));
+if(NL_MOBILE_SERIES_CRAFT.length!==89||seriesMaterials.size!==13||seriesByDest.size!==89)throw Error('MOBILE_SERIES_CRAFT_DRIFT');
+let nlSeriesNewMaterialCount=0;
+for(const [id,link] of seriesMaterials){
+ const index=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===id),prior=index>=0?NL_ITEM_CATALOGUE.items[index]:null,raw=NL_MOBILE_INVENTORY.items.find(x=>String(x.id)===link.sourceId);
+ const targets=NL_MOBILE_SERIES_CRAFT.filter(x=>x.id===id).map(x=>x.toName);
+ if(prior?.integration==='PLAYABLE'){prior.sourceCraftTargets=targets;continue;}
+ const row={id,sourceId:link.sourceId,name:link.name,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:raw.typeName,sourceDesc:raw.desc,sourceIcon:raw.icon,provenance:{classification:'SOURCE_EXACT'},sourceCraftTargets:targets,
+ acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:Math.max(10,link.level-20),shopCost:{silver:Math.max(1000,link.level*18)}},effectRule:null};
+ if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);nlSeriesNewMaterialCount++;
+}
+for(const gear of NL_MOBILE_GEAR_ALL){const link=seriesByDest.get(gear.mobilePromotion?.to);if(link){const materials=gear.mobilePromotion.materials||[];if(!materials.some(m=>m.id===link.id))gear.mobilePromotion.materials=[...materials,{id:link.id,name:link.name,quantity:link.quantity,classification:link.classification}];}}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -475,7 +506,7 @@ if(window.__P2_ENABLE_QA__){
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
-      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,
+      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{

@@ -127,14 +127,23 @@
         debitStack(m,id,qty);wallet[beautyId]=have+added;return {beautyId,qty,added};
       });
     }
-    function grantSourceBundle(next,m,rule){
+    function grantSourceBundle(next,m,rule,receipt){
       requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
       const c=next.nlContentC;
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        if(x.wallet==='silver'){addResource(next,'silver',x.qty);continue;}
+        if(x.wallet==='commander-xp'){
+          requireOk(safe(x.maxQty)&&x.maxQty>=x.qty&&x.maxQty<=1000000,'INVALID_EXP_RANGE');
+          const level=Math.min(440,Math.max(10,safe(c.mobileCommanderLevel)?c.mobileCommanderLevel:10,10+2*Object.keys(c.cleared||{}).length));
+          requireOk(level<440,'COMMANDER_LEVEL_CAP');
+          let seed=2166136261;for(const ch of receipt)seed=Math.imul(seed^ch.charCodeAt(0),16777619)>>>0;
+          const earned=x.qty+seed%(x.maxQty-x.qty+1),xp=safe(c.mobileCommanderXp)?c.mobileCommanderXp:0;requireOk(safe(xp+earned),'SOURCE_BUNDLE_OVERFLOW');
+          const total=xp+earned,levels=Math.min(440-level,Math.floor(total/1000));c.mobileCommanderLevel=level+levels;c.mobileCommanderXp=c.mobileCommanderLevel===440?0:total-levels*1000;continue;
+        }
         if(x.wallet==='stack'){requireOk(goodId(x.itemId),'INVALID_SOURCE_BUNDLE_OUTPUT');addStack(m,x.itemId,x.qty);continue;}
         const map={'seal-credit':'chienTich','blank':'blank','science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade'};
         let owner=x.wallet==='awakening'?c.mobileHeroMaterials:c;
@@ -171,7 +180,7 @@
         }
         debitStack(m,id,1);
         if(rule.kind==='GRANT_RESOURCE')addResource(next,rule.resource,rule.amount);
-        else if(rule.kind==='OPEN_SOURCE_BUNDLE')grantSourceBundle(next,m,rule);
+        else if(rule.kind==='OPEN_SOURCE_BUNDLE')grantSourceBundle(next,m,rule,receipt);
         else if(rule.kind==='OPEN_BUNDLE'){
           for(const [res,qty] of Object.entries(rule.resources))addResource(next,res,qty);
           for(const [item,qty] of Object.entries(rule.stacks))addStack(m,item,qty);
