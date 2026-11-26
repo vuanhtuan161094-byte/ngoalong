@@ -30,7 +30,7 @@
       if (row.integration === 'PLAYABLE') {
         const sourceEnabled=row.provenance.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
           (row.acquisitionRule?.kind==='MOBILE_DROP'||row.acquisitionRule?.kind==='SOURCE_CURRENCY'||
-           (row.acquisitionRule?.kind==='SHOP'&&row.acquisitionRule.classification==='SOURCE_EXACT'&&
+           (row.acquisitionRule?.kind==='SHOP'&&['SOURCE_EXACT','SIMULATED_FALLBACK'].includes(row.acquisitionRule.classification)&&
             row.acquisitionRule.shopCost&&typeof row.acquisitionRule.shopCost==='object'));
         assert(row.provenance.classification === 'SIMULATED'||sourceEnabled, 'UNAPPROVED_WIKI_ACTIVATION');
         if (row.category === 'equipment') {
@@ -160,6 +160,11 @@
         assert(acquisition && ['SHOP','SHOP_OR_AUTHORIZED_REWARD'].includes(acquisition.kind) &&
           acquisition.shopCost, 'EQUIPMENT_NOT_FOR_SALE');
         assert(next.items.length < equipmentCapacity(next), 'EQUIPMENT_CAPACITY');
+        if(acquisition.classification==='SIMULATED_FALLBACK'){
+          assert(integer(acquisition.minCommander,1)&&
+            Math.max(10,Number(next.nlContentC?.mobileCommanderLevel)||10)>=acquisition.minCommander,'COMMANDER_LEVEL_REQUIRED');
+          assert(integer(row.mobileSale?.amount,1)&&integer(acquisition.shopCost.silver,1)&&acquisition.shopCost.silver>row.mobileSale.amount,'FALLBACK_PRICE_ARBITRAGE');
+        }
         pay(next, acquisition.shopCost);
         for(const material of acquisition.shopMaterials||[]){
           available(material.id,'material');
