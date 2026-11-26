@@ -168,6 +168,7 @@ function nlItemAction(action,arg){
     action==='unequip'?nlItemApi.unequip(game,heroId,arg.slot,receipt):
     action==='reinforce'?nlItemApi.reinforce(game,arg.uid,receipt,arg.targetLevel):
     action==='refine'?nlItemApi.refine(game,arg.uid,receipt):
+    action==='mobile-refine'&&!battle?nlItemApi.mobileRefine(game,arg.uid,arg.pool,receipt):
     {ok:false,code:'UNSUPPORTED_ACTION'};
   return nlItemApply(result,{actionNonce:nonce});
 }
@@ -282,6 +283,7 @@ document.addEventListener('click',function(ev){
     id:control.getAttribute('data-item'),
     uid:control.getAttribute('data-uid'),
     slot:control.getAttribute('data-slot'),
+    pool:control.getAttribute('data-pool'),
     targetLevel:control.getAttribute('data-target-level')?Number(control.getAttribute('data-target-level')):undefined
   });
 },true);
