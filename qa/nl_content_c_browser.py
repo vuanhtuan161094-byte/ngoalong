@@ -62,6 +62,16 @@ def main():
           checks.mobileTroopSave=c.mobileTroopAssigned(mobileOwner)?.id==='2'&&q.getGame().version===5;
           checks.mobileExcludeNpcShip=!c.mobileTroopChoose(id,'112')&&!c.mobileTroopChoose(id,'103');
           checks.mobileTraitCatalog=c.mobileTraitSupported().length===21;
+          const multiDesc=c.describeSkill({name:'Kiểm tra liên kích',desc:'[C.Pháp] Địch trên hàng dọc chịu 2 lần 12800% Pháp Công.'},'spear',false,[]);
+          checks.mobileMultiHitDescriptor=multiDesc.sourceHitCount===2&&multiDesc.mult===128&&multiDesc.pattern==='column';
+          const passive=c.mobilePassivePlan({name:'Lưu Thủy Vô Tình',desc:'5 lượt đầu trận, mỗi lượt khiến địch giảm 52 sĩ khí và giải trừ 2 trạng thái có lợi của mục tiêu.'});
+          checks.mobileSealPassive=passive?.limit===5&&passive.enemyMorale===52&&passive.dispel===2;
+          const wa=c.mobilePassivePlan({name:'Gian Tuyệt Lv2',desc:'Mỗi lượt tăng cho các tướng khác phe ta 15 sĩ khí, bản thân tăng 5 sĩ khí, giải trừ 3 hiệu quả có lợi của địch trên đường thẳng.'});
+          checks.mobileWeaponPassive=wa?.allyMorale===15&&wa.selfMorale===5&&wa.dispel===3&&wa.line;
+          const fakeAttacker={hp:100},fakeTarget={hp:40,team:'e',slot:0};
+          const repeat=c.mobileRepeatHit((a,t)=>{const hit=Math.min(30,t.hp);t.hp-=hit;return {amount:hit,team:t.team,slot:t.slot};},fakeAttacker,fakeTarget,'physical',1,{},5);
+          checks.mobileMultiHitStop=repeat.amount===40&&repeat.mobileSourceHitCount===2&&fakeTarget.hp===0;
+
           checks.mobileTraitRank=c.mobileTraitChoose(mobileOwner,'2')&&c.mobileTraitChoose(mobileOwner,'2')&&!c.mobileTraitChoose(mobileOwner,'2')&&c.mobileTraitChoice(mobileOwner).rank===2;
           const techState=q.getGame();techState.nlContentC.mobileCommanderLevel=440;techState.nlContentC.mobileTechPoints=100000;techState.nlContentC.mobileTechTripods=10000;q.setGame(techState);
           const technologyQuote=c.mobileTechQuote('10',20),techBefore=c.state();
