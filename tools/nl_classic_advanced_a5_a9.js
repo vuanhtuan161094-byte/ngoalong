@@ -161,7 +161,7 @@ function bondCost(level){return {silver:500*level,grain:100*level};}
 function heirCost(level){return {silver:1000*level,merit:30*level};}
 function visitBond(id,path){
  const s=state(),f=familyState(),p=familyProfile(id),next=(p.bond?.level||0)+1,def=familyPath(path);
- if(!def||!familyOpen(id)||s.daily.bond>=5||next>5||(p.bond&&p.bond.path!==path))return false;
+ if(game.nlContentC?.mobileBeautyAssigned?.[id]||!def||!familyOpen(id)||s.daily.bond>=5||next>5||(p.bond&&p.bond.path!==path))return false;
  const cost=bondCost(next);if(!pay(cost))return false;
  f.bonds[id]={path,level:next};s.daily.bond++;return done(s,'bond:'+id+':'+next,{silver:-cost.silver,grain:-cost.grain});
 }
@@ -173,7 +173,7 @@ function trainHeir(id,path){
 }
 function familyBonus(id){
  const f=familyProfile(id),out={};
- for(const [p,rate] of [[f.bond,.01],[f.heir,.005]])if(p){const def=familyPath(p.path);for(const k of def.slice(2))out[k]=(out[k]||0)+p.level*rate;}
+ for(const [p,rate] of [[game.nlContentC?.mobileBeautyAssigned?.[id]?null:f.bond,.01],[f.heir,.005]])if(p){const def=familyPath(p.path);for(const k of def.slice(2))out[k]=(out[k]||0)+p.level*rate;}
  return out;
 }
 const priorUnit=p2Unit;
