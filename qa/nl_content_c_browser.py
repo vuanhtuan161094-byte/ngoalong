@@ -125,6 +125,12 @@ def main():
           const train=q.getGame();train.hero[id].level=1;train.hero[id].xp=0;train.silver=100000;q.setGame(train);
           const cost=hs.trainQuote(id),trainingBefore=q.getGame().silver;
           checks.batchTrain=hs.trainBatch(id,5)&&q.getGame().silver===trainingBefore-cost.cost.silver*5&&q.getGame().hero[id].level>1&&!hs.trainBatch(id,99);
+          checks.normalizedCurve=c.npcBaseStage(1)===1&&c.npcBaseStage(90)===28&&Array.from({length:89},(_,i)=>c.npcBaseStage(i+2)>=c.npcBaseStage(i+1)).every(Boolean);
+          const activation=q.getGame();activation.nlContentC.soul=3000;activation.nlClassicA.merit=10000;q.setGame(activation);
+          const baseSeal=c.sealValue('sword');
+          checks.sealActivation=Array.from({length:25},()=>c.activateSeal('sword')).every(Boolean)&&c.sealActivation('sword')===25&&c.sealValue('sword')>baseSeal&&!c.activateSeal('sword');
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.activationSave=c.sealActivation('sword')===25&&q.getGame().version===5;
           return checks;
         }""")
         print(out,flush=True)
