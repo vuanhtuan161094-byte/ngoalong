@@ -40,6 +40,32 @@ const NL_MOBILE_FALLBACK_GEAR=nlMobileFallbackEquipment(NL_MOBILE_INVENTORY);
 if(NL_MOBILE_FALLBACK_GEAR.length!==285)throw Error('MOBILE_FALLBACK_GEAR_COUNT_DRIFT');
 NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment,...NL_MOBILE_FALLBACK_GEAR);
 NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
+function nlMobileSourceBundles(source){
+ const awakening=new Set(['Bánh Bao','Thịt','Rượu','Trân Châu','Ngọc Bôi','Kim Lô','Hổ Phách','Lam Bảo Thạch','Lang Nha Ngọc','Băng Tuyết Liên','Linh Chi Rừng','Hà Thủ Ô Trăm Năm','Thanh Liên','Bàn Đào','Nhân Sâm Quả','Quỳnh Tương','Chu Quả','Thiên Mai','Hoàng Trung Lý']);
+ const bundles=[];
+ for(const row of source.items){
+  const match=String(row.desc||'').match(/^Mở(?:.+?)? nhận:\s*(.+)$/u);if(!match)continue;
+  let body=match[1].replace(/, có thể dùng để.+$/u,'').replace(/\.$/,'');
+  const parts=body.split(/,\s*/),outputs=[];
+  for(const part of parts){
+   const entry=part.match(/^(.+?)\s+x(\d+)$/u);if(!entry)break;
+   const name=entry[1],qty=Number(entry[2]),wallet=awakening.has(name)?'awakening':name==='Điểm Khoa Kỹ'?'science':name==='Huân Đỉnh'?'tripod':null;
+   if(!wallet||!Number.isSafeInteger(qty)||qty<=0)break;outputs.push({name,qty,wallet});
+  }
+  if(outputs.length!==parts.length||!outputs.length)continue;
+  const price=outputs.reduce((sum,x)=>sum+x.qty*(x.wallet==='awakening'?8:x.wallet==='science'?500:1000),0);
+  bundles.push({id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'consumable',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',
+   sourceCategory:row.typeName,sourceDesc:row.desc,sourceIcon:row.icon,provenance:{classification:'SOURCE_EXACT'},
+   acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:price}},
+   effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs,classification:'SOURCE_EXACT_QUANTITIES'}});
+ }
+ return bundles;
+}
+const NL_MOBILE_BUNDLES=nlMobileSourceBundles(NL_MOBILE_INVENTORY);
+for(const row of NL_MOBILE_BUNDLES){
+ const i=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);
+ if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
+}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -337,7 +363,8 @@ document.addEventListener('click',function(ev){
   const action=control.getAttribute('data-nli-item-action');
   const id=control.getAttribute('data-nli-item-id');
   const nonce=nlItemHydrate().actionNonce+1,receipt='nli:ui:'+nonce;
-  const result=action==='use'?nlItemConsumableApi.use(game,id,receipt,nlItemHeroId()):
+  if(battle)return;
+  const result=action==='buy-source-bundle'?nlItemConsumableApi.buySourceBundle(game,id,receipt):action==='use'?nlItemConsumableApi.use(game,id,receipt,nlItemHeroId()):
     action==='process'?nlItemConsumableApi.process(game,id,receipt):
     {ok:false,code:'UNKNOWN_ITEM_ACTION'};
   nlItemApply(result,{actionNonce:nonce});
@@ -358,7 +385,7 @@ if(window.__P2_ENABLE_QA__){
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
-      projectPlayable:669,mobilePlayable:NL_MOBILE_INVENTORY.runtimeMaterials.length,
+      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{
