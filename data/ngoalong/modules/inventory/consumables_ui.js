@@ -32,9 +32,9 @@
    const category=options.category||'all',search=String(options.search||'').toLocaleLowerCase('vi-VN');
    const page=Math.max(0,Math.floor(Number(options.page)||0));
    const stacks=state?.nlItemsV1?.stacks||{};
-   const mode=options.mode==='wiki'?'wiki':'bag';
+   const mode=['wiki','shop'].includes(options.mode)?options.mode:'bag';
    const rows=pack.items.filter(row=>mode==='wiki'?row.integration==='REFERENCE_ONLY':
-     row.integration==='PLAYABLE'&&(stacks[row.id]||0)>0);
+     row.integration==='PLAYABLE'&&(mode==='shop'?row.effectRule?.kind==='OPEN_SOURCE_BUNDLE':(stacks[row.id]||0)>0));
    const filtered=rows.filter(row=>(category==='all'||row.sourceCategory===category)&&
      (!search||row.name.toLocaleLowerCase('vi-VN').includes(search)));
    const pages=Math.max(1,Math.ceil(filtered.length/perPage)),current=Math.min(page,pages-1);
@@ -43,10 +43,10 @@
      const sourceMaterial=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI';
      const silverCost=rule.silverCost||0;
      const canProcess=owned>=needs&&(state.silver||0)>=silverCost;
-     const action=mode==='wiki'||row.integration!=='PLAYABLE'||sourceMaterial?'':rule.kind==='CRAFT_REAGENT'?
+     const action=mode==='shop'?'<button data-nli-item-action="buy-source-bundle" data-nli-item-id="'+esc(row.id)+'" '+((state.silver||0)<row.acquisitionRule.shopCost.silver?'disabled':'')+'>Mua · '+esc(row.acquisitionRule.shopCost.silver)+' Bạc</button>':mode==='wiki'||row.integration!=='PLAYABLE'||(sourceMaterial&&rule.kind!=='OPEN_SOURCE_BUNDLE')?'':rule.kind==='CRAFT_REAGENT'?
        '<button data-nli-item-action="process" data-nli-item-id="'+esc(row.id)+'" '+(!canProcess?'disabled':'')+'>Gia công ×'+needs+'</button>':
        rule.kind==='REFINEMENT_REAGENT'?'':'<button data-nli-item-action="use" data-nli-item-id="'+esc(row.id)+'">'+
-       (rule.kind==='OPEN_BUNDLE'?'Mở rương':'Sử dụng')+'</button>';
+       (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
      const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':sourceMaterial?
        (row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.'):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
@@ -68,9 +68,9 @@
        '</small>'+action+'</div></article>';
    }).join('');
    return '<style data-nli-items-style>'+STYLE+'</style><section class="nli-items-panel" data-nli-items-panel="1">'+
-     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Tên Wiki tham chiếu; tác dụng là thiết kế riêng của Mưu Định Tam Quốc.</p>'+
+     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Rương nguồn giữ nguyên số lượng thưởng. Giá thương nhân bổ sung là mô phỏng; vật phẩm chưa rõ tác dụng giữ tham chiếu.</p>'+
      '<div class="nli-items-switch"><button data-nli-item-mode="bag" '+(mode==='bag'?'aria-pressed="true"':'')+'>Kho của tôi</button>'+
-     '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button></div>'+
+     '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button><button data-nli-item-mode="shop" '+(mode==='shop'?'aria-pressed="true"':'')+'>Rương nguyên liệu</button></div>'+
      '<div class="nli-items-cats">'+CATEGORIES.map(c=>'<button data-nli-item-category="'+esc(c)+'" '+(c===category?'aria-pressed="true"':'')+'>'+esc(c==='all'?'Tất cả':c)+'</button>').join('')+'</div>'+
      '<input data-nli-item-search type="search" aria-label="Tìm vật phẩm" value="'+esc(options.search||'')+'" placeholder="Tìm vật phẩm..."/>'+
      '<div class="nli-items-summary"><span data-nli-items-results="'+filtered.length+'">'+
