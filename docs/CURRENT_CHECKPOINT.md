@@ -2,6 +2,16 @@
 
 **V1.0 NOT COMPLETE · ART HOLD · GAMEPLAY FIRST.** Repository `vuanhtuan161094-byte/ngoalong`, delivery branch `feature/ngoalong-v1-complete`, existing draft PR #1. Do not merge.
 
+## P1–P4 gameplay finalization slice — 2026-11-26
+
+- P1: 51 dated Mobile awakening facts across 44 mapped hero identities now project stage-specific descriptors; 147 Content C heroes get tactical variants, with existing 221 base/expanded IDs retained. Unsupported conditional/multi-operation source semantics remain unmapped. No raw Mobile damage coefficient is applied to the compressed P2 scale.
+- P1: legacy WEB troop control and counter-advantage effects use the native P2 skill/hit path. 55 + 40 source named troop profiles remain distinct from 25 original project profiles; no new hit resolver.
+- P2: hero power display derives from the actual unit stat pipeline; training entry uses the same paid XP path. Quân ấn retains existing 5-level compressed strength curve and adds 25 activation ranks (Mobile structure reference: https://ngoalong.vnggames.com/ngoa-long-wiki/an-tran); costs, effects and gates are simulated, not Mobile parity.
+- P3: normalized NPC base stat curve 1–28 from difficulty 1–90, relative formation soldier weights, next available NPC shortcut and reward preview. All 249 maps / 4,903 NPC remain projected, not individually playtested.
+- P4: canonical DEV HTML upload moved ahead of later test gates, with SHA and hash. Existing source validation and deterministic builder checks are still required. No Pages deployment from feature branch.
+- Evidence executed in the connector JS runtime: 15/15 persisted hero module contract cases; 16/16 campaign/awakening/activation cases with synthetic 249-map fixture prior to curve normalization; 9/9 troop contract cases with actual catalogue and mocked base owners. These are not actual native battles or a full 90-day balance run. Python full projection and browser tests are added/updated but not executed in this turn.
+- Last source/test commit `bda20b74a669f59dafb86551fab9736f0c6597db`. Current container cannot resolve github.com for cloning, and the GitHub connector's workflow-run lookup filters to PR-triggered runs. Latest generated HTML/artifact, exact-SHA hosted CI, Android build and actual browser playability remain unverified. ART HOLD, Save v5, no Codex Cloud, no merge.
+
 ## Gameplay-first implementation delta
 
 - Native P2 Content C: 249 source maps / 4,903 projected NPC identities, first clear and repeat settlement, map completion bonus, difficulty band 1–90, role-specific enemy coefficients and target policy, renewable merit, tower rewards and 18 upgradeable seals. Runtime integration and balancing across the entire roster remain to be verified.
