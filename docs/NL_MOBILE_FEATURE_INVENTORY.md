@@ -56,6 +56,10 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 | SAVE-01 Cài đặt / Save / transfer | Mobile UX reference; existing persistence is project-owned | schema v5, migration chain and transfer format | One save authority, import/export and receipt guard | Journal/settings windows | `muu_dinh_tam_quoc_v1` | PARTIAL | Test new/old/import-failure/reload/reward idempotence across origins. |
 | AND-01 Android package | Mobile is the product benchmark | No verified APK artifact | No Android wrapper/build pipeline; this environment has Java but no `gradle`, `sdkmanager`, `adb`, or configured Android SDK | Browser mobile layout is not an APK | Browser Save only | MISSING · TOOLCHAIN UNAVAILABLE | Add a shared-runtime wrapper/build instructions when an Android SDK/Gradle environment is available, then produce and checksum a real APK. |
 
+## R6 gameplay source delta (unverified build)
+
+- 82 destination equipment identities matched by exact item description name and level; 49 material identities support native upgrade paths. One material per promotion and fallback merchant price/gate simulated; existing drop routes preserved. Ambiguous series-only descriptions not auto-mapped. No second item owner. No native browser acceptance yet.
+
 ## R5 gameplay source delta (unverified build)
 
 - Additional scoped periodic rules 8/24/25 (Đào Binh, Ám Vân, Hồi Phục) tick after the owner's action with explicitly parsed magnitude and duration. HP basis and timing simulated, no attack/reward recursion. Focused periodic execution passed with stubs; A4–A9 mocked contract 35/35 including four fort/defence checks. Native coverage and browser acceptance open.

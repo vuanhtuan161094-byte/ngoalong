@@ -120,7 +120,7 @@
         '<div><b>'+escape(pool)+'</b><ul>'+entries.map(x=>'<li>'+escape(x.name)+' · '+Math.round(x.rate*100)+'% · giá trị '+escape(x.value)+'</li>').join('')+'</ul></div>').join('')+
         '<small>Giữ nguyên giá trị nguồn. Bảng tổng vượt 100% được dùng làm trọng số chuẩn hóa; chi phí và điều kiện mở mô phỏng.</small></details>':'';
       const promotion=typeof api.mobilePromoteQuote==='function'?api.mobilePromoteQuote(state,uid):null;
-      const promoteButton=promotion?'<button data-nli-action="mobile-promote" data-uid="'+escape(uid)+'" '+((state.silver||0)<promotion.silver||Math.max(10,Number(state.nlContentC?.mobileCommanderLevel)||10)<promotion.commander?'disabled':'')+'>Nâng phẩm: '+escape(promotion.name)+' · '+money(promotion.silver)+' Bạc · Chỉ huy '+promotion.commander+'</button>':'';
+      const promoteButton=promotion?'<button data-nli-action="mobile-promote" data-uid="'+escape(uid)+'" '+((state.silver||0)<promotion.silver||Math.max(10,Number(state.nlContentC?.mobileCommanderLevel)||10)<promotion.commander||promotion.materials?.some(m=>(state.nlItemsV1?.stacks?.[m.id]||0)<m.quantity)?'disabled':'')+'>Nâng phẩm: '+escape(promotion.name)+' · '+money(promotion.silver)+' Bạc'+(promotion.materials?.length?' · '+promotion.materials.map(m=>escape(m.name)+' ×'+m.quantity+' ('+(state.nlItemsV1?.stacks?.[m.id]||0)+' có)').join(' / '):'')+' · Chỉ huy '+promotion.commander+'</button>':'';
       const mobileRefineButtons=sourceRefine&&typeof api.mobileRefineQuote==='function'?['so','cao','dacKy'].map((pool,i)=>{
         const q=api.mobileRefineQuote(state,uid,pool);if(!q)return '';
         const have=state.nlItemsV1?.stacks?.[q.materialId]||0,rolls=item.mobileRefines?.[pool]||[];

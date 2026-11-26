@@ -94,7 +94,8 @@ jobs:
               assert data.get('loaded') and data['save']==5 and data['roster'] and data['nativeUnit']
               assert data['traits']==21 and data['beauties']==47 and data['items']['sourceBundles']==29
               assert data['items']['sourceExchangeMaterials']==9 and data['items']['sourceExchangeRecipes']==6
-              assert data['items']['mobilePlayable']==83 and data['items']['projectPlayable']==669 and data['items']['sourceGifts']==11
+              assert data['items']['sourceCraftLinks']==82 and data['items']['sourceCraftMaterials']==49
+              assert data['items']['mobilePlayable']==83+data['items']['sourceCraftNewMaterials'] and data['items']['projectPlayable']==669 and data['items']['sourceGifts']==11
               battle=page.evaluate("""()=>{
                 const q=window.__P2_QA__,g=q.getGame(),id=g.roster[0];
                 g.grain=Math.max(g.grain,1000);g.slots=[id,null,null,null,null,null,null,null,null];q.setGame(g);

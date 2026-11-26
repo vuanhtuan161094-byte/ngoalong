@@ -126,6 +126,35 @@ const NL_MOBILE_GIFTS=NL_MOBILE_INVENTORY.items.filter(row=>row.gift?.famousType
 }));
 if(NL_MOBILE_GIFTS.length!==11)throw Error('MOBILE_GIFT_COUNT_DRIFT');
 for(const row of NL_MOBILE_GIFTS){const idx=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);if(idx>=0)NL_ITEM_CATALOGUE.items[idx]=row;else NL_ITEM_CATALOGUE.items.push(row);}
+// Explicit name + level matches only. Source states the reagent identity, not quantity.
+function nlMobileCraftLinks(source){
+ const gear=new Map(source.equipment.map(x=>[String(x.id),x])),eligible=new Set(),links=[];
+ for(const row of source.equipment){const to=gear.get(String(row.upgradeTo?.id));if(to&&row.type===to.type&&(to.level>row.level||to.level===row.level&&to.quality>row.quality))eligible.add(String(to.id));}
+ for(const row of source.items){
+  const desc=String(row.desc||'');if(!/^Dùng (?:để )?ghép /u.test(desc))continue;
+  for(const clause of desc.replace(/^Dùng (?:để )?ghép /u,'').replace(/\.$/,'').split(/\s+và\s+/u)){
+   const match=clause.match(/^(.+?)\s+\(Trang bị Lv(\d+)\)$/iu);if(!match)continue;
+   const candidates=source.equipment.filter(g=>g.name===match[1]&&g.level===Number(match[2])&&eligible.has(String(g.id)));
+   if(candidates.length!==1)continue;
+   links.push({sourceId:String(row.id),id:'mobile-vng-item-'+row.id,name:row.name,to:'mobile-vng-equipment-'+candidates[0].id,toName:candidates[0].name,level:candidates[0].level,quantity:1});
+  }
+ }
+ return links;
+}
+const NL_MOBILE_CRAFT_LINKS=nlMobileCraftLinks(NL_MOBILE_INVENTORY);
+const craftByDest=new Map(NL_MOBILE_CRAFT_LINKS.map(x=>[x.to,x]));
+const craftMaterials=new Map(NL_MOBILE_CRAFT_LINKS.map(x=>[x.id,x]));
+if(NL_MOBILE_CRAFT_LINKS.length!==82||craftByDest.size!==82||craftMaterials.size!==49)throw Error('MOBILE_CRAFT_SOURCE_DRIFT');
+let nlCraftNewMaterialCount=0;
+for(const [id,link] of craftMaterials){
+ const index=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===id),prior=index>=0?NL_ITEM_CATALOGUE.items[index]:null,raw=NL_MOBILE_INVENTORY.items.find(x=>String(x.id)===link.sourceId);
+ if(prior?.integration==='PLAYABLE'){prior.sourceCraftTargets=NL_MOBILE_CRAFT_LINKS.filter(x=>x.id===id).map(x=>x.toName);continue;}
+ const row={id,sourceId:link.sourceId,name:link.name,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:raw.typeName,sourceDesc:raw.desc,sourceIcon:raw.icon,provenance:{classification:'SOURCE_EXACT'},
+ sourceCraftTargets:NL_MOBILE_CRAFT_LINKS.filter(x=>x.id===id).map(x=>x.toName),
+ acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:Math.max(10,link.level-20),shopCost:{silver:Math.max(600,link.level*12)}},effectRule:null};
+ if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);nlCraftNewMaterialCount++;
+}
+for(const gear of NL_MOBILE_GEAR_ALL){const link=craftByDest.get(gear.mobilePromotion?.to);if(link)gear.mobilePromotion.materials=[{id:link.id,name:link.name,quantity:link.quantity,classification:'SOURCE_IDENTITY_SIMULATED_QUANTITY'}];}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -446,7 +475,7 @@ if(window.__P2_ENABLE_QA__){
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
-      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,
+      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{

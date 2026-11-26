@@ -228,14 +228,16 @@
       const item=state.items.find(x=>String(x.uid)===String(uid)),from=item&&catalog[item.base],to=from&&catalog[from.mobilePromotion?.to];
       if(!from?.mobileEnhancement||!to?.mobileEnhancement||from.slot!==to.slot||!(to.displayedLevel>from.displayedLevel||to.displayedLevel===from.displayedLevel&&to.sourceQuality>from.sourceQuality))return null;
       const oldSale=from.mobileSale?.amount||0,newSale=to.mobileSale?.amount||0;
-      return {from:from.id,to:to.id,name:to.name,kind:from.mobilePromotion.kind,commander:Math.max(10,Math.min(440,to.displayedLevel||10)),silver:Math.max(1000,newSale-oldSale+1,Math.ceil(newSale*.3)),classification:'SOURCE_RELATION_SIMULATED_FEE'};
+      return {from:from.id,to:to.id,name:to.name,kind:from.mobilePromotion.kind,commander:Math.max(10,Math.min(440,to.displayedLevel||10)),silver:Math.max(1000,newSale-oldSale+1,Math.ceil(newSale*.3)),materials:jsonCopy(from.mobilePromotion.materials||[]),classification:'SOURCE_RELATION_SIMULATED_FEE'};
     }
     function mobilePromote(state,uid,receiptId){
-      return execute(state,'MOBILE_PROMOTE',receiptId,uid,(next)=>{
+      return execute(state,'MOBILE_PROMOTE',receiptId,uid,(next,m)=>{
         const item=equipmentInstance(next,uid),q=mobilePromoteQuote(next,uid);
         assert(q,'MOBILE_PROMOTION_NOT_AVAILABLE');
         assert(Math.max(10,Number(next.nlContentC?.mobileCommanderLevel)||10)>=q.commander,'COMMANDER_LEVEL_REQUIRED');
         pay(next,{silver:q.silver});
+        for(const material of q.materials){available(material.id,'material');assert(integer(material.quantity,1)&&integer(m.stacks[material.id]||0)&&(m.stacks[material.id]||0)>=material.quantity,'INSUFFICIENT_MATERIAL');}
+        for(const material of q.materials){m.stacks[material.id]-=material.quantity;if(m.stacks[material.id]===0)delete m.stacks[material.id];}
         const from=item.base;item.base=q.to;
         // Keep the owned UID, slot and level, but invalidate incompatible refinement rolls.
         const dest=catalog[q.to],pool=dest.mobileRefinement?.sourcePools;
@@ -243,7 +245,7 @@
           const allowed=pool?.[key];if(!Array.isArray(allowed)){delete item.mobileRefines[key];continue;}
           item.mobileRefines[key]=item.mobileRefines[key].filter(x=>allowed.some(y=>y.code===x.code&&y.value===x.value&&y.name===x.name));
         }
-        return {uid,from,to:q.to,level:item.lv,silver:q.silver,classification:q.classification};
+        return {uid,from,to:q.to,level:item.lv,silver:q.silver,materials:q.materials,classification:q.classification};
       });
     }
     function sell(state, uid, receiptId) {
