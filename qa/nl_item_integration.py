@@ -68,8 +68,10 @@ def main() -> None:
             headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = open_page(browser)
         counts = page.evaluate("window.__NL_ITEM_QA__.getCounts()")
-        check("411 playable + 392 reference gear, single-file runtime", counts ==
-              {"playable": 411, "references": 392})
+        check("810 playable gear, with 399 Mobile and 392 reference gear",
+              counts.get("playable") == 810 and counts.get("projectPlayable") == 411 and
+              counts.get("mobilePlayable") == 399 and counts.get("sourceRouteGear") == 114 and
+              counts.get("fallbackRouteGear") == 285 and counts.get("references") == 392)
         original = state(page)
         check("Save schema v5 preserved and new item ledger exists",
               original["version"] == 5 and
@@ -171,7 +173,7 @@ def main() -> None:
         mobile = open_page(browser, saved, width=390)
         mobile.locator('.nav[data-tab="equipment"]').click()
         visible_window(mobile, '[data-nli-shop="1"]').click()
-        check("mobile shop paginates 411 gear without rendering a huge list",
+        check("mobile shop paginates expanded gear without rendering a huge list",
               mobile.locator('[data-nli-action="buy"]').count() == 30 and
               mobile.locator('[data-nli-page="1"]').count() == 1)
         visible_window(mobile, '[data-nli-page="1"]').click()
