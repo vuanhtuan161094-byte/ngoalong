@@ -181,6 +181,9 @@ def build(root):
     hero_mini=pinned_mobile("data/hero-mini.json")
     mobile_tech=pinned_mobile("data/advtech-detail.json")
     mobile_beauties=pinned_mobile("data/women-detail.json")
+    mobile_children=pinned_mobile("data/children-detail.json")
+    if mobile_children.get("order")!=["xuatSu","thucTinh","renLuyen","chuChinh","giamQuoc"]:
+        raise ValueError("Mobile children stage order drift")
     if len(mobile_beauties["beauties"])!=47 or any(len(b["growth"])!=221 for b in mobile_beauties["beauties"].values()):
         raise ValueError("Mobile beauty growth coverage drift")
     if any(len(t["exp"])!=221 or len(t["material"])!=221 for t in mobile_beauties["exp"].values()):
@@ -334,6 +337,7 @@ def build(root):
                                 "details":hero_details,"runtimeAliases":source_hero_aliases,"missing":hero_missing},
             "mobileAdvancedTech":mobile_tech,
             "mobileBeauties":mobile_beauties,
+            "mobileChildren":mobile_children,
             "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
             "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
             "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
