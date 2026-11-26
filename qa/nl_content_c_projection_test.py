@@ -4,7 +4,7 @@ from pathlib import Path
 import sys, json
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"))
-from nl_content_c_projection import build
+from nl_content_c_projection import build, project_stage_skill
 from nl_content_c_native import apply_c_native
 
 def main():
@@ -28,6 +28,24 @@ def main():
     assert data["counts"]["newHeroes"]==147 and data["counts"]["runtimeHeroes"]==368
     assert all(h["descriptor"]["tag"] and h["descriptor"]["pattern"] and h["descriptor"]["mult"]>0 for h in data["heroes"])
     assert len(data["awakeningSkills"])==44
+    patterns={"single","double","row","column","all","back","heal"}
+    assert all(h["descriptor"]["pattern"] in patterns for h in data["heroes"])
+    variants={(h["descriptor"]["pattern"],h["descriptor"]["kind"],h["descriptor"].get("apply"),
+               h["descriptor"].get("applyAlly"),h["descriptor"].get("pierce"),h["descriptor"].get("crit"),
+               h["descriptor"].get("cleanseNegative"),h["descriptor"].get("bonusMorale")) for h in data["heroes"]}
+    assert len(variants)>=18, len(variants)
+    for record in data["awakeningSkills"].values():
+        assert record["stages"] and set(record["stages"])<={"PURPLE","ORANGE","GOLD"}
+        for fact in record["stages"].values():
+            desc=fact["descriptor"]
+            assert desc["pattern"] in patterns and 0<desc["mult"]<=2
+            assert desc["kind"] in {"physical","tactic","magic"}
+    aoe=project_stage_skill({"skillName":"QA AoE","lane":"STRATEGY","events":[{"op":"DAMAGE","target":"ALL_ENEMIES","coefficientPct":16500}]})
+    assert aoe["pattern"]=="all" and aoe["mult"]==.78
+    heal=project_stage_skill({"skillName":"QA Heal","lane":"SUPPORT","events":[{"op":"HEAL_UNQUANTIFIED","target":"ALL_ALLIES"}]})
+    assert heal["pattern"]=="heal" and heal["healCount"]==3
+    debuff=project_stage_skill({"skillName":"QA Debuff","lane":"TACTIC","events":[{"op":"DAMAGE","target":"ENEMY_ROW"},{"op":"DEFENSE_REDUCTION","target":"ENEMY_ROW"}]})
+    assert debuff["pattern"]=="row" and debuff["apply"]=="break"
     tier4=json.loads((ROOT/"data/ngoalong/modules/troops/classic_web_tier4_v1.json").read_text(encoding="utf-8"))["troops"]
     assert len(tier4)==len({t["id"] for t in tier4})==40
     for family in ("infantry","spear","cavalry","archer","strategist"):
