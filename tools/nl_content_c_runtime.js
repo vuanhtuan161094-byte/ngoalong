@@ -418,6 +418,8 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_SOURCE_BOUNTY_MARK='mobile-source-bounty-mark',MOBILE_SOURCE_INSIGHT='mobile-source-insight',
  MOBILE_SOURCE_CONFUSION='mobile-source-confusion',
  MOBILE_SOURCE_MAX_HP_SHIELD='mobile-source-max-hp-shield',
+ MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY='mobile-source-progressive-vulnerability',
+ MOBILE_SOURCE_FORTUNE='mobile-source-fortune',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
@@ -481,6 +483,10 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'SOURCE_MECHANIC_WITH_SIMULATED_NORMAL_ATTACK_REDIRECT',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'51',behavior:'forces a normal attack against a random living ally while preserving stored morale'}},
  [MOBILE_SOURCE_MAX_HP_SHIELD]:{duration:3,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_MAX_HP_RATIO_WITH_NATIVE_DAMAGE_ABSORPTION',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'108',behavior:'absorbs damage from a shield pool derived from maximum HP'}},
+ [MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY]:{duration:30,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_MAGNITUDE_WITH_SIMULATED_TARGET_TURN_RAMP',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'29',behavior:'increases incoming damage by source magnitude per affected target action, capped at five stacks'}},
+ [MOBILE_SOURCE_FORTUNE]:{duration:2,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_MAX_DAMAGE_MULTIPLIER_WITH_SIMULATED_UNIFORM_INTEGER_PICK',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'65',behavior:'each action draws one integer damage multiplier from 1 through the source maximum'}},
  [MOBILE_PHYSICAL_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_MAGIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_TACTIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
@@ -552,6 +558,8 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '55':{kind:MOBILE_SOURCE_INSIGHT,mechanic:'damage-to-bounty-target'},
  '51':{kind:MOBILE_SOURCE_CONFUSION,mechanic:'random-ally-attack'},
  '108':{kind:MOBILE_SOURCE_MAX_HP_SHIELD,mechanic:'max-hp-shield'},
+ '29':{kind:MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY,mechanic:'progressive-vulnerability'},
+ '65':{kind:MOBILE_SOURCE_FORTUNE,mechanic:'random-maximum-damage'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -960,6 +968,17 @@ function mobileSourceApplications(skill,effects){
       app.valueEvidence={classification:'SIMULATED_DEFAULT_FROM_MOST_COMMON_SOURCE_DETAIL',sourceEffectId:'108',observedSourceValue:7,sourceDetail:detail,defaultPercent:7};
       app.unresolvedMechanics=['SOURCE_SHIELD_PERCENT_NOT_PUBLISHED_FOR_THIS_ROW'];}
   }
+  if(id==='29'&&percent!==null){app.sourceMagnitude=percent*100;app.values.damageTakenIncreasePerTargetAction=percent;app.simulatedStackLimit=5;
+    app.stackingClassification='SIMULATED_PER_TARGET_ACTION_RAMP_MAX_5_STACKS';
+    app.formulaClassification='SIMULATED_PROGRESSIVE_VULNERABILITY_FROM_SOURCE_MAGNITUDE';
+    app.valueEvidence={classification:'SOURCE_EXACT_MAGNITUDE_WITH_SIMULATED_RAMP',sourceDetail:detail,sourceValue:percent*100,unit:'percent_per_target_action'};}
+  if(id==='65'){
+    const rawFortune=detailFold.match(/^(\d+(?:[.,]\d+)?)\s*[·x*]\s*\d+\s*luot/);
+    if(rawFortune){const maximum=Number(rawFortune[1].replace(',','.'));app.values.maxDamageMultiplier=maximum;app.sourceMagnitude=maximum;
+      app.formulaClassification='SOURCE_MAX_MULTIPLIER_WITH_SIMULATED_UNIFORM_INTEGER_PICK';
+      app.valueEvidence={classification:'SOURCE_EXACT_RANDOM_MULTIPLIER_MAX',sourceDetail:detail,sourceValue:maximum,sourceRange:[1,maximum]};}
+    else app.unresolvedMechanics=['SOURCE_RANDOM_DAMAGE_MULTIPLIER_MAX_UNKNOWN'];
+  }
   if(id==='77'&&/neu khong/.test(context))app.condition='TARGET_SURVIVES';
   if(rule.mechanic==='damage-reduction'&&percent!==null)app.values.incomingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='attack-increase'&&percent!==null)app.values.outgoingDamageMultiplier=1+percent;
@@ -1022,9 +1041,9 @@ function mobileSourceApplications(skill,effects){
   if(rule.mechanic==='morale-on-damage'){const m=detailFold.match(/(\d+)\s*si khi/)||following.match(/(?:tang|hoi)\s+(\d+)\s*si khi/);if(!m)continue;app.values.moraleOnDamage=Math.min(130,Number(m[1]));}
   if(rule.mechanic==='periodic-morale-loss'){const m=detailFold.match(/(\d+)\s*si khi/)||following.match(/(?:giam|mat)\s+(\d+)\s*si khi/);if(!m)continue;app.values.periodicMoraleLoss=Math.min(130,Number(m[1]));}
   const needsValue=['damage-per-harmful','debuff-resistance','periodic-desertion','periodic-healing','counter-increase','damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','magic-defense-reduction','tactic-defense-reduction','all-defense-reduction','dragon-attack-increase',
-   'physical-attack-increase','magic-attack-increase','tactic-attack-increase','physical-attack-reduction','magic-attack-reduction','tactic-attack-reduction',
+   'physical-attack-increase','magic-attack-increase','tactic-attack-increase','physical-attack-reduction','magic-attack-reduction','tactic-attack-reduction','progressive-vulnerability','random-maximum-damage',
    'skill-damage-per-beneficial-buff','healing-reduction','healing-received-increase','lifesteal'].includes(rule.mechanic);
-  if(needsValue&&percent===null)continue;
+  if(needsValue&&percent===null&&rule.mechanic!=='random-maximum-damage')continue;
   rows.push(app);
  }
  return rows;
@@ -1151,7 +1170,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1223,10 +1242,12 @@ function applyMobileSourceStatus(unit,app){
    values.shieldMaximum=Math.max(0,Math.round(Math.max(0,Number(unit.maxHp)||0)*ratio));
    values.shieldRemaining=values.shieldMaximum;
  }
+ const priorProgressiveStacks=existing?.stacks;
  if(!p2Status(unit,app.kind,app.turns))return false;
  const status=unit.effects.find(effect=>effect.kind===app.kind);
  if(!status)return false;
  status.mobileSourceValues=values;
+ if(app.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY)status.stacks=clamp(nat(priorProgressiveStacks)||1,1,Math.min(5,nat(app.simulatedStackLimit)||5));
  status.mobileSource={sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:app.sourceId,
    sourceName:app.sourceName,sourceDescription:app.sourceDescription,sourceDetail:app.detail,
    dispelPolicy:app.dispelPolicy||NL_GAME_DATA.statusEffects.effects[app.kind]?.dispelPolicy||'removable',
@@ -1523,6 +1544,9 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
    const value=effect.mobileSourceValues?.damageToBountyMultiplier;
    return Number.isFinite(value)?factor*Math.max(0,value):factor;
  },1):1;
+ const progressiveDamageMultiplier=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY&&effect.turns>0)
+   .reduce((factor,effect)=>factor*(1+Math.max(0,Number(effect.mobileSourceValues?.damageTakenIncreasePerTargetAction)||0)*clamp(nat(effect.stacks)||1,1,5)),1);
+ const fortuneMultiplier=Math.max(1,Number(attacker?.nlMobileFateDamageMultiplier)||1);
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
  const oneHitShield=target?.effects?.find(effect=>(effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS||effect.kind===MOBILE_BOOK_SHIELD_STATUS)&&effect.turns>0);
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
@@ -1551,7 +1575,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const previousGuard=guardField?resolvedTarget?.[guardField]:undefined;
  if(Number.isFinite(previousGuard))resolvedTarget[guardField]=Math.max(0,(previousGuard+mobileBookAttribute(target))*guardFactor-(ar?.pierceFlat||0));
  let hit;
- try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier*bountyDamageMultiplier,opts);}
+ try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier*bountyDamageMultiplier*progressiveDamageMultiplier*fortuneMultiplier,opts);}
  finally{if(Number.isFinite(previousGuard))resolvedTarget[guardField]=previousGuard;}
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
@@ -1806,6 +1830,17 @@ function mobileResolveCounters(actor,event){
  if(out.length){event.hits.push(...out);event.description+=' · Phản kích: '+out.map(h=>h.counterActor+' '+h.amount).join(', ');event.state=p2Snapshot();battle.log=event.description;}
  return out;
 }
+function mobileAdvanceProgressiveVulnerability(actor,event){
+ if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name||event.mode==='stunned')return [];
+ const advanced=[];
+ for(const effect of actor.effects||[]){
+   if(effect.kind!==MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY||effect.turns<=0)continue;
+   const previous=clamp(nat(effect.stacks)||1,1,5),next=Math.min(5,previous+1);
+   if(next!==previous){effect.stacks=next;advanced.push(next);}
+ }
+ if(advanced.length){event.description+=' · Âm Hồn tăng dần ('+advanced.join('/')+'/5)';event.state=p2Snapshot();battle.log=event.description;}
+ return advanced;
+}
 p2Perform=function(actor){
  // A silence blocks the morale action, not the normal action or stored morale.
  const savedMorale=actor?.morale;
@@ -1820,6 +1855,10 @@ p2Perform=function(actor){
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
  const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
+ const priorFateMultiplier=actor?.nlMobileFateDamageMultiplier,hadFateMultiplier=!!actor&&Object.hasOwn(actor,'nlMobileFateDamageMultiplier');
+ let appliedFateMultiplier=0;
+ const fortuneStatus=(actor?.effects||[]).find(effect=>effect.kind===MOBILE_SOURCE_FORTUNE&&effect.turns>0);
+ if(actor&&fortuneStatus){const max=Math.max(1,Math.floor(Number(fortuneStatus.mobileSourceValues?.maxDamageMultiplier)||1));appliedFateMultiplier=1+Math.floor(p2Random()*max);actor.nlMobileFateDamageMultiplier=appliedFateMultiplier;}
  const priorPeriodic=(actor?.effects||[]).filter(e=>[MOBILE_SOURCE_DESERTION,MOBILE_SOURCE_MORALE_DOT,MOBILE_SOURCE_REGEN,MOBILE_SOURCE_POISON,MOBILE_SOURCE_BURN].includes(e.kind));
  const previousSkillAction=actor?.nlMobileSourceSkillAction,hadSkillAction=!!actor&&Object.hasOwn(actor,'nlMobileSourceSkillAction');
  if(moraleOnly){
@@ -1850,6 +1889,7 @@ p2Perform=function(actor){
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
    if(confusionActive&&event?.actor===actor.name){event.mobileSourceConfusionRedirected=true;event.description+=' · Mê Hoặc: đánh nhầm đồng minh';event.state=p2Snapshot();battle.log=event.description;}
+   if(appliedFateMultiplier&&event?.actor===actor.name){event.mobileSourceFateDamageMultiplier=appliedFateMultiplier;event.description+=' · Thiên Vận ×'+appliedFateMultiplier;event.state=p2Snapshot();battle.log=event.description;}
    if(locked&&silenced&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
    const multi=(event?.hits||[]).filter(h=>h.mobileSourceHitCount>1);if(multi.length){event.description+=' · '+multi.map(h=>h.mobileSourceHitCount+' đòn').join(' / ');event.state=p2Snapshot();battle.log=event.description;}
    if(moraleOnly&&event?.actor===actor.name&&event.mode==='drum'){
@@ -1886,8 +1926,9 @@ p2Perform=function(actor){
    }
    mobileResolveCounters(actor,event);
    mobileTickPeriodic(actor,event,priorPeriodic);
+   mobileAdvanceProgressiveVulnerability(actor,event);
    return result;
- }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
+ }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;if(hadFateMultiplier)actor.nlMobileFateDamageMultiplier=priorFateMultiplier;else delete actor.nlMobileFateDamageMultiplier;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){

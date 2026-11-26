@@ -46,7 +46,7 @@ def main():
             for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
               const npc=map.npcs[npcIndex];
               for(const unit of npc.units||[]){
-                for(const id of ['33','50','58','74','184','54','55','51','108']){
+                for(const id of ['33','50','58','74','184','54','55','51','108','29','65']){
                   const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                   const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
                   const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
@@ -261,6 +261,8 @@ def main():
           const bounty54=sourceStatusSamples['54'],insight55=sourceStatusSamples['55'];
           const confusion51=sourceStatusSamples['51'];
           const shield108=sourceStatusSamples['108'],shieldExact108=sourceStatusSamples['108-exact'];
+          const progressive29=sourceStatusSamples['29'];
+          const fortune65=sourceStatusSamples['65'];
           const bountyRawMagnitude=Number(bounty54?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           const insightRawMagnitude=Number(insight55?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           checks.mobileSourceBountySelectors=sourceStatusSamples['54-least-enemy']?.app?.scope==='least-enemy'&&
@@ -279,6 +281,16 @@ def main():
             shield108.app.kind==='mobile-source-max-hp-shield'&&shield108.app.values.maxHpShieldRatio>0;
           checks.mobileSourceShieldExactRatio=!!shieldExact108&&shieldExact108.app.values.maxHpShieldRatio===shieldExact108.app.sourceMagnitude/100&&
             shieldExact108.app.formulaClassification==='SOURCE_MAX_HP_SHIELD_RATIO';
+          const progressiveMagnitude=Number(progressive29?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)%/)?.[1]?.replace(',','.'))/100;
+          const progressiveTurns=Number(progressive29?.effect?.detail?.match(/(\\d+)\\s*lượt/i)?.[1]);
+          checks.mobileSourceProgressiveVulnerabilityDescriptor=!!progressive29&&progressive29.app.scope==='targets'&&progressiveMagnitude>0&&
+            progressive29.app.values.damageTakenIncreasePerTargetAction===progressiveMagnitude&&progressive29.app.turns===progressiveTurns&&
+            progressive29.app.simulatedStackLimit===5&&progressive29.app.formulaClassification==='SIMULATED_PROGRESSIVE_VULNERABILITY_FROM_SOURCE_MAGNITUDE';
+          const fortuneDetail=fortune65?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*(\\d+)\\s*lượt/i);
+          const fortuneMaximum=Number(fortuneDetail?.[1]?.replace(',','.')),fortuneTurns=Number(fortuneDetail?.[2]);
+          checks.mobileSourceFortuneDescriptor=!!fortune65&&fortune65.app.scope==='self'&&fortune65.app.values.maxDamageMultiplier===fortuneMaximum&&
+            fortune65.app.sourceMagnitude===fortuneMaximum&&fortune65.app.turns===fortuneTurns&&
+            fortune65.app.formulaClassification==='SOURCE_MAX_MULTIPLIER_WITH_SIMULATED_UNIFORM_INTEGER_PICK';
           checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
             silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
@@ -466,6 +478,47 @@ def main():
               probeTarget.effects[0]?.mobileSourceValues?.shieldRemaining<poolBefore&&shieldHit.amount===0;
             checks.mobileSourceShieldDiagnostics={sample:shield108,exactSample:shieldExact108,shielded:hpShieldedUnits.map(unit=>({slot:unit.slot,hp:unit.hp,effects:unit.effects.filter(effect=>effect.mobileSource?.sourceEffectId==='108')})),shieldHit,poolBefore,poolAfter:probeTarget.effects[0]?.mobileSourceValues?.shieldRemaining};
           }else {checks.mobileSourceShieldInNativeCombat=false;checks.mobileSourceShieldDamageAbsorption=false;checks.mobileSourceShieldDiagnostics={battle:!!hpShieldBattle,caster:!!hpShieldCaster,sample:shield108};}
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
+          const progressiveBattle=launchStatusProbe(progressive29,true),progressiveCaster=progressiveBattle?.e?.find(unit=>unit.slot===progressive29?.slot);
+          if(progressiveBattle&&progressiveCaster){
+            progressiveBattle.p.forEach(unit=>{unit.hp=unit.maxHp=1000000000000;unit.alive=true;});
+            const application=progressiveCaster.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='29');if(application)application.chance=1;
+            progressiveCaster.morale=100;q.perform(progressiveCaster);
+            const event=progressiveBattle.events.at(-1),markedTargets=progressiveBattle.p.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='29'));
+            const markedTarget=markedTargets[0],markedStatus=markedTarget?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='29');
+            if(markedTarget&&markedStatus){
+              markedTarget.morale=40;q.perform(markedTarget);const afterOwnTurn=markedTarget.effects.find(effect=>effect.mobileSource?.sourceEffectId==='29');
+              const probeTarget={team:'p',slot:0,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',def:1,tdef:1,mdef:1,effects:[]};
+              const applied=c.applyMobileSourceStatus(probeTarget,progressive29.app),probeStatus=probeTarget.effects[0];probeStatus.stacks=2;
+              const plainTarget=structuredClone(probeTarget);plainTarget.effects=[];
+              const attacker={team:'e',slot:4,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',atk:1000000,catk:1000000,matk:1000000,crit:0,def:1,tdef:1,mdef:1,effects:[]};
+              const seed=progressiveBattle.seed;progressiveBattle.seed=67890;const plainHit=c.p2Hit(structuredClone(attacker),plainTarget,'physical',1);
+              progressiveBattle.seed=67890;const markedHit=applied?c.p2Hit(structuredClone(attacker),probeTarget,'physical',1):null;progressiveBattle.seed=seed;
+              const expectedFactor=1+progressiveMagnitude*2;
+              checks.mobileSourceProgressiveVulnerabilityInNativeCombat=event?.skill===progressive29.skill.name&&event?.mode==='skill'&&markedStatus.turns===progressiveTurns&&
+                afterOwnTurn?.stacks===2&&markedTargets.length>0&&markedHit?.amount>plainHit?.amount&&
+                Math.abs(Number(markedHit.amount)/Math.max(1,Number(plainHit.amount))-expectedFactor)<.01;
+              checks.mobileSourceProgressiveVulnerabilityDiagnostics={sample:progressive29,sourceEvent:event,markedSlots:markedTargets.map(unit=>unit.slot),initialStacks:markedStatus.stacks,afterOwnTurn:afterOwnTurn?.stacks,plainHit,markedHit,expectedFactor};
+            }else {checks.mobileSourceProgressiveVulnerabilityInNativeCombat=false;checks.mobileSourceProgressiveVulnerabilityDiagnostics={sample:progressive29,event,markedTargets:progressiveBattle.p.map(unit=>({slot:unit.slot,effects:unit.effects}))};}
+          }else {checks.mobileSourceProgressiveVulnerabilityInNativeCombat=false;checks.mobileSourceProgressiveVulnerabilityDiagnostics={battle:!!progressiveBattle,caster:!!progressiveCaster,sample:progressive29};}
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
+          const fortuneBattle65=launchStatusProbe(fortune65,true),fortuneCaster65=fortuneBattle65?.e?.find(unit=>unit.slot===fortune65?.slot);
+          if(fortuneBattle65&&fortuneCaster65){
+            const application=fortuneCaster65.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='65');if(application)application.chance=1;
+            fortuneCaster65.morale=100;q.perform(fortuneCaster65);
+            const sourceEvent=fortuneBattle65.events.at(-1),fortuneStatus=fortuneCaster65.effects.find(effect=>effect.mobileSource?.sourceEffectId==='65');
+            const maximum=fortuneStatus?.mobileSourceValues?.maxDamageMultiplier;
+            fortuneCaster65.morale=40;q.perform(fortuneCaster65);const actionEvent=fortuneBattle65.events.at(-1),draw=actionEvent?.mobileSourceFateDamageMultiplier;
+            const plainTarget={team:'p',slot:0,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',def:1,tdef:1,mdef:1,effects:[]},fateTarget=structuredClone(plainTarget);
+            const plainAttacker={team:'e',slot:4,hp:1000000000000,maxHp:1000000000000,alive:true,morale:40,type:'infantry',troop:'infantry',atk:1000000,catk:1000000,matk:1000000,crit:0,def:1,tdef:1,mdef:1,effects:[]},fateAttacker={...plainAttacker,nlMobileFateDamageMultiplier:draw||1};
+            const seed=fortuneBattle65.seed;fortuneBattle65.seed=112233;const plainHit=c.p2Hit(plainAttacker,plainTarget,'physical',1);
+            fortuneBattle65.seed=112233;const fateHit=c.p2Hit(fateAttacker,fateTarget,'physical',1);fortuneBattle65.seed=seed;
+            checks.mobileSourceFortuneInNativeCombat=sourceEvent?.skill===fortune65.skill.name&&fortuneStatus?.turns===fortuneTurns&&
+              fortuneStatus?.mobileSourceValues?.maxDamageMultiplier===fortuneMaximum&&actionEvent?.mode==='normal'&&
+              Number.isInteger(draw)&&draw>=1&&draw<=fortuneMaximum&&!fortuneCaster65.nlMobileFateDamageMultiplier&&
+              Math.abs(Number(fateHit?.amount)/Math.max(1,Number(plainHit?.amount))-draw)<.02;
+            checks.mobileSourceFortuneDiagnostics={sample:fortune65,sourceEvent,actionEvent:{mode:actionEvent?.mode,draw:actionEvent?.mobileSourceFateDamageMultiplier,hit:actionEvent?.hits?.[0]},fortuneStatus,maximum,plainHit,fateHit};
+          }else {checks.mobileSourceFortuneInNativeCombat=false;checks.mobileSourceFortuneDiagnostics={battle:!!fortuneBattle65,caster:!!fortuneCaster65,sample:fortune65};}
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
           if(silenceBattle&&silenceCaster){
