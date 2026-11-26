@@ -40,13 +40,15 @@
    const pages=Math.max(1,Math.ceil(filtered.length/perPage)),current=Math.min(page,pages-1);
    const cards=filtered.slice(current*perPage,(current+1)*perPage).map(row=>{
      const owned=stacks[row.id]||0,rule=row.effectRule||{},needs=rule.needPieces||1;
+     const sourceMaterial=row.provenance?.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI';
      const silverCost=rule.silverCost||0;
      const canProcess=owned>=needs&&(state.silver||0)>=silverCost;
-     const action=mode==='wiki'||row.integration!=='PLAYABLE'?'':rule.kind==='CRAFT_REAGENT'?
+     const action=mode==='wiki'||row.integration!=='PLAYABLE'||sourceMaterial?'':rule.kind==='CRAFT_REAGENT'?
        '<button data-nli-item-action="process" data-nli-item-id="'+esc(row.id)+'" '+(!canProcess?'disabled':'')+'>Gia công ×'+needs+'</button>':
        rule.kind==='REFINEMENT_REAGENT'?'':'<button data-nli-item-action="use" data-nli-item-id="'+esc(row.id)+'">'+
        (rule.kind==='OPEN_BUNDLE'?'Mở rương':'Sử dụng')+'</button>';
-     const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':
+     const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':sourceMaterial?
+       (row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.'):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
          ' · '+Object.entries(rule.stacks).map(([key,value])=>esc(key)+' ×'+esc(value)).join(' · '):'') :
@@ -56,7 +58,7 @@
        'Nguyên liệu rèn luyện';
      return '<article class="nli-items-card" data-nl-art-item="'+esc(row.id)+'" data-nl-art-kind="'+esc(row.sourceCategory||row.sourceGroup||rule.kind||'token')+'" data-nl-art-rarity="'+esc(row.rarity||'')+'"><b>'+esc(row.name)+'</b><small>'+
        esc(row.sourceCategory||row.sourceGroup||'Vật phẩm')+' · '+
-       (mode==='wiki'?'Wiki (chỉ đọc)':'Sở hữu: '+owned)+'</small><p>'+effect+
+       (mode==='wiki'?'Wiki (chỉ đọc)':sourceMaterial?'Nguồn Mobile · Sở hữu: '+owned:'Sở hữu: '+owned)+'</small><p>'+effect+
        '</p>'+(rule.kind==='CRAFT_REAGENT'&&mode!=='wiki'?
        '<div class="nli-items-cost" data-nli-craft-status="'+(canProcess?'ready':'insufficient')+'">'+
        'Có '+owned+'/'+needs+' · Bạc '+esc(state.silver||0)+'/'+esc(silverCost)+

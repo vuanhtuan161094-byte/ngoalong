@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Content C live Chromium smoke; actual P2 launch, one action, and native settlement."""
+import os
+import shutil
 from playwright.sync_api import sync_playwright
 from nl_native_pve_a1_browser import open_page, errors
 
 def main():
     with sync_playwright() as p:
-        browser=p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+        executable=os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH") or shutil.which("chromium")
+        browser=p.chromium.launch(headless=True,executable_path=executable,
+                                  args=["--no-sandbox","--disable-dev-shm-usage"])
         page=open_page(browser)
         out=page.evaluate("""()=>{
           const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__;
@@ -22,14 +26,27 @@ def main():
           const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
-          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===4903&&c.counts.runtimeHeroes===368&&c.tiers()===40,
+          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.tiers()===40,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul};
+          const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
+          const mobileProbe={troop:'archer',type:'archer',atk:100,catk:100,matk:100,def:100,tdef:100,mdef:100,crit:.2};
+          c.applyMobileTroopProfile(mobileProbe,'p');
+          checks.mobileTroopSource= c.mobileTroopCount()===408&&Object.entries(mobileRoles).every(([role,id])=>c.mobileTroopSourceId(role)===id&&c.mobileTroopProfile(role)?.id===id);
+          checks.mobileTroopCoefficients=mobileProbe.atk===85&&mobileProbe.catk===125&&mobileProbe.matk===85&&mobileProbe.def===15&&mobileProbe.tdef===10&&mobileProbe.mdef===20&&Math.abs(mobileProbe.crit-.11)<1e-9&&mobileProbe.nlMobileTroop?.id==='12';
+          const mobileBefore=q.getGame(),mobileCandidate=mobileBefore.roster.find(heroId=>c.p2Unit(heroId,'p',0,1)?.type==='infantry');
+          if(mobileCandidate){
+            const mobileGame=JSON.parse(JSON.stringify(mobileBefore));mobileGame.troopModes[mobileCandidate]='spear';
+            if(mobileGame.nlClassicWebB4?.assigned)delete mobileGame.nlClassicWebB4.assigned[mobileCandidate];
+            q.setGame(mobileGame);const liveMobile=c.p2Unit(mobileCandidate,'p',0,1);
+            checks.mobileTroopLiveP2=liveMobile?.nlMobileTroop?.id==='10'&&liveMobile.atk>0&&liveMobile.def>0;
+          }else checks.mobileTroopLiveP2=false;
+          q.setGame(mobileBefore);
           const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders,firstMerit=q.getGame().nlClassicA.merit;
           checks.difficultyRange=c.npcDifficulty(n.id)===1&&m.npcs.every(x=>c.npcDifficulty(x.id)>=1&&c.npcDifficulty(x.id)<=90);
           checks.nativeStart=c.startNpc(n.id);checks.oneOrder=q.getGame().nlClassicA.orders===orders-1;
           let b=q.debugBattle();
-          checks.formation=b?.e.length===n.units.length&&b.e.every((e,i)=>e.slot===n.units[i][0]&&e.name===n.units[i][1]);
+          checks.formation=b?.e.length===n.units.length&&b.e.every((e,i)=>e.slot===n.units[i].slot&&e.name===n.units[i].name);
           if(!b)return checks;
           const enemy=b.e[0];enemy.morale=100;q.perform(enemy);
           checks.nativeAction=b.events.length===1;
@@ -37,7 +54,16 @@ def main():
           for(const u of b.e)u.hp=0;
           if(!b.finished)q.finishBattle();
           const s=q.getGame(),report=b.report;
-          checks.settlement=b.won&&c.state().cleared[n.id]===true&&s.cleared.length===28&&report?.nlContentC?.id===n.id&&report?.rewards?.iron===undefined;
+          checks.settlement=b.won&&c.state().cleared[n.id]===true&&s.cleared.length===28&&report?.nlContentC?.id===n.id&&report?.nlContentC?.mobileSource?.record?.ident===n.source?.ident&&report?.rewards?.iron===undefined;
+          const mobileDrop=report?.nlContentC?.mobileDropRolls?.rows?.find(x=>x.sourceId==='34');
+          checks.mobileCampaignDrop=mobileDrop?.status==='SOURCE_DROP_ROLLED'&&mobileDrop?.rate===100&&
+            mobileDrop?.runtimeId==='mobile-vng-equipment-34'&&s.items.some(x=>x.base==='mobile-vng-equipment-34')&&
+            report?.nlContentC?.mobileDropRolls?.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE';
+          const mobileGear=s.items.find(x=>x.base==='mobile-vng-equipment-34');
+          const unarmed=c.p2Unit(id,'p',0,1),equipResult=mobileGear&&window.__NL_ITEM_QA__?.equipOwned(id,mobileGear.uid),armed=c.p2Unit(id,'p',0,1);
+          checks.mobileGearLiveCombat=!!equipResult?.ok&&equipResult.detail?.slot==='armor'&&armed.def>unarmed.def&&armed.hp>unarmed.hp&&
+            q.getGame().gear[id]?.armor===mobileGear.uid&&q.getGame().version===5;
+          checks.sealCurrencySettlement=report?.rewards?.chienTich===650+c.npcDifficulty(n.id)*240+(n.boss?500:0)&&c.state().chienTich===report.rewards.chienTich&&c.state().hoPhu===0;
           checks.firstMerit=s.nlClassicA.merit-firstMerit>=c.npcMerit(n.id)&&report?.nlContentC?.meritAward===s.nlClassicA.merit-firstMerit;
           const balance=s.silver,meritBalance=s.nlClassicA.merit;q.finishBattle();checks.noDuplicate=q.getGame().silver===balance&&q.getGame().nlClassicA.merit===meritBalance;
           q.closeBattle('city');
@@ -55,8 +81,16 @@ def main():
           q.finishBattle();const towerRepeated=q.getGame();
           checks.towerNoDuplicate=JSON.stringify(settled)===JSON.stringify([towerRepeated.silver,towerRepeated.grain,towerRepeated.prestige,c.floor(),c.state().soul,towerRepeated.battleReports.length]);
           q.closeBattle('city');
-          checks.seals=c.unlockSeal('sword')&&c.equipSeal('sword')&&!c.unlockSeal('sword');
-          checks.panels=c.panels().every(x=>x.includes('data-nlc-panel'));
+          checks.seals=c.seals()===25&&c.sealReady('1001')&&c.sealLevel('1002')===1&&!('unlockSeal'in c)&&!('equipSeal'in c);
+          checks.panels=c.panels().every(x=>x.includes('data-nlc-panel'))&&c.panels().some(x=>x.includes('mobile-troops'));
+          const exactMapBonus=c.mapBonus('wiki-map-1');
+          checks.mobileCampaignAchievement=exactMapBonus?.sourceExact===true&&exactMapBonus.silver===140&&exactMapBonus.gold===10&&Number.isSafeInteger(q.getGame().gold);
+          const campaignGateBefore=q.getGame(),campaignTarget=c.map('wiki-map-3')?.npcs?.[0];
+          const belowGate=JSON.parse(JSON.stringify(campaignGateBefore));belowGate.nlContentC.mobileCommanderLevel=29;q.setGame(belowGate);
+          const campaignLocked=!!campaignTarget&&!c.readyNpc(campaignTarget.id);
+          const atGate=q.getGame();atGate.nlContentC.mobileCommanderLevel=30;q.setGame(atGate);
+          checks.mobileSourceUnlock=campaignLocked&&!!campaignTarget&&c.readyNpc(campaignTarget.id)&&c.state().mobileCommanderLevel===30;
+          q.setGame(campaignGateBefore);
           checks.saveV5=q.getGame().version===5&&c.floor()===21&&c.state().soul===soulBefore+expected.soul;
           // Test repeat victory through the same native settlement path; not a balance claim.
           const repeatGame=q.getGame();repeatGame.silver=1000000;repeatGame.grain=1000000;
@@ -66,7 +100,7 @@ def main():
           const rb=q.debugBattle();if(rb){for(const u of rb.e)u.hp=0;if(!rb.finished)q.finishBattle();}
           const afterRepeat=q.getGame();
           checks.repeatSettlement=!!rb?.won&&c.npcRepeatCount(n.id)===1&&c.state().soul===repeatSoul&&rb.report?.rewards?.silver===repeatReward.silver;
-          checks.repeatMerit=afterRepeat.nlClassicA.merit-repeatMeritBefore===4&&rb.report?.nlContentC?.meritAward===4;
+          checks.repeatMerit=afterRepeat.nlClassicA.merit-repeatMeritBefore===c.npcMerit(n.id)&&rb.report?.nlContentC?.meritAward===c.npcMerit(n.id);
           q.finishBattle();checks.repeatOnce=q.getGame().silver===afterRepeat.silver&&c.npcRepeatCount(n.id)===1&&q.getGame().nlClassicA.merit===afterRepeat.nlClassicA.merit;
           q.closeBattle('city');
           const cap=q.getGame();cap.nlContentC.npcRepeat[n.id]=3;q.setGame(cap);
@@ -83,13 +117,25 @@ def main():
             const mapAfter=q.getGame();q.finishBattle();checks.mapOnce=q.getGame().silver===mapAfter.silver&&c.state().soul===mapSoul+bonus.soul+(last.boss?15:5);
             q.closeBattle('city');
           }
-          const sealGame=q.getGame();sealGame.nlContentC.soul=1000;sealGame.silver=100000;q.setGame(sealGame);
-          checks.sealMigration=c.sealLevel('sword')===1&&c.sealValue('sword')===25;
-          checks.sealUpgrade=c.upgradeSeal('sword')&&c.sealLevel('sword')===2&&c.sealValue('sword')===29&&q.getGame().silver===98800&&c.state().soul===960;
-          checks.sealLocked=!c.upgradeSeal('not-a-seal');
-          checks.sealMax=c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.sealLevel('sword')===5&&c.sealValue('sword')===40&&!c.upgradeSeal('sword');
+          const untouched=q.getGame(),legacy=JSON.parse(JSON.stringify(untouched));
+          legacy.nlContentC={version:1,seals:{sword:true,precision:true,flame:true},sealLevels:{sword:5,precision:3,flame:4},sealActivations:{sword:7,precision:4,flame:5},equippedSeals:['sword','precision','flame']};
+          q.setGame(legacy);const migrated=c.state();
+          checks.sealMigration=c.sealLevel('1001')===5&&c.sealActivation('1001')===7&&c.sealLevel('1002')===3&&c.sealActivation('1002')===4&&migrated.mobileSealMigration?.version===2&&migrated.mobileSealMigration.aliases.length===3&&migrated.mobileSealMigration.legacyEquippedSnapshot.length===3;
+          const sourceChecks=(()=>{const xs=c.sealCatalog(),raw=window.__NL_CONTENT_C_QA__.state(),cost=c.sealQuote(1,250),late=c.sealQuote(209,250),xung=c.sealStatsForRuntime('1002',1,0);return xs.length===25&&xs.every(x=>x.attributes.filter(a=>a.kind==='levelSeries').every(a=>a.series.length===250))&&cost.chienTich===66897820&&cost.hoPhu===9&&late.hoPhu===9&&xung[0].value===6&&xung[1].sourceValue===175&&xs[1].attributes[1].series[249]===56487&&c.sealActivationValue('1002',25)===2071;})();
+          checks.sealSourceExact=sourceChecks;
+          const sealGame=q.getGame();sealGame.nlContentC={version:1};sealGame.nlContentC.chienTich=100000000;sealGame.nlContentC.hoPhu=10;q.setGame(sealGame);
+          const quote2=c.sealQuote(1,2);checks.sealUpgrade=c.upgradeSeal('1002',2)&&c.sealLevel('1002')===2&&q.getGame().nlContentC.chienTich===100000000-quote2.chienTich&&q.getGame().nlContentC.hoPhu===10;
+          checks.sealLocked=!c.upgradeSeal('not-a-seal',2)&&!c.upgradeSeal('1002',251);
+          const maxQuote=c.sealQuote(2,250),maxGame=q.getGame();maxGame.nlContentC.chienTich=maxQuote.chienTich;maxGame.nlContentC.hoPhu=maxQuote.hoPhu;q.setGame(maxGame);
+          checks.sealMax=c.upgradeSeal('1002',250)&&c.sealLevel('1002')===250&&q.getGame().nlContentC.chienTich===0&&q.getGame().nlContentC.hoPhu===0&&c.sealQuote(1,250).chienTich===66897820;
+          const activeGame=q.getGame();activeGame.formation='spear';q.setGame(activeGame);const strong=c.p2Unit(id,'p',0,1).catk;
+          const weaker=q.getGame();weaker.nlContentC.mobileSealLevels['1002']=1;weaker.nlContentC.mobileSealActivations['1002']=0;q.setGame(weaker);
+          const weak=c.p2Unit(id,'p',0,1).catk;checks.sealCombat=strong>weak+40&&c.sealActive('1018');
+          const otherFormation=q.getGame();otherFormation.formation='shield';q.setGame(otherFormation);checks.sealFormationLinked=!c.sealActive('1018')&&c.sealActive('1002');
+          const poor=q.getGame();poor.nlContentC.chienTich=10;poor.nlContentC.hoPhu=0;q.setGame(poor);const poorBefore=c.state();
+          checks.sealAtomicFailure=!c.upgradeSeal('1002',250)&&c.sealLevel('1002')===1&&c.state().chienTich===poorBefore.chienTich&&c.state().hoPhu===poorBefore.hoPhu;
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
-          checks.sealSave=c.sealLevel('sword')===5&&c.state().soul===600&&q.getGame().version===5;
+          checks.sealSave=c.sealLevel('1002')===1&&c.state().mobileSealSchema===2&&q.getGame().version===5;
           const adv=window.__NL_ADVANCED_QA__,hs=window.__NL_HERO_SYSTEMS_QA__,fg=q.getGame();
           fg.silver=100000;fg.grain=100000;fg.nlClassicA.merit=10000;
           fg.nlCity.levels.nl_city_manor=2;fg.hero[id].level=60;
@@ -126,11 +172,10 @@ def main():
           const cost=hs.trainQuote(id),trainingBefore=q.getGame().silver;
           checks.batchTrain=hs.trainBatch(id,5)&&q.getGame().silver===trainingBefore-cost.cost.silver*5&&q.getGame().hero[id].level>1&&!hs.trainBatch(id,99);
           checks.normalizedCurve=c.npcBaseStage(1)===1&&c.npcBaseStage(90)===28&&Array.from({length:89},(_,i)=>c.npcBaseStage(i+2)>=c.npcBaseStage(i+1)).every(Boolean);
-          const activation=q.getGame();activation.nlContentC.soul=3000;activation.nlClassicA.merit=10000;q.setGame(activation);
-          const baseSeal=c.sealValue('sword');
-          checks.sealActivation=Array.from({length:25},()=>c.activateSeal('sword')).every(Boolean)&&c.sealActivation('sword')===25&&c.sealValue('sword')>baseSeal&&!c.activateSeal('sword');
+          const activation=q.getGame();activation.nlContentC.chienTich=100000;activation.nlContentC.mobileSealLevels['1002']=1;activation.nlContentC.mobileSealActivations['1002']=0;q.setGame(activation);
+          checks.sealActivation=Array.from({length:25},()=>c.activateSeal('1002')).every(Boolean)&&c.sealActivation('1002')===25&&c.sealActivationValue('1002',25)===2071&&c.state().chienTich===6250&&!c.activateSeal('1002');
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
-          checks.activationSave=c.sealActivation('sword')===25&&q.getGame().version===5;
+          checks.activationSave=c.sealActivation('1002')===25&&q.getGame().version===5;
           return checks;
         }""")
         print(out,flush=True)

@@ -25,6 +25,13 @@ def payload() -> str:
     rules = json.loads((DATA / "rules.json").read_text(encoding="utf-8"))
     from nl_classic_phase_a3_items import project_a3
     catalogue, rules = project_a3(catalogue, rules)
+    mobile_source_path=DATA / "mobile_wiki_v1.json"
+    mobile_source=json.loads(mobile_source_path.read_text(encoding="utf-8"))
+    from nl_mobile_inventory_v1 import normalize as normalize_mobile_inventory
+    expected_mobile_source,_=normalize_mobile_inventory(ROOT)
+    if mobile_source!=expected_mobile_source:
+        raise ValueError("Stale Mobile Wiki equipment/item source model")
+    catalogue["mobileSource"]=mobile_source
     playable = [e for e in catalogue["equipment"] if e["integration"] == "PLAYABLE"]
     reference = [e for e in catalogue["equipment"] if e["integration"] == "REFERENCE_ONLY"]
     if len(playable) != 411 or len(reference) != 392 or len(catalogue["items"]) != 1343:

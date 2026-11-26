@@ -1,0 +1,18 @@
+{
+  "passed": 10,
+  "total": 10,
+  "failed": [],
+  "catalog": {
+    "referenceUnits": 9,
+    "families": [
+      "archer",
+      "cavalry",
+      "infantry",
+      "spear",
+      "strategist"
+    ],
+    "unknownStats": 9,
+    "unknownEvolutionLinks": 9,
+    "playableUnitImports": 0
+  }
+}

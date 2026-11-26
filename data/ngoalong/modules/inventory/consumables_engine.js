@@ -23,16 +23,18 @@
     for(const row of pack.items){
       requireOk(row&&goodId(row.id)&&!own(lookup,row.id),'INVALID_OR_DUPLICATE_ITEM_ID');
       requireOk(row.integration==='PLAYABLE'||row.integration==='REFERENCE_ONLY','BAD_INTEGRATION');
-      requireOk(row.provenance?.classification==='VERIFIED' ||
-        row.provenance?.classification==='SIMULATED','BAD_PROVENANCE');
+      const mobileSourceMaterial=row.provenance?.classification==='SOURCE_EXACT'&&
+        row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&row.acquisitionRule?.kind==='MOBILE_DROP'&&
+        row.category==='material'&&row.effectRule==null;
+      requireOk(['VERIFIED','SIMULATED','SOURCE_EXACT'].includes(row.provenance?.classification),'BAD_PROVENANCE');
       if(row.integration==='REFERENCE_ONLY'){
         requireOk(row.effectRule==null,'REFERENCE_EFFECT_FORBIDDEN');
       }else{
-        requireOk(row.provenance.classification==='SIMULATED','ACTIVE_NOT_PROJECT_ORIGINAL');
+        requireOk(row.provenance.classification==='SIMULATED'||mobileSourceMaterial,'ACTIVE_NOT_PROJECT_ORIGINAL');
         requireOk(row.category==='consumable'||row.category==='material','BAD_PLAYABLE_KIND');
         if(row.category==='consumable')requireOk(row.effectRule&&
           ['GRANT_RESOURCE','OPEN_BUNDLE','TRAIN_HERO_XP'].includes(row.effectRule.kind),'BAD_CONSUMABLE_RULE');
-        else requireOk(row.effectRule?.kind==='CRAFT_REAGENT'||
+        else if(!mobileSourceMaterial)requireOk(row.effectRule?.kind==='CRAFT_REAGENT'||
           row.effectRule?.kind==='REFINEMENT_REAGENT','BAD_MATERIAL_RULE');
       }
       lookup[row.id]=row;

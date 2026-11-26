@@ -5,6 +5,12 @@
 const NL_ITEM_CATALOGUE = window.NLItemBalanceV1.apply(__NL_ITEMS_CATALOGUE__);
 // Balance B2 changes only 667 project-origin item rules, not Wiki reference rows.
 window.NLItemBalanceV1.economicAudit(NL_ITEM_CATALOGUE);
+const NL_MOBILE_INVENTORY=NL_ITEM_CATALOGUE.mobileSource;
+if(NL_MOBILE_INVENTORY?.sourceCounts?.equipment!==399||NL_MOBILE_INVENTORY?.sourceCounts?.items!==746||
+   NL_MOBILE_INVENTORY.runtimeEquipment?.length!==36||NL_MOBILE_INVENTORY.runtimeMaterials?.length!==33)
+  throw new Error('NL_MOBILE_INVENTORY_SOURCE_COVERAGE_MISMATCH');
+NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment);
+NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -13,9 +19,10 @@ const nlItemConsumableApi=window.NLItemConsumables.createModule(NL_ITEM_CATALOGU
 const nlItemWarehouseView={mode:'bag',category:'all',search:'',page:0};
 const nlItemApi = window.NLItemInventory.createModule(NL_ITEM_CATALOGUE, NL_ITEM_RULES);
 const nlItemModels = NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'PLAYABLE');
-if (nlItemModels.length !== 411 ||
+if (nlItemModels.length !== 447 ||
+    NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='PLAYABLE'&&x.provenance?.classification==='SIMULATED').length!==411||
     NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'REFERENCE_ONLY').length !== 392) {
-  throw new Error('NL_ITEMS_411_OR_392_COVERAGE_MISMATCH');
+  throw new Error('NL_ITEMS_411_PROJECT_PLUS_36_MOBILE_OR_392_REFERENCE_COVERAGE_MISMATCH');
 }
 for (const item of nlItemModels) {
   // Old 19 IDs and stats stay byte-for-byte equivalent to their R03 pack.
@@ -72,7 +79,7 @@ equipmentStats=function(heroId){
 };
 if(window.__NL_R03_QA__) window.__NL_R03_QA__.equipmentStats=equipmentStats;
 
-const nlItemSelected={heroId:null,tab:'all',search:'',shop:false,page:0};
+const nlItemSelected={heroId:null,tab:'all',search:'',shop:false,page:0,reinforceTargets:{}};
 function nlItemHeroId(){
   const roster=(game.roster||[]).filter(id=>game.hero?.[id]);
   if (!roster.includes(nlItemSelected.heroId)) nlItemSelected.heroId=roster[0]||null;
@@ -101,7 +108,8 @@ renderEquipment=function(){
       '<option value="'+esc(id)+'" '+(id===heroId?'selected':'')+'>'+
         esc(HEROES[id]?.name||id)+'</option>').join('')+'</select></label>';
   const pending=Object.entries(nlItemHydrate().pendingAwards).map(([stage,drop])=>
-    '<div class="nli-pending">Ải '+esc(stage)+' · Chờ nhận '+esc(EQUIPMENT[drop.id]?.name||drop.id)+
+    '<div class="nli-pending">'+(drop.source==='mobile-campaign'?'Chiến dịch Wiki':'Ải '+esc(stage))+' · Chờ nhận '+
+    esc(EQUIPMENT[drop.id]?.name||drop.entries?.map(x=>NL_ITEM_CATALOGUE.equipment.find(e=>e.id===x.id)?.name||NL_ITEM_CATALOGUE.items.find(i=>i.id===x.id)?.name||x.id).join(', ')||drop.id)+
     ' <button data-nli-pending="'+esc(stage)+'">Nhận thưởng</button></div>').join('');
   return previous+'<div data-nl-item-bridge="1">'+selector+pending+
     window.NLItemEquipmentUI.makeView(NL_ITEM_CATALOGUE,nlItemApi,game,heroId,nlItemSelected)+
@@ -128,7 +136,7 @@ function nlItemAction(action,arg){
   const result=action==='buy'?nlItemApi.buy(game,arg.id,receipt):
     action==='equip'?nlItemApi.equip(game,heroId,arg.uid,receipt):
     action==='unequip'?nlItemApi.unequip(game,heroId,arg.slot,receipt):
-    action==='reinforce'?nlItemApi.reinforce(game,arg.uid,receipt):
+    action==='reinforce'?nlItemApi.reinforce(game,arg.uid,receipt,arg.targetLevel):
     action==='refine'?nlItemApi.refine(game,arg.uid,receipt):
     {ok:false,code:'UNSUPPORTED_ACTION'};
   return nlItemApply(result,{actionNonce:nonce});
@@ -168,11 +176,42 @@ function nlItemClaimPending(stage){
   if(typeof render==='function')render();
   return true;
 }
+function nlItemSettleMobileDrops(record){
+  if(!record||!Array.isArray(record.rows))return false;
+  const entries=record.rows.filter(x=>x.hit&&x.runtimeId).map(x=>({id:x.runtimeId,quantity:x.quantity||1}));
+  if(!entries.length){record.settlement={granted:0,unresolved:record.rows.filter(x=>x.status==='UNRESOLVED_SOURCE_ITEM_BINDING').length};return true;}
+  const reportId=String(battle?.report?.id||('seed-'+(battle?.seed||0)+'-'+Date.now()));
+  const receipt='nli:mobile-drop:'+reportId;
+  const result=nlItemApi.grant(game,entries,receipt);
+  if(result.ok){
+    if(!result.duplicate)Object.assign(game,result.state);
+    const nonce=nlItemHydrate().actionNonce+1;game.nlItemsV1.actionNonce=nonce;
+    record.settlement={granted:result.duplicate?0:entries.reduce((n,x)=>n+x.quantity,0),duplicate:!!result.duplicate,
+      receipt,quantities:result.detail?.quantities||{},unresolved:record.rows.filter(x=>x.status==='UNRESOLVED_SOURCE_ITEM_BINDING').length};
+    if(typeof save==='function')save();
+    return true;
+  }
+  const m=nlItemHydrate(),pendingKey='mobile:'+reportId;
+  if(['EQUIPMENT_CAPACITY','STACK_CAPACITY','STACK_KIND_CAPACITY'].includes(result.code)){
+    m.pendingAwards[pendingKey]={source:'mobile-campaign',entries,receipt};
+    record.settlement={granted:0,pending:true,code:result.code,receipt,
+      unresolved:record.rows.filter(x=>x.status==='UNRESOLVED_SOURCE_ITEM_BINDING').length};
+    if(typeof save==='function')save();
+  }else record.settlement={granted:0,error:result.code,receipt};
+  return false;
+}
+function nlItemQaEquipOwned(heroId,uid){
+  const nonce=nlItemHydrate().actionNonce+1,receipt='nli:qa:equip:'+nonce+':'+String(uid);
+  const result=nlItemApi.equip(game,heroId,uid,receipt);
+  if(result.ok&&!result.duplicate){Object.assign(game,result.state);game.nlItemsV1.actionNonce=nonce;if(typeof save==='function')save();}
+  return {ok:result.ok,duplicate:!!result.duplicate,code:result.code||null,detail:result.detail||null};
+}
 // Hook the actual settled battle report; never mint gear from replay, animation
 // frames, losses, or stage previews. Receipt ID has only one interpretation.
 const nlItemPriorStoreReport=p2StoreReport;
 p2StoreReport=function(rewards,loot){
   nlItemPriorStoreReport(rewards,loot);
+  if(battle?.nlContentC&&battle.report)nlItemSettleMobileDrops(battle.nlContentC.mobileDropRolls);
   if (!battle || battle.mode!=='campaign' || battle.won!==true ||
       battle.replay || !battle.report) return;
   nlItemGiveCampaignReward(Number(battle.stage));
@@ -212,10 +251,16 @@ document.addEventListener('click',function(ev){
   nlItemAction(action,{
     id:control.getAttribute('data-item'),
     uid:control.getAttribute('data-uid'),
-    slot:control.getAttribute('data-slot')
+    slot:control.getAttribute('data-slot'),
+    targetLevel:control.getAttribute('data-target-level')?Number(control.getAttribute('data-target-level')):undefined
   });
 },true);
 document.addEventListener('change',function(ev){
+  if(ev.target.matches?.('[data-nli-reinforce-target]')){
+    const uid=ev.target.getAttribute('data-nli-reinforce-target');
+    nlItemSelected.reinforceTargets[uid]=Math.max(1,Math.floor(Number(ev.target.value)||1));
+    nlItemRefreshEquipmentPanel();return;
+  }
   if(!ev.target.matches?.('[data-nli-hero]'))return;
   nlItemSelected.heroId=ev.target.value;render();
 },true);
@@ -277,10 +322,11 @@ document.addEventListener('input',function(ev){
 },true);
 if(window.__P2_ENABLE_QA__){
   window.__NL_ITEM_QA__={
-    getCounts:()=>({playable:nlItemModels.length,
+    getCounts:()=>({playable:nlItemModels.length,projectPlayable:411,mobilePlayable:NL_MOBILE_INVENTORY.runtimeEquipment.length,
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
+      projectPlayable:669,mobilePlayable:NL_MOBILE_INVENTORY.runtimeMaterials.length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{
@@ -294,7 +340,12 @@ if(window.__P2_ENABLE_QA__){
     selectLoot:nlItemLootForStage,
     settleStage:nlItemGiveCampaignReward,
     claim:nlItemClaimPending,
-    state:()=>structuredClone(game.nlItemsV1)
+    state:()=>structuredClone(game.nlItemsV1),
+    equipOwned:nlItemQaEquipOwned,
+    mobileSource:()=>({equipment:NL_MOBILE_INVENTORY.sourceCounts.equipment,items:NL_MOBILE_INVENTORY.sourceCounts.items,
+      drops:NL_MOBILE_INVENTORY.sourceCounts.campaignDropRows,activeEquipment:NL_MOBILE_INVENTORY.runtimeEquipment.length,
+      activeMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length}),
+    settleMobileDrops:nlItemSettleMobileDrops
   };
 }
 // === end NL-ITEMS-V1 ===
