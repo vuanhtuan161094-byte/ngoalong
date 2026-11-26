@@ -67,7 +67,7 @@ p2Unit=function(id,team,slot,stage){
    if(Number.isFinite(u[prop]))u[prop]=Math.max(1,Math.round(u[prop]*nlwB4Factor(prop,k[source],troop.tier)));
  }
  u.nlClassicWebUnit=troop.id;u.nlClassicWebName=troop.name;
- u.nlClassicWebAbility=troop.ability;u.nlClassicWebPattern=troop.skillPattern;
+ u.nlClassicWebAbility=troop.ability;u.nlClassicWebPattern=troop.skillPattern;u.nlClassicWebTier=troop.tier;
  u.troop=troop.ability==='drum'?'drum':troop.ability==='dancer'?'dancer':troop.family;
  u.type=troop.family==='spear'?'infantry':troop.family;
  if(troop.ability==='drum'||troop.ability==='dancer')u.type='support';
@@ -86,9 +86,10 @@ p2Skill=function(actor){
  const descriptor=nlwB4PriorSkill(actor);
  if(!actor||actor.team!=='p'||battle?.mode!=='campaign'||!descriptor)return descriptor;
  const kind=actor.nlClassicWebPattern;
- if(['row','column','back'].includes(kind)&&descriptor.pattern==='single')
-   return {...descriptor,pattern:kind,mult:descriptor.mult*.75};
- return descriptor;
+ let out={...descriptor};
+ if(['row','column','back'].includes(kind)&&out.pattern==='single'){out.pattern=kind;out.mult*=.75;}
+ if(actor.nlClassicWebAbility==='control'&&out.pattern!=='heal'&&!out.apply){out.apply='daze';out.applyChance=.18+.03*(actor.nlClassicWebTier||1);}
+ return out;
 };
 const nlwB4PriorHit=p2Hit;
 p2Hit=function(actor,target,kind,mult=1,opts={}){
@@ -96,6 +97,8 @@ p2Hit=function(actor,target,kind,mult=1,opts={}){
  if(actor.team==='p'&&actor.nlClassicWebAbility==='crit'&&['physical','tactic'].includes(kind))
    opts={...opts,crit:(opts.crit||0)+.045};
  if(target.team==='p'&&target.nlClassicWebAbility==='guard'&&kind==='physical')mult*=.93;
+ // Counter specialists exploit an existing matchup advantage; no extra hit or retaliation resolver.
+ if(actor.team==='p'&&actor.nlClassicWebAbility==='counter'&&typeof p3CounterFactor==='function'&&p3CounterFactor(actor.troop,target.troop)>1)mult*=1.12;
  return nlwB4PriorHit(actor,target,kind,mult,opts);
 };
 // Original 2D courtyard art: project-generated, NOT a source-game image.
@@ -157,14 +160,14 @@ function nlwB4Panel(){
      fee=nlwB4Cost(u.tier);
    return '<article class="nlw-unit" data-nlw-unit="'+esc(u.id)+'">'+nlwB4Glyph(u)+
    '<div class="nlw-txt"><b>'+esc(u.name)+'</b><small>'+esc(u.sourceName)+' · '+esc(u.familyName)+' · cấp '+u.tier+'</small>'+
-   '<small>'+esc(({drum:'Cổ vũ sĩ khí',dancer:'Nhiễu loạn sĩ khí',line:'Đòn lan tuyến',back:'Tập kích hậu quân',guard:'Chống đỡ',crit:'Đòn chí mạng',counter:'Phản kích',control:'Kiềm chế',standard:'Công thủ cân bằng'})[u.ability]||'Hỗ trợ')+'</small></div>'+
+   '<small>'+esc(({drum:'Cổ vũ sĩ khí',dancer:'Nhiễu loạn sĩ khí',line:'Đòn lan tuyến',back:'Tập kích hậu quân',guard:'Chống đỡ',crit:'Đòn chí mạng',counter:'Tăng 12% sát thương khi khắc chế',control:'Chiến pháp có xác suất choáng',standard:'Công thủ cân bằng'})[u.ability]||'Hỗ trợ')+'</small></div>'+
    '<button class="gold-button" data-nlw-choose="'+esc(u.id)+'" '+(!ready||owned?'disabled':'')+'>'+
      (owned?'Đang dùng':level<u.tier?'Doanh Trại '+u.tier:'Chọn'+(fee?' · '+fmt(fee)+' Bạc':''))+'</button></article>';
  }).join('')+'</div>'+(!shown.length?'<p class="tiny">Không có kết quả.</p>':'')+
  '<div class="nlw-page"><button class="dark-button" data-nlw-page="prev" '+(nlwB4Page===0?'disabled':'')+'>◀ Trước</button>'+
  '<span>Trang '+(nlwB4Page+1)+'/'+(pageMax+1)+' · '+list.length+' loại quân</span>'+
  '<button class="dark-button" data-nlw-page="next" '+(nlwB4Page>=pageMax?'disabled':'')+'>Sau ▶</button></div>'+
- '<p class="tiny">Khi chuyển quân, đội hình và quân số vẫn giữ nguyên; chỉ số, chức năng dòng quân được áp dụng trong P2 và không tính hai lần. Cấp Doanh Trại/phí chuyển do dự án mô phỏng.</p></section>';
+ '<p class="tiny">Khi chuyển quân, đội hình và quân số vẫn giữ nguyên; chỉ số, chức năng dòng quân được áp dụng trong P2 và không tính hai lần. Cấp Doanh Trại/phí chuyển và hiệu ứng chiến thuật do dự án mô phỏng.</p></section>';
 }
 const nlwB4PriorBarracks=renderBarracks;
 renderBarracks=function(){return nlwB4PriorBarracks()+nlwB4Panel();};
