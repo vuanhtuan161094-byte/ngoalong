@@ -11,7 +11,7 @@
   const RESOURCE=new Set(['silver','gold','iron','grain','prestige']);
   const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   const safe=n=>Number.isSafeInteger(n)&&n>=0;
-  const goodId=id=>typeof id==='string'&&id.length>0&&id.length<=160;
+  const goodId=id=>typeof id==='string'&&id.length>0&&id.length<=160&&!['__proto__','prototype','constructor'].includes(id);
   const copy=o=>JSON.parse(JSON.stringify(o));
   const error=code=>{const e=new Error(code);e.code=code;throw e};
   const requireOk=(ok,code)=>{if(!ok)error(code)};
@@ -111,7 +111,7 @@
       for(const x of rule.outputs){
         requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
         const owner=x.wallet==='awakening'?c.mobileHeroMaterials:c,key=x.wallet==='awakening'?x.name:x.wallet==='science'?'mobileTechPoints':'mobileTechTripods';
-        const previous=owner[key]??0;requireOk(safe(previous)&&safe(previous+x.qty),'SOURCE_BUNDLE_OVERFLOW');owner[key]=previous+x.qty;
+        const previous=own(owner,key)?owner[key]:0;requireOk(safe(previous)&&safe(previous+x.qty),'SOURCE_BUNDLE_OVERFLOW');owner[key]=previous+x.qty;
       }
     }
     function use(state,id,receipt,heroId=null){
@@ -144,6 +144,7 @@
         }else if(rule.kind==='TRAIN_HERO_XP'){
           const hero=next.hero[heroId];
           requireOk(safe(rule.amount)&&rule.amount>=1,'BAD_HERO_XP');
+          requireOk(safe((hero.xp||0)+rule.amount),'HERO_XP_OVERFLOW');
           hero.xp=(hero.xp||0)+rule.amount;
           while(hero.level<40&&hero.xp>=hero.level*90){
             hero.xp-=hero.level*90;

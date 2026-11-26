@@ -375,8 +375,18 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
  MOBILE_HEAL_REDUCTION_STATUS='mobile-source-heal-reduction',MOBILE_LIFESTEAL_STATUS='mobile-source-lifesteal',MOBILE_ONE_HIT_SHIELD_STATUS='mobile-source-one-hit-shield',
  MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
- MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs',MOBILE_BOOK_GUARD_STATUS='mobile-book-guard',MOBILE_BOOK_SHIELD_STATUS='mobile-book-shield';
+ MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs',MOBILE_BOOK_GUARD_STATUS='mobile-book-guard',MOBILE_BOOK_SHIELD_STATUS='mobile-book-shield',
+ MOBILE_BOOK_BREAK='mobile-book-break',MOBILE_BOOK_BREAK2='mobile-book-break2',MOBILE_BOOK_SILENCE='mobile-book-silence',MOBILE_BOOK_ATTR='mobile-book-attr',MOBILE_BOOK_SPRING='mobile-book-spring',MOBILE_BOOK_MOON='mobile-book-moon',MOBILE_BOOK_IMMUNE='mobile-book-immune',MOBILE_BOOK_VITAL='mobile-book-vital',MOBILE_BOOK_MORALE_GUARD='mobile-book-morale-guard';
 for(const [kind,spec] of Object.entries({
+ [MOBILE_BOOK_BREAK]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_BREAK2]:{"duration":1,"polarity":"harmful","dispelPolicy":"undispellable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_SILENCE]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_ATTR]:{"duration":2,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_SPRING]:{"duration":99,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_MOON]:{"duration":2,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_IMMUNE]:{"duration":1,"polarity":"beneficial","dispelPolicy":"undispellable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_VITAL]:{"duration":3,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_BOOK_MORALE_GUARD]:{"duration":3,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
  [MOBILE_BOOK_SHIELD_STATUS]:{duration:2,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_BOOK_GUARD_STATUS]:{duration:3,polarity:'beneficial',dispelPolicy:'undispellable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_CONTROL_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1},
@@ -857,10 +867,13 @@ p2StatusValue=function(effect,field){
 const nlContentCMobileBaseMorale=p2Morale;
 p2Morale=function(unit,delta){
  if(unit&&delta>0)delta=Math.floor(delta*p2StatusFactor(unit,'moraleGainMultiplier'));
+ if(unit&&delta<0&&mobileBookHas(unit,MOBILE_BOOK_MORALE_GUARD))delta=Math.ceil(delta*.5);
  return nlContentCMobileBaseMorale(unit,delta);
 };
 function applyMobileSourceStatus(unit,app){
- if(!unit||!app||!Number.isInteger(app.turns)||app.turns<1||!p2Status(unit,app.kind,app.turns))return false;
+ if(!unit||!app||!Number.isInteger(app.turns)||app.turns<1)return false;
+ if(mobileBookHas(unit,MOBILE_BOOK_IMMUNE)&&NL_GAME_DATA.statusEffects.effects[app.kind]?.polarity==='harmful')return false;
+ if(!p2Status(unit,app.kind,app.turns))return false;
  const status=unit.effects.find(effect=>effect.kind===app.kind);
  if(!status)return false;
  status.mobileSourceValues=structuredClone(app.values||{});
@@ -1068,6 +1081,18 @@ p2Skill=function(actor){
 };
 const nlContentCBaseHit=p2Hit;
 // Each layer consumes one positive native hit; no extra attack or reward.
+function mobileBookHas(u,kind){return !!u?.effects?.some(e=>e.kind===kind&&e.turns>0);}
+function mobileBookBroken(u){return mobileBookHas(u,MOBILE_BOOK_BREAK)||mobileBookHas(u,MOBILE_BOOK_BREAK2);}
+function mobileBookAttribute(u){return (u?.effects||[]).filter(e=>e.kind===MOBILE_BOOK_ATTR&&e.turns>0).reduce((sum,e)=>sum+(Number(e.mobileSourceValues?.attributeFlat)||0),0);}
+function mobileBookSpring(u){
+ const e=u?.effects?.find(x=>x.kind===MOBILE_BOOK_SPRING&&x.turns>0);
+ if(!e||u.hp<=0)return 0;
+ const layers=Math.max(1,nat(e.mobileSourceValues?.layers));
+ // 50,000 source troops -> 41 P2 HP using the established .001*.82 conversion.
+ const healed=mobileBookRestore(u,41/Math.max(1,u.maxHp));
+ if(layers>1)e.mobileSourceValues.layers=layers-1;else u.effects=u.effects.filter(x=>x!==e);
+ return healed;
+}
 function mobileConsumeShield(target,shield){
  const layers=shield.kind===MOBILE_BOOK_SHIELD_STATUS?Math.max(1,nat(shield.mobileSourceValues?.shieldLayers)):1;
  if(layers>1)shield.mobileSourceValues.shieldLayers=layers-1;
@@ -1086,7 +1111,8 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
  const beforeHp=target?.hp,beforeMorale=target?.morale;
  const critAdd=(attacker?.effects||[]).reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.criticalChanceAdd)||0)*(effect.stacks||1),0);
- const effectiveAttacker=critAdd?{...attacker,crit:Math.min(.95,(Number(attacker.crit)||0)+critAdd)}:attacker;
+ const attribute=mobileBookAttribute(attacker),effectiveAttacker=critAdd||attribute?{...attacker,crit:Math.min(.95,(Number(attacker.crit)||0)+critAdd)}:attacker;
+ if(attribute)for(const k of ['atk','catk','matk'])if(Number.isFinite(effectiveAttacker[k]))effectiveAttacker[k]+=attribute;
  const vectorField=({physical:'physicalDamageMultiplier',tactic:'tacticDamageMultiplier',magic:'magicDamageMultiplier'})[kind];
  const vectorMultiplier=vectorField?(attacker?.effects||[]).reduce((factor,effect)=>{
    const value=effect.mobileSourceValues?.[vectorField];return Number.isFinite(value)?factor*value:factor;
@@ -1104,7 +1130,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const teamDefense=(target?.team==='p'?battle?.p:battle?.e)?.reduce((a,u)=>a+(u.hp>0?(u.nlMobileRefine?.teamDefense||0):0),0)||0;
  const guardFactor=sourceDefenseMultiplier*(attacker?.nlMobilePierceActive?.9:1)*(1+teamDefense);
  const previousGuard=guardField?resolvedTarget?.[guardField]:undefined;
- if(Number.isFinite(previousGuard))resolvedTarget[guardField]=Math.max(0,previousGuard*guardFactor-(ar?.pierceFlat||0));
+ if(Number.isFinite(previousGuard))resolvedTarget[guardField]=Math.max(0,(previousGuard+mobileBookAttribute(target))*guardFactor-(ar?.pierceFlat||0));
  let hit;
  try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier,opts);}
  finally{if(Number.isFinite(previousGuard))resolvedTarget[guardField]=previousGuard;}
@@ -1116,17 +1142,18 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
  let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction*(hit.critical===true||hit.crit===true?1+(ar?.critDamage||0)+(ab?.critDamage||0):1)));
- if(protectedBySource&&rawDamage>0)damage=Math.min(damage||1,1);
+ if((protectedBySource||mobileBookBroken(attacker))&&rawDamage>0)damage=Math.min(damage||1,1);
  if(damage>0&&target?.nlMobileAbsorb>0){const blocked=Math.min(damage,target.nlMobileAbsorb);target.nlMobileAbsorb-=blocked;damage-=blocked;hit.mobileTraitAbsorbed=blocked;}
  if(damage!==rawDamage){target.hp=beforeHp-damage;target.alive=target.hp>0;target.morale=beforeMorale;
    if(damage>0)p2Morale(target,target.type==='strategist'?34:25);
    hit.amount=damage;hit.number='-'+damage;}
  if(hit.amount>0&&target?.effects?.some(effect=>effect.kind===MOBILE_SLEEP_STATUS))
    target.effects=target.effects.filter(effect=>effect.kind!==MOBILE_SLEEP_STATUS);
+ if(hit.amount>0&&target.hp>0){const recovered=mobileBookSpring(target);if(recovered)hit.mobileBookSpringHealing=recovered;}
  const lifeSteal=(attacker?.effects||[]).filter(effect=>effect.kind===MOBILE_LIFESTEAL_STATUS&&effect.turns>0)
    .reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.lifestealDamageMultiplier)||0),0);
  if(hit.amount>0&&lifeSteal>0&&Number.isFinite(attacker.hp)&&Number.isFinite(attacker.maxHp)){
-   const healed=Math.min(Math.max(0,attacker.maxHp-attacker.hp),Math.floor(hit.amount*Math.min(1,lifeSteal)));
+   const healed=Math.min(Math.max(0,attacker.maxHp-attacker.hp),mobileBookBroken(attacker)?1:Math.floor(hit.amount*Math.min(1,lifeSteal)));
    attacker.hp+=healed;if(healed>0)attacker.alive=true;hit.mobileSourceHealing=healed;
  }
  return hit;
@@ -1154,7 +1181,10 @@ p2Heal=function(attacker,target,mult){
    return {team:target.team,slot:target.slot,amount:0,number:'+0',heal:true,kind:'heal'};
  const received=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_HEAL_REDUCTION_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingHealingMultiplier)?effect.mobileSourceValues.incomingHealingMultiplier:1),1);
- return nlContentCBaseHeal(attacker,target,mult*received);
+ const before=target.hp,vital=mobileBookHas(attacker,MOBILE_BOOK_VITAL)?1.4:1;
+ const hit=nlContentCBaseHeal(attacker,target,mult*received*vital);
+ if(mobileBookBroken(target)&&target.hp-before>1){target.hp=before+1;hit.amount=1;hit.number='+1';}
+ return hit;
 };
 // Preserve the source Cổ Vũ support action on the native P2 turn/event path.
 // The temporary drum role is an adapter only; the original troop identity returns
@@ -1216,17 +1246,20 @@ function mobilePassivePlan(passive){
 function mobileBookCleanse(u,max){
  let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='harmful'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;
 }
-function mobileBookRestore(u,ratio){const old=u.hp;u.hp=Math.min(u.maxHp,u.hp+Math.round(u.maxHp*ratio));return u.hp-old;}
+function mobileBookRestore(u,ratio){const old=u.hp,amount=Math.max(0,Math.round(u.maxHp*ratio));u.hp=Math.min(u.maxHp,u.hp+(mobileBookBroken(u)?Math.min(1,amount):amount));return u.hp-old;}
+function mobileBookDispel(u,max){let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind];if(n<max&&spec?.polarity==='beneficial'&&spec.dispelPolicy==='removable'){n++;return false;}return true;});return n;}
 function mobileBookAction(actor,event){
  const b=actor?.nlMobileTraining?.book;if(!b||!battle||battle.replay||battle.mode==='cltq'||actor.hp<=0||event?.actor!==actor.name||event.mode==='stunned')return false;
  actor.nlMobileBookTurns=nat(actor.nlMobileBookTurns)+1;
  if(![3,6].includes(actor.nlMobileBookTurns))return false;
  const desc=mobileTextKey(b.desc),enemies=battle.e.filter(x=>x.hp>0),allies=battle.p.filter(x=>x.hp>0);
  let changed=false;
+ const g=b.grade,turns=actor.nlMobileBookTurns===6?2:1,apply=(u,kind,n,values={})=>applyMobileSourceStatus(u,{kind,turns:n,values,sourceName:b.name,sourceDescription:b.desc});
  if(b.id==='1'&&enemies.length){
   const target=enemies.slice().sort((a,b)=>b.morale-a.morale||a.slot-b.slot)[0],n=desc.match(/giam (\d+) si khi/);
   if(/giam toan bo si khi/.test(desc)){p2Morale(target,-target.morale);changed=true;}
   else if(n){p2Morale(target,-Number(n[1]));changed=true;}
+  if(g>=2&&mobileBookHas(target,MOBILE_BOOK_MOON))changed=apply(target,MOBILE_CONTROL_STATUS,g===2?1:2)||changed;
   const extra=desc.match(/giam them (\d+) si khi/);if(extra)for(const e of enemies)p2Morale(e,-Number(extra[1]));
  }else if(b.id==='2'&&allies.length){
   const targets=allies.slice().sort((a,b)=>a.hp-b.hp||a.slot-b.slot),u=targets[0],g=b.grade;
@@ -1241,11 +1274,17 @@ function mobileBookAction(actor,event){
    const total=Math.min(99,layer+(old?Math.max(1,nat(old.mobileSourceValues?.shieldLayers)):0));
    changed=applyMobileSourceStatus(u,{kind:MOBILE_BOOK_SHIELD_STATUS,turns:2,values:{shieldLayers:total},sourceName:b.name,sourceDescription:b.desc})||changed;
   }
- }else if(b.id==='4'&&allies.length){const n=desc.match(/hoi (\d+) si khi/);if(n){p2Morale(allies.slice().sort((a,b)=>a.morale-b.morale||a.slot-b.slot)[0],Number(n[1]));changed=true;const extra=desc.match(/hoi them cho toan phe ta (\d+) si khi/);if(extra)for(const u of allies)p2Morale(u,Number(extra[1]));}}
+ }else if(b.id==='4'&&allies.length){const n=desc.match(/hoi (\d+) si khi/);if(n){const target=allies.slice().sort((a,b)=>a.morale-b.morale||a.slot-b.slot)[0];p2Morale(target,Number(n[1]));changed=true;if(g>=2)apply(target,MOBILE_BOOK_MOON,g===2?1:2);const extra=desc.match(/hoi them cho toan phe ta (\d+) si khi/);if(extra)for(const u of allies)p2Morale(u,Number(extra[1]));}}
  else if(b.id==='5'){const power=[.4,.6,.6,.8,1][b.grade-1],turns=b.grade<=2?1:2;for(const u of allies)changed=applyMobileSourceStatus(u,{kind:MOBILE_ATTACK_UP_STATUS,turns,values:{outgoingDamageMultiplier:1+power},sourceName:b.name,sourceDescription:b.desc})||changed;}
- else if(b.id==='9'){const def=[.6,.6,.7,.7,.8][b.grade-1];for(const u of allies)changed=applyMobileSourceStatus(u,{kind:MOBILE_BOOK_GUARD_STATUS,turns:3,values:{outgoingDamageMultiplier:.4,incomingPhysicalDefenseMultiplier:1+def,incomingTacticDefenseMultiplier:1+def,incomingMagicDefenseMultiplier:1+def},sourceName:b.name,sourceDescription:b.desc})||changed;}
- else if(b.id==='6'){for(const u of allies){const removed=mobileBookCleanse(u,b.grade===1?1:2);if(removed){p2Morale(u,removed*(b.grade<=2?10:20));changed=true;}}}
- else if(b.id==='8'){const n=desc.match(/giam (\d+) si khi/);if(n){for(const e of enemies)p2Morale(e,-Number(n[1]));changed=!!enemies.length;}}
+ else if(b.id==='9'){const def=[.6,.6,.7,.7,.8][b.grade-1];for(const u of allies)changed=applyMobileSourceStatus(u,{kind:MOBILE_BOOK_GUARD_STATUS,turns:3,values:{outgoingDamageMultiplier:.4,incomingPhysicalDefenseMultiplier:1+def,incomingTacticDefenseMultiplier:1+def,incomingMagicDefenseMultiplier:1+def},sourceName:b.name,sourceDescription:b.desc})||changed;
+  for(const u of allies){if(g>=2)changed=apply(u,MOBILE_BOOK_VITAL,3)||changed;if(g>=4)changed=apply(u,MOBILE_BOOK_MORALE_GUARD,3)||changed;}}
+ else if(b.id==='6'){const immunity=g===5||(g===4&&p2Random()<.5);for(const u of allies){const removed=mobileBookCleanse(u,g===1?1:2);if(removed){p2Morale(u,removed*(g<=2?10:20));changed=true;}if(immunity)changed=apply(u,MOBILE_BOOK_IMMUNE,1)||changed;}}
+ else if(b.id==='7'){const chance=[.25,.5,.5,1,1][g-1];if(chance===1||p2Random()<chance)for(const u of enemies)changed=apply(u,g>=3?MOBILE_BOOK_BREAK2:MOBILE_BOOK_BREAK,turns)||changed;
+  if(g===5)for(const u of allies)changed=apply(u,MOBILE_BOOK_SPRING,99,{layers:2})||changed;}
+ else if(b.id==='8'){const n=desc.match(/giam (\d+) si khi/);if(n){for(const e of enemies){p2Morale(e,-Number(n[1]));if(g>=4&&e.morale<(g===4?10:50))apply(e,MOBILE_CONTROL_STATUS,1);}changed=!!enemies.length;}}
+ else if(b.id==='10'&&enemies.length){const u=enemies.slice().sort((a,b)=>b.morale-a.morale||a.slot-b.slot)[0];if(g>=3)changed=mobileBookDispel(u,g===5?4:2)>0;const chance=[.33,.66,.66,1,1][g-1];if(chance===1||p2Random()<chance)changed=apply(u,MOBILE_BOOK_SILENCE,turns)||changed;}
+ else if(b.id==='11'){// SIMULATED: 0.1 P2 attack/defense per source attribute point; no permanent growth.
+  for(const u of allies)changed=apply(u,MOBILE_BOOK_ATTR,2,{attributeFlat:(100+25*(g-1))*.1})||changed;}
  if(changed){event.description+=' · '+b.name;event.state=p2Snapshot();battle.log=event.description;}
  return changed;
 }
@@ -1272,6 +1311,11 @@ function mobileApplyTurnPassives(actor,event){
  return labels;
 }
 p2Perform=function(actor){
+ // A silence blocks the morale action, not the normal action or stored morale.
+ const savedMorale=actor?.morale,locked=!!actor&&savedMorale>=100&&mobileBookHas(actor,MOBILE_BOOK_SILENCE)&&battle?.mode!=='cltq'&&!battle?.replay;
+ if(locked)actor.morale=99;
+ let moraleRestored=false;
+ const restoreLockedMorale=()=>{if(locked&&!moraleRestored){actor.morale=clamp(savedMorale+(actor.morale-99),0,130);moraleRestored=true;}};
  const d=actor?.team==='e'&&battle?.nlContentC?actor.nlCDescriptor:
    actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100?mobileHeroSkill(actor.id):null;
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
@@ -1301,8 +1345,10 @@ p2Perform=function(actor){
      actor.nlMobileActionPattern=actor.morale>=100?(p2Skill(actor)?.pattern||'single'):'single';
    }
    const result=nlContentCNativePerform(actor);
+   restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
+   if(locked&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
    const multi=(event?.hits||[]).filter(h=>h.mobileSourceHitCount>1);if(multi.length){event.description+=' · '+multi.map(h=>h.mobileSourceHitCount+' đòn').join(' / ');event.state=p2Snapshot();battle.log=event.description;}
    if(moraleOnly&&event?.actor===actor.name&&event.mode==='drum'){
      const audience=d.sourceMoraleScope==='OTHER_ALLIES'?'các tướng đồng minh khác':'toàn phe ta';
@@ -1337,7 +1383,7 @@ p2Perform=function(actor){
      if(label){event.description+=' · '+label;event.state=p2Snapshot();battle.log=event.description;}
    }
    return result;
- }finally{p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
+ }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
@@ -1607,7 +1653,7 @@ function trainingPanel(){
  return row(h.name,'Bậc '+t+' · '+horseStar(id)+' Sao · '+(h.tiers[0].unlock||'Mở ngay')+' · '+h.tiers[t].stats.map(x=>x.label+' '+x.base+' / '+x.pct+'%').join(' · '),(step?btn('horse-step',id,(step.complete?'Lên bậc '+(step.tier+1):'Luyện sao '+step.star)+' · '+fmt(step.points)+' điểm',!!battle||!step.gate||s.horsePoints<step.points):'')+(q?btn('horse-up',id,'Nâng · '+fmt(q.points)+' điểm',!!battle||!q.gate||s.horsePoints<q.points):'')+btn('horse-equip',id,s.horseAssigned[trainHero]===id?'Đang dùng':'Cưỡi',!!battle||!horseGate(id,0)||used||s.horseAssigned[trainHero]===id));},'horse-page');
  const own=MOBILE_ETCH.filter(x=>etchCount(x.id));etchPage=clamp(etchPage,0,Math.max(0,Math.ceil(own.length/4)-1));
  const etch=pages(own,etchPage,x=>{const up=etchQuote(x.id,'upgrade'),mix=etchQuote(x.id,'mix');return row(x.qname+' '+x.stat+' Lv'+x.level,'×'+etchCount(x.id)+' · '+fmt(x.value),(up?btn('etch-up',x.id,'Nâng · '+fmt(up.silver)+' Bạc / '+fmt(up.ngoc)+' Ngọc',!!battle||game.silver<up.silver||(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)<up.ngoc):'')+(mix?btn('etch-mix',x.id,'Ghép '+mix.count,!!battle||etchCount(x.id)<mix.count):'')+btn('etch-equip',x.id,'Khảm',!!battle));},'etch-page');
- return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá',btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; tám Binh Thư có adapter sĩ khí/hồi lính/giải trừ/công/phòng/Hộ Thuẫn theo lượt 3/6; hiệu ứng phụ và ba Binh Thư khác chưa nối.</p>');
+ return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá',btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; 11 Binh Thư có adapter theo lượt 3/6; Vỡ Trận, Hồi Xuân, khóa chiến pháp và tăng thuộc tính dùng P2. Quy đổi thuộc tính và thời hạn là mô phỏng; chờ kiểm thử trận thực.</p>');
 }
 function mobileTechPanel(){
  const s=state();
