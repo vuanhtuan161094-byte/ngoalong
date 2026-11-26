@@ -43055,6 +43055,7 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_TACTIC_ATTACK_UP_STATUS='mobile-source-tactic-attack-up',MOBILE_PHYSICAL_ATTACK_DOWN_STATUS='mobile-source-physical-attack-down',
  MOBILE_MAGIC_ATTACK_DOWN_STATUS='mobile-source-magic-attack-down',MOBILE_TACTIC_ATTACK_DOWN_STATUS='mobile-source-tactic-attack-down',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
+ MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
  MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
  MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs';
@@ -43078,6 +43079,10 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'DERIVED_FROM_SOURCE_WITH_UNRESOLVED_BUFF_COUNT_SCALING',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'70'}},
  [MOBILE_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'18'}},
+ [MOBILE_MAGIC_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'19'}},
+ [MOBILE_TACTIC_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'20'}},
  [MOBILE_ALL_DEFENSE_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ADAPTER',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'21'}},
  [MOBILE_PURIFICATION_STATUS]:{duration:1,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
@@ -43099,6 +43104,8 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '14':{kind:MOBILE_MAGIC_ATTACK_DOWN_STATUS,mechanic:'magic-attack-reduction'},
  '15':{kind:MOBILE_TACTIC_ATTACK_DOWN_STATUS,mechanic:'tactic-attack-reduction'},
  '18':{kind:MOBILE_DEFENSE_DOWN_STATUS,mechanic:'defense-reduction'},
+ '19':{kind:MOBILE_MAGIC_DEFENSE_DOWN_STATUS,mechanic:'magic-defense-reduction'},
+ '20':{kind:MOBILE_TACTIC_DEFENSE_DOWN_STATUS,mechanic:'tactic-defense-reduction'},
  '21':{kind:MOBILE_ALL_DEFENSE_DOWN_STATUS,mechanic:'all-defense-reduction'},
  '46':{kind:MOBILE_PURIFICATION_STATUS,mechanic:'skill-damage-per-beneficial-buff'},
  '49':{kind:MOBILE_ATTACK_STACK_STATUS,mechanic:'stackable-attack-increase'},
@@ -43200,6 +43207,8 @@ function mobileSourceApplications(skill,effects){
     at=fold.search(/(?:tat ca phong|tat ca nang luc phong)/);context=fold.slice(Math.max(0,at-100),at+140);
   }
   else if(id==='18'&&/vat phong.{0,100}giam/.test(fold)){at=fold.search(/vat phong/);context=fold.slice(at,at+180);}
+  else if(id==='19'&&/phap phong.{0,100}giam/.test(fold)){at=fold.search(/phap phong/);context=fold.slice(Math.max(0,at-100),at+180);}
+  else if(id==='20'&&/muu phong.{0,100}giam/.test(fold)){at=fold.search(/muu phong/);context=fold.slice(Math.max(0,at-100),at+180);}
   else if(id==='16'&&/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/.test(fold)){at=fold.search(/tan cong.{0,90}giam\s+\d+(?:[.,]\d+)?\s*%/);context=fold.slice(Math.max(0,at-45),at+110);}
   else if(id==='12'&&/tang.{0,60}(?:tan cong|cong)/.test(fold)){at=fold.search(/tang.{0,60}(?:tan cong|cong)/);context=fold.slice(Math.max(0,at-45),at+100);}
   if(at<0)continue;
@@ -43214,6 +43223,7 @@ function mobileSourceApplications(skill,effects){
   else if(id==='21'&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='18'&&/vat phong\s+toan phe dich/.test(context))scope='enemies';
   else if(id==='18'&&/(?:vat phong.{0,70}muc tieu|muc tieu.{0,70}vat phong)/.test(context))scope='targets';
+  else if(['19','20'].includes(id)&&/(?:muc tieu|toan phe dich|\bdich\b|doi phuong)/.test(context))scope='targets';
   else if(/toan phe dich\s+(?:bi|nhan)\s*$/.test(context))scope='enemies';
   else if(/(?:muc tieu|doi phuong)\s+(?:bi|nhan)\s*$/.test(context)||id==='16')scope='targets';
   else if(id==='12'&&/toan phe ta/.test(context))scope='allies';
@@ -43244,8 +43254,15 @@ function mobileSourceApplications(skill,effects){
   }
   if(rule.mechanic==='dragon-attack-increase'&&percent!==null){app.values.outgoingDamageMultiplier=1+percent;app.unresolvedMechanics=['SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED'];}
   if(rule.mechanic==='critical-increase'&&percent!==null)app.values.criticalChanceAdd=percent;
-  if(rule.mechanic==='defense-reduction'&&percent!==null)app.values.incomingDefenseMultiplier=Math.max(0,1-percent);
+  if(rule.mechanic==='defense-reduction'&&percent!==null)app.values.incomingPhysicalDefenseMultiplier=Math.max(0,1-percent);
+  if(rule.mechanic==='magic-defense-reduction'&&percent!==null)app.values.incomingMagicDefenseMultiplier=Math.max(0,1-percent);
+  if(rule.mechanic==='tactic-defense-reduction'&&percent!==null){
+    app.values.incomingTacticDefenseMultiplier=Math.max(0,1-percent);
+    if(/vat phong/.test(context))app.values.incomingPhysicalDefenseMultiplier=Math.max(0,1-percent);
+  }
   if(rule.mechanic==='all-defense-reduction'&&percent!==null)app.values.incomingDefenseMultiplier=Math.max(0,1-percent);
+  if(['defense-reduction','magic-defense-reduction','tactic-defense-reduction','all-defense-reduction'].includes(rule.mechanic))
+    app.stackingClassification='SIMULATED_MULTIPLICATIVE_CROSS_EFFECTS';
   if(rule.mechanic==='skill-damage-per-beneficial-buff'&&percent!==null){
     app.values.damageBonusPerBeneficialBuff=percent;
     app.values.beneficialBuffCountClassification='SIMULATED_DISTINCT_ACTIVE_STATUS_TYPES';
@@ -43254,7 +43271,7 @@ function mobileSourceApplications(skill,effects){
   if(rule.mechanic==='attack-reduction'&&percent!==null)app.values.outgoingDamageMultiplier=Math.max(0,1-percent);
   if(rule.mechanic==='one-action-control'||rule.mechanic==='sleep-wakes-on-damage')app.values.skipActionChance=1;
   if(rule.mechanic==='no-morale-gain')app.values.moraleGainMultiplier=0;
-  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','all-defense-reduction','dragon-attack-increase',
+  const needsValue=['damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','magic-defense-reduction','tactic-defense-reduction','all-defense-reduction','dragon-attack-increase',
    'physical-attack-increase','magic-attack-increase','tactic-attack-increase','physical-attack-reduction','magic-attack-reduction','tactic-attack-reduction',
    'skill-damage-per-beneficial-buff'].includes(rule.mechanic);
   if(needsValue&&percent===null)continue;
@@ -43304,10 +43321,11 @@ function descriptor(skill,role,boss,effects=[]){
  const targetContext=damageStart>=0?fold.slice(0,Math.min(fold.length,damageStart+120)):fold;
  const percent=damageClause.match(/(\d{1,3}(?:\.\d{3})+|\d+(?:[.,]\d+)?)\s*%/);
  const damageLane=damageClause.toLocaleLowerCase('vi');
- const sourceKind=/mưu công|pháp công|sát thương phép/.test(damageLane)?'magic':
+ const sourceKind=/mưu công/.test(damageLane)?'tactic':
+   /pháp công|sát thương phép/.test(damageLane)?'magic':
    /sát thương vật lý|vật công/.test(damageLane)?'physical':
    /\[c\. pháp\]/i.test(text)?'magic':
-   /\[kế sách\]/i.test(text)?'magic':
+   /\[kế sách\]/i.test(text)?'tactic':
    /\[vật lý\]|\[thường\]/i.test(text)?'physical':out.kind;
  let sourcePattern=null,targetProvenance='SOURCE_TARGET_TEXT_NOT_MAPPED';
  if(/toàn phe địch/.test(targetContext)){sourcePattern='all';targetProvenance='DERIVED_FROM_SOURCE';}
@@ -43614,7 +43632,15 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
    .filter(effect=>effect.kind===MOBILE_PURIFICATION_STATUS&&effect.turns>0)
    .reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.damageBonusPerBeneficialBuff)||0),0):0);
  const purificationMultiplier=perBuffDamage?1+activeBeneficialKinds.size*perBuffDamage:1;
- const hit=nlContentCBaseHit(effectiveAttacker,target,kind,mult*vectorMultiplier*purificationMultiplier,opts);
+ const guardField=({physical:'def',tactic:'tdef',magic:'mdef'})[kind];
+ const defenseValueField=({physical:'incomingPhysicalDefenseMultiplier',tactic:'incomingTacticDefenseMultiplier',magic:'incomingMagicDefenseMultiplier'})[kind];
+ const sourceDefenseMultiplier=guardField?(target?.effects||[]).filter(effect=>effect.turns>0)
+   .reduce((factor,effect)=>{const value=effect.mobileSourceValues?.[defenseValueField];return Number.isFinite(value)?factor*value:factor;},1):1;
+ const previousGuard=guardField?target?.[guardField]:undefined;
+ if(Number.isFinite(previousGuard)&&sourceDefenseMultiplier!==1)target[guardField]=Math.max(0,previousGuard*sourceDefenseMultiplier);
+ let hit;
+ try{hit=nlContentCBaseHit(effectiveAttacker,target,kind,mult*vectorMultiplier*purificationMultiplier,opts);}
+ finally{if(Number.isFinite(previousGuard)&&sourceDefenseMultiplier!==1)target[guardField]=previousGuard;}
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
  const rawDamage=beforeHp-target.hp;let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction));
