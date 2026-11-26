@@ -2,7 +2,7 @@
 const NL_CONTENT_C=__NL_CONTENT_C_DATA__;
 const NL_C_TIER4=__NL_CONTENT_C_TIER4__;
 const NL_CONTENT_C_TOWER=__NL_TOWER_DATA__;
-let nlContentCSettle,nlContentCHeroPanel,nlMobileHeroApi;
+let nlContentCSettle,nlContentCHeroPanel,nlMobileHeroApi,nlMobileHeroBuildModifiers;
 (()=>{
 'use strict';
 const obj=x=>x&&typeof x==='object'&&!Array.isArray(x), nat=x=>Number.isSafeInteger(x)&&x>=0?x:0, clamp=(v,l,h)=>Math.min(h,Math.max(l,v));
@@ -842,6 +842,8 @@ const nlContentCBaseHit=p2Hit;
 p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const trait=mobileTraitFactors(attacker,target,kind,attacker?.nlMobileActionPattern||'single',battle?.round||1);
  const ar=attacker?.nlMobileRefine,tr=target?.nlMobileRefine,af=attacker?.nlMobileHero?.faction,tf=target?.nlMobileHero?.faction;
+ const ab=attacker?.nlMobileHeroBuild,tb=target?.nlMobileHeroBuild,pattern=attacker?.nlMobileActionPattern||'single';
+ mult*=Math.max(0,1+(ab?.finalDamage||0)+(ab?.patterns?.[pattern]||0)+(ab?.troopAttack?.[attacker?.troop]||0))*Math.max(0,1-(tb?.troopDefense?.[target?.troop]||0));
  mult*=trait.outgoing*trait.incoming*mobileTechDamage(attacker,target)*(1+(ar?.finalDamage||0)+(ar?.vs?.[tf]||0))*Math.max(0,1-(tr?.resist?.[af]||0));
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
  const oneHitShield=target?.effects?.find(effect=>effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS&&effect.turns>0);
@@ -877,7 +879,7 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
  }
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
- let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction*(hit.critical===true||hit.crit===true?1+(ar?.critDamage||0):1)));
+ let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction*(hit.critical===true||hit.crit===true?1+(ar?.critDamage||0)+(ab?.critDamage||0):1)));
  if(protectedBySource&&rawDamage>0)damage=Math.min(damage||1,1);
  if(damage>0&&target?.nlMobileAbsorb>0){const blocked=Math.min(damage,target.nlMobileAbsorb);target.nlMobileAbsorb-=blocked;damage-=blocked;hit.mobileTraitAbsorbed=blocked;}
  if(damage!==rawDamage){target.hp=beforeHp-damage;target.alive=target.hp>0;target.morale=beforeMorale;
@@ -933,8 +935,9 @@ function applyMobileSourceApplications(actor,event,descriptor){
 }
 function applyMobileSourceConditionalMorale(actor,event,descriptor){
  const branch=descriptor?.sourceConditionalMorale;
- if(actor?.team!=='e'||!battle?.nlContentC||event?.actor!==actor.name||event.mode==='stunned'||!branch)return;
- const hitUnits=(event.hits||[]).filter(hit=>hit.team==='p').map(hit=>battle.p.find(unit=>unit.slot===hit.slot)).filter(Boolean);
+ if(!battle||(!battle.nlContentC&&!descriptor?.nlMobileHeroSkill)||event?.actor!==actor?.name||event.mode==='stunned'||!branch)return;
+ const opposing=actor.team==='p'?'e':'p';
+ const hitUnits=(event.hits||[]).filter(hit=>hit.team===opposing).map(hit=>battle[opposing].find(unit=>unit.slot===hit.slot)).filter(Boolean);
  if(!hitUnits.length)return;
  const killed=hitUnits.some(unit=>unit.hp<=0),moraleBefore=actor.morale,requested=killed?branch.onKill:branch.onSurvival;
  if(!killed&&branch.onSurvivalStatus){
@@ -950,6 +953,7 @@ function applyMobileSourceConditionalMorale(actor,event,descriptor){
 p2Perform=function(actor){
  const d=actor?.team==='e'&&battle?.nlContentC?actor.nlCDescriptor:
    actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100?mobileHeroSkill(actor.id):null;
+ const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
  const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
  const previousSkillAction=actor?.nlMobileSourceSkillAction,hadSkillAction=!!actor&&Object.hasOwn(actor,'nlMobileSourceSkillAction');
@@ -972,7 +976,7 @@ p2Perform=function(actor){
      if(actor.morale<100)p2Status(actor,MOBILE_NO_NORMAL,1);
    }
    if(actor?.nlMobileTrait?.name==='Kình Nỏ')actor.nlMobilePierceActive=p2Random()<mobileTraitRate(actor,[.15,.24,.40]);
-   if(actor?.nlMobileTrait){
+   if(actor){
      actor.nlMobileActionPattern=actor.morale>=100?(p2Skill(actor)?.pattern||'single'):'single';
    }
    const result=nlContentCNativePerform(actor);
@@ -988,8 +992,7 @@ p2Perform=function(actor){
      for(const target of (actor.team==='p'?battle.e:battle.p).filter(u=>u.hp>0))originalMorale(target,-d.sourceEnemyMorale);
      event.description+=' · giảm '+d.sourceEnemyMorale+' sĩ khí toàn địch.';event.state=p2Snapshot();battle.log=event.description;
    }
-   applyMobileSourceApplications(actor,event,d);
-   applyMobileSourceConditionalMorale(actor,event,d);
+   if(moraleOnly||sourceSkillAction){applyMobileSourceApplications(actor,event,d);applyMobileSourceConditionalMorale(actor,event,d);}
    if(actor?.nlMobileTrait&&event&&event.mode!=='stunned'&&actor.hp>0){
      actor.nlMobileTraitTurns=(actor.nlMobileTraitTurns||0)+1;
      let label='';
@@ -1128,11 +1131,12 @@ p2Unit=function(id,team,slot,stage){
  const exact=team==='p'&&battle?.mode!=='cltq'?mobileHeroQuality(id):null,prior=HEROES[id];
  const talent=team==='p'&&battle?.mode!=='cltq'?mobileTraitChoice(id):null;
  const allRound=talent?.name==='Toàn Năng'?[9,15,24][talent.rank-1]:0;
+ const build=team==='p'&&owned(id)&&battle?.mode!=='cltq'&&typeof nlMobileHeroBuildModifiers==='function'?nlMobileHeroBuildModifiers(id):null;
  const refine=team==='p'&&battle?.mode!=='cltq'&&owned(id)&&typeof nlItemApi?.mobileRefineModifiers==='function'?nlItemApi.mobileRefineModifiers(game,id):null;
  let u;
- if((exact||allRound||refine?.lead||refine?.war||refine?.intellect)&&prior){
+ if((exact||allRound||refine?.lead||refine?.war||refine?.intellect||build?.lead||build?.war||build?.intellect)&&prior){
    // Apply the source attribute bonus before the single native stat formula.
-   const g=exact?.growth;HEROES[id]={...prior,lead:(g?.lead??prior.lead??0)+allRound+(refine?.lead||0),atk:(g?.war??prior.atk??0)+allRound+(refine?.war||0),int:(g?.int??prior.int??0)+allRound+(refine?.intellect||0)};
+   const g=exact?.growth;HEROES[id]={...prior,lead:(g?.lead??prior.lead??0)+allRound+(refine?.lead||0)+(build?.lead||0),atk:(g?.war??prior.atk??0)+allRound+(refine?.war||0)+(build?.war||0),int:(g?.int??prior.int??0)+allRound+(refine?.intellect||0)+(build?.intellect||0)};
    try{u=priorUnit(id,team,slot,stage);}finally{HEROES[id]=prior;}
  }else u=priorUnit(id,team,slot,stage);
  if(team!=='p'||!u||battle?.mode==='cltq')return u;
