@@ -1,18 +1,18 @@
 # Active task checkpoint — 2026-11-26
 
-**V1.0 NOT COMPLETE · ART HOLD · GAMEPLAY FIRST.** Repository `vuanhtuan161094-byte/ngoalong`, delivery branch `feature/ngoalong-v1-complete`, existing draft PR #1. Do not merge.
+**V1.0 NOT COMPLETE · ART HOLD · GAMEPLAY FIRST.** Repository `vuanhtuan161094-byte/ngoalong`, delivery branch `feature/ngoalong-v1-complete`, draft PR #1. Do not merge.
 
-## P1–P4 gameplay finalization slice — 2026-11-26
+## Mobile source/runtime continuation batch
 
-- P1: 51 dated Mobile awakening facts across 44 mapped hero identities now project stage-specific descriptors; 147 Content C heroes get tactical variants, with existing 221 base/expanded IDs retained. Unsupported conditional/multi-operation source semantics remain unmapped. No raw Mobile damage coefficient is applied to the compressed P2 scale.
-- P1: legacy WEB troop control and counter-advantage effects use the native P2 skill/hit path. 55 + 40 source named troop profiles remain distinct from 25 original project profiles; no new hit resolver.
-- P2: hero power display derives from the actual unit stat pipeline; training entry uses the same paid XP path. Quân ấn retains existing 5-level compressed strength curve and adds 25 activation ranks (Mobile structure reference: https://ngoalong.vnggames.com/ngoa-long-wiki/an-tran); costs, effects and gates are simulated, not Mobile parity.
-- P3: normalized NPC base stat curve 1–28 from difficulty 1–90, relative formation soldier weights, next available NPC shortcut and reward preview. All 249 maps / 4,903 NPC remain projected, not individually playtested.
-- P4: canonical DEV HTML upload moved ahead of later test gates, with SHA and hash. Existing source validation and deterministic builder checks are still required. No Pages deployment from feature branch.
-- Evidence executed in the connector JS runtime: 15/15 persisted hero module contract cases; 16/16 campaign/awakening/activation cases with synthetic 249-map fixture prior to curve normalization; 9/9 troop contract cases with actual catalogue and mocked base owners. These are not actual native battles or a full 90-day balance run. Python full projection and browser tests are added/updated but not executed in this turn.
-- Last source/test commit `bda20b74a669f59dafb86551fab9736f0c6597db`. Current container cannot resolve github.com for cloning, and the GitHub connector's workflow-run lookup filters to PR-triggered runs. Latest generated HTML/artifact, exact-SHA hosted CI, Android build and actual browser playability remain unverified. ART HOLD, Save v5, no Codex Cloud, no merge.
+- Verified branch base and remote HEAD before editing: `c37bd1b36b487008a467f777ca3385f4510fd80e`.
+- Connected six detail-only Mobile heroes to the existing recruit action, stable roster IDs, source-quality lookup, native P2 unit creation, and Save v5: Mã Hưu (3488), Vương Nguyên Cơ (3531), Phục Thọ (3972), Tào Tiết (3973), Trương Tinh Thái (3974), Bộ Luyện Sư (3975). Their names, factions, core attributes and source skill text are preserved. Recruitment gates/prices and P2 skill-shape adapters are explicitly SIMULATED.
+- The generated projection now resolves all 373 pinned hero detail IDs to runtime identities: 364 Wiki-index mappings, three base-hero aliases, and six playable detail-only additions. Runtime count is 374 including the existing native/expanded identities.
+- Rebuilt the canonical offline `index.html` with the four repository builders. Artifact size: 98,792,763 bytes; SHA-256: `0dbabadb1bdd1592e01b059a6810752771c6d9bf3c2a9397698c4f7483cd6828`.
+- Local verification: source projection contract PASS (249 maps, 5,063 NPCs, 408 Mobile troop profiles, 373 hero details, 746 Mobile item records); all four HTML builders pass `--check`; Content C Chromium smoke passes, including fixture-backed recruit/save/P2 checks for all six additions, source troop profile application, campaign and item catalogue UI. `validate_ngoalong_data.py` also passes its legacy data scope; it does not validate the 5,063-record Mobile projection.
+- Save key/schema v5, one-game runtime and existing art retained. ART HOLD. This is a local validation checkpoint before branch publication; hosted exact-SHA Actions, natural long-run progression, full feature parity and Android packaging remain unverified. No merge.
 
-## Gameplay-first implementation delta
+## Historical pre-source-parity implementation notes
+## Historical pre-source-parity implementation notes
 
 - Native P2 Content C: 249 source maps / 4,903 projected NPC identities, first clear and repeat settlement, map completion bonus, difficulty band 1–90, role-specific enemy coefficients and target policy, renewable merit, tower rewards and 18 upgradeable seals. Runtime integration and balancing across the entire roster remain to be verified.
 - Hero systems: level 1–10 skill progression, batch training 1/5/10 with dynamic growth cap, earned-only Bạc/Chiến công/material costs, ancient levels 1–5, three mutually exclusive illusion modes, renewable material exchange, first-clear receipt protection and searchable expanded recruitment.

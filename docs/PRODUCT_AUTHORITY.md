@@ -25,7 +25,7 @@ Mưu Định Tam Quốc remains an original, offline-first, single-player strate
 - One combat resolver, one reward/receipt authority, one Save implementation, and one replay path. Battlefield art, UI, and replay cannot create hits, damage, rewards, or receipts.
 - Preserve the 3×3 formation, maximum five generals per side, storage key `muu_dinh_tam_quoc_v1`, Save schema v5, stable hero/item/formation IDs, and existing migrations. New state is additive and migration-tested.
 - Runtime sources are structured data under `data/ngoalong/`, source modules under `tools/`, and original assets under `assets/ngoalong/`. Generator-owned HTML is never edited by hand.
-- Distinguish playable runtime records from research catalogues. Current audits report 368 runtime hero identities, 403 visible catalogue entries, 25 troop identities, 28 native campaign stages, and broader reference packs; reference counts do not imply playable coverage.
+- Distinguish playable runtime records from research catalogues. The current Content C projection has 374 runtime hero identities, including all 373 pinned Mobile detail IDs (Wiki-index identities, three base-hero aliases, and six detail-only recruits); the separate visible roster catalogue has a different coverage count. Troop/campaign reference counts do not imply playable coverage.
 - Every imported or authored fact uses `VERIFIED`, `DERIVED`, `SIMULATED`, or `UNKNOWN` with source/version scope. Do not promote an estimate or project formula to an official Mobile rule.
 
 ## Art direction

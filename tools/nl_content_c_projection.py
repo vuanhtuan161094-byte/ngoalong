@@ -1,6 +1,6 @@
 """Project runtime projection from the pinned Mobile source shards. Never edits source."""
 from pathlib import Path
-import json, hashlib
+import json, hashlib, re, unicodedata
 
 def read(path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -222,6 +222,8 @@ def build(root):
                             "growth":raw.get("growth") or [],"units":raw.get("units") or [],
                             "quality":raw.get("quality"),"stages":stages,
                             "leadership":raw.get("leadership"),"war":raw.get("war"),"intellect":raw.get("intellect"),
+                            "skill":(raw.get("vi") or {}).get("skill") or {},"access":(raw.get("vi") or {}).get("access"),
+                            "qualityName":raw.get("qualityName"),
                             "bonds":raw.get("bonds") or [],"seal":raw.get("seal"),"weapon":raw.get("weapon"),
                             "sourceClassification":"SOURCE_EXACT"}
     raw_buffs=read(buff_path)
@@ -341,6 +343,75 @@ def build(root):
         if source_id in hero_details and hero_details[source_id]["name"]==expected_name and any(
             h["id"]==runtime_id and h["name"]==expected_name for h in old):
             source_hero_aliases[runtime_id]=source_id
+    # The public hero-mini feed contains six additional identities beyond the
+    # 364-entry Wiki index. Keep their exact source facts and add playable rows;
+    # recruitment gates and P2 skill scaling are explicitly project adapters.
+    source_alias_ids=set(source_hero_aliases.values())
+    extras=sorted(set(hero_details)-source_alias_ids)
+    expected_extras={"3488","3531","3972","3973","3974","3975"}
+    if set(extras)!=expected_extras:
+        raise ValueError("Mobile extra hero identity drift: "+str(extras))
+    role_labels={"infantry":"Bộ binh","cavalry":"Kỵ binh","archer":"Cung binh",
+                 "strategist":"Mưu sĩ","support":"Hỗ trợ"}
+    for idx,source_id in enumerate(extras):
+        raw=hero_details[source_id];skill=raw.get("skill") or {};skill_name=skill.get("name") or raw["name"]
+        skill_desc=str(skill.get("desc") or "")
+        folded=unicodedata.normalize("NFD",skill_desc).casefold()
+        folded="".join(ch for ch in folded if unicodedata.category(ch)!="Mn").replace("đ","d")
+        units=" ".join(str(x) for x in raw.get("units") or [])
+        if "ho tro" in folded or "toan phe ta" in folded and ("tri lieu" in folded or "hoi" in folded):
+            kind="support"
+        elif "ke sach" in folded or "c.phap" in folded or "muu cong" in folded:
+            kind="strategist"
+        elif "骑兵" in units or "kỵ" in units.casefold():
+            kind="cavalry"
+        elif "弓兵" in units or "cung" in units.casefold():
+            kind="archer"
+        else:
+            kind="infantry"
+        if "tri lieu" in folded or "hoi phuc" in folded and "phe ta" in folded:
+            pattern,combat_kind,mult="heal","magic",0.25
+        elif "hang doc" in folded:
+            pattern,combat_kind="column","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.4,max(.75,float(pct.group(1).replace(",","."))/100)) if pct else 1.25
+        elif "hang ngang" in folded:
+            pattern,combat_kind="row","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.4,max(.75,float(pct.group(1).replace(",","."))/100)) if pct else 1.25
+        elif "toan phe dich" in folded or "toan bo phe dich" in folded:
+            pattern,combat_kind="all","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(1.5,max(.55,float(pct.group(1).replace(",","."))/100)) if pct else .85
+        else:
+            pattern="single"
+            combat_kind="magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.0,max(.8,float(pct.group(1).replace(",","."))/100)) if pct else 1.3
+        hid="mobile-vng-hero-"+source_id
+        stats={"lead":raw.get("leadership"),"war":raw.get("war"),"intellect":raw.get("intellect")}
+        if not all(isinstance(stats[k],(int,float)) for k in stats):
+            raise ValueError("Mobile extra hero source stats missing: "+source_id)
+        rarity=raw.get("qualityName") or "Danh tướng"
+        icon={"infantry":"🛡️","cavalry":"🐎","archer":"🏹","strategist":"📜","support":"✚"}[kind]
+        descriptor={"tag":skill_name,"pattern":pattern,"kind":combat_kind,"mult":mult}
+        if pattern=="heal":descriptor.update(healCount=5)
+        # Conditions/statuses in these long Mobile texts are kept verbatim in
+        # skillDesc; only this bounded P2 combat shape is simulated.
+        additions.append({"id":hid,"sourceHeroId":source_id,"name":raw["name"],"faction":raw.get("faction"),
+            "sourceGrade":rarity,"type":kind,"role":role_labels[kind],"rarity":rarity,"icon":icon,
+            "lead":round(stats["lead"]),"atk":round(stats["war"]),"int":round(stats["intellect"]),
+            "def":max(30,round(stats["lead"]*.45+stats["war"]*.12)),
+            "agi":max(30,round((stats["lead"]+stats["war"]+stats["intellect"])/7)),
+            "sourceStats":stats,"sourceSkillName":skill_name,"skill":skill_name,"skillDesc":skill_desc,
+            "descriptor":descriptor,"skillAdapterClassification":"SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED",
+            "mobileStartingQuality":raw.get("quality"),"gate":14+idx*2,"silver":2200+idx*300,
+            "towerGate":None,"soulCost":0,"provenance":"SOURCE_IDENTITY_WITH_SIMULATED_RECRUIT_AND_P2_ADAPTER",
+            "fieldProvenance":{"name":"SOURCE_EXACT","faction":"SOURCE_EXACT","skill":"SOURCE_EXACT",
+                "skillDesc":"SOURCE_EXACT","lead":"SOURCE_EXACT","atk":"SOURCE_EXACT","int":"SOURCE_EXACT",
+                "def":"SIMULATED_ADAPTER","agi":"SIMULATED_ADAPTER","gate":"SIMULATED_ADAPTER",
+                "silver":"SIMULATED_ADAPTER","descriptor":"SIMULATED_ADAPTER"}})
+        source_hero_aliases[hid]=source_id
     if len(set(source_hero_aliases.values()))!=len(source_hero_aliases):
         raise ValueError("Mobile hero alias collision")
     return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
@@ -352,4 +423,4 @@ def build(root):
             "mobileBooks":mobile_books,"mobileHorses":mobile_horses,"mobileEtch":mobile_etch,
             "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,"mobileElite":mobile_elite,
             "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
-            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileEliteForces":mobile_elite["forceCount"],"mobileEliteAppearances":mobile_elite["appearanceCount"],"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
+            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileHeroDetails":len(hero_mini),"mobileExtraRosterHeroes":len(extras),"mobileTroops":408,"mobileEliteForces":mobile_elite["forceCount"],"mobileEliteAppearances":mobile_elite["appearanceCount"],"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}

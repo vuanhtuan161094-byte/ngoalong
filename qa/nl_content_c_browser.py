@@ -14,6 +14,17 @@ def main():
         out=page.evaluate("""()=>{
           const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__,itemQa=window.__NL_ITEM_QA__,itemCounts=itemQa?.getItemCounts();
           if(!q||!c)return {loaded:false};
+          const heroBase=q.getGame(),extraIds=['3488','3531','3972','3973','3974','3975'].map(id=>'mobile-vng-hero-'+id),heroFixture=structuredClone(heroBase);
+          heroFixture.cleared=Array.from({length:28},(_,i)=>i+1);heroFixture.silver=1000000;q.setGame(heroFixture);
+          const extraBought=extraIds.map(id=>c.recruit(id)),extraRows=extraIds.map(id=>({id,record:c.mobileHeroRecord(id),quality:c.mobileHeroQuality(id)}));
+          let extraUnits=true;
+          for(const id of extraIds){const roster=q.getGame();roster.slots=[id,...roster.slots.slice(1)];q.setGame(roster);
+            const unit=c.p2Unit(id,'p',0,1),row=extraRows.find(x=>x.id===id);
+            if(!unit||unit.nlMobileHero?.sourceId!==row.record?.id||unit.skill!==row.record?.skill?.name)extraUnits=false;
+          }
+          const extraSave=structuredClone(q.getGame());q.setGame(extraSave);
+          const extraSaveOk=extraIds.every(id=>q.getGame().roster.includes(id)&&c.mobileHeroRecord(id)?.id===id.split('-').at(-1))&&q.getGame().version===5;
+          q.setGame(heroBase);
           [...document.querySelectorAll('.nav')].find(x=>x.textContent.includes('Trang Bị'))?.click();
           document.querySelector('[data-nli-item-mode="wiki"]')?.click();
           const wikiResults=Number(document.querySelector('[data-nli-items-results]')?.getAttribute('data-nli-items-results'));
@@ -32,7 +43,9 @@ def main():
           const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
-          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===368&&c.counts.mobileBuffs===320&&c.mobileBuffCount()===320&&c.tiers()===40,
+          const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===374&&c.counts.mobileHeroDetails===373&&c.counts.mobileExtraRosterHeroes===6&&c.counts.mobileBuffs===320&&c.mobileBuffCount()===320&&c.tiers()===40,
+            mobileExtraHeroRecruitment:extraBought.every(Boolean)&&extraRows.every(x=>x.record&&x.record.leadership>0&&x.quality?.growth)&&extraSaveOk,
+            mobileExtraHeroP2Runtime:extraUnits,
             mobileItemSourceCatalogue:itemCounts?.mobileSourceCatalogueIds===746&&wikiResults===746,
             mobileItemCatalogueUI:wikiResults===746&&wikiPageCards===25,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,

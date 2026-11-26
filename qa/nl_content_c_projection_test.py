@@ -40,7 +40,11 @@ def main():
     assert len({str(e["id"]) for e in exact_effect_rows})==134
     assert len({e["name"] for e in exact_effect_rows})==134
     assert len(data["heroAliases"])==len(set(data["heroAliases"].values()))==364
-    assert data["counts"]["newHeroes"]==147 and data["counts"]["runtimeHeroes"]==368
+    assert data["counts"]["newHeroes"]==153 and data["counts"]["runtimeHeroes"]==374
+    assert data["counts"]["mobileHeroDetails"]==373 and data["counts"]["mobileExtraRosterHeroes"]==6
+    extras=[h for h in data["heroes"] if h.get("sourceHeroId")]
+    assert {h["sourceHeroId"] for h in extras}=={"3488","3531","3972","3973","3974","3975"}
+    assert all(h["skillDesc"] and h["skillAdapterClassification"]=="SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED" for h in extras)
     assert data["counts"]["mobileBuffs"]==320
     assert data["mobileBuffCatalog"]["sourceEdition"]=="CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
     assert data["mobileBuffCatalog"]["records"]["2"]["name"].casefold()=="hỗn loạn"
