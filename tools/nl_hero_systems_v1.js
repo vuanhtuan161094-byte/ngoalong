@@ -207,7 +207,7 @@ function nlhSourceOptions(id){
  return q?(stages.filter(x=>x.q<=q.growth.q&&x.kismets?.length).sort((a,b)=>b.q-a.q)[0]?.kismets||[]):[];
 }
 function nlhSourceWeapon(id){const w=nlhSourceRecord(id)?.weapon;return w?.name&&Array.isArray(w.stats)&&w.stats.length?w:null;}
-function nlhSourceProgress(id){const h=nlhsHero(id);if(!h.mobileBuild||typeof h.mobileBuild!=='object')h.mobileBuild={weapon:0,destiny:null,ranks:{}};const m=h.mobileBuild;if(!m.ranks||typeof m.ranks!=='object')m.ranks={};m.weapon=Number.isSafeInteger(m.weapon)?Math.max(0,Math.min(10,m.weapon)):0;return m;}
+function nlhSourceProgress(id){const h=nlhsHero(id);if(!h.mobileBuild||typeof h.mobileBuild!=='object')h.mobileBuild={weapon:Math.min(10,h.weaponLevel||0),destiny:null,ranks:{},migration:'legacy-weapon-rank-preserved'};const m=h.mobileBuild;if(!m.ranks||typeof m.ranks!=='object')m.ranks={};m.weapon=Number.isSafeInteger(m.weapon)?Math.max(0,Math.min(10,m.weapon)):0;return m;}
 function nlhSourceRank(id,name){const v=nlhSourceProgress(id).ranks[name];return Number.isSafeInteger(v)?Math.max(0,Math.min(10,v)):0;}
 function nlhSourceQuote(id,system,name){
  if(system==='weapon'){
@@ -264,7 +264,7 @@ function nlhSourcePanel(id,system){
   const lv=weapon?m.weapon:nlhSourceRank(id,o.name),q=nlhSourceQuote(id,system,o.name),active=weapon||m.destiny===o.name;
   const stats=weapon?o.stats.map(x=>({label:x.name,value:lv?x.series[x.ranks.indexOf(lv)]:0,next:q?x.series[x.ranks.indexOf(q.level)]:null})):o.effects.map(x=>({label:x.label,value:lv?x.series[lv-1]:0,next:q?x.series[q.level-1]:null}));
   return '<div class="nlh-feature-panel"><b>'+hsEsc(o.name)+' · '+lv+'/10'+(active?' · Đang dùng':'')+'</b><p>'+stats.map(x=>hsEsc(x.label)+' '+hsEsc(x.value)+(x.next!=null?' → '+hsEsc(x.next):'')).join(' · ')+'</p>'+
-  (weapon?'<p>'+o.slots.map(x=>hsEsc(x.name)+': '+x.tiers.map(t=>hsEsc(t.desc)).join(' / ')).join(' · ')+'</p>':'')+
+  (weapon?'<p>'+(o.slots||[]).map(x=>hsEsc(x.name)+': '+(x.tiers||[]).map(t=>hsEsc(t.desc)).join(' / ')).join(' · ')+'</p>':'')+
   (q?'<button class="nlh-button" data-nlh-action="sourceUpgrade" data-nlh-kind="'+system+'" data-nlh-name="'+hsEsc(o.name)+'" '+(battle||!nlhIsOpen(weapon?'specialWeapon':'destiny')||q.gate>(game.nlContentC?.mobileCommanderLevel||10)||!nlhCanPay(q.currency,q.materials)?'disabled':'')+'>Nâng cấp · '+hsEsc(nlhCostText(q.currency,q.materials))+'</button>':'')+
   (!weapon&&lv&&!active?'<button class="nlh-button" data-nlh-action="sourceEquip" data-nlh-name="'+hsEsc(o.name)+'">Trang bị</button>':'')+'</div>';
  }).join('')+'<p class="nlh-source-note">Bảng chỉ số theo cấp lấy nguyên nguồn. Chi phí và mở khóa đặc vũ mô phỏng; hiệu ứng mô tả riêng chưa nối đầy đủ. Mệnh Cách mở ở cấp Chỉ huy đại diện 400.</p>';
@@ -278,7 +278,7 @@ function nlhCombatGrowth(id){
  bonus.defensePct+=h.commanderLevel*.012+h.inheritanceLevel*.015+gold*.08;
  bonus.hpPct+=h.inheritanceLevel*.035+orange*.05;
  bonus.speedFlat+=h.commanderLevel;
- if(h.destinyId&&!nlhSourceOptions(id).length){
+ if(h.destinyId&&!nlhSourceProgress(id).destiny){
    if(h.destinyId==='war')bonus.attackPct+=h.destinyLevel*.028;
    else if(h.destinyId==='guard'){bonus.hpPct+=h.destinyLevel*.04;bonus.defensePct+=h.destinyLevel*.015;}
    else if(h.destinyId==='tactic'){bonus.magicAttackPct+=h.destinyLevel*.03;bonus.speedFlat+=h.destinyLevel*2;}
@@ -287,8 +287,9 @@ function nlhCombatGrowth(id){
  const illusion=ILLUSIONS[h.illusionMode];if(illusion)for(const k of Object.keys(bonus))bonus[k]+=illusion[k]||0;
  return bonus;
 }
+if(typeof nlMobileHeroBuildModifiers!=='undefined'||typeof nlMobileHeroApi!=='undefined')nlMobileHeroBuildModifiers=nlhSourceModifiers;
 const nlhPriorUnit=p2Unit;p2Unit=function(id,team,slot,stage){
- const unit=nlhPriorUnit.apply(this,arguments);if(team!=='p'||!unit||!nlhOwned(id))return unit;
+ const unit=nlhPriorUnit.apply(this,arguments);if(team!=='p'||!unit||!nlhOwned(id)||battle?.mode==='cltq')return unit;
  const source=nlhSourceModifiers(id);
  for(const k of ['atk','catk','matk','def','tdef','mdef'])if(Number.isFinite(unit[k]))unit[k]=Math.max(1,(unit[k]+(source.flat[k]||0))*(1+(source.pct[k]||0)));
  unit.dodge=Math.max(0,Math.min(.95,(unit.dodge||0)+source.dodge));unit.nlMobileHeroBuild=source;
