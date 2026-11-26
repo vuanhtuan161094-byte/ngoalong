@@ -173,6 +173,38 @@ def build(root):
     buff_hash=hashlib.sha256(buff_path.read_bytes()).hexdigest()
     if mobile_file_hashes.get("data/buff-page.json")!=buff_hash:
         raise ValueError("C mobile buff catalogue source hash mismatch")
+    def pinned_mobile(rel):
+        p=mobile_raw/rel
+        if not p.is_file() or mobile_file_hashes.get(rel)!=hashlib.sha256(p.read_bytes()).hexdigest():
+            raise ValueError("Mobile source hash mismatch: "+rel)
+        return read(p)
+    hero_mini=pinned_mobile("data/hero-mini.json")
+    mobile_tech=pinned_mobile("data/advtech-detail.json")
+    if len(hero_mini)!=373 or len(mobile_tech["tech"])!=14 or any(
+        any(len(t[k])!=20 for k in ("effect","pointCost","tripodCost")) for t in mobile_tech["tech"]):
+        raise ValueError("Mobile hero index or technology coverage drift")
+    hero_details={}
+    hero_missing=[]
+    for ident,mini in hero_mini.items():
+        rel="data/hero/"+ident+".json"
+        if not (mobile_raw/rel).is_file():
+            hero_missing.append(ident)
+            continue
+        raw=pinned_mobile(rel)
+        if str(raw.get("id"))!=ident or raw.get("name")!=mini.get("n"):
+            hero_missing.append(ident)
+            continue
+        stages=[]
+        for stage in raw.get("viTiers") or []:
+            if not isinstance(stage,dict) or not isinstance(stage.get("q"),int):
+                continue
+            stages.append({k:stage.get(k) for k in ("q","qName","name","skill","access","cost","seals","weapons","kismets")})
+        hero_details[ident]={"id":ident,"name":mini["n"],"faction":mini.get("p"),
+                            "growth":raw.get("growth") or [],"units":raw.get("units") or [],
+                            "quality":raw.get("quality"),"stages":stages,
+                            "leadership":raw.get("leadership"),"war":raw.get("war"),"intellect":raw.get("intellect"),
+                            "bonds":raw.get("bonds") or [],"seal":raw.get("seal"),"weapon":raw.get("weapon"),
+                            "sourceClassification":"SOURCE_EXACT"}
     raw_buffs=read(buff_path)
     if len(raw_buffs)!=320:
         raise ValueError("C mobile buff catalogue coverage drift")
@@ -271,7 +303,25 @@ def build(root):
                           "gate":1+index%28,"silver":650+50*(index%28),"towerGate":tower_gate,"soulCost":max(100,round(positive(acquisition.get("soulCost"),1000)/10)) if tower_gate else 0,"classicReference":record.get("sourceUrl"),"provenance":"PROJECT_SIMULATED"})
         aliases[hid]=hid
     if len(aliases)!=364 or len(set(aliases.values()))!=364: raise ValueError("C hero alias collision")
+    # Strict identity bridge: exact name + faction, unique in both source and legacy Wiki.
+    # Do not auto-map by ordinal: source index now has 373 identities vs legacy 364.
+    source_names={}
+    for ident,row in hero_details.items():
+        key=(norm(row["name"]),norm(str(row.get("faction") or "")))
+        source_names.setdefault(key,[]).append(ident)
+    wiki_names={}
+    for h in wiki:
+        key=(norm(h["name"]),norm(str(h.get("faction") or "")))
+        wiki_names.setdefault(key,[]).append(h["id"])
+    source_hero_aliases={}
+    for key,ids in wiki_names.items():
+        matches=source_names.get(key,[])
+        if len(ids)==1 and len(matches)==1:
+            source_hero_aliases[aliases[ids[0]]]=matches[0]
     return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
+            "mobileHeroSource":{"index":{k:{"name":v["n"],"faction":v.get("p")} for k,v in hero_mini.items()},
+                                "details":hero_details,"runtimeAliases":source_hero_aliases,"missing":hero_missing},
+            "mobileAdvancedTech":mobile_tech,
             "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
             "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
             "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
