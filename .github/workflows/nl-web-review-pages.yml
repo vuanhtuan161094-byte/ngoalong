@@ -11,7 +11,8 @@ on:
 
 concurrency:
   group: nl-web-review-pages-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  # Allow an already running exact-SHA build to finish rather than cancel it on each production commit.
+  cancel-in-progress: false
 
 permissions:
   contents: read
