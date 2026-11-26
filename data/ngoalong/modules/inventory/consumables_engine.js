@@ -114,6 +114,19 @@
         next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
       });
     }
+    function giveBeautyGift(state,id,receipt,beautyId,qty,score){
+      return execute(state,'GIFT_BEAUTY',id,[beautyId,qty,score],receipt,(next,m)=>{
+        const row=get(id),gift=row.sourceGift;
+        requireOk(gift&&safe(gift.effect)&&gift.effect>0&&safe(gift.needScore)&&goodId(beautyId)&&safe(qty)&&qty>0&&qty<=1000&&safe(score),'BAD_BEAUTY_GIFT');
+        requireOk(score>=gift.needScore,'BEAUTY_SCORE_REQUIRED');
+        requireOk(next.nlCity?.levels?.nl_city_manor>=1,'MANOR_REQUIRED');
+        const wallet=next.nlContentC?.mobileBeautyExp;
+        requireOk(wallet&&typeof wallet==='object'&&!Array.isArray(wallet),'BEAUTY_STATE_REQUIRED');
+        const have=own(wallet,beautyId)?wallet[beautyId]:0,added=gift.effect*qty;
+        requireOk(safe(have)&&safe(added)&&safe(have+added),'BEAUTY_EXP_OVERFLOW');
+        debitStack(m,id,qty);wallet[beautyId]=have+added;return {beautyId,qty,added};
+      });
+    }
     function grantSourceBundle(next,rule){
       requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
@@ -201,7 +214,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,buySourceMaterial,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,giveBeautyGift,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });

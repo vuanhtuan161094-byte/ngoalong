@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds===24&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.legacySourceStatusIds===24&&skillAudit.sourceStatusIds>=24&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -170,7 +170,7 @@ def main():
             appOf(tacticDefenseDescriptor,'20')?.values.incomingTacticDefenseMultiplier===.6;
           checks.mobileSourceCompoundDefenseDescriptor=appOf(compoundDefenseDescriptor,'20')?.values.incomingTacticDefenseMultiplier===.7&&
             appOf(compoundDefenseDescriptor,'20')?.values.incomingPhysicalDefenseMultiplier===.7;
-          checks.mobileSourceDefenseStatusCoverage=skillAudit.sourceStatusIds===24;
+          checks.mobileSourceDefenseStatusCoverage=skillAudit.legacySourceStatusIds===24&&skillAudit.sourceStatusIds>=24;
           checks.mobileSourceHealingReductionDescriptor=appOf(healingReductionDescriptor,'30')?.scope==='targets'&&appOf(healingReductionDescriptor,'30')?.turns===2&&
             appOf(healingReductionDescriptor,'30')?.values.incomingHealingMultiplier===.5;
           checks.mobileSourceLifestealDescriptor=appOf(lifestealDescriptor,'31')?.scope==='self'&&appOf(lifestealDescriptor,'31')?.turns===3&&
@@ -192,7 +192,7 @@ def main():
             appOf(purificationDescriptor,'46')?.values.damageBonusPerBeneficialBuff===.2&&
             appOf(purificationHighDescriptor,'46')?.scope==='self'&&appOf(purificationHighDescriptor,'46')?.turns===2&&
             appOf(purificationHighDescriptor,'46')?.values.damageBonusPerBeneficialBuff===1;
-          checks.mobileSourcePurificationCoverage=skillAudit.sourceStatusIds===24;
+          checks.mobileSourcePurificationCoverage=skillAudit.legacySourceStatusIds===24&&skillAudit.sourceStatusIds>=24;
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);

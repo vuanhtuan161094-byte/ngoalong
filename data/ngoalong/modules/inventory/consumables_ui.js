@@ -50,7 +50,7 @@
        (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
      const outputName=pack.items.find(x=>x.id===rule.output)?.name||rule.output||'tinh khoáng';
      const effect=mode==='wiki'?'Chưa xác minh tác dụng Wiki':rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ Wiki, phí mô phỏng':sourceMaterial?
-       (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
+       (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(row.sourceGift?' · Tặng tại Dinh Phủ / Tri kỷ.':'')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
          ' · '+Object.entries(rule.stacks).map(([key,value])=>esc(key)+' ×'+esc(value)).join(' · '):'') :

@@ -110,7 +110,7 @@ def main():
         receipt = after["nlCity"]["receipts"]
         check("construction reserves one job and debits actual game resources",
               len(receipt) == 1 and
-              after["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks" and
+              (after["nlCity"].get("construction") or {}).get("id") == "nl_city_ironworks" and
               after["silver"] < original["silver"] and
               after["grain"] < original["grain"] and
               after["iron"] == original["iron"] and
@@ -128,10 +128,17 @@ def main():
               page.locator('[data-nl-city-panel]').count() == 1)
         reopened = page_for(browser, saved)
         reloaded = reopened.evaluate("window.__P2_QA__.getGame()")
-        check("reload preserves construction, costs and one-time receipt",
+        # On a slow runner the 30s building timer can legally complete during reload.
+        job = after["nlCity"].get("construction") or {}
+        pending = reloaded["nlCity"].get("construction")
+        completed = (pending is None and
+                     reloaded["nlCity"]["levels"]["nl_city_ironworks"] == job.get("targetLevel",1) and
+                     reloaded["nlCity"]["lastAt"] >= job.get("finishAt",0))
+        check("reload preserves construction or its completed level, costs and one-time receipt",
               reloaded["silver"] == after["silver"] and
+              reloaded["grain"] == after["grain"] and
               reloaded["nlCity"]["receiptIndex"] == after["nlCity"]["receiptIndex"] and
-              reloaded["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks")
+              ((pending is not None and pending == job) or completed))
         mobile = page_for(browser, saved, 390)
         mobile.locator('.nav[data-tab="city"]').click()
         mobile_tile = visible_window(mobile, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
