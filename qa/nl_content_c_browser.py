@@ -47,6 +47,7 @@ def main():
             mobileExtraHeroRecruitment:extraBought.every(Boolean)&&extraRows.every(x=>x.record&&x.record.leadership>0&&x.quality?.growth)&&extraSaveOk,
             mobileExtraHeroP2Runtime:extraUnits,
             mobileItemSourceCatalogue:itemCounts?.mobileSourceCatalogueIds===746&&wikiResults===746,
+            mobileItemRuntimeCount:itemCounts?.mobilePlayable===itemCounts?.sourceRouteMaterials+itemCounts?.sourceEliteMaterials+itemCounts?.sourceBundles+itemCounts?.sourceExchangeMaterials+itemCounts?.sourceGifts+itemCounts?.sourceResetItems+itemCounts?.sourceCraftNewMaterials+itemCounts?.sourceSeriesNewMaterials&&itemCounts?.sourceRouteMaterials===34&&itemCounts?.sourceEliteMaterials===6,
             mobileItemCatalogueUI:wikiResults===746&&wikiPageCards===25,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,

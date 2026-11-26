@@ -14,7 +14,7 @@ class Quiet(SimpleHTTPRequestHandler):
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(ROOT)))
 Thread(target=server.serve_forever,daemon=True).start()
 rows=[];errors=[]
-CLOCK="""window.__P2_ENABLE_QA__=true;let virtualNow=Date.now();const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[virtualNow]))}static now(){return virtualNow}};"""
+CLOCK="""window.__P2_ENABLE_QA__=true;window.__NL_VIRTUAL_NOW__=Date.now();const NativeDate=Date;window.Date=class extends NativeDate{constructor(...a){super(...(a.length?a:[window.__NL_VIRTUAL_NOW__]))}static now(){return window.__NL_VIRTUAL_NOW__}};"""
 try:
     with sync_playwright() as p:
         launch={'headless':True,'args':['--no-sandbox','--disable-dev-shm-usage']}
@@ -26,7 +26,7 @@ try:
         page.evaluate("""()=>{window.__NL_CLASSIC_A_QA__.recruit('zhao');window.__P3_QA__.assign('spear-van')}""")
         for day in range(1,91):
             row=page.evaluate("""day=>{const q=window.__P2_QA__,a=window.__NL_CLASSIC_A_QA__,h=window.__NL_HERO_SYSTEMS_QA__,r=window.__NL_R03_QA__,c=window.__NL_CONTENT_C_QA__;
-              virtualNow+=86400000;r.tick();a.tax();
+              window.__NL_VIRTUAL_NOW__+=86400000;r.tick();a.tax();
               let g=q.getGame();if(!g.roster.includes('huang')&&a.canRecruit('huang')){a.recruit('huang');window.__P3_QA__.assign('spear-van');}
               g=q.getGame();let train=0;for(const id of g.slots.filter(Boolean)){
                 if(q.getGame().silver>5000&&h.trainBatch(id,5))train++;

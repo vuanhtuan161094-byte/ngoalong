@@ -565,6 +565,7 @@ if(window.__P2_ENABLE_QA__){
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
       projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceResetItems:NL_MOBILE_RESET_ITEMS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
+      sourceRouteMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceEliteMaterials:NL_MOBILE_ELITE_MATERIALS.length,
       mobileSourceCatalogueIds:new Set(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null).map(x=>String(x.sourceId))).size,
       mobileSourceReferenceOnly:NL_MOBILE_WIKI_REFERENCES.length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length

@@ -1215,7 +1215,8 @@ function openObjective(o,units,scale){
    adapter:u.provenance||'PROJECT_SIMULATED'};
   const {ratio,difficulty}=power,sourceTroop=MOBILE_TROOPS.units[String(u.sourceTroopId||'')];
   if(u.sourceTroopId&&!sourceTroop)throw Error('UNKNOWN_MOBILE_NPC_TROOP:'+u.sourceTroopId);
-  if(o.kind==='npc'&&!sourceTroop)throw Error('MOBILE_NPC_WITHOUT_SOURCE_TROOP:'+String(u.name||''));
+  const simulatedTroopFallback=!sourceTroop&&String(u.provenance||'').startsWith('SIMULATED_');
+  if(o.kind==='npc'&&!sourceTroop&&!simulatedTroopFallback)throw Error('MOBILE_NPC_WITHOUT_SOURCE_TROOP:'+String(u.name||''));
   if(sourceTroop)mobileTroopCoefficients(e,u.sourceTroopId);
   for(const k of ['atk','catk','matk','def','tdef','mdef'])e[k]=Math.max(1,Math.round(e[k]*ratio*difficulty*(sourceTroop?1:(ROLE_COEFFICIENTS[role]?.[k]||1))*(boss?1.12:1)));
   e.hp=e.maxHp=Math.max(1,Math.round(e.maxHp*ratio*difficulty*(boss?1.18:1)));e.effects=[];e.morale=boss?60:40;

@@ -42352,6 +42352,7 @@ if(window.__P2_ENABLE_QA__){
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
       projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceResetItems:NL_MOBILE_RESET_ITEMS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
+      sourceRouteMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceEliteMaterials:NL_MOBILE_ELITE_MATERIALS.length,
       mobileSourceCatalogueIds:new Set(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null).map(x=>String(x.sourceId))).size,
       mobileSourceReferenceOnly:NL_MOBILE_WIKI_REFERENCES.length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
@@ -44766,7 +44767,8 @@ function openObjective(o,units,scale){
    adapter:u.provenance||'PROJECT_SIMULATED'};
   const {ratio,difficulty}=power,sourceTroop=MOBILE_TROOPS.units[String(u.sourceTroopId||'')];
   if(u.sourceTroopId&&!sourceTroop)throw Error('UNKNOWN_MOBILE_NPC_TROOP:'+u.sourceTroopId);
-  if(o.kind==='npc'&&!sourceTroop)throw Error('MOBILE_NPC_WITHOUT_SOURCE_TROOP:'+String(u.name||''));
+  const simulatedTroopFallback=!sourceTroop&&String(u.provenance||'').startsWith('SIMULATED_');
+  if(o.kind==='npc'&&!sourceTroop&&!simulatedTroopFallback)throw Error('MOBILE_NPC_WITHOUT_SOURCE_TROOP:'+String(u.name||''));
   if(sourceTroop)mobileTroopCoefficients(e,u.sourceTroopId);
   for(const k of ['atk','catk','matk','def','tdef','mdef'])e[k]=Math.max(1,Math.round(e[k]*ratio*difficulty*(sourceTroop?1:(ROLE_COEFFICIENTS[role]?.[k]||1))*(boss?1.12:1)));
   e.hp=e.maxHp=Math.max(1,Math.round(e.maxHp*ratio*difficulty*(boss?1.18:1)));e.effects=[];e.morale=boss?60:40;
