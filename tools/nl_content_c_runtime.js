@@ -804,7 +804,8 @@ p2Skill=function(actor){
 const nlContentCBaseHit=p2Hit;
 p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const trait=mobileTraitFactors(attacker,target,kind,attacker?.nlMobileActionPattern||'single',battle?.round||1);
- mult*=trait.outgoing*trait.incoming*mobileTechDamage(attacker,target);
+ const ar=attacker?.nlMobileRefine,tr=target?.nlMobileRefine,af=attacker?.nlMobileHero?.faction,tf=target?.nlMobileHero?.faction;
+ mult*=trait.outgoing*trait.incoming*mobileTechDamage(attacker,target)*(1+(ar?.finalDamage||0)+(ar?.vs?.[tf]||0))*Math.max(0,1-(tr?.resist?.[af]||0));
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
  const oneHitShield=target?.effects?.find(effect=>effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS&&effect.turns>0);
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
@@ -825,12 +826,13 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const defenseValueField=({physical:'incomingPhysicalDefenseMultiplier',tactic:'incomingTacticDefenseMultiplier',magic:'incomingMagicDefenseMultiplier'})[kind];
  const sourceDefenseMultiplier=guardField?(resolvedTarget?.effects||[]).filter(effect=>effect.turns>0)
    .reduce((factor,effect)=>{const value=effect.mobileSourceValues?.[defenseValueField];return Number.isFinite(value)?factor*value:factor;},1):1;
- const guardFactor=sourceDefenseMultiplier*(attacker?.nlMobilePierceActive?.9:1);
+ const teamDefense=(target?.team==='p'?battle?.p:battle?.e)?.reduce((a,u)=>a+(u.hp>0?(u.nlMobileRefine?.teamDefense||0):0),0)||0;
+ const guardFactor=sourceDefenseMultiplier*(attacker?.nlMobilePierceActive?.9:1)*(1+teamDefense);
  const previousGuard=guardField?resolvedTarget?.[guardField]:undefined;
- if(Number.isFinite(previousGuard)&&guardFactor!==1)resolvedTarget[guardField]=Math.max(0,previousGuard*guardFactor);
+ if(Number.isFinite(previousGuard))resolvedTarget[guardField]=Math.max(0,previousGuard*guardFactor-(ar?.pierceFlat||0));
  let hit;
  try{hit=nlContentCBaseHit(effectiveAttacker,resolvedTarget,kind,mult*vectorMultiplier*purificationMultiplier,opts);}
- finally{if(Number.isFinite(previousGuard)&&guardFactor!==1)resolvedTarget[guardField]=previousGuard;}
+ finally{if(Number.isFinite(previousGuard))resolvedTarget[guardField]=previousGuard;}
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
    target.effects=target.effects.filter(effect=>effect!==oneHitShield);
@@ -838,7 +840,7 @@ p2Hit=function(attacker,target,kind,mult=1,opts={}){
  }
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
- let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction));
+ let damage=Math.min(beforeHp,Math.floor(rawDamage*damageReduction*(hit.critical===true||hit.crit===true?1+(ar?.critDamage||0):1)));
  if(protectedBySource&&rawDamage>0)damage=Math.min(damage||1,1);
  if(damage>0&&target?.nlMobileAbsorb>0){const blocked=Math.min(damage,target.nlMobileAbsorb);target.nlMobileAbsorb-=blocked;damage-=blocked;hit.mobileTraitAbsorbed=blocked;}
  if(damage!==rawDamage){target.hp=beforeHp-damage;target.alive=target.hp>0;target.morale=beforeMorale;
@@ -1089,10 +1091,11 @@ p2Unit=function(id,team,slot,stage){
  const exact=team==='p'&&battle?.mode!=='cltq'?mobileHeroQuality(id):null,prior=HEROES[id];
  const talent=team==='p'&&battle?.mode!=='cltq'?mobileTraitChoice(id):null;
  const allRound=talent?.name==='Toàn Năng'?[9,15,24][talent.rank-1]:0;
+ const refine=team==='p'&&battle?.mode!=='cltq'&&owned(id)&&typeof nlItemApi?.mobileRefineModifiers==='function'?nlItemApi.mobileRefineModifiers(game,id):null;
  let u;
- if((exact||allRound)&&prior){
+ if((exact||allRound||refine?.lead||refine?.war||refine?.intellect)&&prior){
    // Apply the source attribute bonus before the single native stat formula.
-   const g=exact?.growth;HEROES[id]={...prior,lead:(g?.lead??prior.lead??0)+allRound,atk:(g?.war??prior.atk??0)+allRound,int:(g?.int??prior.int??0)+allRound};
+   const g=exact?.growth;HEROES[id]={...prior,lead:(g?.lead??prior.lead??0)+allRound+(refine?.lead||0),atk:(g?.war??prior.atk??0)+allRound+(refine?.war||0),int:(g?.int??prior.int??0)+allRound+(refine?.intellect||0)};
    try{u=priorUnit(id,team,slot,stage);}finally{HEROES[id]=prior;}
  }else u=priorUnit(id,team,slot,stage);
  if(team!=='p'||!u||battle?.mode==='cltq')return u;
@@ -1110,6 +1113,10 @@ p2Unit=function(id,team,slot,stage){
  if(troopCapacity){const hpBonus=troopCapacity*.82;u.troopCapacity=(u.troopCapacity||0)+troopCapacity;u.maxHp+=hpBonus;u.hp+=hpBonus;}
  u.nlSealHealingMultiplier=1+healing;
  if(tier4.has(nlwB4Active(id)?.id))for(const k of ['atk','catk','matk','def','tdef','mdef'])if(Number.isFinite(u[k]))u[k]=Math.round(u[k]*1.08);
+ if(refine){
+  for(const k of ['atk','catk','matk','def','tdef','mdef'])if(Number.isFinite(u[k]))u[k]*=1+(refine[k]||0)+(['def','tdef','mdef'].includes(k)?refine.allDefense:0);
+  u.hp+=refine.hp;u.maxHp+=refine.hp;u.crit=Math.min(.95,(u.crit||0)+refine.crit);u.dodge=Math.min(.95,(u.dodge||0)+refine.dodge);u.nlMobileRefine=refine;
+ }
  return mobileTechCombat(u);
 };
 const priorSealHeal=p2Heal;
