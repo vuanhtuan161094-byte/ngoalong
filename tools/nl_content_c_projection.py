@@ -318,6 +318,12 @@ def build(root):
         matches=source_names.get(key,[])
         if len(ids)==1 and len(matches)==1:
             source_hero_aliases[aliases[ids[0]]]=matches[0]
+    for runtime_id,source_id,expected_name in (("liu","3834","Lưu Bị"),("sunquan","3835","Tôn Quyền"),("cao","3836","Tào Tháo")):
+        if source_id in hero_details and hero_details[source_id]["name"]==expected_name and any(
+            h["id"]==runtime_id and h["name"]==expected_name for h in old):
+            source_hero_aliases[runtime_id]=source_id
+    if len(set(source_hero_aliases.values()))!=len(source_hero_aliases):
+        raise ValueError("Mobile hero alias collision")
     return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
             "mobileHeroSource":{"index":{k:{"name":v["n"],"faction":v.get("p")} for k,v in hero_mini.items()},
                                 "details":hero_details,"runtimeAliases":source_hero_aliases,"missing":hero_missing},
