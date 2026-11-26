@@ -1,0 +1,11 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-a46e212f-b221-4ee8-9654-41ac5118705d.
+Generated source: /workspace/generated_images/exec-a46e212f-b221-4ee8-9654-41ac5118705d.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 16ae026de6dc803522a9b24edccd1547bdb8f4e31db7ccf3eb4701c56292bdfe. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-015 / Mao Giới; source raw hero ID 3958.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+Edited from provider output exec-da373e3f-f2b3-419a-acde-0fc5cec59f10; input SHA-256 bbb3cd8293fc189fb6a34bac0e10865806a618a5dbba17d87f0b37b6b0d31971.
+
+VERBATIM GENERATION PROMPT
+Edit the supplied artwork only. Preserve this character's face, hairstyle, facial identity, exact unique pose, prop, body proportions, 2:3 full-body framing, background and polished semi-realistic painterly Chinese fantasy mobile-game style. Rework only the clothing to be bolder and sexier: Ivory and pale jade lingerie cosplay: opaque lace bralette-corset, bare midriff, high-cut jade silk briefs fully covering groin, pale thigh-high stockings with jade garters, delicate body chain and flowing translucent detached sleeves. Expose the stomach and more upper thigh while leaving breasts and groin fully covered by opaque fabric. Add ornate lace detail, sensual mature glamour and long legs. Depict a clearly adult 18-year-old woman with adult features. Keep head and both shoes inside the tall frame. No nudity, no nipple or genital exposure, no explicit sexual content, no text, no watermark.

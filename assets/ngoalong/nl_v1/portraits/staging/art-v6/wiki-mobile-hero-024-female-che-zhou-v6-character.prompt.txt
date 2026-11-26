@@ -1,0 +1,10 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-fce0b303-c843-4e0c-bda4-634756b9612f.
+Generated source: /workspace/generated_images/exec-fce0b303-c843-4e0c-bda4-634756b9612f.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 5e89ee2ba7bd694d4d521f6303cb002a1d233c00ba75d524a6fc78cc07314c19. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-024 / Xa Trụ; source raw hero ID 1966.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+
+VERBATIM GENERATION PROMPT
+TALL VERTICAL 2:3 mobile hero artwork, exact composition 1024x1536. One full-body adult woman from hair to both shoes, no cropping, generous safe margins. Match the approved Diao Chan sample's polished semi-realistic painterly Chinese Three Kingdoms fantasy mobile-game style, cinematic moonlit palace colors, ornate detail. Character is clearly an adult 18-year-old woman with adult facial features. Bold sexy cosplay/lingerie styling: opaque lace bra-corset fully covering breasts, clearly exposed bare midriff, high-cut opaque briefs fully covering groin, bare upper thighs, thigh-high stockings with garter straps, delicate body chain, long legs and fuller adult figure. Expose stomach and thighs strongly while breasts and groin remain covered. One unique face, one unique pose, unique hair and palette per description. No nudity, no nipples/genitals, no explicit sexual activity, no text, logo, watermark, border, collage, childlike face, extra limbs. Xa Trụ, 024. Face: round heart-shaped face, peachy warm complexion, large amber eyes, full brows, mischievous grin, short wavy auburn bob with a jeweled side clip. Pose: sweeping dance-spin with a long jade staff, one leg extended high to the side and torso tilted opposite, fabric and ribbons making a large circular silhouette. Ruby and gold lingerie cosplay with opaque cups, exposed waist, lace thigh-high stockings and garters, ornate corridor. Full figure, elegant anatomy, no sitting and no throne.

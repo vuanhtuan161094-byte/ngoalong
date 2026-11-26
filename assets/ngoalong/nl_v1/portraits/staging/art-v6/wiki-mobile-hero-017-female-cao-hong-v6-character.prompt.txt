@@ -1,0 +1,11 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-a6b08a15-63b3-41f3-8fbd-486f5126f815.
+Generated source: /workspace/generated_images/exec-a6b08a15-63b3-41f3-8fbd-486f5126f815.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 4f61304f0b995aff3d4b7080af5e2b35737aa1a74e92c5b345d4ef3c9862e416. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-017 / Tào Hồng; source raw hero ID 3749.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+Edited from provider output exec-1175b1f4-7f31-49e3-8d59-9751690c487c; input SHA-256 21866536fc3fa120ac6034267ad3b13406d22b985313e741a8b0c16f6ecaaca0.
+
+VERBATIM GENERATION PROMPT
+Edit the supplied artwork only. Preserve this character's face, hairstyle, facial identity, exact unique pose, prop, body proportions, 2:3 full-body framing, background and polished semi-realistic painterly Chinese fantasy mobile-game style. Rework only the clothing to be bolder and sexier: Burgundy and gold battle-lingerie cosplay: opaque lace bra-corset, bare abdomen, high-cut burgundy shorts fully covering groin, black thigh-high stockings with gold garters, prominent waist chain, small shoulder armor and red streamers. Expose the stomach and more upper thigh while leaving breasts and groin fully covered by opaque fabric. Add ornate lace detail, sensual mature glamour and long legs. Depict a clearly adult 18-year-old woman with adult features. Keep head and both shoes inside the tall frame. No nudity, no nipple or genital exposure, no explicit sexual content, no text, no watermark.

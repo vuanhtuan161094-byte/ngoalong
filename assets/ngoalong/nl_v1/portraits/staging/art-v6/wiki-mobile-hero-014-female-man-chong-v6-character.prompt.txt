@@ -1,0 +1,11 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-7013a6d4-dd60-4e06-bae1-7834533e1c8a.
+Generated source: /workspace/generated_images/exec-7013a6d4-dd60-4e06-bae1-7834533e1c8a.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: dbd81d6418cf020b8ea363e06a68ca6b3b65a18d007465956a9e7f4ff3a26a5e. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-014 / Mãn Sủng; source raw hero ID 4066.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+Edited from provider output exec-3ba47f51-46af-4196-825d-cba4cec956a8; input SHA-256 c189af3a5ddb1b8551ceadca7c0165ce1075db62393449002017de0fb72750df.
+
+VERBATIM GENERATION PROMPT
+Edit the supplied artwork only. Preserve this character's face, hairstyle, facial identity, exact unique pose, prop, body proportions, 2:3 full-body framing, background and polished semi-realistic painterly Chinese fantasy mobile-game style. Rework only the clothing to be bolder and sexier: Deep teal scholar-inspired lace bra-corset with opaque cups and cropped waist, clearly bare midriff, high-cut teal lace shorts fully covering groin, sheer black thigh-high stockings with jeweled garters, gold waist chain and open scholar coat. Expose the stomach and more upper thigh while leaving breasts and groin fully covered by opaque fabric. Add ornate lace detail, sensual mature glamour and long legs. Depict a clearly adult 18-year-old woman with adult features. Keep head and both shoes inside the tall frame. No nudity, no nipple or genital exposure, no explicit sexual content, no text, no watermark.

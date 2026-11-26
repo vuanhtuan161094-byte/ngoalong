@@ -1,0 +1,11 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-87045e98-0431-45bb-80fc-86ab28cb28b4.
+Generated source: /workspace/generated_images/exec-87045e98-0431-45bb-80fc-86ab28cb28b4.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 3f40b1b358e42fad6fef5816cf10d3bdde7f68bc80fc21480cf25ad0738d7694. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-013 / Hứa Chử; source raw hero ID 3799.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+Edited from provider output exec-04021b35-67c3-4de4-bed8-257e73cd4f81; input SHA-256 bc7429e69dc756a63baea5f3a09d624e45590aae5c400109fefa0cb0a0685007.
+
+VERBATIM GENERATION PROMPT
+Edit the supplied artwork only. Preserve this character's face, hairstyle, facial identity, exact unique pose, prop, body proportions, 2:3 full-body framing, background and polished semi-realistic painterly Chinese fantasy mobile-game style. Rework only the clothing to be bolder and sexier: Red and black tiger-themed corset lingerie with opaque lace bra cups, bare stomach, high-cut red lace shorts fully covering groin, black thigh-high stockings with red garters, waist body chain, gold tiger shoulder guard. Expose the stomach and more upper thigh while leaving breasts and groin fully covered by opaque fabric. Add ornate lace detail, sensual mature glamour and long legs. Depict a clearly adult 18-year-old woman with adult features. Keep head and both shoes inside the tall frame. No nudity, no nipple or genital exposure, no explicit sexual content, no text, no watermark.

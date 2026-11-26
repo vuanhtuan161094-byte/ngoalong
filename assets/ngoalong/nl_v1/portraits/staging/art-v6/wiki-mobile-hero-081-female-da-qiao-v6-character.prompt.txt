@@ -1,0 +1,10 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-9f55cf73-5898-4430-9a10-7e1318b1723f.
+Generated source: /workspace/generated_images/exec-9f55cf73-5898-4430-9a10-7e1318b1723f.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 2b5b03d59c1da94660db755982af20b57cfd71cd37d61597362a9d603748a7d0. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-081 / Đại Kiều; source raw hero ID 4100.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+
+VERBATIM GENERATION PROMPT
+TALL VERTICAL 2:3 mobile hero artwork, exact composition 1024x1536. Show one full adult woman from hair to both shoes with margins, no cropped limbs. Premium polished semi-realistic painterly Chinese Three Kingdoms fantasy game style matching the approved Diao Chan sample, cinematic light and ornate textile. Clearly adult 18-year-old woman, adult face/proportions. Bold sexy lingerie cosplay: opaque lace bra-corset fully covering breasts, bare midriff clearly visible, high-cut opaque briefs fully covering groin, bare upper thighs, thigh-high stockings with garters, decorative body chain, long legs and fuller adult figure. Strong stomach and thigh exposure, covered bust and crotch. Give unmistakably different facial geometry, hair and silhouette. No nudity, no nipple/genital exposure, no explicit activity, text, logos, watermarks, collage, frame, childlike features or extra limbs. Đại Kiều, 081. Face: elegant heart-shaped face, peach-gold complexion, bright amber eyes, pronounced arched brows, rose-tipped long curls gathered over one shoulder. Pose: graceful standing dance with one arm arched above her head holding a long translucent pink ribbon, other hand at waist, one heel lifted and legs crossed in a narrow line; not a kick and not seated. Ivory-pink lingerie couture, exposed stomach, lace thigh-high stockings with rose garters, pearl body chain, blooming peach garden. Keep anatomy polished and face distinct.

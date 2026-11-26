@@ -1,0 +1,10 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-29ffc5e4-18e7-4fa0-9ee1-f6fdba4dd703.
+Generated source: /workspace/generated_images/exec-29ffc5e4-18e7-4fa0-9ee1-f6fdba4dd703.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 47afe8de4e87e9a6edca887a8ca86c748478c624f91ed123e5414d2b2517511e. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-018 / Tào Nhân; source raw hero ID 3788.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+
+VERBATIM GENERATION PROMPT
+TALL VERTICAL 2:3 mobile hero artwork, exact composition 1024x1536. One full-body adult woman from hair to both shoes, no cropping, generous safe margins. Match the approved Diao Chan sample's polished semi-realistic painterly Chinese Three Kingdoms fantasy mobile-game style, cinematic moonlit palace colors, ornate detail. Character is clearly an adult 18-year-old woman with adult facial features. Bold sexy cosplay/lingerie styling: opaque lace bra-corset fully covering breasts, clearly exposed bare midriff, high-cut opaque briefs fully covering groin, bare upper thighs, thigh-high stockings with garter straps, delicate body chain, long legs and fuller adult figure. Expose stomach and thighs strongly while breasts and groin remain covered. One unique face, one unique pose, unique hair and palette per description. No nudity, no nipples/genitals, no explicit sexual activity, no text, logo, watermark, border, collage, childlike face, extra limbs. Tào Nhân, 018. Face: mature rectangular face, warm bronze complexion, straight dark brows, deep olive eyes, small scar at chin, long black hair tied in a compact warrior knot. Pose: planted standing stance, broad ornate shield thrust forward at one side and sword held low in the other, torso turned three-quarters, feet far apart. Navy and antique-gold armored lingerie, one shoulder guard, garter stockings, moonlit fortress gate. Full figure, elegant anatomy, no sitting and no throne.

@@ -1,0 +1,11 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-3904e49d-c89c-435f-be88-7872a8c2c929.
+Generated source: /workspace/generated_images/exec-3904e49d-c89c-435f-be88-7872a8c2c929.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 0d275a767b9ff557da63eee2987506b51a0a5ac317a4380fec1d53b1d10b8c8c. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-016 / Quách Gia; source raw hero ID 3971.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+Edited from provider output exec-33a89997-50e0-4733-ab70-fef2bd3c785a; input SHA-256 224500a8362e5b02d18b6e010654dd9411930705fd6ee142f484b0a6bbc71ca6.
+
+VERBATIM GENERATION PROMPT
+Edit the supplied artwork only. Preserve this character's face, hairstyle, facial identity, exact unique pose, prop, body proportions, 2:3 full-body framing, background and polished semi-realistic painterly Chinese fantasy mobile-game style. Rework only the clothing to be bolder and sexier: Violet and charcoal lace lingerie fantasy costume: opaque corset bra, bare midriff, very high-cut plum lace shorts fully covering groin, patterned thigh-high stockings with garter straps and a silver body chain; keep flowing purple ribbon. Expose the stomach and more upper thigh while leaving breasts and groin fully covered by opaque fabric. Add ornate lace detail, sensual mature glamour and long legs. Depict a clearly adult 18-year-old woman with adult features. Keep head and both shoes inside the tall frame. No nudity, no nipple or genital exposure, no explicit sexual content, no text, no watermark.

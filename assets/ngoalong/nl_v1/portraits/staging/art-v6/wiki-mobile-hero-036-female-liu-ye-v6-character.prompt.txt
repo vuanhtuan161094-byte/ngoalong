@@ -1,0 +1,10 @@
+Art direction: NL_CHARACTER_ART_V6, owner-approved Diao Chan sample style; distinct pose and facial design.
+Provider: OpenAI ImageGen. Output ID: exec-6aaf67e2-95de-4cae-a0bd-5653b1b9e3c9.
+Generated source: /workspace/generated_images/exec-6aaf67e2-95de-4cae-a0bd-5653b1b9e3c9.png
+Created: 2026-11-26 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 38ed61bd01709379dbc6fd65c19c2e96cfb1e7dbb4ae3620be5b021b049feb83. Cost: unknown; provider returned no estimate.
+Wiki identity: wiki-mobile-hero-036 / Lưu Diệp; source raw hero ID 925.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official source fact.
+
+VERBATIM GENERATION PROMPT
+TALL VERTICAL 2:3 mobile hero artwork, exact composition 1024x1536. Show one full adult woman from hair to both shoes with margins, no cropped limbs. Premium polished semi-realistic painterly Chinese Three Kingdoms fantasy game style matching the approved Diao Chan sample, cinematic light and ornate textile. Clearly adult 18-year-old woman, adult face/proportions. Bold sexy lingerie cosplay: opaque lace bra-corset fully covering breasts, bare midriff clearly visible, high-cut opaque briefs fully covering groin, bare upper thighs, thigh-high stockings with garters, decorative body chain, long legs and fuller adult figure. Strong stomach and thigh exposure, covered bust and crotch. Give unmistakably different facial geometry, hair and silhouette. No nudity, no nipple/genital exposure, no explicit activity, text, logos, watermarks, collage, frame, childlike features or extra limbs. Lưu Diệp, 036. Face: narrow diamond-shaped face, fair cool skin, pale gray-green eyes, neat straight nose, small beauty mark beside lip, long ink-black hair with silver threads in a low double braid. Pose: precise standing crossbow aim, body twisted and leaning back, one leg crossed ahead and pointed, long narrow crossbow aimed toward viewer left; elegant rather than combat crouch. Deep emerald and gold lingerie, exposed waist, thigh-high stockings with emerald garters, moonlit armory. Keep anatomy polished and face distinct.

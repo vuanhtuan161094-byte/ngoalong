@@ -203,8 +203,8 @@ def payload() -> str:
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")
-    # V4 heroine art is bound to stable gameplay IDs. Masters remain as source
-    # PNGs; only optimized local WebP data URLs enter the offline game bundle.
+    # V5 and runtime-adapted V6 heroine art are bound to stable gameplay IDs.
+    # V5 art is embedded; V6 WebPs ship as local paths beside the offline game.
     hero_data = json.loads((ROOT / "data/ngoalong/modules/heroes/hero_systems_v1.json").read_text(encoding="utf-8"))
     art_manifest = json.loads((ROOT / "assets/ngoalong/nl_v1/portraits/hero_art_v5.json").read_text(encoding="utf-8"))
     if hero_data.get("schemaVersion") != 1 or len(hero_data.get("systems", [])) != 12:
@@ -213,15 +213,19 @@ def payload() -> str:
         raise ValueError("Hero art catalogue must be versioned and offline embedded")
     portrait_dir = ROOT / "assets/ngoalong/nl_v1/portraits"
     hero_art = {}
-    art_kinds = ("portrait", "splash", "character")
-    for hero_id, character in art_manifest.get("heroes", {}).items():
+
+    def compile_hero_art(hero_id, character, art_kinds, embed_data_urls=True):
         compiled = {}
         for kind in art_kinds:
             asset = character.get(kind)
             if not asset:
                 continue
-            source = portrait_dir / asset["sourcePng"]
-            runtime = portrait_dir / asset["runtimeWebp"]
+            source = ROOT / asset["sourcePng"]
+            runtime = ROOT / asset["runtimeWebp"]
+            if not source.is_file():
+                source = portrait_dir / asset["sourcePng"]
+            if not runtime.is_file():
+                runtime = portrait_dir / asset["runtimeWebp"]
             source_bytes, runtime_bytes = source.read_bytes(), runtime.read_bytes()
             if not source_bytes.startswith(b"\x89PNG\r\n\x1a\n") or runtime_bytes[:4] != b"RIFF" or runtime_bytes[8:12] != b"WEBP":
                 raise ValueError(f"Invalid hero artwork file: {hero_id}/{kind}")
@@ -231,9 +235,40 @@ def payload() -> str:
                 raise ValueError(f"Hero master changed without manifest update: {hero_id}/{kind}")
             if expected_runtime and hashlib.sha256(runtime_bytes).hexdigest() != expected_runtime:
                 raise ValueError(f"Hero runtime image changed without manifest update: {hero_id}/{kind}")
-            compiled[kind] = "data:image/webp;base64," + b64encode(runtime_bytes).decode("ascii")
+            compiled[kind] = (
+                "data:image/webp;base64," + b64encode(runtime_bytes).decode("ascii")
+                if embed_data_urls else asset["runtimeWebp"]
+            )
+        return compiled
+
+    for hero_id, character in art_manifest.get("heroes", {}).items():
+        compiled = compile_hero_art(hero_id, character, ("portrait", "splash", "character"))
         if compiled:
             hero_art[hero_id] = compiled
+
+    # V6 artwork is wired only for heroes already adapted in the explicit
+    # runtime manifest. Reference-only Mobile Wiki entries remain catalogue art.
+    v6_path = ROOT / "assets/ngoalong/nl_v1/portraits/staging/art-v6/hero_art_v6_batch1.json"
+    runtime_manifest_path = ROOT / "data/ngoalong/integration/heroes207_runtime_manifest_v1.json"
+    v6_manifest = json.loads(v6_path.read_text(encoding="utf-8"))
+    runtime_manifest = json.loads(runtime_manifest_path.read_text(encoding="utf-8"))
+    runtime_hero_ids = {
+        row["heroId"]
+        for row in runtime_manifest.get("heroes", [])
+        if row.get("status") == "ADAPTED_EXPLICIT_SUBSET"
+    }
+    for row in v6_manifest.get("heroes", []):
+        hero_id = row.get("wikiId")
+        if hero_id not in runtime_hero_ids:
+            continue
+        if hero_id in hero_art:
+            raise ValueError(f"V6 art cannot overwrite an existing hero art entry: {hero_id}")
+        # V6 WebPs ship beside index.html in the repo and are loaded by local
+        # relative path, keeping the generated HTML below GitHub's file limit.
+        compiled = compile_hero_art(hero_id, row, ("portrait", "character"), embed_data_urls=False)
+        if not compiled:
+            raise ValueError(f"Runtime-adapted V6 hero has no artwork: {hero_id}")
+        hero_art[hero_id] = compiled
     for alias, target in art_manifest.get("aliases", {}).items():
         if target in hero_art:
             hero_art[alias] = hero_art[target]
