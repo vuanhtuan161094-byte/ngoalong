@@ -58,6 +58,8 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R7 gameplay source delta (unverified build)
 
+- Consolidated continuation: 24 more source item use routes, all 17 Tri Kỷ gifts (+5 generic preference adapter for six), two inheritance tokens and atomic refund of recorded Mobile awakening expenditure only. Full hero reset (skill/gear/weapon/destiny/etc.) remains unresolved. Added scoped instant cleanse/dispel and poison/burn where explicit numeric magnitude is available; no invented probability. 88 isolated transaction assertions passed. Existing CI queue remains unresolved. 143 source promotion edges (136 dual-reagent) passed prior isolated actual engine tests.
+
 - 89 equipment destinations across 13 group material identities mapped by unique tier, explicitly SIMULATED membership/quantity. Common material is additive to explicit craft reagent. Existing drop routes retained. 5 new source bundles (four EXP ranges and Bạc), receipt-seeded bounded EXP, simulated 1000 XP per commander level; daily wins award XP boxes. Source IDs45/52 scoped frenzy/resistance adapters. Isolated bundle tests 15/15 PASS; native browser acceptance pending. The Ứng Long group has no validated upgrade edge; remains open.
 
 ## R6 gameplay source delta (unverified build)

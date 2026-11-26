@@ -353,6 +353,11 @@ function nlhEndgamePanel(id){
 function nlhMaterialShopPanel(){
  const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
 }
+function nlhMobileResetPanel(id){
+ if(typeof nlMobileHeroApi==='undefined'||!nlMobileHeroApi?.resetQuote)return '';
+ const rows=['normal','super'].map(kind=>{const q=nlMobileHeroApi.resetQuote(id,kind);return q?'<div class="nlh-feature-panel"><b>'+hsEsc(kind==='super'?'Truyền Thừa Lệnh-Siêu':'Truyền Thừa Lệnh')+'</b><p>Hạ phẩm chất '+q.from+' → '+q.to+' · Hoàn trả '+Object.entries(q.refund).map(([k,v])=>hsEsc(k)+' ×'+nlhFmt(v)).join(' · ')+'</p><button class="nlh-button" data-nlh-action="mobileReset" data-nlh-mode="'+kind+'" '+(battle||!q.owned?'disabled':'')+'>Hạ phẩm chất · Có '+q.owned+' lệnh</button></div>':'';}).join('');
+ return '<h3 class="nlh-section-title">Hạ chức / Truyền thừa</h3><p>Chỉ hoàn trả giác ngộ có chứng từ đầy đủ; không hạ cấp, không đổi trang bị, Mệnh Cách, Quý Tử hoặc các đầu tư khác. Chưa phải toàn bộ cơ chế Mobile.</p>'+(rows||'<p>Chưa đủ chuỗi chứng từ từ phẩm chất gốc hoặc chưa đạt điều kiện.</p>');
+}
 function nlhMobileAwakeningPanel(id){
  if(typeof nlMobileHeroApi==='undefined'||!nlMobileHeroApi?.quality(id))return null;
  const exact=nlMobileHeroApi?.quality(id),q=nlMobileHeroApi.next(id),wallet=game.nlContentC?.mobileHeroMaterials||{};
@@ -365,7 +370,7 @@ function nlhMobileAwakeningPanel(id){
  '<h3 class="nlh-section-title">Giác ngộ theo phẩm chất nguồn</h3>'+nlhMobileSourcePanel(id)+
  (!q?'<p>Đã đạt phẩm chất tối đa có dữ liệu.</p>':'<div class="nlh-feature-panel"><b>Bậc tiếp: '+hsEsc(q.name)+'</b><p>'+hsEsc(q.stage?.access||'Chưa xác minh đường nhận')+'</p>'+materials+
  (q.valid?'<button class="nlh-button" data-nlh-action="mobileAwaken" '+(!nlMobileHeroApi.canAwaken(id)?'disabled':'')+'>Giác ngộ · cần Chỉ huy '+q.gate+'</button>':'<p>Thiếu bảng chi phí nguồn: chưa mở giao dịch.</p>')+
- '<p class="nlh-source-note">Số lượng nguyên liệu lấy nguyên Wiki; đường đổi Bạc và các ngưỡng chưa có nguồn là mô phỏng.</p></div>');
+ '<p class="nlh-source-note">Số lượng nguyên liệu lấy nguyên Wiki; đường đổi Bạc và các ngưỡng chưa có nguồn là mô phỏng.</p></div>')+nlhMobileResetPanel(id);
 }
 function nlhMobileSourcePanel(id){
  const key=typeof NL_CONTENT_C!=='undefined'?NL_CONTENT_C.mobileHeroSource?.runtimeAliases?.[id]:null;
@@ -447,6 +452,7 @@ document.addEventListener('click',e=>{
  else if(action==='materialBuy')nlhMaterialBuy(b.dataset.nlhMaterial);
  else if(action==='mobileMaterial')nlMobileHeroApi.buyMaterial(nlhsState().selectedHero,b.dataset.nlhName,Number(b.dataset.nlhCount));
  else if(action==='mobileAwaken')nlMobileHeroApi.awaken(nlhsState().selectedHero);
+ else if(action==='mobileReset'){const id=nlhsState().selectedHero,kind=b.dataset.nlhMode,q=nlMobileHeroApi.resetQuote(id,kind);if(q&&window.confirm('Hạ phẩm chất '+q.from+' về '+q.to+' và dùng một lệnh?'))nlMobileHeroApi.reset(id,kind);}
  else if(action==='artMode')nlhSetArtMode(nlhsState().selectedHero,b.dataset.nlhMode);
 });
 const NLH_NAV_ICON_PATH={

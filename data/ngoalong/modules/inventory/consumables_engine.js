@@ -127,6 +127,27 @@
         debitStack(m,id,qty);wallet[beautyId]=have+added;return {beautyId,qty,added};
       });
     }
+    function resetMobileQuality(state,id,receipt,heroId,sourceId,from,to){
+      return execute(state,'RESET_MOBILE_QUALITY',id,[heroId,sourceId,from,to],receipt,(next,m)=>{
+        const row=get(id),c=next.nlContentC;
+        requireOk(['normal','super'].includes(row.sourceReset)&&goodId(heroId)&&heroId!=='mobile-quy-tu'&&next.roster?.includes(heroId)&&next.hero?.[heroId]&&goodId(sourceId)&&safe(from)&&safe(to)&&from>to,'BAD_RESET_TARGET');
+        requireOk(c?.mobileHeroRanks?.[heroId]===from&&c.mobileHeroRankReceipts&&c.mobileHeroMaterials,'RESET_RANK_MISMATCH');
+        // Only refund actual debits in an unbroken chain; never fabricate historical expenditure.
+        let rank=from;const refund=Object.create(null),keys=[];
+        while(rank>to){
+          const key=heroId+':'+rank,r=c.mobileHeroRankReceipts[key];
+          requireOk(r&&String(r.sourceId)===sourceId&&r.to===rank&&safe(r.from)&&r.from<rank&&r.from>=to&&r.classification==='SOURCE_EXACT_QUANTITIES'&&r.materials&&typeof r.materials==='object','RESET_RECEIPT_CHAIN_INCOMPLETE');
+          for(const [name,qty] of Object.entries(r.materials)){requireOk(goodId(name)&&safe(qty)&&qty>0&&safe((refund[name]||0)+qty),'BAD_RESET_REFUND');refund[name]=(refund[name]||0)+qty;}
+          keys.push(key);rank=r.from;
+        }
+        requireOk(rank===to&&keys.length>0,'RESET_RECEIPT_CHAIN_INCOMPLETE');
+        debitStack(m,id,1);
+        for(const [name,qty] of Object.entries(refund)){const prev=c.mobileHeroMaterials[name]||0;requireOk(safe(prev)&&safe(prev+qty),'SOURCE_BUNDLE_OVERFLOW');c.mobileHeroMaterials[name]=prev+qty;}
+        for(const key of keys)delete c.mobileHeroRankReceipts[key];
+        c.mobileHeroRanks[heroId]=to;
+        return {heroId,from,to,refund,classification:'PARTIAL_SOURCE_RESET_RECORDED_AWAKENING_ONLY'};
+      });
+    }
     function grantSourceBundle(next,m,rule,receipt){
       requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
@@ -134,7 +155,7 @@
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
         if(x.wallet==='silver'){addResource(next,'silver',x.qty);continue;}
         if(x.wallet==='commander-xp'){
           requireOk(safe(x.maxQty)&&x.maxQty>=x.qty&&x.maxQty<=1000000,'INVALID_EXP_RANGE');
@@ -145,7 +166,7 @@
           const total=xp+earned,levels=Math.min(440-level,Math.floor(total/1000));c.mobileCommanderLevel=level+levels;c.mobileCommanderXp=c.mobileCommanderLevel===440?0:total-levels*1000;continue;
         }
         if(x.wallet==='stack'){requireOk(goodId(x.itemId),'INVALID_SOURCE_BUNDLE_OUTPUT');addStack(m,x.itemId,x.qty);continue;}
-        const map={'seal-credit':'chienTich','blank':'blank','science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade'};
+        const map={'tiger-token':'hoPhu','beauty-pendant':'mobileBeautyPendants','seal-credit':'chienTich','blank':'blank','science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade'};
         let owner=x.wallet==='awakening'?c.mobileHeroMaterials:c;
         if(['weapon-core','destiny-jade','blank'].includes(x.wallet)){
           if(!next.heroDevelopment||typeof next.heroDevelopment!=='object')next.heroDevelopment={};
@@ -224,7 +245,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,buySourceMaterial,giveBeautyGift,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,giveBeautyGift,resetMobileQuality,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });

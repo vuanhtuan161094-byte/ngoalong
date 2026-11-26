@@ -54,6 +54,14 @@ function nlMobileSourceBundles(source){
  // Additional fixed source rewards are connected to existing growth wallets.
  // Source quantities are exact; point and legacy material conversions, and merchant prices, are SIMULATED.
  const direct={
+  'res_120':{output:{name:'Linh Lăng-Thanh',qty:1,wallet:'horse-points',factor:350000},price:350000,gate:300},
+  'res_121':{output:{name:'Linh Lăng-Tinh',qty:1,wallet:'horse-points',factor:620000},price:620000,gate:350},
+  'res_122':{output:{name:'Linh Lăng-Cống',qty:1,wallet:'horse-points',factor:930000},price:930000,gate:400},
+  'res_119':{output:{name:'Thanh Trĩ Thảo',qty:1,wallet:'horse-points',factor:175000},price:175000,gate:250},
+  'res_114':{output:{name:'Mệnh Hồn Luyện Ngọc',qty:1,wallet:'destiny-jade'},price:2500,gate:400},
+  'res_123':{output:{name:'Điểm Khoa Kỹ',qty:1,wallet:'science'},price:500,gate:100},
+  'res_95':{output:{name:'Hổ Phù',qty:1,wallet:'tiger-token'},price:500000,gate:210},
+  'res_107':{output:{name:'Long Phượng Bội',qty:1,wallet:'beauty-pendant'},price:5000,gate:100},
   '539':{output:{name:'EXP chúa công',qty:100,maxQty:200,wallet:'commander-xp'},price:4000,gate:10},
   '540':{output:{name:'EXP chúa công',qty:500,maxQty:800,wallet:'commander-xp'},price:18000,gate:30},
   '541':{output:{name:'EXP chúa công',qty:1500,maxQty:2000,wallet:'commander-xp'},price:45000,gate:80},
@@ -73,7 +81,7 @@ function nlMobileSourceBundles(source){
   '1227':{output:{name:'Thanh Trĩ Thảo',qty:175000,wallet:'horse-points',factor:1},price:175000,gate:250}
  };
  for(const row of source.items){
-  const fixed=direct[String(row.id)];
+  const fixed=direct[String(row.id)]||(String(row.id).startsWith('res_')&&awakening.has(row.name)?{output:{name:row.name,qty:1,wallet:'awakening'},price:8,gate:10}:null);
   if(fixed){
    bundles.push({id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'consumable',integration:'PLAYABLE',
     sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc,sourceIcon:row.icon,provenance:{classification:'SOURCE_EXACT'},
@@ -123,13 +131,13 @@ for(const row of NL_MOBILE_EXCHANGE){
  if(i>=0)NL_ITEM_CATALOGUE.items[i]=row;else NL_ITEM_CATALOGUE.items.push(row);
 }
 // Ordinary Tri Kỷ gifts: exact XP/score gate; merchant price follows existing gift adapter.
-const NL_MOBILE_GIFTS=NL_MOBILE_INVENTORY.items.filter(row=>row.gift?.famousType===0&&Number.isSafeInteger(row.gift.effect)&&row.gift.effect>0).map(row=>({
+const NL_MOBILE_GIFTS=NL_MOBILE_INVENTORY.items.filter(row=>[0,1].includes(row.gift?.famousType)&&Number.isSafeInteger(row.gift.effect)&&row.gift.effect>0).map(row=>({
  id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'material',integration:'PLAYABLE',
  sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc||'',sourceIcon:row.icon,
- provenance:{classification:'SOURCE_EXACT'},sourceGift:{effect:row.gift.effect,needScore:row.gift.needScore||0},
+ provenance:{classification:'SOURCE_EXACT'},sourceGift:{effect:row.gift.effect,needScore:row.gift.needScore||0,famousType:row.gift.famousType,classification:row.gift.famousType===1?'SIMULATED_GENERIC_PREFERENCE_GIFT':'SOURCE_EXACT_AMOUNT'},
  acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:row.gift.effect*2}},effectRule:null
 }));
-if(NL_MOBILE_GIFTS.length!==11)throw Error('MOBILE_GIFT_COUNT_DRIFT');
+if(NL_MOBILE_GIFTS.length!==17)throw Error('MOBILE_GIFT_COUNT_DRIFT');
 for(const row of NL_MOBILE_GIFTS){const idx=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);if(idx>=0)NL_ITEM_CATALOGUE.items[idx]=row;else NL_ITEM_CATALOGUE.items.push(row);}
 // Explicit name + level matches only. Source states the reagent identity, not quantity.
 function nlMobileCraftLinks(source){
@@ -186,6 +194,14 @@ for(const [id,link] of seriesMaterials){
  if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);nlSeriesNewMaterialCount++;
 }
 for(const gear of NL_MOBILE_GEAR_ALL){const link=seriesByDest.get(gear.mobilePromotion?.to);if(link){const materials=gear.mobilePromotion.materials||[];if(!materials.some(m=>m.id===link.id))gear.mobilePromotion.materials=[...materials,{id:link.id,name:link.name,quantity:link.quantity,classification:link.classification}];}}
+// Reset permits only recorded Mobile quality payments; other hero investments are preserved.
+const NL_MOBILE_RESET_ITEMS=NL_MOBILE_INVENTORY.items.filter(row=>['842','1235'].includes(String(row.id))).map(row=>({
+ id:'mobile-vng-item-'+row.id,sourceId:String(row.id),name:row.name,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc,sourceIcon:row.icon,
+ provenance:{classification:'SOURCE_EXACT'},sourceReset:String(row.id)==='1235'?'super':'normal',
+ acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:100,shopCost:{silver:String(row.id)==='1235'?100000:30000}},effectRule:null
+}));
+if(NL_MOBILE_RESET_ITEMS.length!==2)throw Error('MOBILE_RESET_SOURCE_DRIFT');
+for(const row of NL_MOBILE_RESET_ITEMS){const index=NL_ITEM_CATALOGUE.items.findIndex(x=>x.id===row.id);if(index>=0)NL_ITEM_CATALOGUE.items[index]=row;else NL_ITEM_CATALOGUE.items.push(row);}
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -506,7 +522,7 @@ if(window.__P2_ENABLE_QA__){
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
-      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
+      projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceResetItems:NL_MOBILE_RESET_ITEMS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
     useItem:(id,heroId)=>{

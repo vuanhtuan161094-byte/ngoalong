@@ -229,3 +229,12 @@ test('R3 source material conversion purchases base and exchanges 2:1 atomically'
  s=done(api.process(s,'raw','x2'));s=done(api.process(s,'middle','x3'));assert.equal(s.nlItemsV1.stacks.final,1);assert.equal(s.nlItemsV1.stacks.raw,undefined);
  assert.equal(api.process(s,'middle','empty').code,'NOT_ENOUGH_ITEMS');assert.equal(s.version,5);
 });
+
+test('R7 reset quality refunds only contiguous actual awakening receipts and consumes token once',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const item={id:'reset',name:'Truyền Thừa Lệnh-Siêu',category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:100}},sourceReset:'super',effectRule:null};
+ const api=create({items:[item]},{limits:{stacksKinds:10,quantityEach:999,receipts:100}});
+ const g={version:5,roster:['liu'],hero:{liu:{level:40}},silver:1000,nlItemsV1:{stacks:{reset:1},receipts:{},serial:0},nlContentC:{mobileHeroRanks:{liu:5},mobileHeroMaterials:{},mobileHeroRankReceipts:{'liu:5':{sourceId:'src',from:4,to:5,materials:{'Bánh Bao':10},classification:'SOURCE_EXACT_QUANTITIES'},'liu:4':{sourceId:'src',from:3,to:4,materials:{'Thịt':5},classification:'SOURCE_EXACT_QUANTITIES'}}}};
+ rejected(api.resetMobileQuality(g,'reset','bad','liu','src',5,2),'RESET_RECEIPT_CHAIN_INCOMPLETE',g);
+ const result=done(api.resetMobileQuality(g,'reset','good','liu','src',5,3));assert.equal(result.nlContentC.mobileHeroRanks.liu,3);assert.equal(result.nlContentC.mobileHeroMaterials['Bánh Bao'],10);assert.equal(result.nlContentC.mobileHeroMaterials['Thịt'],5);assert.equal(result.nlItemsV1.stacks.reset,undefined);assert.equal(result.hero.liu.level,40);assert.equal(api.resetMobileQuality(result,'reset','good','liu','src',5,3).duplicate,true);
+});
