@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: nl-web-review-pages
+  group: nl-web-review-pages-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -34,6 +34,7 @@ jobs:
           python tools/validate_ngoalong_data.py
           python qa/nl_content_c_projection_test.py
           node --check tools/nl_content_c_runtime.js
+          node --check tools/nl_hero_systems_v1.js
           python tools/build_ngoa_long_mode.py
           python tools/build_ngoa_long_r03.py
           python tools/build_ngoa_long_r04.py
@@ -73,6 +74,15 @@ jobs:
           node --test qa/nl_classic_world_a4.test.cjs qa/nl_classic_advanced_a5_a9.test.cjs
           python -m py_compile tools/nl_classic_phase_a3_items.py qa/nl_onboarding_30min.py
           python -m py_compile qa/nl_classic_phase_a2_browser.py
+      - name: Upload canonical DEV HTML before long browser gates
+        uses: actions/upload-artifact@v4
+        with:
+          name: nl-one-game-dev-unverified
+          path: |
+            index.html
+            qa/web-review-sha.txt
+            qa/web-review-html-sha256.txt
+          if-no-files-found: error
       - name: Install approved browser QA dependencies
         run: |
           python -m pip install playwright==1.58.0
