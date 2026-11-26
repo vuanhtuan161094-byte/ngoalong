@@ -35,6 +35,7 @@ jobs:
           python qa/nl_content_c_projection_test.py
           node --check tools/nl_content_c_runtime.js
           node --check tools/nl_hero_systems_v1.js
+          node --test qa/nl_hero_gameplay.test.cjs
           python tools/build_ngoa_long_mode.py
           python tools/build_ngoa_long_r03.py
           python tools/build_ngoa_long_r04.py
