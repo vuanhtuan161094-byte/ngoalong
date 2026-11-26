@@ -76,7 +76,9 @@ def main():
             tacticBuffProbe=c.skillProbe('Chuyên Chú'),tacticBuffDescriptor=tacticBuffProbe&&c.describeSkill(tacticBuffProbe.skill,'support',false,tacticBuffProbe.effects),
             attackDebuffProbe=c.skillProbe('Chiết Binh'),attackDebuffDescriptor=attackDebuffProbe&&c.describeSkill(attackDebuffProbe.skill,'strategist',false,attackDebuffProbe.effects),
             dragonBuffProbe=c.skillProbe('Chúa Lâm'),dragonBuffDescriptor=dragonBuffProbe&&c.describeSkill(dragonBuffProbe.skill,'support',false,dragonBuffProbe.effects),
-            allDefenseProbe=c.skillProbe('Đoạn Lương Phá Trận'),allDefenseDescriptor=allDefenseProbe&&c.describeSkill(allDefenseProbe.skill,'strategist',false,allDefenseProbe.effects);
+            allDefenseProbe=c.skillProbe('Đoạn Lương Phá Trận'),allDefenseDescriptor=allDefenseProbe&&c.describeSkill(allDefenseProbe.skill,'strategist',false,allDefenseProbe.effects),
+            purificationProbe=c.skillProbe('Long Uy'),purificationDescriptor=purificationProbe&&c.describeSkill(purificationProbe.skill,'cavalry',false,purificationProbe.effects),
+            purificationHighProbe=c.skillProbe('Huyền Tướng'),purificationHighDescriptor=purificationHighProbe&&c.describeSkill(purificationHighProbe.skill,'strategist',false,purificationHighProbe.effects);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
           checks.mobileSourceNoBuffDescriptor=noBuffDescriptor?.sourceApplications?.some(app=>app.sourceId==='77'&&app.kind==='mobile-source-no-buffs'&&app.scope==='targets'&&app.turns===5&&app.condition==='TARGET_SURVIVES')&&
@@ -96,6 +98,11 @@ def main():
             appOf(dragonBuffDescriptor,'70')?.values.outgoingDamageMultiplier===1.2&&appOf(dragonBuffDescriptor,'70')?.unresolvedMechanics?.includes('SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED');
           checks.mobileSourceAllDefenseDescriptor=appOf(allDefenseDescriptor,'21')?.scope==='enemies'&&appOf(allDefenseDescriptor,'21')?.turns===3&&
             appOf(allDefenseDescriptor,'21')?.values.incomingDefenseMultiplier===.25;
+          checks.mobileSourcePurificationDescriptor=appOf(purificationDescriptor,'46')?.scope==='self'&&appOf(purificationDescriptor,'46')?.turns===2&&
+            appOf(purificationDescriptor,'46')?.values.damageBonusPerBeneficialBuff===.2&&
+            appOf(purificationHighDescriptor,'46')?.scope==='self'&&appOf(purificationHighDescriptor,'46')?.turns===2&&
+            appOf(purificationHighDescriptor,'46')?.values.damageBonusPerBeneficialBuff===1;
+          checks.mobileSourcePurificationCoverage=skillAudit.sourceStatusIds===19;
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -228,6 +235,31 @@ def main():
             checks.mobileSourceDefenseInNativeCombat=defenseEvent?.skill==='Chấn Kích'&&affected.length===db.p.filter(unit=>unit.hp>0).length&&
               affected.every(unit=>unit.effects.find(effect=>effect.mobileSource?.sourceEffectId==='18')?.turns===3&&c.p2StatusFactor(unit,'incomingDefenseMultiplier')===.5);
           }else checks.mobileSourceDefenseInNativeCombat=false;
+          q.closeBattle('city');
+          const pb=launchStatusProbe(purificationProbe),pa=pb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Long Uy');
+          if(pb&&pa){
+            for(const unit of pb.p){unit.hp=unit.maxHp=100000000;unit.alive=true;unit.effects=[];c.p2Status(unit,'mobile-source-incoming',8);c.p2Status(unit,'mobile-source-attack-up',8);}
+            const oldRandom=window.p2Random;pa.morale=100;q.perform(pa);
+            const firstEvent=pb.events.at(-1),purification=pa.effects.find(effect=>effect.mobileSource?.sourceEffectId==='46');
+            pa.morale=100;q.perform(pa);const secondEvent=pb.events.at(-1);
+            const plainActor=structuredClone(pa),buffedActor=structuredClone(pa),plainTarget=structuredClone(pb.p[0]);
+            plainActor.effects=plainActor.effects.filter(effect=>effect.mobileSource?.sourceEffectId!=='46');plainActor.crit=buffedActor.crit=0;
+            plainActor.matk=buffedActor.matk=1000000;
+            plainActor.nlMobileSourceSkillAction=buffedActor.nlMobileSourceSkillAction=true;
+            plainTarget.effects=[];c.p2Status(plainTarget,'mobile-source-incoming',8);c.p2Status(plainTarget,'mobile-source-attack-up',8);
+            plainTarget.hp=plainTarget.maxHp=100000000;plainTarget.alive=true;plainTarget.mdef=0;
+            const seed=pb.seed;pb.seed=123456;const plainHit=c.p2Hit(plainActor,plainTarget,'magic',1);
+            const purifiedTarget=structuredClone(plainTarget);purifiedTarget.hp=purifiedTarget.maxHp=100000000;pb.seed=123456;
+            const purifiedHit=c.p2Hit(buffedActor,purifiedTarget,'magic',1);pb.seed=seed;
+            const plainDamage=plainHit?.amount||0,purifiedDamage=purifiedHit?.amount||0;
+            checks.mobileSourcePurificationInNativeCombat=firstEvent?.skill==='Long Uy'&&secondEvent?.skill==='Long Uy'&&!!purification&&
+              purification.turns>0&&purification.mobileSourceValues?.damageBonusPerBeneficialBuff===.2&&
+              plainDamage>0&&purifiedDamage>plainDamage&&Math.abs(purifiedDamage/plainDamage-1.4)<.08;
+            checks.mobileSourcePurificationDiagnostics={npcId:purificationProbe?.npcId,turns:purification?.turns,detail:purification?.mobileSource?.sourceDetail,
+              firstHits:firstEvent?.hits,secondHits:secondEvent?.hits,plainMean:plainDamage,purifiedMean:purifiedDamage,
+              buffCount:2,expectedMultiplier:1.4,observedMultiplier:plainDamage?purifiedDamage/plainDamage:null};
+            window.p2Random=oldRandom;
+          }else{checks.mobileSourcePurificationInNativeCombat=false;checks.mobileSourcePurificationDiagnostics={probe:purificationProbe,launched:!!pb,actor:!!pa};}
           q.closeBattle('city');
           const xb=launchStatusProbe(deathProbe),xa=xb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Tử Thần');
           if(xb&&xa){xa.morale=100;for(const unit of xb.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}q.perform(xa);
