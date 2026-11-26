@@ -8,7 +8,7 @@
  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>
    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const CATEGORIES=['all','Rương','Vật Liệu','Tài Nguyên','Túi Phúc','Túi Tầm Bảo',
-   'Ấn Thạch','Danh Phẩm','Bí Tịch','Truyền Thừa Lệnh','Lệnh','Chìa Khóa','Khác'];
+   'Ấn Thạch','Danh Phẩm','Bí Tịch','Đạo Cụ','Truyền Thừa Lệnh','Lệnh','Chìa Khóa','Khác'];
  const STYLE=[
   '.nli-items-panel{padding:14px;margin:12px 0;background:#182a32;color:#e7ddca;border:1px solid #9b7942;border-radius:12px;font:13px/1.5 system-ui,sans-serif}',
   '.nli-items-panel *{box-sizing:border-box}.nli-items-panel h2{margin:0;color:#f0d49c;font-size:19px}',
@@ -50,8 +50,10 @@
        (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
      const outputName=pack.items.find(x=>x.id===rule.output)?.name||rule.output||'tinh khoáng';
      const wikiRecord=row.sourceReference||{},wikiText=String(row.sourceDesc||wikiRecord.desc||'');
-     const effect=mode==='wiki'?(wikiText?esc(wikiText):'Wiki không ghi mô tả')+' · '+(row.integration==='PLAYABLE'?'Đã nối route: '+esc(rule.kind||'xem tham chiếu'):'Chưa có thao tác gameplay nối nguồn'):
-       rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ Wiki, phí mô phỏng':sourceMaterial?
+     const effect=mode==='wiki'?(wikiText?esc(wikiText):'Wiki không ghi mô tả')+' · '+(row.sourceFallback?'Có lối dùng dự phòng SIMULATED':row.integration==='PLAYABLE'?'Đã nối route: '+esc(rule.kind||'xem tham chiếu'):'Chưa có thao tác gameplay nối nguồn'):
+       rule.classification==='SIMULATED_GENERIC_RECYCLING'?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Công thức chuyển đổi SIMULATED':
+       rule.classification==='SIMULATED_GENERIC_BUNDLE'?'Mở nhận '+(rule.outputs||[]).map(x=>esc(x.name)+' ×'+esc(x.qty)).join(' · ')+' · Nội dung fallback SIMULATED':
+       rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ nguồn / phí mô phỏng':sourceMaterial?
        (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(row.sourceGift?' · Tặng tại Dinh Phủ / Tri kỷ.':'')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
@@ -76,7 +78,7 @@
        '</small>'+action+'</div></article>';
    }).join('');
    return '<style data-nli-items-style>'+STYLE+'</style><section class="nli-items-panel" data-nli-items-panel="1">'+
-     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Rương nguồn giữ nguyên số lượng thưởng. Danh mục Wiki hiển thị đủ 746 vật phẩm; mô tả giữ theo nguồn, tác dụng chưa nối được ghi rõ. Giá thương nhân bổ sung là mô phỏng.</p>'+
+     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Đủ 746 ID vật phẩm Wiki. Dữ liệu tên, nhóm và mô tả được giữ nguyên; lối mua, mở và quy đổi chỉ dùng công thức nguồn khi đã được xác minh, phần thiếu được ghi SIMULATED. Giá thương nhân bổ sung là mô phỏng.</p>'+
      '<div class="nli-items-switch"><button data-nli-item-mode="bag" '+(mode==='bag'?'aria-pressed="true"':'')+'>Kho của tôi</button>'+
      '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button><button data-nli-item-mode="shop" '+(mode==='shop'?'aria-pressed="true"':'')+'>Rương và nguyên liệu</button></div>'+
      '<div class="nli-items-cats">'+CATEGORIES.map(c=>'<button data-nli-item-category="'+esc(c)+'" '+(c===category?'aria-pressed="true"':'')+'>'+esc(c==='all'?'Tất cả':c)+'</button>').join('')+'</div>'+

@@ -180,8 +180,8 @@
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
-        if(x.wallet==='silver'){addResource(next,'silver',x.qty);continue;}
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','grain','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        if(x.wallet==='silver'||x.wallet==='grain'){addResource(next,x.wallet,x.qty);continue;}
         if(x.wallet==='commander-xp'){
           requireOk(safe(x.maxQty)&&x.maxQty>=x.qty&&x.maxQty<=1000000,'INVALID_EXP_RANGE');
           const level=Math.min(440,Math.max(10,safe(c.mobileCommanderLevel)?c.mobileCommanderLevel:10,10+2*Object.keys(c.cleared||{}).length));

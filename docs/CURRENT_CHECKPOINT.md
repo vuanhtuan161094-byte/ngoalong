@@ -2,6 +2,13 @@
 
 **V1.0 NOT COMPLETE · ART HOLD · GAMEPLAY FIRST.** Repository `vuanhtuan161094-byte/ngoalong`, delivery branch `feature/ngoalong-v1-complete`, draft PR #1. Do not merge.
 
+## 746-item runtime batch — local candidate after `22cb214`
+
+- The canonical offline game now exposes all 746 current Mobile Wiki item IDs through a real bag/shop/action route. Existing source-specific routes remain 161; the other 585 use explicitly `SIMULATED_GENERIC_FALLBACK` purchase/open or recycling rules. All source names, groups, descriptions, and known exact quantities/ratios remain untouched; the fallback never claims to be official Mobile behavior. No source item remains `REFERENCE_ONLY`.
+- Runtime UI lists all source groups, including Đạo Cụ. Generic boxes open into bounded Silver/Lương rewards and generic materials recycle into the project mineral. Receipt-protected purchase, open, and craft operations use the existing Save v5 item ledger. The generic fallback probe exercised successful purchase/open, duplicate-receipt rejection, purchase/craft, and schema v5; Content C Chromium passed with all 746 IDs, 408 troop stat profiles, 249 maps, and 5,063 NPCs.
+- Canonical `index.html`: 98,798,708 bytes, SHA-256 `a957695f9084e331d9f055e85f361c3f3bbd89e2b610548ff88c5d260a873386`. All four builder `--check` gates pass.
+- Exact-SHA full Actions run `45894376823` is still executing on parent SHA `22cb214b06e42184653c9f302b0878a9d3e994a9`; a new candidate commit will trigger its own review/run. The earlier 90-day earned-only simulation passed before this item batch and will not be represented as a test of this new candidate. City economy, many specific item behaviors, source NPC secondary effects, 43 troop acquisition routes, balance, device and art scope remain open. No merge or V1.0 completion claim.
+
 ## Mobile source/runtime continuation batch
 
 - Verified branch base and remote HEAD before editing: `c37bd1b36b487008a467f777ca3385f4510fd80e`.

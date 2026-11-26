@@ -41568,8 +41568,8 @@ if(window.__P2_ENABLE_QA__)window.__NL_R04_QA__={art:NL_R04_PILOT_ART,poseEligib
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
-        if(x.wallet==='silver'){addResource(next,'silver',x.qty);continue;}
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','grain','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        if(x.wallet==='silver'||x.wallet==='grain'){addResource(next,x.wallet,x.qty);continue;}
         if(x.wallet==='commander-xp'){
           requireOk(safe(x.maxQty)&&x.maxQty>=x.qty&&x.maxQty<=1000000,'INVALID_EXP_RANGE');
           const level=Math.min(440,Math.max(10,safe(c.mobileCommanderLevel)?c.mobileCommanderLevel:10,10+2*Object.keys(c.cleared||{}).length));
@@ -41672,7 +41672,7 @@ if(window.__P2_ENABLE_QA__)window.__NL_R04_QA__={art:NL_R04_PILOT_ART,poseEligib
  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>
    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const CATEGORIES=['all','Rương','Vật Liệu','Tài Nguyên','Túi Phúc','Túi Tầm Bảo',
-   'Ấn Thạch','Danh Phẩm','Bí Tịch','Truyền Thừa Lệnh','Lệnh','Chìa Khóa','Khác'];
+   'Ấn Thạch','Danh Phẩm','Bí Tịch','Đạo Cụ','Truyền Thừa Lệnh','Lệnh','Chìa Khóa','Khác'];
  const STYLE=[
   '.nli-items-panel{padding:14px;margin:12px 0;background:#182a32;color:#e7ddca;border:1px solid #9b7942;border-radius:12px;font:13px/1.5 system-ui,sans-serif}',
   '.nli-items-panel *{box-sizing:border-box}.nli-items-panel h2{margin:0;color:#f0d49c;font-size:19px}',
@@ -41714,8 +41714,10 @@ if(window.__P2_ENABLE_QA__)window.__NL_R04_QA__={art:NL_R04_PILOT_ART,poseEligib
        (['OPEN_BUNDLE','OPEN_SOURCE_BUNDLE'].includes(rule.kind)?'Mở rương':'Sử dụng')+'</button>';
      const outputName=pack.items.find(x=>x.id===rule.output)?.name||rule.output||'tinh khoáng';
      const wikiRecord=row.sourceReference||{},wikiText=String(row.sourceDesc||wikiRecord.desc||'');
-     const effect=mode==='wiki'?(wikiText?esc(wikiText):'Wiki không ghi mô tả')+' · '+(row.integration==='PLAYABLE'?'Đã nối route: '+esc(rule.kind||'xem tham chiếu'):'Chưa có thao tác gameplay nối nguồn'):
-       rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ Wiki, phí mô phỏng':sourceMaterial?
+     const effect=mode==='wiki'?(wikiText?esc(wikiText):'Wiki không ghi mô tả')+' · '+(row.sourceFallback?'Có lối dùng dự phòng SIMULATED':row.integration==='PLAYABLE'?'Đã nối route: '+esc(rule.kind||'xem tham chiếu'):'Chưa có thao tác gameplay nối nguồn'):
+       rule.classification==='SIMULATED_GENERIC_RECYCLING'?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Công thức chuyển đổi SIMULATED':
+       rule.classification==='SIMULATED_GENERIC_BUNDLE'?'Mở nhận '+(rule.outputs||[]).map(x=>esc(x.name)+' ×'+esc(x.qty)).join(' · ')+' · Nội dung fallback SIMULATED':
+       rule.kind==='CRAFT_REAGENT'&&sourceMaterial?'Đổi '+needs+' '+esc(row.name)+' → '+esc(rule.outputQuantity||1)+' '+esc(outputName)+' · Tỷ lệ nguồn / phí mô phỏng':sourceMaterial?
        (esc(row.sourceDesc||'Nguồn Mobile xác nhận vật phẩm; cách dùng ngoài các khoản chi đã nối chưa được công bố.')+(row.sourceGift?' · Tặng tại Dinh Phủ / Tri kỷ.':'')+(rule.classification==='SOURCE_EXACT_QUANTITIES_SIMULATED_WALLET_ADAPTER'?' · Quy đổi ví dự án (mô phỏng).':'')):
        rule.kind==='OPEN_BUNDLE'?'Mở nhận '+Object.entries(rule.resources||{}).map(([key,value])=>
          esc(key)+' ×'+esc(value)).join(' · ')+(Object.keys(rule.stacks||{}).length?
@@ -41740,7 +41742,7 @@ if(window.__P2_ENABLE_QA__)window.__NL_R04_QA__={art:NL_R04_PILOT_ART,poseEligib
        '</small>'+action+'</div></article>';
    }).join('');
    return '<style data-nli-items-style>'+STYLE+'</style><section class="nli-items-panel" data-nli-items-panel="1">'+
-     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Rương nguồn giữ nguyên số lượng thưởng. Danh mục Wiki hiển thị đủ 746 vật phẩm; mô tả giữ theo nguồn, tác dụng chưa nối được ghi rõ. Giá thương nhân bổ sung là mô phỏng.</p>'+
+     '<h2>Vật tư · Kho tàng</h2><p class="nli-items-meta">Đủ 746 ID vật phẩm Wiki. Dữ liệu tên, nhóm và mô tả được giữ nguyên; lối mua, mở và quy đổi chỉ dùng công thức nguồn khi đã được xác minh, phần thiếu được ghi SIMULATED. Giá thương nhân bổ sung là mô phỏng.</p>'+
      '<div class="nli-items-switch"><button data-nli-item-mode="bag" '+(mode==='bag'?'aria-pressed="true"':'')+'>Kho của tôi</button>'+
      '<button data-nli-item-mode="wiki" '+(mode==='wiki'?'aria-pressed="true"':'')+'>Danh mục Wiki (chỉ đọc)</button><button data-nli-item-mode="shop" '+(mode==='shop'?'aria-pressed="true"':'')+'>Rương và nguyên liệu</button></div>'+
      '<div class="nli-items-cats">'+CATEGORIES.map(c=>'<button data-nli-item-category="'+esc(c)+'" '+(c===category?'aria-pressed="true"':'')+'>'+esc(c==='all'?'Tất cả':c)+'</button>').join('')+'</div>'+
@@ -42018,19 +42020,42 @@ function nlMobileWikiRecord(row){
 function nlExposeMobileWikiCatalogue(source){
  const bySourceId=new Map(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null)
   .map(x=>[String(x.sourceId),x]));
- const added=[];
+ const added=[],genericFallbacks=[];
+ const awakening=new Set(['Bánh Bao','Thịt','Rượu','Trân Châu','Ngọc Bôi','Kim Lô','Hổ Phách','Lam Bảo Thạch','Lang Nha Ngọc','Băng Tuyết Liên','Linh Chi Rừng','Hà Thủ Ô Trăm Năm','Thanh Liên','Bàn Đào','Nhân Sâm Quả','Quỳnh Tương','Chu Quả','Thiên Mai','Hoàng Trung Lý']);
+ const materialGroups=new Set(['Vật Liệu','Ấn Thạch']);
+ function genericFallback(row,record){
+  const sourceId=String(row.id),id='mobile-vng-item-'+sourceId;
+  let hash=2166136261;for(const ch of sourceId)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
+  const tier=1+hash%5,price=400+tier*350;
+  const common={id,sourceId,name:row.name,category:materialGroups.has(row.typeName)?'material':'consumable',
+   integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,
+   sourceDesc:row.desc||'',sourceIcon:row.icon,sourceReference:record,
+   provenance:{classification:'SOURCE_EXACT',sourceId:'mobile-wiki-item-identity'},
+   sourceFallback:{classification:'SIMULATED_GENERIC_FALLBACK',reason:'Wiki chưa công bố đường mua hoặc công thức sử dụng cho ID này; thêm lối dùng chung mô phỏng cho bản offline. Tên và mô tả vẫn giữ nguyên dữ liệu Wiki.'},
+   fieldProvenance:{name:'SOURCE_EXACT',sourceDescription:'SOURCE_EXACT',sourceCategory:'SOURCE_EXACT',effectRule:'SIMULATED_GENERIC_FALLBACK',acquisitionRule:'SIMULATED_GENERIC_FALLBACK'},
+   acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:0,shopCost:{silver:price}}};
+  if(materialGroups.has(row.typeName))return {...common,effectRule:{kind:'CRAFT_REAGENT',needPieces:3+(tier>=4?1:0),silverCost:150+tier*75,
+   output:'mdt-tinh-khoang',outputQuantity:1,classification:'SIMULATED_GENERIC_RECYCLING'}};
+  let outputs;
+  if(row.typeName==='Tài Nguyên'&&awakening.has(row.name))outputs=[{name:row.name,qty:1,wallet:'awakening'}];
+  else {
+   outputs=[{name:'Bạc',qty:100+tier*60,wallet:'silver'}];
+   if(['Rương','Túi Phúc','Túi Tầm Bảo'].includes(row.typeName))outputs.push({name:'Lương',qty:120+tier*70,wallet:'grain'});
+  }
+  return {...common,effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs,minCommander:0,classification:'SIMULATED_GENERIC_BUNDLE'}};
+ }
  for(const row of source.items){
   const sourceId=String(row.id),existing=bySourceId.get(sourceId),record=nlMobileWikiRecord(row);
   if(existing){existing.sourceReference=record;continue;}
-  const reference={id:'mobile-vng-reference-'+sourceId,sourceId,name:row.name,category:'material',integration:'REFERENCE_ONLY',
-   sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceCategory:row.typeName,sourceDesc:row.desc||'',sourceIcon:row.icon,
-   sourceReference:record,provenance:{classification:'SOURCE_EXACT'},effectRule:null};
-  NL_ITEM_CATALOGUE.items.push(reference);bySourceId.set(sourceId,reference);added.push(reference);
+  const fallback=genericFallback(row,record);
+  NL_ITEM_CATALOGUE.items.push(fallback);bySourceId.set(sourceId,fallback);added.push(fallback);genericFallbacks.push(fallback);
  }
  if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
- return added;
+ if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
+ return {added,genericFallbacks};
 }
-const NL_MOBILE_WIKI_REFERENCES=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);
+const NL_MOBILE_WIKI_CATALOGUE=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);
+const NL_MOBILE_WIKI_GENERIC_FALLBACKS=NL_MOBILE_WIKI_CATALOGUE.genericFallbacks;
 const NL_ITEM_RULES = {"schemaVersion":1,"module":"nl-items-v1","provenance":{"classification":"SIMULATED","sourceId":"project-items-v1"},"limits":{"equipmentInstances":200,"stackKinds":800,"stackQuantity":999,"receipts":10000},"reinforcement":{"maxLevel":12,"statBonusPerLevel":0.22,"silverBase":350,"silverExponent":2,"from":"PROJECT_ALPHA_R03","classicA3Pricing":true,"silverSupplementBase":420,"silverSupplementExponent":1,"grainBase":53,"grainExponent":1},"refinement":{"maxLevel":3,"statBonusPerLevel":0.08,"silverBase":600,"materialId":"mdt-tinh-khoang","materialPerLevel":2,"from":"PROJECT_ORIGINAL_SIMULATED","highTierPricing":{"provenance":"SIMULATED","onlyForProjectEquipmentPrefix":"mdt-equip02-","groups":{"Hiên Viên":{"silverMultiplier":1.5,"materialExtra":1},"Hỗn Độn":{"silverMultiplier":1.5,"materialExtra":1},"Bàn Cổ":{"silverMultiplier":1.5,"materialExtra":1},"Diệt Thế":{"silverMultiplier":2,"materialExtra":2},"Thần Hoàng":{"silverMultiplier":2,"materialExtra":2}},"legacyCostUnchanged":true}},"resources":["grain","prestige","silver"],"gearSlots":["weapon","armor","horse","book","cloak","shield","artifact"],"legacyAliases":{"banner":"artifact"},"transactionRule":{"requiresUniqueReceipt":true,"allOrNothing":true,"duplicateReceipt":"NO_OP","conflictingReceipt":"ERROR","grantFromAuthorizedSourceOnly":true,"autoGrantOnReplay":false},"setBonuses":{"mdt-cung-ky":{"provenance":"SIMULATED","thresholds":[{"pieces":2,"stats":{"def":8,"hp":70}},{"pieces":4,"stats":{"atk":22,"int":14}},{"pieces":7,"stats":{"atk":50,"def":30,"hp":250}}]},"mdt-thao-thiet":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"hp":45,"def":7}},{"pieces":4,"stats":{"hp":120,"mdef":13}},{"pieces":7,"stats":{"hp":240,"def":32,"tdef":18}}]},"mdt-xi-vuu":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"atk":7,"hp":30}},{"pieces":4,"stats":{"atk":17,"def":12}},{"pieces":7,"stats":{"atk":37,"int":14,"def":19}}]},"mdt-hinh-thien":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"def":10,"hp":35}},{"pieces":4,"stats":{"def":20,"tdef":12}},{"pieces":7,"stats":{"def":42,"hp":160,"mdef":14}}]},"mdt-viem-de":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"int":9,"hp":28}},{"pieces":4,"stats":{"int":22,"tdef":12}},{"pieces":7,"stats":{"int":43,"tdef":27,"hp":110}}]},"mdt-nu-oa":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"hp":54,"mdef":8}},{"pieces":4,"stats":{"hp":105,"tdef":16}},{"pieces":7,"stats":{"hp":230,"def":20,"mdef":32}}]},"mdt-phuc-hi":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"int":9,"mdef":7}},{"pieces":4,"stats":{"int":19,"tdef":11}},{"pieces":7,"stats":{"int":41,"def":17,"mdef":27}}]},"mdt-hien-vien":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"atk":7,"int":5}},{"pieces":4,"stats":{"def":14,"hp":70}},{"pieces":7,"stats":{"atk":30,"int":22,"hp":105}}]},"mdt-hon-don":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"atk":8,"hp":26}},{"pieces":4,"stats":{"int":18,"mdef":10}},{"pieces":7,"stats":{"atk":30,"int":26,"tdef":20}}]},"mdt-ban-co":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"def":8,"hp":28}},{"pieces":4,"stats":{"def":17,"hp":55}},{"pieces":7,"stats":{"def":35,"hp":148,"tdef":15}}]},"mdt-diet-the":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"atk":8,"int":4}},{"pieces":4,"stats":{"atk":17,"def":8}},{"pieces":7,"stats":{"atk":32,"int":19,"hp":95}}]},"mdt-than-hoang":{"provenance":"SIMULATED","sourceId":"project-items-v2","thresholds":[{"pieces":2,"stats":{"int":7,"hp":24}},{"pieces":4,"stats":{"int":15,"mdef":8}},{"pieces":7,"stats":{"int":28,"tdef":20,"hp":100}}]}},"itemEconomy":{"projectRuleVersion":"mdt-inventory-consumables-v2","sourceEffects":"UNKNOWN","safeMaterialRecipe":true,"receiptLedger":"nlItemsV1.receipts","provenance":"SIMULATED"},"classicA3":{"version":"classic-a3-silver-grain-v1","provenance":"PROJECT_SIMULATED","silverPerHistoricIron":4,"grainPerTwoHistoricIron":1,"playableGear":411,"legacySaveIronPreserved":true,"saveSchema":5}};
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
 NL_ITEM_CATALOGUE.rules=NL_ITEM_RULES;
@@ -42354,9 +42379,31 @@ if(window.__P2_ENABLE_QA__){
       projectPlayable:669,mobilePlayable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE'&&x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI').length,sourceBundles:NL_MOBILE_BUNDLES.length,sourceExchangeMaterials:NL_MOBILE_EXCHANGE.length,sourceExchangeRecipes:NL_MOBILE_EXCHANGE.filter(x=>x.effectRule).length,sourceGifts:NL_MOBILE_GIFTS.length,sourceResetItems:NL_MOBILE_RESET_ITEMS.length,sourceCraftLinks:NL_MOBILE_CRAFT_LINKS.length,sourceCraftMaterials:craftMaterials.size,sourceCraftNewMaterials:nlCraftNewMaterialCount,sourceSeriesCraftLinks:NL_MOBILE_SERIES_CRAFT.length,sourceSeriesCraftMaterials:seriesMaterials.size,sourceSeriesNewMaterials:nlSeriesNewMaterialCount,
       sourceRouteMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceEliteMaterials:NL_MOBILE_ELITE_MATERIALS.length,
       mobileSourceCatalogueIds:new Set(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null).map(x=>String(x.sourceId))).size,
-      mobileSourceReferenceOnly:NL_MOBILE_WIKI_REFERENCES.length,
+      sourceGenericFallbacks:NL_MOBILE_WIKI_GENERIC_FALLBACKS.length,
+      sourceSpecificActive:NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.integration==='PLAYABLE'&&!x.sourceFallback).length,
+      mobileSourceReferenceOnly:NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.integration==='REFERENCE_ONLY').length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length
     }),
+    genericFallbackProbe:()=>{
+      const bundle=NL_MOBILE_WIKI_GENERIC_FALLBACKS.find(x=>x.effectRule?.classification==='SIMULATED_GENERIC_BUNDLE');
+      const material=NL_MOBILE_WIKI_GENERIC_FALLBACKS.find(x=>x.effectRule?.classification==='SIMULATED_GENERIC_RECYCLING');
+      if(!bundle||!material)return {ok:false,code:'FALLBACK_FIXTURE_MISSING'};
+      nlItemHydrate();
+      const fixture=structuredClone(game);fixture.silver=Math.max(fixture.silver||0,10000000);
+      if(!fixture.nlContentC)fixture.nlContentC={};fixture.nlContentC.mobileCommanderLevel=440;
+      const buyBundle=nlItemConsumableApi.buySourceBundle(fixture,bundle.id,'qa:generic-bundle-buy');
+      const openBundle=buyBundle.ok?nlItemConsumableApi.use(buyBundle.state,bundle.id,'qa:generic-bundle-open',nlItemHeroId()):buyBundle;
+      const duplicateOpen=openBundle.ok?nlItemConsumableApi.use(openBundle.state,bundle.id,'qa:generic-bundle-open',nlItemHeroId()):openBundle;
+      const quantity=material.effectRule.needPieces;
+      const buyMaterial=nlItemConsumableApi.buySourceMaterials(fixture,material.id,quantity,'qa:generic-material-buy');
+      const processMaterial=buyMaterial.ok?nlItemConsumableApi.process(buyMaterial.state,material.id,'qa:generic-material-process'):buyMaterial;
+      return {ok:buyBundle.ok&&openBundle.ok&&duplicateOpen.ok&&duplicateOpen.duplicate&&buyMaterial.ok&&processMaterial.ok,
+        genericBundle:bundle.sourceId,genericMaterial:material.sourceId,openClassification:bundle.effectRule.classification,
+        recipeClassification:material.effectRule.classification,duplicateOpen:!!duplicateOpen.duplicate,
+        processed:processMaterial.detail?.outputCount===1,saveVersion:fixture.version,
+        buyBundleCode:buyBundle.code||null,openBundleCode:openBundle.code||null,duplicateCode:duplicateOpen.code||null,
+        buyMaterialCode:buyMaterial.code||null,processMaterialCode:processMaterial.code||null};
+    },
     useItem:(id,heroId)=>{
       const nonce=nlItemHydrate().actionNonce+1;
       const result=nlItemConsumableApi.use(game,id,'nli:ui:'+nonce,heroId||nlItemHeroId());

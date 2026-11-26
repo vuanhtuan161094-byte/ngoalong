@@ -7,7 +7,9 @@ legacy regression, real device QA or publisher-source provenance.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+import shutil
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,7 +67,9 @@ def main() -> None:
         raise RuntimeError("NL item integration block missing from built canonical HTML")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
-            headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+            headless=True,
+            executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH") or shutil.which("chromium"),
+            args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = open_page(browser)
         counts = page.evaluate("window.__NL_ITEM_QA__.getCounts()")
         check("810 playable gear, with 399 Mobile and 392 reference gear",

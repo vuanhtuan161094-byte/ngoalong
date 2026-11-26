@@ -12,7 +12,7 @@ def main():
                                   args=["--no-sandbox","--disable-dev-shm-usage"])
         page=open_page(browser)
         out=page.evaluate("""()=>{
-          const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__,itemQa=window.__NL_ITEM_QA__,itemCounts=itemQa?.getItemCounts();
+          const q=window.__P2_QA__,c=window.__NL_CONTENT_C_QA__,itemQa=window.__NL_ITEM_QA__,itemCounts=itemQa?.getItemCounts(),itemFallbackProbe=itemQa?.genericFallbackProbe();
           if(!q||!c)return {loaded:false};
           const heroBase=q.getGame(),extraIds=['3488','3531','3972','3973','3974','3975'].map(id=>'mobile-vng-hero-'+id),heroFixture=structuredClone(heroBase);
           heroFixture.cleared=Array.from({length:28},(_,i)=>i+1);heroFixture.silver=1000000;q.setGame(heroFixture);
@@ -47,7 +47,8 @@ def main():
             mobileExtraHeroRecruitment:extraBought.every(Boolean)&&extraRows.every(x=>x.record&&x.record.leadership>0&&x.quality?.growth)&&extraSaveOk,
             mobileExtraHeroP2Runtime:extraUnits,
             mobileItemSourceCatalogue:itemCounts?.mobileSourceCatalogueIds===746&&wikiResults===746,
-            mobileItemRuntimeCount:itemCounts?.mobilePlayable===itemCounts?.sourceRouteMaterials+itemCounts?.sourceEliteMaterials+itemCounts?.sourceBundles+itemCounts?.sourceExchangeMaterials+itemCounts?.sourceGifts+itemCounts?.sourceResetItems+itemCounts?.sourceCraftNewMaterials+itemCounts?.sourceSeriesNewMaterials&&itemCounts?.sourceRouteMaterials===34&&itemCounts?.sourceEliteMaterials===6,
+            mobileItemRuntimeCount:itemCounts?.mobilePlayable===itemCounts?.sourceSpecificActive+itemCounts?.sourceGenericFallbacks&&itemCounts?.mobilePlayable===746&&itemCounts?.sourceSpecificActive===itemCounts?.sourceRouteMaterials+itemCounts?.sourceEliteMaterials+itemCounts?.sourceBundles+itemCounts?.sourceExchangeMaterials+itemCounts?.sourceGifts+itemCounts?.sourceResetItems+itemCounts?.sourceCraftNewMaterials+itemCounts?.sourceSeriesNewMaterials&&itemCounts?.sourceRouteMaterials===34&&itemCounts?.sourceEliteMaterials===6&&itemCounts?.sourceGenericFallbacks===585&&itemCounts?.mobileSourceReferenceOnly===0,
+            mobileItemGenericFallback:itemFallbackProbe?.ok&&itemFallbackProbe?.duplicateOpen&&itemFallbackProbe?.processed,
             mobileItemCatalogueUI:wikiResults===746&&wikiPageCards===25,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
@@ -60,6 +61,7 @@ def main():
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           checks.mobileItemSourceCatalogueStats=itemCounts;
+          checks.mobileItemGenericFallbackStats=itemFallbackProbe;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
           const troopRuntimeCoverage=c.mobileTroopRuntimeCoverage();
           checks.mobileTroopRuntimeCoverage=troopRuntimeCoverage.sourceProfiles===408&&troopRuntimeCoverage.playerSelectableProfiles===225&&
