@@ -46,7 +46,7 @@ def main():
             for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
               const npc=map.npcs[npcIndex];
               for(const unit of npc.units||[]){
-                for(const id of ['33','50','58','74','184','54','55','51','108','29','65','68']){
+                for(const id of ['33','50','58','74','184','54','55','51','108','29','65','68','123']){
                   const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                   const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
                   const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
@@ -264,6 +264,7 @@ def main():
           const progressive29=sourceStatusSamples['29'];
           const fortune65=sourceStatusSamples['65'];
           const heavenlyFire68=sourceStatusSamples['68'];
+          const octagram123=sourceStatusSamples['123'];
           const bountyRawMagnitude=Number(bounty54?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           const insightRawMagnitude=Number(insight55?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           checks.mobileSourceBountySelectors=sourceStatusSamples['54-least-enemy']?.app?.scope==='least-enemy'&&
@@ -296,6 +297,11 @@ def main():
           checks.mobileSourceHeavenlyFireDescriptor=!!heavenlyFire68&&heavenlyFire68.app.scope==='targets'&&heavenlyFire68.app.turns===fireDuration&&
             heavenlyFire68.app.values.currentTroopLossRatio>0&&heavenlyFire68.app.values.spreadChance===.25&&
             heavenlyFire68.app.dispelPolicy==='unremovable'&&heavenlyFire68.app.formulaClassification.startsWith('SIMULATED_');
+          const octagramDuration=Number(octagram123?.effect?.detail?.match(/(\\d+)\\s*lượt/i)?.[1]);
+          const octagramMagnitude=Number(octagram123?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]/)?.[1]?.replace(',','.'));
+          checks.mobileSourceOctagramDescriptor=!!octagram123&&octagram123.app.scope==='lowest-ally'&&octagram123.app.turns===octagramDuration&&
+            octagram123.app.values.damageBlockCharges===1&&octagram123.app.sourceMagnitude===octagramMagnitude&&
+            octagram123.app.formulaClassification==='SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SIMULATED_UNIFORM_RANDOM_TARGET';
           checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
             silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
@@ -554,6 +560,35 @@ def main():
               fireHpBefore,fireHpAfter:fireTarget?.hp,spreadSlots:fireSide?.filter(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='68')).map(unit=>unit.slot)};
           }else {checks.mobileSourceHeavenlyFireInNativeCombat=false;checks.mobileSourceHeavenlyFireUnremovable=false;checks.mobileSourceHeavenlyFireSpreads=false;
             checks.mobileSourceHeavenlyFireDiagnostics={battle:!!heavenlyFireBattle,caster:!!heavenlyFireCaster,sample:heavenlyFire68};}
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
+          const octagramBattle=launchStatusProbe(octagram123,true),octagramCaster=octagramBattle?.e?.find(unit=>unit.slot===octagram123?.slot);
+          if(octagramBattle&&octagramCaster){
+            for(const unit of [...octagramBattle.p,...octagramBattle.e]){unit.hp=unit.maxHp=1000000000000;unit.alive=true;if(unit.nlMobileTroop)unit.nlMobileTroop.strikeBack=0;}
+            const octagramApplication=octagramCaster.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='123');
+            if(octagramApplication)octagramApplication.chance=1;
+            const expectedOctagramAllies=c.mobileSourceApplicationTargets(octagramCaster,{actorTeam:'e',hits:[]},octagram123.app,octagramCaster.nlCDescriptor);
+            octagramCaster.morale=100;q.perform(octagramCaster);
+            const octagramSourceEvent=octagramBattle.events.at(-1),protectedAlly=octagramBattle.e.find(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='123'));
+            const protectedStatus=protectedAlly?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='123'),protectedAppliedTurns=protectedStatus?.turns;
+            const playerAttacker=octagramBattle.p[0],enemyHpBefore=octagramBattle.e.map(unit=>unit.hp),playerHpBefore=octagramBattle.p.map(unit=>unit.hp);
+            for(const unit of octagramBattle.e)if(unit!==protectedAlly)unit.hp=0;
+            playerAttacker.morale=40;playerAttacker.atk=playerAttacker.catk=playerAttacker.matk=1000000000;
+            q.perform(playerAttacker);
+            const octagramHitEvent=octagramBattle.events.at(-1),blockedHit=octagramHitEvent?.hits?.find(hit=>hit.team==='e'&&hit.slot===protectedAlly?.slot&&hit.mobileSourceShieldBlocked),redirectedHit=octagramHitEvent?.hits?.find(hit=>hit.mobileSourceRedirect&&hit.mobileSourceEffectId==='123');
+            const redirectVictim=redirectedHit&&octagramBattle.p.find(unit=>unit.slot===redirectedHit.slot);
+            checks.mobileSourceOctagramNativeRedirect=octagramSourceEvent?.skill===octagram123.skill.name&&octagramSourceEvent?.mode==='skill'&&
+              protectedAlly&&expectedOctagramAllies.length===1&&expectedOctagramAllies[0]===protectedAlly&&protectedAppliedTurns===octagram123.app.turns&&protectedAlly.hp===1000000000000&&
+              blockedHit?.amount===0&&!!redirectedHit&&redirectedHit.amount>0&&redirectedHit.amount===redirectedHit.mobileSourceRedirectAmount&&
+              redirectVictim?.hp===playerHpBefore[redirectVictim.slot]-redirectedHit.amount&&
+              !protectedAlly.effects.some(effect=>effect.mobileSource?.sourceEffectId==='123')&&octagramHitEvent.description.includes('Bát Quái chuyển');
+            checks.mobileSourceOctagramTargetPolicy=octagram123.app.scope==='lowest-ally'&&expectedOctagramAllies.length===1&&
+              expectedOctagramAllies[0]===protectedAlly&&enemyHpBefore.length===octagramBattle.e.length;
+            checks.mobileSourceOctagramDiagnostics={sample:{mapId:octagram123.mapId,npcId:octagram123.npcId,skill:octagram123.skill,app:octagram123.app},
+              octagramSourceEvent,protected:{slot:protectedAlly?.slot,turns:protectedAppliedTurns,hp:protectedAlly?.hp},
+              octagramHitEvent:{actor:octagramHitEvent?.actor,mode:octagramHitEvent?.mode,description:octagramHitEvent?.description,hits:octagramHitEvent?.hits},
+              redirectVictim:{slot:redirectVictim?.slot,hp:redirectVictim?.hp},playerHpBefore};
+          }else {checks.mobileSourceOctagramNativeRedirect=false;checks.mobileSourceOctagramTargetPolicy=false;
+            checks.mobileSourceOctagramDiagnostics={battle:!!octagramBattle,caster:!!octagramCaster,sample:octagram123};}
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
           if(silenceBattle&&silenceCaster){

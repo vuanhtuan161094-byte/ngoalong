@@ -421,6 +421,7 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY='mobile-source-progressive-vulnerability',
  MOBILE_SOURCE_FORTUNE='mobile-source-fortune',
  MOBILE_SOURCE_HEAVENLY_FIRE='mobile-source-heavenly-fire',
+ MOBILE_SOURCE_OCTAGRAM='mobile-source-octagram-redirect',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
@@ -490,6 +491,8 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'SOURCE_MAX_DAMAGE_MULTIPLIER_WITH_SIMULATED_UNIFORM_INTEGER_PICK',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'65',behavior:'each action draws one integer damage multiplier from 1 through the source maximum'}},
  [MOBILE_SOURCE_HEAVENLY_FIRE]:{duration:2,polarity:'harmful',dispelPolicy:'unremovable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_UNREMOVABLE_SPREADING_BURN_WITH_SIMULATED_TICK_AND_SPREAD',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'68',behavior:'burns current HP each affected action and may spread using a simulated chance'}},
+ [MOBILE_SOURCE_OCTAGRAM]:{duration:2,polarity:'beneficial',dispelPolicy:'unknown',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SOURCE_MAGNITUDE_AND_DISPEL_UNRESOLVED',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'123',behavior:'blocks one incoming hit and redirects its damage to a random enemy'}},
  [MOBILE_PHYSICAL_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_MAGIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_TACTIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
@@ -564,6 +567,7 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '29':{kind:MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY,mechanic:'progressive-vulnerability'},
  '65':{kind:MOBILE_SOURCE_FORTUNE,mechanic:'random-maximum-damage'},
  '68':{kind:MOBILE_SOURCE_HEAVENLY_FIRE,mechanic:'spreading-burn'},
+ '123':{kind:MOBILE_SOURCE_OCTAGRAM,mechanic:'one-hit-random-redirect'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -913,6 +917,7 @@ function mobileSourceApplications(skill,effects){
   else if(['9','10','11','13','14','15'].includes(id)&&/toan phe dich|\bdich\b/.test(context))scope='enemies';
   else if(['9','10','11','13','14','15'].includes(id)&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='58'&&/(?:dong doi|tuong phe ta).{0,80}(?:linh it nhat|it linh nhat|linh thap nhat)/.test(fold))scope='lowest-ally';
+  else if(id==='123'&&/tuong linh it nhat phe ta/.test(context))scope='lowest-ally';
   else if(id==='108'&&/toan phe ta.{0,90}(?:nhan|ho thuan|de khang)/.test(context))scope='allies';
   else if(id==='108'&&/(?:ban than|tu than).{0,90}(?:nhan|ho thuan|de khang)/.test(context))scope='self';
   else if(id==='54'&&/(?:tuong dich linh nhieu nhat|don vi dich linh nhieu nhat).{0,70}(?:va\s+\d+\s+tuong dich ngau nhien khac)/.test(context))scope='highest-troops-and-random';
@@ -993,6 +998,13 @@ function mobileSourceApplications(skill,effects){
     app.valueEvidence=rawValue!==null?{classification:'SOURCE_MAGNITUDE_WITH_SIMULATED_CURRENT_HP_RATIO',sourceDetail:detail,sourceValue:rawValue,unit:'percent'}:
       {classification:'SIMULATED_DEFAULT_FROM_MOST_COMMON_SOURCE_DETAIL',sourceEffectId:'68',mostCommonObservedSourceValue:36,sourceDetail:detail,defaultPercent:36};
     if(rawValue===null)app.unresolvedMechanics=['SOURCE_BURN_MAGNITUDE_NOT_PUBLISHED_FOR_THIS_ROW'];
+  }
+  if(id==='123'){
+    const rawShield=detailFold.match(/^(\d+(?:[.,]\d+)?)\s*[·x*]\s*\d+\s*luot/);
+    if(rawShield){app.sourceMagnitude=Number(rawShield[1].replace(',','.'));app.valueEvidence={classification:'SOURCE_VALUE_OBSERVED_SEMANTICS_UNKNOWN',sourceDetail:detail,sourceValue:app.sourceMagnitude};}
+    app.values.damageBlockCharges=1;app.formulaClassification='SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SIMULATED_UNIFORM_RANDOM_TARGET';
+    app.targetSelectionClassification='SIMULATED_UNIFORM_RANDOM_LIVING_ENEMY';app.dispelPolicy='unknown';
+    app.stackingClassification='SIMULATED_REPLACE_DURATION';app.unresolvedMechanics=['SOURCE_MAGNITUDE_SEMANTICS_UNPUBLISHED','SOURCE_DISPELLABILITY_UNPUBLISHED','SOURCE_STACKING_RULE_UNPUBLISHED'];
   }
   if(id==='77'&&/neu khong/.test(context))app.condition='TARGET_SURVIVES';
   if(rule.mechanic==='damage-reduction'&&percent!==null)app.values.incomingDamageMultiplier=Math.max(0,1-percent);
@@ -1185,7 +1197,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1563,7 +1575,8 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
    .reduce((factor,effect)=>factor*(1+Math.max(0,Number(effect.mobileSourceValues?.damageTakenIncreasePerTargetAction)||0)*clamp(nat(effect.stacks)||1,1,5)),1);
  const fortuneMultiplier=Math.max(1,Number(attacker?.nlMobileFateDamageMultiplier)||1);
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
- const oneHitShield=target?.effects?.find(effect=>(effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS||effect.kind===MOBILE_BOOK_SHIELD_STATUS)&&effect.turns>0);
+ const oneHitShield=target?.effects?.find(effect=>effect.kind===MOBILE_SOURCE_OCTAGRAM&&effect.turns>0)||
+   target?.effects?.find(effect=>(effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS||effect.kind===MOBILE_BOOK_SHIELD_STATUS)&&effect.turns>0);
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
  const beforeHp=target?.hp,beforeMorale=target?.morale;
  const critAdd=(attacker?.effects||[]).reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.criticalChanceAdd)||0)*(effect.stacks||1),0);
@@ -1595,7 +1608,15 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
    mobileConsumeShield(target,oneHitShield);
-   hit.amount=0;hit.number='-0';hit.mobileSourceShieldBlocked=true;return hit;
+   hit.amount=0;hit.number='-0';hit.mobileSourceShieldBlocked=true;
+   if(oneHitShield.kind===MOBILE_SOURCE_OCTAGRAM&&!battle?.replay&&battle?.mode!=='cltq'){
+     const redirectSide=target.team==='p'?battle.e:battle.p,redirectTargets=redirectSide.filter(unit=>unit.hp>0);
+     if(redirectTargets.length){const redirected=redirectTargets[Math.floor(p2Random()*redirectTargets.length)],redirectedDamage=Math.min(redirected.hp,Math.max(1,Math.floor(rawDamage)));
+       redirected.hp-=redirectedDamage;if(redirected.hp<=0)redirected.alive=false;else p2Morale(redirected,redirected.type==='strategist'?34:25);
+       hit.mobileSourceRedirectInfo={team:redirected.team,slot:redirected.slot,unit:redirected.name,amount:redirectedDamage,sourceEffectId:'123'};
+     }
+   }
+   return hit;
  }
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
    .reduce((factor,effect)=>factor*(Number.isFinite(effect.mobileSourceValues?.incomingDamageMultiplier)?effect.mobileSourceValues.incomingDamageMultiplier:1),1);
@@ -1634,6 +1655,17 @@ function mobileRepeatHit(single,attacker,target,kind,mult,opts,count){
  const last=hits[hits.length-1];
  if(hits.length===1&&count===1)return last;
  return {...last,amount,number:'-'+amount,mobileSourceHitCount:hits.length,mobileSourceRequestedHits:count,mobileSourceHits:hits};
+}
+function mobileAppendSourceRedirectHits(event){
+ if(!event?.hits?.length)return 0;
+ const sourceHits=event.hits.flatMap(hit=>hit.mobileSourceHits||[hit]),redirected=[];
+ for(const hit of sourceHits){const info=hit.mobileSourceRedirectInfo;if(!info)continue;
+   redirected.push({team:info.team,slot:info.slot,number:'-'+info.amount,amount:info.amount,mobileSourceRedirectAmount:info.amount,kind:hit.kind||'physical',mobileSourceRedirect:true,
+     mobileSourceRedirectFrom:hit.slot,mobileSourceEffectId:info.sourceEffectId,unit:info.unit});
+ }
+ if(!redirected.length)return 0;
+ event.hits.push(...redirected);event.description+=' · Bát Quái chuyển '+redirected.map(hit=>hit.amount+' sát thương sang '+hit.unit).join(', ');
+ event.state=p2Snapshot();battle.log=event.description;return redirected.length;
 }
 p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const d=attacker?.nlMobileSourceSkillAction?(attacker.team==='e'?attacker.nlCDescriptor:mobileHeroSkill(attacker.id)):null;
@@ -1844,7 +1876,7 @@ function mobileResolveCounters(actor,event){
  const enemies=actor.team==='p'?battle.e:battle.p,seen=new Set(),out=[];
  for(const hit of (event.hits||[]).slice()){
   if(actor.hp<=0)break;
-  if(hit.team===actor.team||!(hit.amount>0)||hit.heal||seen.has(hit.slot))continue;
+  if(hit.team===actor.team||!(hit.amount>0)||hit.heal||hit.mobileSourceRedirect||seen.has(hit.slot))continue;
   seen.add(hit.slot);
   const u=enemies.find(x=>x.slot===hit.slot&&x.hp>0),chance=mobileCounterChance(u);
   if(!u||!chance||mobileBookHas(u,MOBILE_CONTROL_STATUS)||mobileBookHas(u,MOBILE_SLEEP_STATUS)||mobileBookHas(u,'mobile-source-freeze')||p2Random()>=chance)continue;
@@ -1912,6 +1944,7 @@ p2Perform=function(actor){
    restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
+   mobileAppendSourceRedirectHits(event);
    if(confusionActive&&event?.actor===actor.name){event.mobileSourceConfusionRedirected=true;event.description+=' · Mê Hoặc: đánh nhầm đồng minh';event.state=p2Snapshot();battle.log=event.description;}
    if(appliedFateMultiplier&&event?.actor===actor.name){event.mobileSourceFateDamageMultiplier=appliedFateMultiplier;event.description+=' · Thiên Vận ×'+appliedFateMultiplier;event.state=p2Snapshot();battle.log=event.description;}
    if(locked&&silenced&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
