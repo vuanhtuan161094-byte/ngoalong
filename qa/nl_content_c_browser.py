@@ -55,6 +55,37 @@ def main():
           checks.seals=c.unlockSeal('sword')&&c.equipSeal('sword')&&!c.unlockSeal('sword');
           checks.panels=c.panels().every(x=>x.includes('data-nlc-panel'));
           checks.saveV5=q.getGame().version===5&&c.floor()===21&&c.state().soul===soulBefore+expected.soul;
+          // Test repeat victory through the same native settlement path; not a balance claim.
+          const repeatGame=q.getGame();repeatGame.silver=1000000;repeatGame.grain=1000000;
+          repeatGame.hero[id].troops=3000;repeatGame.nlClassicA.orders=60;q.setGame(repeatGame);
+          const beforeRepeat=q.getGame(),repeatSoul=c.state().soul,repeatReward=c.npcReward(n.id);
+          checks.repeatLaunch=c.canReplayNpc(n.id)&&c.startNpc(n.id,true)&&q.debugBattle()?.nlContentC?.repeat===true;
+          const rb=q.debugBattle();if(rb){for(const u of rb.e)u.hp=0;if(!rb.finished)q.finishBattle();}
+          const afterRepeat=q.getGame();
+          checks.repeatSettlement=!!rb?.won&&c.npcRepeatCount(n.id)===1&&c.state().soul===repeatSoul&&rb.report?.rewards?.silver===repeatReward.silver;
+          q.finishBattle();checks.repeatOnce=q.getGame().silver===afterRepeat.silver&&c.npcRepeatCount(n.id)===1;
+          q.closeBattle('city');
+          const cap=q.getGame();cap.nlContentC.npcRepeat[n.id]=3;q.setGame(cap);
+          checks.repeatCap=!c.canReplayNpc(n.id)&&!c.startNpc(n.id,true);
+          const last=m.npcs.at(-1),mapGame=q.getGame();
+          if(m.npcs.length>1){
+            for(const x of m.npcs.slice(0,-1))mapGame.nlContentC.cleared[x.id]=true;
+            delete mapGame.nlContentC.cleared[last.id];delete mapGame.nlContentC.mapsCleared[m.id];
+            mapGame.hero[id].troops=3000;mapGame.nlClassicA.orders=60;q.setGame(mapGame);
+            const mapSoul=c.state().soul,bonus=c.mapBonus(m.id);
+            checks.mapLaunch=c.startNpc(last.id);const mb=q.debugBattle();
+            if(mb){for(const u of mb.e)u.hp=0;if(!mb.finished)q.finishBattle();}
+            checks.mapCompletion=!!mb?.won&&c.state().mapsCleared[m.id]===true&&c.state().soul===mapSoul+bonus.soul+(last.boss?15:5);
+            const mapAfter=q.getGame();q.finishBattle();checks.mapOnce=q.getGame().silver===mapAfter.silver&&c.state().soul===mapSoul+bonus.soul+(last.boss?15:5);
+            q.closeBattle('city');
+          }
+          const sealGame=q.getGame();sealGame.nlContentC.soul=1000;sealGame.silver=100000;q.setGame(sealGame);
+          checks.sealMigration=c.sealLevel('sword')===1&&c.sealValue('sword')===25;
+          checks.sealUpgrade=c.upgradeSeal('sword')&&c.sealLevel('sword')===2&&c.sealValue('sword')===29&&q.getGame().silver===98800&&c.state().soul===960;
+          checks.sealLocked=!c.upgradeSeal('not-a-seal');
+          checks.sealMax=c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.upgradeSeal('sword')&&c.sealLevel('sword')===5&&c.sealValue('sword')===40&&!c.upgradeSeal('sword');
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.sealSave=c.sealLevel('sword')===5&&c.state().soul===600&&q.getGame().version===5;
           return checks;
         }""")
         print(out,flush=True)
