@@ -90,6 +90,8 @@ def project_mobile_map(m,index,legacy_map):
                           "level":round(positive(u.get("level"),positive(n["source"].get("level"),1))),
                           "sourceTroopId":u.get("sourceTroopId"),"sourceTroopType":u.get("sourceTroopType"),
                           "sourceHp":source_hp,"sourceSkillName":(u.get("skill") or {}).get("name"),
+                          "effects":u.get("effects") or [],
+                          "sourceEffectsOwnerNpcId":n["id"] if not incomplete else donor,
                           "provenance":u.get("provenance") or
                             ("SIMULATED_DONOR_FORMATION" if incomplete else "SOURCE_EXACT_WITH_P2_ADAPTER")})
         rows.append({"id":n["id"],"name":n["name"],"level":round(positive(n["source"].get("level"),1)),

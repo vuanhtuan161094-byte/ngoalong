@@ -9,6 +9,10 @@ const obj=x=>x&&typeof x==='object'&&!Array.isArray(x), nat=x=>Number.isSafeInte
 const owned=id=>game.roster.includes(id)&&!!game.hero[id];
 const MOBILE_TROOPS=NL_CONTENT_C.mobileTroops;
 const MOBILE_ITEM_SOURCE=NL_ITEM_CATALOGUE.mobileSource;
+const MOBILE_DAMAGE_ONE_STATUS='mobile-damage-one';
+NL_GAME_DATA.statusEffects.effects[MOBILE_DAMAGE_ONE_STATUS]={duration:1,polarity:'beneficial',
+ dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
+ provenance:{classification:'DERIVED_FROM_SOURCE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI_VIETNAMESE',sourceEffectId:'3'}};
 const MOBILE_DROP_BINDINGS=new Map((MOBILE_ITEM_SOURCE?.campaignDropBindings||[]).map(x=>[
  [String(x.mapId),String(x.npcId),String(x.sourceId),String(x.category||''),String(x.name||'')].join('|'),x.binding
 ]));
@@ -92,6 +96,15 @@ function descriptor(skill,role,boss){
  out.tag=name;out.sourceSkillName=name;out.sourceDescription=text;
  out.sourceSkillClassification='SOURCE_TEXT_WITH_P2_ADAPTER';
  out.skillFieldProvenance={name:'SOURCE_EXACT',description:'SOURCE_EXACT',coefficient:'UNRESOLVED',target:'UNRESOLVED',secondaryEffects:'UNRESOLVED'};
+ const simpleMorale=text.match(/^\s*\[Hỗ Trợ\]\s*(tướng khác của phe ta|toàn phe ta)\s+hồi\s+(\d+)\s+sĩ khí[.,]?\s*$/i);
+ if(simpleMorale){
+   out.pattern='morale';out.kind='tactic';out.mult=0;out.bonusMorale=Number(simpleMorale[2]);
+   out.sourceMoraleOnly=true;out.sourceMoraleScope=/tướng khác/i.test(simpleMorale[1])?'OTHER_ALLIES':'ALL_ALLIES';
+   out.sourceSkillClassification='SOURCE_MORALE_ONLY_ADAPTED';
+   out.skillFieldProvenance.coefficient='NOT_APPLICABLE_MORALE_ONLY';
+   out.skillFieldProvenance.target='DERIVED_FROM_SOURCE';out.skillFieldProvenance.secondaryEffects='SOURCE_TEXT_RETAINED';
+   return out;
+ }
  const damageStart=fold.search(/(?:gây|chịu|tấn công)\s+(?:cho\s+)?/);
  const damageClause=damageStart>=0?text.slice(damageStart,damageStart+240).split(/[;。]/,1)[0]:'';
  const targetContext=damageStart>=0?fold.slice(0,Math.min(fold.length,damageStart+120)):fold;
@@ -123,7 +136,10 @@ function descriptor(skill,role,boss){
    out.pattern=sourcePattern;out.kind=sourceKind;out.mult=amount/100;
    out.sourceSkillClassification='SOURCE_DAMAGE_COEFFICIENT_AND_TARGET_ADAPTED';
    out.skillFieldProvenance.coefficient='DERIVED_FROM_SOURCE';out.skillFieldProvenance.target=targetProvenance;
+   const sourceDamageOne=/bản thân nhận\s+\[\s*thiết bích\s*\]/i.test(text),duration=fold.match(/duy trì\s+(\d+)\s+lượt/);
+   if(sourceDamageOne){out.applyAlly=MOBILE_DAMAGE_ONE_STATUS;if(duration)out.applyAllyDuration=Number(duration[1]);}
    if(repeated&&Number(repeated[1])>1)out.skillFieldProvenance.secondaryEffects='UNRESOLVED_MULTI_HIT';
+   else if(sourceDamageOne)out.skillFieldProvenance.secondaryEffects='PARTIAL_SOURCE_DAMAGE_ONE_STATUS_ADAPTED';
    else out.skillFieldProvenance.secondaryEffects=/\[|duy trì|giảm \d+ sĩ khí|hồi \d+ sĩ khí/.test(fold)?'UNRESOLVED_SECONDARY_EFFECTS':'SOURCE_TEXT_RETAINED';
    return out;
  }
@@ -134,11 +150,15 @@ function descriptor(skill,role,boss){
 function mobileSkillAudit(){
  const rows={totalUnits:0,sourceExactUnits:0,sourceExactWithNameAndDescription:0,withNameAndDescription:0,
    sourceExactDamageAdapted:0,sourceExactHealAdapted:0,sourceDamageAdapted:0,sourceHealAdapted:0,
+   sourceExactMoraleAdapted:0,sourceEffectUnits:0,sourceEffectRows:0,sourceEffectIds:new Set(),sourceEffectNames:new Set(),
    simulatedFallback:0,skillNames:new Set(),sourceExactSkillNames:new Set(),unresolvedSecondaryEffects:0};
  for(const map of MAPS)for(const npc of map.npcs)for(const unit of npc.units||[]){
    rows.totalUnits++;const skill=unit.skill;
    const sourceExact=unit.provenance==='SOURCE_EXACT_WITH_P2_ADAPTER';
    if(sourceExact)rows.sourceExactUnits++;
+   if(sourceExact&&Array.isArray(unit.effects)&&unit.effects.length){rows.sourceEffectUnits++;for(const effect of unit.effects){
+     rows.sourceEffectRows++;if(effect?.id!=null)rows.sourceEffectIds.add(String(effect.id));if(effect?.name)rows.sourceEffectNames.add(effect.name);
+   }}
    if(!skill||typeof skill!=='object'||!skill.name||!skill.desc)continue;
    rows.withNameAndDescription++;rows.skillNames.add(skill.name);
    if(sourceExact){rows.sourceExactWithNameAndDescription++;rows.sourceExactSkillNames.add(skill.name);}
@@ -147,12 +167,31 @@ function mobileSkillAudit(){
      rows.sourceDamageAdapted++;if(sourceExact)rows.sourceExactDamageAdapted++;
    }else if(d.sourceSkillClassification==='SOURCE_HEAL_COEFFICIENT_ADAPTED'){
      rows.sourceHealAdapted++;if(sourceExact)rows.sourceExactHealAdapted++;
+   }else if(d.sourceSkillClassification==='SOURCE_MORALE_ONLY_ADAPTED'){
+     if(sourceExact)rows.sourceExactMoraleAdapted++;
    }else rows.simulatedFallback++;
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
+function skillProbe(name){
+ for(const map of MAPS)for(let npcIndex=0;npcIndex<map.npcs.length;npcIndex++){
+   const npc=map.npcs[npcIndex];for(let unitIndex=0;unitIndex<(npc.units||[]).length;unitIndex++){
+     const unit=npc.units[unitIndex],skill=unit.skill;
+     if(unit.provenance==='SOURCE_EXACT_WITH_P2_ADAPTER'&&skill?.name===name)
+       return {mapId:map.id,npcId:npc.id,npcIndex,unitIndex,slot:unit.slot,skill:structuredClone(skill)};
+   }
+ }
+ return null;
+}
+const nlContentCMobileBaseStatus=p2Status;
+p2Status=function(unit,kind,turns,...rest){
+ if(unit?.team==='e'&&battle?.nlContentC&&kind===MOBILE_DAMAGE_ONE_STATUS&&
+   Number.isInteger(unit.nlCDescriptor?.applyAllyDuration))turns=unit.nlCDescriptor.applyAllyDuration;
+ return nlContentCMobileBaseStatus(unit,kind,turns,...rest);
+};
 function awakeningDescriptor(id){
  const record=NL_CONTENT_C.awakeningSkills?.[id],growth=game.heroDevelopment?.heroes?.[id]?.awakening;
  if(!record)return null;
@@ -244,6 +283,10 @@ function openObjective(o,units,scale){
   e.nlMobileSource={npcId:o.id||null,troopId:u.sourceTroopId||null,troopType:u.sourceTroopType||null,
    sourceHp:u.sourceHp??null,sourceSkillName:u.sourceSkillName||u.skill?.name||u.skill||null,
    sourceSkillDescription:u.skill&&typeof u.skill==='object'?u.skill.desc||null:null,
+   sourceEffects:structuredClone(Array.isArray(u.effects)?u.effects:[]),
+   sourceEffectsOwnerNpcId:u.sourceEffectsOwnerNpcId||o.id||null,
+   sourceEffectsClassification:u.provenance==='SOURCE_EXACT_WITH_P2_ADAPTER'?'SOURCE_EXACT':
+     (Array.isArray(u.effects)&&u.effects.length?'SOURCE_EXACT_FROM_DONOR':'SIMULATED_OR_EMPTY'),
    skillAdapter:e.nlCDescriptor.sourceSkillClassification||'SIMULATED_LEGACY_LABEL',
    adapter:u.provenance||'PROJECT_SIMULATED'};
   const {ratio,difficulty}=power;
@@ -321,6 +364,44 @@ p2Skill=function(actor){
  if(['row','column','back'].includes(pattern)&&d.pattern==='single'){d.pattern=pattern;d.mult*=.75;}
  if(actor.nlClassicWebAbility==='control'&&d.pattern!=='heal'&&!d.apply){d.apply='daze';d.applyChance=.18+.03*(actor.nlClassicWebTier||1);}
  return d;
+};
+const nlContentCBaseHit=p2Hit;
+p2Hit=function(attacker,target,kind,mult=1,opts={}){
+ const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
+ if(!protectedBySource)return nlContentCBaseHit(attacker,target,kind,mult,opts);
+ const beforeHp=target.hp,hit=nlContentCBaseHit(attacker,target,kind,mult,opts),damage=beforeHp-target.hp;
+ if(damage>1){target.hp=beforeHp-1;target.alive=target.hp>0;hit.amount=1;hit.number='-1';}
+ return hit;
+};
+// Preserve the source Cổ Vũ support action on the native P2 turn/event path.
+// The temporary drum role is an adapter only; the original troop identity returns
+// before the stored snapshot is finalized, and no damage resolver is added.
+const nlContentCNativePerform=p2Perform;
+p2Perform=function(actor){
+ const d=actor?.team==='e'&&battle?.nlContentC?actor.nlCDescriptor:null;
+ if(!actor||actor.morale<100||!d?.sourceMoraleOnly||!Number.isFinite(d.bonusMorale))
+   return nlContentCNativePerform(actor);
+ const originalTroop=actor.troop,originalMorale=p2Morale,eventIndex=battle.events.length;
+ actor.troop='drum';
+ p2Morale=function(unit,delta){
+   if(unit?.team===actor.team&&delta>0){
+     if(unit===actor&&d.sourceMoraleScope==='OTHER_ALLIES')return originalMorale(unit,0);
+     return originalMorale(unit,d.bonusMorale);
+   }
+   if(unit?.team!==actor.team&&delta<0)return originalMorale(unit,0);
+   return originalMorale(unit,delta);
+ };
+ try{
+   const result=nlContentCNativePerform(actor);actor.troop=originalTroop;
+   const event=battle?.events?.[eventIndex];
+   if(event?.actor===actor.name&&event.mode==='drum'){
+     const audience=d.sourceMoraleScope==='OTHER_ALLIES'?'các tướng đồng minh khác':'toàn phe ta';
+     event.description='🥁 '+actor.name+' thi triển '+actor.skill+': '+audience+' hồi '+d.bonusMorale+' sĩ khí.';
+     event.state=p2Snapshot();battle.log=event.description;
+     const log=document.getElementById('combat-log');if(log)log.textContent=event.description;
+   }
+   return result;
+ }finally{p2Morale=originalMorale;actor.troop=originalTroop;}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
@@ -525,6 +606,6 @@ document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlc-acti
  if(a==='map-page'){mapPage=Math.max(0,mapPage+delta);const list=MAPS.filter(x=>x.name.toLocaleLowerCase('vi').includes(search.toLocaleLowerCase('vi')));if(list[mapPage*20]){mapId=list[mapPage*20].id;npcPage=0;}render();return;}
  if(a==='npc-page')npcPage=Math.max(0,npcPage+delta);else if(a==='hero-page')heroPage=Math.max(0,heroPage+delta);else if(a==='unit-page')unitPage=Math.max(0,unitPage+delta);else if(a==='seal-page')sealPage=Math.max(0,sealPage+delta);else {const fn={npc:startNpc,'npc-repeat':id=>startNpc(id,true),recruit,tier4:tid=>choose4(heroId,tid),tower:startTower,'upgrade-seal':id=>upgradeSeal(id,sealTo),'activate-seal':activateSeal}[a];if(fn&&!fn(id))toast('Chưa đủ điều kiện hoặc tài nguyên.');return;}render();});
 const style=document.createElement('style');style.textContent='.nlc-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #665e43}.nlc-row b,.nlc-row small{display:block}.nlc-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:57%}.nlc-actions button{white-space:normal!important;text-align:center}.nlc-row small,.nlc-pane p{font-size:10px}.nlc-row button,.nlc-nav button{font-size:11px;padding:5px 8px;white-space:nowrap}.nlc-nav{display:flex;align-items:center;gap:6px;margin:4px 0}.nlc-pane input,.nlc-pane select{max-width:100%;font-size:12px}.nlc-pane h3{margin:4px 0}.nlc-seal-wallet{padding:6px 8px;margin:4px 0;background:#102d28;border:1px solid #927849;border-radius:5px;font-size:11px}.nlc-seal-wallet b{color:#f0d18a}.nlc-seal-detail{margin-top:7px;padding:8px;border:1px solid #91764a;background:linear-gradient(140deg,#172c28,#17221f);border-radius:6px}.nlc-seal-detail h4{font-size:14px;margin:0 0 3px;color:#f1dcaa}.nlc-seal-detail h4 small{font-size:10px;color:#b9aa83}.nlc-seal-attr{display:grid;grid-template-columns:minmax(100px,1fr) auto;gap:2px 8px;padding:3px 0;border-bottom:1px solid #554d39;font-size:10px}.nlc-seal-attr b{color:#e7cf94}.nlc-seal-attr small{grid-column:1/-1;color:#aeb4a6;font-size:9px}.nlc-seal-attr i{font-style:normal;color:#87cdb0}.nlc-seal-calc{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:6px;padding-top:6px;border-top:1px solid #746342;font-size:10px}.nlc-seal-calc>b{flex-basis:100%;color:#edd59d}.nlc-seal-calc label{white-space:nowrap}.nlc-seal-calc input{width:48px;padding:3px;border:1px solid #806e49;border-radius:4px;background:#0b1c19;color:#fff;text-align:center}.nlc-seal-calc span{color:#e5d3a4}.nlc-seal-calc button{font-size:10px;padding:5px 7px}.nlc-tower-plan{margin:8px 0;padding:9px 11px;border:1px solid #786a47;border-radius:6px;background:linear-gradient(135deg,#29362f,#172522)}.nlc-tower-plan>b{display:block;color:#f1d797}.nlc-tower-plan>small{display:block;margin-top:3px;color:#c5b68e;font-size:10px}.nlc-tower-plan p{line-height:1.55;margin:6px 0;color:#c4cdc0}.nlc-tower-lineup{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:3px 10px;color:#e0d4b4;font-size:10px}.nlc-tower-reward{padding:7px 9px;background:#172c27;border-left:3px solid #c3a262;color:#e5d4a9;line-height:1.6}@media(max-width:560px){.nlc-tower-lineup{grid-template-columns:1fr}}';document.head.appendChild(style);
-if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),troopPanel(),towerPanel(),sealPanel()]});
+if(window.__P2_ENABLE_QA__)window.__NL_CONTENT_C_QA__=Object.freeze({counts:NL_CONTENT_C.counts,state:()=>structuredClone(state()),map:id=>MAP.get(id),npc:id=>NPC.get(id)?.n,readyNpc,startNpc,nextNpc:()=>structuredClone(nextNpc()),skillProbe,awakeningDescriptor:id=>structuredClone(awakeningDescriptor(id)),canReplayNpc,npcRepeatCount,npcDifficulty:id=>NPC.has(id)?npcDifficulty(NPC.get(id)):null,npcBaseStage,enemyScale,npcMerit:id=>NPC.has(id)?npcMerit(NPC.get(id)):null,npcReward:id=>{const r=NPC.get(id);return r?npcReward(r,true):null;},mapBonus:id=>MAP.has(id)?mapBonus(MAP.get(id)):null,startTower,towerPlan,towerRewards,towerTarget:p2Target,recruit,choose4,upgradeSeal,activateSeal,sealReady:id=>sealReady(SEAL_BY_ID.get(sealKey(id))),sealActive:id=>sealActive(SEAL_BY_ID.get(sealKey(id))),sealActivation:id=>sealActivation(state(),id),sealActivationValue:(id,rank)=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealActivationValue(r,rank):0;},sealActivationCost,sealLevel:id=>sealLevel(state(),id),sealValue:id=>{const r=SEAL_BY_ID.get(sealKey(id));return r?sealValue(r,state()):null;},sealStatsForRuntime,sealQuote,sealMigration:legacySealStats,p2Unit,p2Hit,applyMobileTroopProfile,mobileTroopSourceId,mobileTroopProfile,mobileTroopCount:()=>Object.keys(MOBILE_TROOPS.units).length,credit,days:()=>dayId(),floor,descriptor,describeSkill:descriptor,skillAudit:mobileSkillAudit,family,tiers:()=>NL_C_TIER4.length,seals:()=>SEALS.length,sealCatalog:()=>structuredClone(SEALS),panels:()=>[campaignPanel(),heroPanel(),mobileTroopPanel(),troopPanel(),towerPanel(),sealPanel()]});
 })();
 // === end NL-CONTENT-C-V1 ===

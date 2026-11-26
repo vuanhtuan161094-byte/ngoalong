@@ -33,6 +33,8 @@ def main():
             mobileNpcSkillAudit:skillAudit.totalUnits===25195&&skillAudit.sourceExactUnits===23944&&
               skillAudit.sourceExactWithNameAndDescription===23944&&skillAudit.sourceExactSkillNames===694&&
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
+              skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
+              skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -58,7 +60,9 @@ def main():
             firstEnemySkill?.sourceSkillClassification==='SOURCE_DAMAGE_COEFFICIENT_AND_TARGET_ADAPTED'&&
             firstEnemySkill?.tag===firstSourceSkill.name&&firstEnemySkill?.pattern==='single'&&
             firstEnemySkill?.kind==='magic'&&firstEnemySkill?.mult===.35&&
-            b.e[0].nlMobileSource?.sourceSkillDescription===firstSourceSkill.desc;
+            b.e[0].nlMobileSource?.sourceSkillDescription===firstSourceSkill.desc&&
+            JSON.stringify(b.e[0].nlMobileSource?.sourceEffects)===JSON.stringify(n.units[0]?.effects)&&
+            b.e[0].nlMobileSource?.sourceEffectsClassification==='SOURCE_EXACT';
           checks.mobileNpcSkillDiagnostics={sourceSkill:firstSourceSkill,enemySkill:b?.e?.[0]?.skill,
             descriptor:firstEnemySkill,mobileSource:b?.e?.[0]?.nlMobileSource};
           if(!b)return checks;
@@ -68,6 +72,11 @@ def main():
           checks.mobileNpcSkillInNativeCombat=npcSkillEvent?.skill===firstSourceSkill.name&&
             npcSkillEvent?.kind==='magic'&&npcSkillEvent?.hits?.length===1&&npcSkillEvent.hits[0].amount>0&&
             npcSkillEvent?.actorTeam==='e'&&npcSkillEvent?.actor===enemy.name;
+          const damageOne=enemy.effects.find(effect=>effect.kind==='mobile-damage-one');
+          const beforeDamageOneHit=enemy.hp,damageOneHit=c.p2Hit(b.p[0],enemy,'physical',1);
+          checks.mobileSourceEffectInNativeCombat=firstEnemySkill?.applyAlly==='mobile-damage-one'&&
+            firstEnemySkill?.applyAllyDuration===1&&firstEnemySkill?.skillFieldProvenance?.secondaryEffects==='PARTIAL_SOURCE_DAMAGE_ONE_STATUS_ADAPTED'&&
+            damageOne?.turns===1&&damageOneHit?.amount===1&&enemy.hp===beforeDamageOneHit-1;
           checks.mobileNpcSkillEvent=npcSkillEvent?{skill:npcSkillEvent.skill,kind:npcSkillEvent.kind,
             mode:npcSkillEvent.mode,hits:npcSkillEvent.hits}:null;
           // Deterministic forced victory exercises the real native finish owner, not balance.
@@ -106,8 +115,26 @@ def main():
           const afterSale=q.getGame();
           checks.mobileGearSale=!!sellPrice&&afterSale.silver===shopBalance-400+13&&
             afterSale.items.length===shopCount&&!afterSale.items.some(x=>x.base==='mobile-vng-equipment-1')&&afterSale.version===5;
-          document.querySelector('.nav[data-tab="city"]')?.click();
+          const beforeMoraleProbe=q.getGame(),moraleProbe=c.skillProbe('Cổ Vũ'),moraleDesc=moraleProbe&&c.describeSkill(moraleProbe.skill,'strategist',false);
+          checks.mobileMoraleDescriptor=!!moraleProbe&&moraleDesc?.sourceSkillClassification==='SOURCE_MORALE_ONLY_ADAPTED'&&
+            moraleDesc?.pattern==='morale'&&moraleDesc?.bonusMorale===45&&moraleDesc?.sourceMoraleScope==='OTHER_ALLIES';
           q.closeBattle('city');
+          if(moraleProbe){
+            const probeMap=c.map(moraleProbe.mapId),probeState=JSON.parse(JSON.stringify(beforeMoraleProbe));
+            probeState.nlContentC.mobileCommanderLevel=440;
+            for(const previous of probeMap.npcs.slice(0,moraleProbe.npcIndex))probeState.nlContentC.cleared[previous.id]=true;
+            delete probeState.nlContentC.cleared[moraleProbe.npcId];q.setGame(probeState);
+            const launched=c.startNpc(moraleProbe.npcId),mb=q.debugBattle();
+            const moraleUnit=mb?.e?.find(u=>u.nlMobileSource?.sourceSkillName==='Cổ Vũ'&&u.slot===moraleProbe.slot);
+            const allies=(mb?.e||[]).filter(u=>u!==moraleUnit);for(const unit of mb?.e||[])unit.morale=0;if(moraleUnit)moraleUnit.morale=100;
+            const beforeMoraleEvents=mb?.events?.length||0;if(moraleUnit)q.perform(moraleUnit);
+            const moraleEvent=mb?.events?.at(-1);
+            checks.mobileMoraleInNativeCombat=!!launched&&!!moraleUnit&&allies.length>0&&moraleEvent?.mode==='drum'&&
+              moraleEvent?.skill==='Cổ Vũ'&&moraleEvent?.hits?.length===0&&mb.events.length===beforeMoraleEvents+1&&
+              allies.every(unit=>unit.morale===45)&&moraleUnit.morale===0&&moraleEvent.description.includes('45 sĩ khí');
+            q.closeBattle('city');q.setGame(beforeMoraleProbe);
+          }else checks.mobileMoraleInNativeCombat=false;
+          document.querySelector('.nav[data-tab="city"]')?.click();
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
           const tb=q.debugBattle(),towerBefore=q.getGame(),expected=c.towerRewards(21),soulBefore=c.state().soul,towerMeritBefore=q.getGame().nlClassicA.merit;
           checks.towerPlanInNativeBattle=tb?.e.length===3&&tb?.nlContentC?.arcId===plans[0].arcId&&tb?.nlContentC?.aiStyle===plans[0].aiStyle;

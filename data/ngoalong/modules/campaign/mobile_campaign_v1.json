@@ -7,6 +7,10 @@
     "maps": 249,
     "npcs": 5063,
     "formations": 23944,
+    "formationEffectUnits": 18250,
+    "formationEffectRows": 36480,
+    "formationEffectIds": 134,
+    "formationEffectNames": 134,
     "emptyFormations": 251,
     "unknownTroopIds": {}
   },

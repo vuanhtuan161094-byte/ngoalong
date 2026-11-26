@@ -47,6 +47,10 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
     all_ids = set()
     unknown_troops = {}
     formation_count = 0
+    formation_effect_units = 0
+    formation_effect_rows = 0
+    formation_effect_ids = set()
+    formation_effect_names = set()
     empty_formations = 0
     source_npc_count = 0
     for source_path in source_paths:
@@ -85,6 +89,16 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                 if role is None:
                     unknown_troops[soldier_id] = unknown_troops.get(soldier_id, 0) + 1
                 skill = raw_unit.get("activeSkill") or {}
+                effects = compact_source_rows(raw_unit.get("effects"))
+                if effects:
+                    formation_effect_units += 1
+                for effect in effects:
+                    if isinstance(effect, dict):
+                        if effect.get("id") is not None:
+                            formation_effect_ids.add(str(effect["id"]))
+                        if effect.get("name"):
+                            formation_effect_names.add(effect["name"])
+                    formation_effect_rows += 1
                 units.append({
                     "slot": pos - 1,
                     "sourcePosition": pos,
@@ -95,7 +109,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                     "sourceHp": raw_unit.get("hp"),
                     "level": raw_unit.get("level"),
                     "skill": {k: v for k, v in skill.items() if k != "icon"},
-                    "effects": compact_source_rows(raw_unit.get("effects")),
+                    "effects": effects,
                 })
                 formation_count += 1
             npc_source = {
@@ -133,6 +147,10 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         "sourceManifest": "data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw/capture_manifest.json",
         "sourceCampaignFolderSha256": "field hashes are pinned per source JSON in the capture manifest",
         "counts": {"maps": len(maps), "npcs": source_npc_count, "formations": formation_count,
+                   "formationEffectUnits": formation_effect_units,
+                   "formationEffectRows": formation_effect_rows,
+                   "formationEffectIds": len(formation_effect_ids),
+                   "formationEffectNames": len(formation_effect_names),
                    "emptyFormations": empty_formations,
                    "unknownTroopIds": unknown_troops},
         "maps": maps,
@@ -156,11 +174,13 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         ("/vn/npcs/formation", "all source 1-9 positions; zero-row records use an explicitly marked donor adapter", "APPLIED_OR_SIMULATED_DONOR_TO_NATIVE_P2_3X3"),
         ("/vn/npcs/formation/soldierId", "source troop ID and role", "APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/hp", "source unit HP retained; P2 battle scale adapter", "PRESERVED_AND_USED_AS_SCALE_INPUT"),
+        ("/vn/npcs/formation/effects", "exact unit effect IDs, names, descriptions and detail strings carried onto native units; effect ID 3 is adapted as source damage-to-1 while remaining effect IDs stay unresolved", "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER"),
         ("/vn/npcs/formation/activeSkill/name", "exact source skill name used by the native combat event", "SOURCE_EXACT_APPLIED_TO_NATIVE_P2"),
         ("/vn/npcs/formation/activeSkill/desc", "exact source skill description preserved on the combat unit and descriptor", "SOURCE_EXACT_PRESERVED_IN_RUNTIME"),
         ("/vn/npcs/formation/activeSkill/desc/coefficient", "simple single-hit coefficient parsed from the source description into the P2 scale; unparsed or multi-stage formulas retain an explicit fallback", "PARTIALLY_DERIVED_FROM_SOURCE_WITH_SIMULATED_FALLBACK"),
         ("/vn/npcs/formation/activeSkill/desc/target", "single, row, column, back-row, all-enemy, and all-ally targets parsed when stated; other target language remains unresolved", "PARTIALLY_DERIVED_FROM_SOURCE_WITH_UNRESOLVED_FALLBACK"),
-        ("/vn/npcs/formation/activeSkill/desc/secondaryEffects", "secondary statuses, multi-hit rules, durations, chances, and conditions preserved verbatim; no runtime adapter unless explicitly supported", "SOURCE_TEXT_PRESERVED_EFFECT_ADAPTER_UNRESOLVED"),
+        ("/vn/npcs/formation/activeSkill/desc/secondaryEffects", "Thiết Bích source text/detail maps to native damage-to-1 for its stated duration; other statuses, multi-hit rules, chances and conditions remain unresolved", "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER"),
+        ("/vn/npcs/formation/activeSkill/moraleOnly", "fixed morale-only allied skills map to native morale events; mixed/global/status skills remain unresolved or simulated", "PARTIAL_SOURCE_MORALE_ACTION_ADAPTER"),
         ("/vn/thanhTuu", "exact supported Silver/Gold achievements granted; other reward types and Tướng Hồn pace remain separate adapters", "SOURCE_EXACT_SUPPORTED_CURRENCIES_GRANTED"),
         ("/vn/rewards", "map reward list; grant semantics not documented in snapshot", "PRESERVED_REWARD_ADAPTER_UNRESOLVED"),
         ("/vn/buffs", "map buffs", "PRESERVED_EFFECT_ADAPTER_UNRESOLVED"),
@@ -172,6 +192,10 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         "schemaVersion": 1, "sourceEdition": data["sourceEdition"],
         "sourceManifest": data["sourceManifest"],
         "coverage": {"maps": len(maps), "npcs": source_npc_count, "formations": formation_count,
+                     "formationEffectUnits": formation_effect_units,
+                     "formationEffectRows": formation_effect_rows,
+                     "formationEffectIds": len(formation_effect_ids),
+                     "formationEffectNames": len(formation_effect_names),
                      "emptyFormationRecords": empty_formations,
                      "legacyNativeNpcCount": 4903, "sourceNpcCountDelta": source_npc_count - 4903,
                      "legacyIdPreservation": "verified in the canonical projection against all 4,903 previously shipped NPC IDs",

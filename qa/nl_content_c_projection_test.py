@@ -13,7 +13,7 @@ def main():
     assert len(maps)==249 and len({m["id"] for m in maps})==249
     assert sum(len(m["npcs"]) for m in maps)==5063
     assert data["counts"]["legacyNpcCount"]==4903
-    exact_units=[]
+    exact_units=[];exact_effect_rows=[];effect_units=0
     for m in maps:
         peers={n["id"] for n in m["npcs"]}
         assert 1<=m["gate"]<=28 and peers
@@ -29,9 +29,16 @@ def main():
                 if u["provenance"]=="SOURCE_EXACT_WITH_P2_ADAPTER":
                     assert u["sourceTroopId"] and u["skill"]["name"] and u["skill"]["desc"]
                     exact_units.append(u)
+                    if u["effects"]: effect_units+=1
+                    for effect in u["effects"]:
+                        assert set(effect)=={"id","name","desc","detail"}
+                        exact_effect_rows.append(effect)
     assert len(ids)==5063
     assert len(exact_units)==23944
     assert len({u["skill"]["name"] for u in exact_units})==694
+    assert effect_units==18250 and len(exact_effect_rows)==36480
+    assert len({str(e["id"]) for e in exact_effect_rows})==134
+    assert len({e["name"] for e in exact_effect_rows})==134
     assert len(data["heroAliases"])==len(set(data["heroAliases"].values()))==364
     assert data["counts"]["newHeroes"]==147 and data["counts"]["runtimeHeroes"]==368
     assert all(h["descriptor"]["tag"] and h["descriptor"]["pattern"] and h["descriptor"]["mult"]>0 for h in data["heroes"])
