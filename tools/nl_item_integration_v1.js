@@ -136,6 +136,7 @@ function nlItemAction(action,arg){
   const receipt='nli:ui:'+nonce;
   const heroId=nlItemHeroId();
   const result=action==='buy'?nlItemApi.buy(game,arg.id,receipt):
+    action==='sell'?nlItemApi.sell(game,arg.uid,receipt):
     action==='equip'?nlItemApi.equip(game,heroId,arg.uid,receipt):
     action==='unequip'?nlItemApi.unequip(game,heroId,arg.slot,receipt):
     action==='reinforce'?nlItemApi.reinforce(game,arg.uid,receipt,arg.targetLevel):

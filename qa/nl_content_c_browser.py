@@ -79,6 +79,13 @@ def main():
           const afterShop=q.getGame();
           checks.mobileShopPurchase=!!shopPrice&&afterShop.silver===shopBalance-400&&
             afterShop.items.length===shopCount+1&&afterShop.items.some(x=>x.base==='mobile-vng-equipment-1')&&afterShop.version===5;
+          document.querySelector('[data-nl-item-bridge] [data-nli-shop="0"]')?.click();
+          const ownedShopItem=document.querySelector('[data-nl-item-bridge] [data-nl-art-item="mobile-vng-equipment-1"]');
+          const sellPrice=ownedShopItem?.innerText.includes('13 Bạc');
+          ownedShopItem?.querySelector('[data-nli-action="sell"]')?.click();
+          const afterSale=q.getGame();
+          checks.mobileGearSale=!!sellPrice&&afterSale.silver===shopBalance-400+13&&
+            afterSale.items.length===shopCount&&!afterSale.items.some(x=>x.base==='mobile-vng-equipment-1')&&afterSale.version===5;
           document.querySelector('.nav[data-tab="city"]')?.click();
           q.closeBattle('city');
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;

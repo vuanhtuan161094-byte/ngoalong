@@ -130,12 +130,14 @@
         '<div class="nli-buttons">'+
         (isWorn?'<button data-nli-action="unequip" data-uid="'+escape(uid)+'" data-slot="'+escape(worn[uid])+'">Tháo</button>':
           '<button data-nli-action="equip" data-uid="'+escape(uid)+'" '+(!allowed?'disabled':'')+'>Trang bị</button>')+
+        (row.mobileSale?'<button data-nli-action="sell" data-uid="'+escape(uid)+'" '+(isWorn?'disabled title="Tháo trang bị trước khi bán"':'')+'>Bán · '+money(row.mobileSale.amount)+' Bạc</button>':'')+
         (sourceEnhancement?'<label class="nli-upgrade-target">Đến Lv <input type="number" min="'+(level+1)+'" max="'+maxLevel+'" value="'+targetLevel+'" data-nli-reinforce-target="'+escape(uid)+'"></label>':'')+
         '<button data-nli-action="reinforce" data-uid="'+escape(uid)+'" data-target-level="'+(sourceEnhancement?targetLevel:'')+'" '+(!canReinforce?'disabled':'')+'>'+
         (rc?'Cường hóa'+(sourceEnhancement?' đến Lv '+targetLevel:'')+' · '+priceText(rc):'Cường hóa tối đa')+'</button>'+
         (sourceEnhancement?'<button disabled title="Bảng giá và hiệu ứng combat Tinh Luyện chưa được công khai đầy đủ">Tinh Luyện · cơ chế nguồn đang đối chiếu</button>':'<button data-nli-action="refine" data-uid="'+escape(uid)+'" '+(!canRefine?'disabled':'')+'>'+
         (fc!=null?'Tinh luyện · '+money(fc)+' bạc / '+needMat+' tinh khoáng':'Tinh luyện tối đa')+'</button>')+'</div>'+
         (sourceEnhancement?'<div class="nli-meta">Cường Hóa theo bảng Wiki Lv1–425. Giảm Bạc theo Cấp Chỉ huy mô phỏng: '+(rc?.discount?Math.round(rc.discount*100)+'%':'0%')+'; làm tròn từng cấp là giả định vì Wiki chỉ nêu mức giảm. Không áp dụng giảm giá công trình/khoa kỹ chưa có hệ số nguồn. Đá Tôi Luyện Wiki: '+(state.nlItemsV1?.stacks?.['mobile-vng-resource-res_62']||0)+'</div>':'')+
+        (row.mobileSale?'<div class="nli-meta">Giá trị bán theo Wiki; quy đổi thành Bạc là mô phỏng vì nguồn không ghi loại tiền.</div>':'')+
         (sourceRefine?sourceRefineDetail:'<div class="nli-meta">Tinh khoáng: '+haveMat+' · '+(canRefine?'Đủ nguyên liệu':'Chưa đủ điều kiện tinh luyện')+'</div>')+'</article>';
     }).join('');
     const shopCards=(shop?visible:[]).map(row=>{
@@ -194,6 +196,7 @@
       if(typeof rid!=='string'||!rid)throw new Error('RECEIPT_REQUIRED');
       const state=getState();
       const result=action==='buy'?inventory.buy(state,id,rid):
+        action==='sell'?inventory.sell(state,uid,rid):
         action==='equip'?inventory.equip(state,heroId,uid,rid):
         action==='unequip'?inventory.unequip(state,heroId,slot,rid):
         action==='reinforce'?inventory.reinforce(state,uid,rid):

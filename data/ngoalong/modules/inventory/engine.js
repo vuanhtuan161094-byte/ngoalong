@@ -219,6 +219,24 @@
         return { heroId, uid, slot };
       });
     }
+    function sell(state, uid, receiptId) {
+      return execute(state, 'SELL_EQUIPMENT', receiptId, uid, (next) => {
+        const instance=equipmentInstance(next,uid),row=catalog[instance.base],sale=row.mobileSale;
+        assert(sale?.classification==='SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY'&&
+          integer(sale.amount,1)&&RESOURCES.has(sale.currency)&&
+          sale.currencyClassification==='SIMULATED','EQUIPMENT_NOT_SELLABLE');
+        assert(!Object.values(next.gear).some(slots=>
+          Object.values(slots||{}).some(equipped=>String(equipped)===String(uid))),
+          'EQUIPMENT_EQUIPPED');
+        const balance=next[sale.currency]||0;
+        assert(integer(balance)&&Number.isSafeInteger(balance+sale.amount),'RESOURCE_OVERFLOW');
+        const index=next.items.findIndex(x=>String(x.uid)===String(uid));
+        assert(index>=0,'EQUIPMENT_NOT_OWNED');
+        next.items.splice(index,1);next[sale.currency]=balance+sale.amount;
+        return {sold:instance.base,uid:instance.uid,amount:sale.amount,currency:sale.currency,
+          currencyClassification:sale.currencyClassification};
+      });
+    }
     function pay(state, costs) {
       for (const [resource, amount] of Object.entries(costs)) {
         assert(RESOURCES.has(resource) && integer(amount), 'INVALID_COST');
@@ -391,7 +409,7 @@
       for (const key of STATS) result[key] += setStats[key];
       return result;
     }
-    return { grant, buy, equip, unequip, reinforce, reinforcementCost, refine, use, bonuses, sets, validateState: checkOwned };
+    return { grant, buy, equip, unequip, sell, reinforce, reinforcementCost, refine, use, bonuses, sets, validateState: checkOwned };
   }
   return { createModule, validateCatalogue };
 });

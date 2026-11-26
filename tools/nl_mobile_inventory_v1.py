@@ -284,6 +284,10 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                 "classification": "SOURCE_EXACT_DATA_WITH_RUNTIME_EFFECTS_UNRESOLVED",
                 "slot": str(row.get("type")), "sourcePools": refinements.get(str(row.get("type"))),
             },
+            "mobileSale": {"classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+                           "amount": int(row.get("sell") or 0), "currency": "silver",
+                           "currencyClassification": "SIMULATED",
+                           "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."},
             "acquisitionRule": ({"kind": "SHOP", "classification": "SOURCE_EXACT",
                                  "shopCost": equipment_shop_costs[ident]["shopCost"],
                                  "shopMaterials": equipment_shop_costs[ident]["shopMaterials"],
@@ -384,7 +388,8 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                          "qualityTiers": len(tiers), "refinementSlots": len(refinements),
                          "campaignDropRows": len(drop_rows),
                          "equipmentReverseDropRows": usage_drop_counts["total"],
-                         "equipmentPurchaseCostRows": len(equipment_cost_crosswalk)},
+                         "equipmentPurchaseCostRows": len(equipment_cost_crosswalk),
+                         "equipmentSellValueRows": sum("sell" in row for row in source_equipment)},
         "equipTiers": tiers, "equipRefine": refinements,
         "equipment": source_equipment, "items": source_items,
         "sourceItemIndex": item_index,
@@ -397,6 +402,10 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                                         "unresolvedCostRows": len(unresolved_equipment_costs),
                                         "byCostType": cost_type_counts},
         "unresolvedEquipmentPurchaseCosts": unresolved_equipment_costs,
+        "equipmentSellAudit": {"sourceRows": sum("sell" in row for row in source_equipment),
+                               "positiveValues": sum(int(row.get("sell") or 0) > 0 for row in source_equipment),
+                               "runtimeSellValues": sum(bool(row.get("mobileSale")) for row in runtime_equipment),
+                               "runtimeCurrency": "silver", "currencyClassification": "SIMULATED"},
         "runtimeEquipment": runtime_equipment, "runtimeMaterials": runtime_materials,
         "runtimeCounts": {"activeSourceEquipment": len(runtime_equipment),
                           "activeSourceMaterials": len(runtime_materials),
@@ -415,6 +424,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
             "reinforcementFormula": "For each destination level e: G=1/600; floor(inc*coef*e*(0.22+e*e*G)*qualityCoef*G + 5*e + 3*inc); double Bạc when e>=200. Sum e=current+1..target. Tranh Ngọc: 0 through e=200; 40*ceil((e-200)/10) through 260; e above 260.",
             "reinforcementDiscount": "Wiki client text: account level >=200 reduces Bạc by 5%; >=300 reduces Bạc by 10%. Save v5 uses simulated mobileCommanderLevel as the account-level adapter; per-destination-level floor and that adapter are not source verified. Building/technology discounts have no published coefficients and are not applied.",
             "runtimeDropRoll": "SOURCE_EXACT per-NPC item and rate; DERIVED_FROM_SOURCE independent P2 seeded roll using rate/100. Quantity is omitted by the source and defaults to one (SIMULATED).",
+            "equipmentSale": "Sell amount is SOURCE_EXACT. Source field omits the currency; runtime pays Bạc as SIMULATED currency mapping.",
             "refinementActivation": "UNRESOLVED: raw exact property pools are retained. Mobile Wiki client says rates are chances per roll, but slot 6 'so' sums to 1.10 and slot 7 'cao' sums to 1.08; runtime activation/cost and combat semantics require a source-consistent rule.",
         "unresolvedCampaignDrops": "12 rows have no unique item detail/resource binding (including id 0 'Sách Vạn Năng' and generic 'Nguyên liệu'); preserved but not granted.",
         },
@@ -433,6 +443,7 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
         ("/runtime/requiredHeroLevel", "not published in inspected Mobile data; permit from level 1", "SIMULATED"),
         ("/equip-detail/items/*/usage/drops", "reverse NPC/map drop reference; compared with NPC-owned source drop", "SOURCE_EXACT"),
         ("/equip-detail/items/cost,costType,costName", "source shop cost using verified resource IDs or unresolved ledger", "SOURCE_EXACT"),
+        ("/equip-detail/items/sell", "source sell amount; currency is not exposed and is mapped to Bạc", "DERIVED_FROM_SOURCE"),
         ("/equip-detail/equipRefine", "all exact slot/pool property values and rates", "SOURCE_EXACT"),
         ("/campaign/{map}/vn/npcs/*/drops", "NPC drop ID/name/category/rate", "SOURCE_EXACT"),
         ("/campaign/{map}/vn/npcs/*/drops/quantity", "quantity per drop", "SIMULATED_DEFAULT_ONE"),
@@ -443,6 +454,8 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
             runtime_status = "REVERSE_SOURCE_CROSSWALK_ONLY_NPC_OWNED_DROP_IS_RUNTIME_AUTHORITY"
         elif pointer == "/equip-detail/items/cost,costType,costName":
             runtime_status = "96_EXACT_RESOURCE_BINDINGS_APPLIED;_22_COST_TYPE_ZERO_ROWS_UNRESOLVED"
+        elif pointer == "/equip-detail/items/sell":
+            runtime_status = "EXACT_AMOUNT_APPLIED;_CURRENCY_BAC_IS_SIMULATED_MAPPING"
         else:
             runtime_status = "APPLIED"
         fields.append({"sourcePointer": pointer, "sourcePage": PAGE, "sourceClassification": classification,
@@ -460,7 +473,8 @@ def normalize(root: Path = ROOT) -> tuple[dict, dict]:
                                                      "sourceExact": len(equipment_shop_costs),
                                                      "unresolved": len(unresolved_equipment_costs),
                                                      "runtimeSourceEquipment": len(runtime_equipment),
-                                                     "runtimeSourceMaterials": len(runtime_materials)}},
+                                                     "runtimeSourceMaterials": len(runtime_materials)},
+                           "equipmentSellAudit": module["equipmentSellAudit"]},
         "refinementRateSums": refine_sums, "fields": fields,
         "runtimeAdapters": module["runtimeAdapters"],
         "unresolvedCampaignDrops": unresolved,
@@ -485,7 +499,8 @@ def write(check: bool = False) -> None:
           f"{counts['npcNotCaptured'] + counts['npcFoundDropNotMatched']} unresolved), " +
           f"{costs['sourceExactShopRows']} source-exact shop costs, {costs['unresolvedCostRows']} unresolved costs, " +
           f"{module['runtimeCounts']['activeSourceEquipment']} active source gear, " +
-          f"{module['runtimeCounts']['activeSourceMaterials']} source materials, 12 unresolved drops.")
+          f"{module['runtimeCounts']['activeSourceMaterials']} source materials, " +
+          f"{module['equipmentSellAudit']['runtimeSellValues']} source sell values, 12 unresolved drops.")
 
 
 def main() -> int:

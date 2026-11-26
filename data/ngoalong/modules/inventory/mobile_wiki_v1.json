@@ -22,7 +22,8 @@
     "refinementSlots": 7,
     "campaignDropRows": 893,
     "equipmentReverseDropRows": 680,
-    "equipmentPurchaseCostRows": 118
+    "equipmentPurchaseCostRows": 118,
+    "equipmentSellValueRows": 399
   },
   "equipTiers": {
     "1": {
@@ -95733,6 +95734,13 @@
       "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
     }
   ],
+  "equipmentSellAudit": {
+    "sourceRows": 399,
+    "positiveValues": 399,
+    "runtimeSellValues": 114,
+    "runtimeCurrency": "silver",
+    "currencyClassification": "SIMULATED"
+  },
   "runtimeEquipment": [
     {
       "id": "mobile-vng-equipment-1",
@@ -95938,6 +95946,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 13,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -96173,6 +96188,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 600,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -96406,6 +96428,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1620,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -96641,6 +96670,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2700,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -96874,6 +96910,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3720,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -97109,6 +97152,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -97342,6 +97392,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 6600,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -97577,6 +97634,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 8100,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -97810,6 +97874,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 9300,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -98045,6 +98116,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10800,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -98279,6 +98357,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 32,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -98506,6 +98591,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -98746,6 +98838,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 80,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -98985,6 +99084,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -99218,6 +99324,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 600,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -99453,6 +99566,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1620,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -99686,6 +99806,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2700,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -99921,6 +100048,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3720,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -100154,6 +100288,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -100389,6 +100530,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 6600,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -100622,6 +100770,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 8100,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -100857,6 +101012,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 9300,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -101090,6 +101252,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10800,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -101325,6 +101494,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 30,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -101552,6 +101728,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 48,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -101792,6 +101975,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 64,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -102031,6 +102221,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -102264,6 +102461,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -102499,6 +102703,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -102732,6 +102943,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3360,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -102967,6 +103185,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5040,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -103200,6 +103425,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 7200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -103435,6 +103667,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 40,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -103662,6 +103901,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -103902,6 +104148,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -104135,6 +104388,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -104370,6 +104630,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -104603,6 +104870,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3360,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -104838,6 +105112,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5040,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -105071,6 +105352,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 7200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -105306,6 +105594,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 40,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -105533,6 +105828,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -105773,6 +106075,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -106006,6 +106315,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -106241,6 +106557,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -106474,6 +106797,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3360,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -106709,6 +107039,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5040,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -106942,6 +107279,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 7200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -107177,6 +107521,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 40,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -107404,6 +107755,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -107644,6 +108002,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -107877,6 +108242,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -108112,6 +108484,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -108345,6 +108724,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3360,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -108580,6 +108966,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5040,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -108813,6 +109206,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 7200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -109048,6 +109448,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 40,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -109275,6 +109682,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -109562,6 +109976,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -109842,6 +110263,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 3600,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -110124,6 +110552,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 4200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -110404,6 +110839,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 4800,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -110686,6 +111128,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -110966,6 +111415,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 6000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -111248,6 +111704,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 5400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -111528,6 +111991,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 6400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -111810,6 +112280,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 7400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -112090,6 +112567,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 9000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -112372,6 +112856,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -112652,6 +113143,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 56,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -112934,6 +113432,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 12000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -113214,6 +113719,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 14000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -113496,6 +114008,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 15000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -113776,6 +114295,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 16000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -114058,6 +114584,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 18000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -114338,6 +114871,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 20000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -114620,6 +115160,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 24000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -114900,6 +115447,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 27000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -115182,6 +115736,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 30000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -115462,6 +116023,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 33000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -115744,6 +116312,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 36000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -116024,6 +116599,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 38000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -116306,6 +116888,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 42000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -116587,6 +117176,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 48000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -116867,6 +117463,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 116,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -117154,6 +117757,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 140,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -117393,6 +118003,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 64,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -117621,6 +118238,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 60,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -117848,6 +118472,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 240,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -118088,6 +118719,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -118326,6 +118964,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 320,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -118566,6 +119211,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -118804,6 +119456,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 220,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -119044,6 +119703,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 240,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -119282,6 +119948,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 240,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -119522,6 +120195,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -119760,6 +120440,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -120000,6 +120687,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 220,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -120238,6 +120932,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 240,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -120478,6 +121179,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 280,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -120717,6 +121425,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -120955,6 +121670,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 220,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "SHOP",
@@ -121242,6 +121964,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 200,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -121528,6 +122257,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 240,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "SHOP",
         "classification": "SOURCE_EXACT",
@@ -121767,6 +122503,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 500,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -121994,6 +122737,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
@@ -122223,6 +122973,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -122450,6 +123207,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 500,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
@@ -122726,6 +123490,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 1000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -122954,6 +123725,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 4000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -123181,6 +123959,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 2400,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
@@ -123457,6 +124242,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 4000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -123732,6 +124524,13 @@
           ]
         }
       },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 10000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
+      },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
         "classification": "SOURCE_EXACT"
@@ -124006,6 +124805,13 @@
             }
           ]
         }
+      },
+      "mobileSale": {
+        "classification": "SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY",
+        "amount": 16000,
+        "currency": "silver",
+        "currencyClassification": "SIMULATED",
+        "currencyReason": "Wiki sell value has no currency field; runtime maps it to Bạc."
       },
       "acquisitionRule": {
         "kind": "MOBILE_DROP",
@@ -125152,6 +125958,7 @@
     "reinforcementFormula": "For each destination level e: G=1/600; floor(inc*coef*e*(0.22+e*e*G)*qualityCoef*G + 5*e + 3*inc); double Bạc when e>=200. Sum e=current+1..target. Tranh Ngọc: 0 through e=200; 40*ceil((e-200)/10) through 260; e above 260.",
     "reinforcementDiscount": "Wiki client text: account level >=200 reduces Bạc by 5%; >=300 reduces Bạc by 10%. Save v5 uses simulated mobileCommanderLevel as the account-level adapter; per-destination-level floor and that adapter are not source verified. Building/technology discounts have no published coefficients and are not applied.",
     "runtimeDropRoll": "SOURCE_EXACT per-NPC item and rate; DERIVED_FROM_SOURCE independent P2 seeded roll using rate/100. Quantity is omitted by the source and defaults to one (SIMULATED).",
+    "equipmentSale": "Sell amount is SOURCE_EXACT. Source field omits the currency; runtime pays Bạc as SIMULATED currency mapping.",
     "refinementActivation": "UNRESOLVED: raw exact property pools are retained. Mobile Wiki client says rates are chances per roll, but slot 6 'so' sums to 1.10 and slot 7 'cao' sums to 1.08; runtime activation/cost and combat semantics require a source-consistent rule.",
     "unresolvedCampaignDrops": "12 rows have no unique item detail/resource binding (including id 0 'Sách Vạn Năng' and generic 'Nguyên liệu'); preserved but not granted."
   }

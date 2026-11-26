@@ -35,6 +35,8 @@ test('Mobile Wiki inventory source rows are exact, stable and separately playabl
     rateDrift:5,npcNotCaptured:29,npcFoundDropNotMatched:33});
   assert.equal(source.runtimeEquipment.length,114);
   assert.equal(source.runtimeMaterials.length,34);
+  assert.deepEqual(source.equipmentSellAudit,{sourceRows:399,positiveValues:399,
+    runtimeSellValues:114,runtimeCurrency:'silver',currencyClassification:'SIMULATED'});
   assert.deepEqual(source.runtimeCounts,{activeSourceEquipment:114,activeSourceMaterials:34,
     campaignDropEquipment:36,sourceExactShopEquipment:96,dropBoundMaterials:30,
     dropBoundResourceCurrencies:3,currencyWithUnresolvedEarningRoute:1});
@@ -71,6 +73,27 @@ test('source shop purchases debit exact Bạc, Vàng and material prices atomica
   const failed=engine.buy(poor,gold.id,'mobile-shop:poor-gold');
   assert.equal(failed.code,'INSUFFICIENT_RESOURCES');
   assert.deepEqual(failed.state,poor);
+});
+
+test('source sale pays the exact Wiki amount, uses simulated Bạc mapping and forbids selling equipped gear',()=>{
+  const row=source.runtimeEquipment.find(x=>x.sourceId==='1');
+  const sourceRow=source.equipment.find(x=>String(x.id)==='1');
+  assert.equal(row.mobileSale.amount,sourceRow.sell);
+  let state=ok(engine.grant(fresh(),[{id:row.id,quantity:1}],'mobile-sale:grant'));
+  const uid=state.items[0].uid,before=state.silver;
+  const sold=engine.sell(state,uid,'mobile-sale:sell');
+  assert.equal(sold.ok,true,sold.code);
+  assert.equal(sold.detail.amount,sourceRow.sell);
+  assert.equal(sold.detail.currencyClassification,'SIMULATED');
+  assert.equal(sold.state.silver,before+sourceRow.sell);
+  assert.equal(sold.state.items.length,0);
+  assert.equal(engine.sell(sold.state,uid,'mobile-sale:sell').duplicate,true);
+
+  let worn=ok(engine.grant(fresh(),[{id:row.id,quantity:1}],'mobile-sale:worn-grant'));
+  const wornUid=worn.items[0].uid;worn=ok(engine.equip(worn,'liu',wornUid,'mobile-sale:equip'));
+  const rejected=engine.sell(worn,wornUid,'mobile-sale:equipped');
+  assert.equal(rejected.code,'EQUIPMENT_EQUIPPED');
+  assert.deepEqual(rejected.state,worn);
 });
 
 test('gold item rewards settle through the shared currency Save v5 field',()=>{
