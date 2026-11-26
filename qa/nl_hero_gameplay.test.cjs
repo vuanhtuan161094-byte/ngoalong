@@ -1,0 +1,40 @@
+// Gameplay-first contracts: real hero module, stubbed DOM and base P2/XP owners.
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.join(__dirname,'..');
+const source=fs.readFileSync(path.join(root,'tools/nl_hero_systems_v1.js'),'utf8');
+const config=JSON.parse(fs.readFileSync(path.join(root,'data/ngoalong/modules/heroes/hero_systems_v1.json'),'utf8'));
+const harness=`
+const structuredClone=x=>JSON.parse(JSON.stringify(x));
+let game={roster:['cao'],hero:{cao:{level:20,xp:0,troops:500}},cleared:Array.from({length:28},(_,i)=>i+1),silver:1000000,grain:1000000,iron:0,gems:0,nlClassicA:{merit:100000},buildings:{academy:5},gear:{},heroDevelopment:{heroes:{cao:{awakening:{orange:false,gold:false}}},materials:{}}};
+for(const k of Object.keys(config.materialCatalog))game.heroDevelopment.materials[k]=100;
+const dayId=()=> 'd1',save=()=>{},render=()=>{},toast=()=>{},log=()=>{},esc=String,fmt=String;let tasks=0;const countTask=()=>tasks++;
+const document={getElementById:()=>true,addEventListener:()=>{},querySelector:()=>null};
+const window={__P2_ENABLE_QA__:true};
+const nlClassicGrowthPolicy={cap:id=>game.nlClassicAdvanced?.growth?.[id]?.advanced?60:40,trainingBonus:()=>0};
+const addExp=(id,xp)=>{const h=game.hero[id];h.xp+=xp;while(h.level<nlClassicGrowthPolicy.cap(id)&&h.xp>=h.level*90){h.xp-=h.level*90;h.level++;}};
+let battle=null,p2Skill=()=>({tag:'Test',mult:1,drainMorale:20,applyChance:.3}),p2Unit=(id,team)=>({atk:1000,catk:1000,matk:1000,def:1000,tdef:1000,mdef:1000,hp:1000,maxHp:1000,speed:10}),finishBattle=()=>{},renderHeroes=()=>'',HEROES={cao:{name:'Tào Tháo'}},P2_SKILLS={cao:{tag:'Test',mult:1,drainMorale:20,applyChance:.3}};
+const NL_HERO207_BY_ID=new Map();
+const __NL_HERO_SYSTEM_CONFIG__=config,__NL_HERO_ART__={},__NL_HERO_SYSTEM_STYLE__='';
+`;
+const checks=`
+const q=window.__NL_HERO_SYSTEMS_QA__,out={};
+let silver=game.silver,merit=game.nlClassicA.merit;out.commander=q.upgrade('commander','cao')&&game.silver===silver-1000&&game.nlClassicA.merit===merit-60&&game.iron===0;
+silver=game.silver;merit=game.nlClassicA.merit;out.skill=q.skillUpgrade('cao')&&q.state().heroes.cao.skillLevel===2&&game.silver===silver-500&&game.nlClassicA.merit===merit-20;
+out.skillNative=p2Skill({id:'cao',team:'p'}).mult===1.035&&p2Skill({id:'cao',team:'e'}).mult===1;
+out.skillUnchanged=P2_SKILLS.cao.mult===1;
+battle={mode:'campaign'};out.skillBlocked=!q.skillUpgrade('cao')&&!q.pickDestiny('war','cao');battle=null;
+silver=game.silver;out.train=q.trainBatch('cao',5)&&game.silver===silver-3500&&tasks===5&&game.hero.cao.xp===775;
+out.invalidBatch=!q.trainBatch('cao',99);
+game.hero.cao.level=40;game.hero.cao.xp=0;out.normalCap=!q.trainBatch('cao',1);
+game.nlClassicAdvanced={growth:{cao:{advanced:true}}};silver=game.silver;merit=game.nlClassicA.merit;out.advanced=q.trainBatch('cao',10)&&game.hero.cao.level===42&&game.silver===silver-9000&&game.nlClassicA.merit===merit-600;
+game.hero.cao.level=59;game.hero.cao.xp=59*90-1;silver=game.silver;out.stopAtCap=q.trainBatch('cao',10)&&game.hero.cao.level===60&&game.silver===silver-900&&!q.trainBatch('cao',1);
+out.orange=q.upgrade('awakening','cao','orange')&&game.gems===0;
+out.gold=q.upgrade('awakening','cao','gold')&&game.gems===0;
+out.ancient=q.ancientUpgrade('cao');out.illusion=q.illusionChoose('cao','assault');game=structuredClone(game);out.save=q.state().heroes.cao.skillLevel===2&&q.state().heroes.cao.ancientLevel===1&&q.state().heroes.cao.illusionMode==='assault';
+return out;
+`;
+const result=new Function('config',harness+source+'\n'+checks)(config);
+for(const [name,value] of Object.entries(result))test('hero gameplay '+name,()=>assert.equal(value,true));
