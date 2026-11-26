@@ -11,7 +11,34 @@ if(NL_MOBILE_INVENTORY?.sourceCounts?.equipment!==399||NL_MOBILE_INVENTORY?.sour
    NL_MOBILE_INVENTORY.runtimeCounts?.activeSourceMaterials!==34||
    NL_MOBILE_INVENTORY.runtimeEquipment?.length!==114||NL_MOBILE_INVENTORY.runtimeMaterials?.length!==34)
   throw new Error('NL_MOBILE_INVENTORY_SOURCE_COVERAGE_MISMATCH');
-NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment);
+// Keep the immutable normalized source routes separate from the offline merchant adapter.
+function nlMobileFallbackEquipment(source){
+ const exact=new Set(source.runtimeEquipment.map(x=>String(x.sourceId))),slots={1:'weapon',2:'armor',3:'horse',4:'book',5:'cloak',6:'shield',7:'artifact'};
+ const labels={'Vật Công':'atk','Pháp Công':'catk','Mưu Công':'matk','Vật Phòng':'def','Pháp Phòng':'tdef','Mưu Phòng':'mdef','Lính':'hp','Bạo Kích':'crit','Phản Kích':'counter','Né Tránh':'dodge'};
+ return source.equipment.filter(row=>!exact.has(String(row.id))).map(row=>{
+  const stats=Object.fromEntries([...Object.values(labels),'int'].map(k=>[k,0]));
+  for(const a of row.stats||[])if(labels[a.label])stats[labels[a.label]]=Math.max(0,Math.trunc(a.base||0));
+  const quality=source.equipTiers[String(row.quality)]||{},sell=Math.max(1,Math.trunc(row.sell||0));
+  // Original cost and currency code are preserved even when unresolved. No fake source price.
+  const price=Math.max(sell+1,Math.ceil(sell*1.35),500*(1+Number(row.quality||0)));
+  return {id:'mobile-vng-equipment-'+row.id,sourceId:String(row.id),name:row.name,category:'equipment',integration:'PLAYABLE',
+   sourceEdition:'CURRENT_VNG_MOBILE_WIKI',sourceGroup:row.qualityName||'',displayedLevel:row.level,requiredLevel:1,
+   slot:slots[row.type],rarity:row.qualityName||'Thường',stats,sourceStats:row.stats,sourceQuality:row.quality,
+   sourceType:row.type,sourceTypeName:row.typeName,sourceDesc:row.desc||'',sourceIcon:row.icon,
+   sourceAcquisition:{cost:row.cost,costType:row.costType,costName:row.costName,usage:row.usage,upgradeFrom:row.upgradeFrom,upgradeTo:row.upgradeTo},
+   mobileEnhancement:{classification:'SOURCE_EXACT',maxLevel:425,inc:row.cuongHoa.inc,coef:row.cuongHoa.coef,
+    qualityCoef:quality.coef||1,tierName:quality.name||row.qualityName,statScale:.001,formulaId:'VNG_WIKI_BAC_CUONG_HOA_V1'},
+   mobileRefinement:{classification:'SOURCE_EXACT_DATA_WITH_RUNTIME_EFFECTS_UNRESOLVED',slot:String(row.type),sourcePools:source.equipRefine[String(row.type)]},
+   mobileSale:{classification:'SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY',amount:sell,currency:'silver',currencyClassification:'SIMULATED'},
+   acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:Math.max(10,Math.min(440,Number(row.level)||10)),shopCost:{silver:price},shopMaterials:[]},
+   enhancementRule:{kind:'MOBILE_WIKI_EXACT',maxLevel:425},
+   fieldProvenance:{name:'SOURCE_EXACT',sourceStats:'SOURCE_EXACT',stats:'DERIVED_FROM_SOURCE',enhancementRule:'SOURCE_EXACT',acquisitionRule:'SIMULATED_FALLBACK'},
+   provenance:{classification:'SOURCE_EXACT',sourceId:'mobile-wiki-equip-detail'}};
+ });
+}
+const NL_MOBILE_FALLBACK_GEAR=nlMobileFallbackEquipment(NL_MOBILE_INVENTORY);
+if(NL_MOBILE_FALLBACK_GEAR.length!==285)throw Error('MOBILE_FALLBACK_GEAR_COUNT_DRIFT');
+NL_ITEM_CATALOGUE.equipment.push(...NL_MOBILE_INVENTORY.runtimeEquipment,...NL_MOBILE_FALLBACK_GEAR);
 NL_ITEM_CATALOGUE.items.push(...NL_MOBILE_INVENTORY.runtimeMaterials);
 const NL_ITEM_RULES = __NL_ITEMS_RULES__;
 // UI-only access to upgrade costs; authoritative mechanics remain in engine.js.
@@ -21,10 +48,10 @@ const nlItemConsumableApi=window.NLItemConsumables.createModule(NL_ITEM_CATALOGU
 const nlItemWarehouseView={mode:'bag',category:'all',search:'',page:0};
 const nlItemApi = window.NLItemInventory.createModule(NL_ITEM_CATALOGUE, NL_ITEM_RULES);
 const nlItemModels = NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'PLAYABLE');
-if (nlItemModels.length !== 525 ||
+if (nlItemModels.length !== 810 ||
     NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='PLAYABLE'&&x.provenance?.classification==='SIMULATED').length!==411||
     NL_ITEM_CATALOGUE.equipment.filter(x => x.integration === 'REFERENCE_ONLY').length !== 392) {
-  throw new Error('NL_ITEMS_411_PROJECT_PLUS_114_MOBILE_OR_392_REFERENCE_COVERAGE_MISMATCH');
+  throw new Error('NL_ITEMS_411_PROJECT_PLUS_399_MOBILE_OR_392_REFERENCE_COVERAGE_MISMATCH');
 }
 for (const item of nlItemModels) {
   // Old 19 IDs and stats stay byte-for-byte equivalent to their R03 pack.
@@ -325,7 +352,7 @@ document.addEventListener('input',function(ev){
 },true);
 if(window.__P2_ENABLE_QA__){
   window.__NL_ITEM_QA__={
-    getCounts:()=>({playable:nlItemModels.length,projectPlayable:411,mobilePlayable:NL_MOBILE_INVENTORY.runtimeEquipment.length,
+    getCounts:()=>({playable:nlItemModels.length,projectPlayable:411,mobilePlayable:NL_MOBILE_INVENTORY.runtimeEquipment.length+NL_MOBILE_FALLBACK_GEAR.length,sourceRouteGear:NL_MOBILE_INVENTORY.runtimeEquipment.length,fallbackRouteGear:NL_MOBILE_FALLBACK_GEAR.length,
       references:NL_ITEM_CATALOGUE.equipment.filter(x=>x.integration==='REFERENCE_ONLY').length}),
     getItemCounts:()=>({
       playable:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='PLAYABLE').length,
@@ -346,7 +373,7 @@ if(window.__P2_ENABLE_QA__){
     state:()=>structuredClone(game.nlItemsV1),
     equipOwned:nlItemQaEquipOwned,
     mobileSource:()=>({equipment:NL_MOBILE_INVENTORY.sourceCounts.equipment,items:NL_MOBILE_INVENTORY.sourceCounts.items,
-      drops:NL_MOBILE_INVENTORY.sourceCounts.campaignDropRows,activeEquipment:NL_MOBILE_INVENTORY.runtimeEquipment.length,
+      drops:NL_MOBILE_INVENTORY.sourceCounts.campaignDropRows,activeEquipment:NL_MOBILE_INVENTORY.runtimeEquipment.length+NL_MOBILE_FALLBACK_GEAR.length,sourceRouteEquipment:NL_MOBILE_INVENTORY.runtimeEquipment.length,fallbackRouteEquipment:NL_MOBILE_FALLBACK_GEAR.length,
       activeMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceShopCosts:NL_MOBILE_INVENTORY.equipmentPurchaseCostCounts.sourceExactShopRows,
       unresolvedCostTypes:NL_MOBILE_INVENTORY.equipmentPurchaseCostCounts.unresolvedCostRows,
       reverseDropAudit:NL_MOBILE_INVENTORY.equipmentUsageDropCounts}),
