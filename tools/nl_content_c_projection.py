@@ -182,6 +182,15 @@ def build(root):
     mobile_tech=pinned_mobile("data/advtech-detail.json")
     mobile_beauties=pinned_mobile("data/women-detail.json")
     mobile_children=pinned_mobile("data/children-detail.json")
+    mobile_books=pinned_mobile("data/books-detail.json")
+    mobile_horses=pinned_mobile("data/horse-detail.json")
+    mobile_etch=pinned_mobile("data/khac-van-detail.json")
+    if len(mobile_books["books"])!=11 or len(mobile_horses["horses"])!=19 or len(mobile_etch["items"])!=129:
+        raise ValueError("Mobile book/horse/etch source coverage drift")
+    for book in mobile_books["books"]:
+        if len(book["grades"])!=5 or sum(g["frag"] for g in book["grades"])!=book["fragment"] or sum(g["exp"] for g in book["grades"])!=book["exp"]:
+            raise ValueError("Mobile book source totals mismatch")
+
     if mobile_children.get("order")!=["xuatSu","thucTinh","renLuyen","chuChinh","giamQuoc"]:
         raise ValueError("Mobile children stage order drift")
     if len(mobile_beauties["beauties"])!=47 or any(len(b["growth"])!=221 for b in mobile_beauties["beauties"].values()):
@@ -338,6 +347,7 @@ def build(root):
             "mobileAdvancedTech":mobile_tech,
             "mobileBeauties":mobile_beauties,
             "mobileChildren":mobile_children,
+            "mobileBooks":mobile_books,"mobileHorses":mobile_horses,"mobileEtch":mobile_etch,
             "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,
             "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
             "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileTroops":408,"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
