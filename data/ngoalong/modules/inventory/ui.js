@@ -142,12 +142,14 @@
     }).join('');
     const shopCards=(shop?visible:[]).map(row=>{
         const cost={...(row.acquisitionRule.shopCost||{}),materials:row.acquisitionRule.shopMaterials||[]};
+        const fallback=row.acquisitionRule.classification==='SIMULATED_FALLBACK',min=row.acquisitionRule.minCommander||1;
+        const locked=fallback&&Math.max(10,Number(state.nlContentC?.mobileCommanderLevel)||10)<min;
         return '<article class="nli-gear" data-nl-art-item="'+escape(row.id)+'" data-nl-art-kind="'+escape(row.slot)+'" data-nl-art-rarity="'+escape(row.rarity)+'"><header><strong>'+escape(row.name)+'</strong><span>'+
           escape(row.rarity)+'</span></header><small>'+escape(SLOTS.find(s=>s[0]===row.slot)?.[1]||row.slot)+
-          (row.mobileEnhancement?' · Cấp Wiki '+money(row.displayedLevel||0)+' · yêu cầu Chỉ huy Lv1 (mô phỏng)':' · Cấp '+row.requiredLevel)+'</small><p>'+byStat(row.stats)+'</p>'+
+          (row.mobileEnhancement?' · Cấp Wiki '+money(row.displayedLevel||0)+(fallback?' · Thương nhân bổ sung (mô phỏng), Chỉ huy '+min:' · Giá nguồn Wiki'):' · Cấp '+row.requiredLevel)+'</small><p>'+byStat(row.stats)+'</p>'+
           '<div class="nli-buttons"><span>'+priceText(cost,' · ')+'</span>'+
           '<button data-nli-action="buy" data-item="'+escape(row.id)+'" '+
-          (!affordable(state,cost)?'disabled':'')+'>Mua</button></div></article>';
+          (locked||!affordable(state,cost)?'disabled':'')+'>'+(locked?'Chưa mở':'Mua')+'</button></div></article>';
       }).join('');
     return '<style data-nli-style="1">'+STYLES+'</style>'+
       '<section class="nli-panel" data-nli-root="1" aria-label="Trang bị">'+
