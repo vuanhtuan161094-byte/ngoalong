@@ -44,7 +44,7 @@ def main():
           for(let mapId=1;mapId<=400;mapId++){
             const map=c.map('wiki-map-'+mapId);if(!map)continue;
             for(const npc of map.npcs||[])for(const unit of npc.units||[]){
-              for(const id of ['50','58']){
+              for(const id of ['33','50','58','74']){
                 if(sourceStatusSamples[id])continue;
                 const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                 const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
@@ -254,6 +254,20 @@ def main():
             lastStand58?.app?.formulaClassification==='SOURCE_MAGNITUDE_WITH_SIMULATED_LINEAR_INTERPOLATION'&&lastStandApplied&&
             Math.abs(c.p2StatusFactor(lastStandUnit,'incomingDefenseMultiplier')-(1+lastStand58.app.values.defenseBonusAtZeroTroops*.5))<1e-9;
           checks.mobileSourceLastStandLowestAllyTarget=lastStandTarget58?.app?.scope==='lowest-ally'&&lastStandTarget58?.app?.turns===3;
+          const moonSoul33=sourceStatusSamples['33'],healingVitality74=sourceStatusSamples['74'];
+          const moraleProtected={morale:80,effects:[],team:'p',slot:0};
+          const moraleProtectedApplied=!!moonSoul33?.app&&c.applyMobileSourceStatus(moraleProtected,moonSoul33.app);
+          if(moraleProtectedApplied)c.p2Morale(moraleProtected,-25);
+          checks.mobileSourceMoonSoulBlocksMoraleLoss=moonSoul33?.app?.scope==='self'&&moonSoul33?.app?.values.moraleLossMultiplier===0&&
+            moraleProtectedApplied&&moraleProtected.morale===80;
+          const healer=c.p2Unit(id,'p',0,1),plainRecipient=c.p2Unit(id,'p',1,1),buffedRecipient=plainRecipient&&structuredClone(plainRecipient);
+          if(plainRecipient&&buffedRecipient){plainRecipient.hp=Math.floor(plainRecipient.maxHp*.5);buffedRecipient.hp=plainRecipient.hp;}
+          const healingBuffApplied=!!buffedRecipient&&!!healingVitality74?.app&&c.applyMobileSourceStatus(buffedRecipient,healingVitality74.app);
+          const plainSourceHeal=healer&&plainRecipient?c.p2Heal(healer,plainRecipient,.5):null;
+          const buffedSourceHeal=healer&&buffedRecipient?c.p2Heal(healer,buffedRecipient,.5):null;
+          checks.mobileSourceHealingReceivedBuff=healingVitality74?.app?.scope==='allies'&&healingVitality74?.app?.values.incomingHealingMultiplier>1&&
+            healingVitality74?.app?.formulaClassification==='SOURCE_PERCENT_WITH_DERIVED_HEAL_RECEIVED_ADAPTER'&&healingBuffApplied&&
+            plainSourceHeal?.amount>0&&buffedSourceHeal?.amount===Math.round(plainSourceHeal.amount*healingVitality74.app.values.incomingHealingMultiplier);
           checks.mobileSourceDefenseDiagnostics={guard50:guard50&&{mapId:guard50.mapId,detail:guard50.effect.detail,app:guard50.app},lastStand58:lastStand58&&{mapId:lastStand58.mapId,detail:lastStand58.effect.detail,app:lastStand58.app},lowestAlly:lastStandTarget58&&{mapId:lastStandTarget58.mapId,detail:lastStandTarget58.effect.detail,app:lastStandTarget58.app}};
           checks.mobileSourcePurificationDescriptor=appOf(purificationDescriptor,'46')?.scope==='self'&&appOf(purificationDescriptor,'46')?.turns===2&&
             appOf(purificationDescriptor,'46')?.values.damageBonusPerBeneficialBuff===.2&&
