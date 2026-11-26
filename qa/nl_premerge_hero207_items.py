@@ -35,7 +35,7 @@ def run():
   browser=pw.chromium.launch(headless=True,executable_path=shutil.which("chromium"),args=["--no-sandbox","--disable-dev-shm-usage"])
   page=open_page(browser)
   checks_runtime=page.evaluate("()=>({hero:window.__NL_HERO207_QA__?.count,gear:window.__NL_ITEM_QA__?.getCounts(),v:window.__P2_QA__.getGame()?.version})")
-  check("both Heroes207 and Items modules coexist in same canonical HTML",checks_runtime.get("hero")==207 and checks_runtime.get("gear")=={"playable":411,"references":392} and checks_runtime.get("v")==5)
+  check("both Heroes207 and Items modules coexist in same canonical HTML",checks_runtime.get("hero")==207 and checks_runtime.get("gear",{}).get("playable")==810 and checks_runtime.get("gear",{}).get("mobilePlayable")==399 and checks_runtime.get("gear",{}).get("references")==392 and checks_runtime.get("v")==5)
   first=next((h for h in PACK["heroes"]["hero207Roster"] if PACK["heroes"]["hero207Unlocks"][h["id"]]["stage"]==1),None)
   check("first-stage recruit candidate is present",first is not None)
   if first is None:return 1
