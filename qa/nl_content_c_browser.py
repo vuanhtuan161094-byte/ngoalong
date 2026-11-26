@@ -35,7 +35,7 @@ def main():
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
               skillAudit.sourceExactMoraleAdapted>0&&skillAudit.sourceEffectUnits===18250&&
               skillAudit.sourceEffectRows===36480&&skillAudit.sourceEffectIds===134&&skillAudit.sourceEffectNames===134&&
-              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds===21&&
+              skillAudit.sourceStatusAdapted>3000&&skillAudit.sourceStatusAdaptedUnits>3000&&skillAudit.sourceStatusIds===24&&
               skillAudit.simulatedFallback>0&&skillAudit.sourceEdition==='CURRENT_VNG_MOBILE_WIKI_VIETNAMESE'};
           checks.mobileNpcSkillAuditStats=skillAudit;
           const mobileRoles={infantry:'1',spear:'10',cavalry:'11',archer:'12',strategist:'13'};
@@ -81,7 +81,10 @@ def main():
             purificationHighProbe=c.skillProbe('Huyền Tướng'),purificationHighDescriptor=purificationHighProbe&&c.describeSkill(purificationHighProbe.skill,'strategist',false,purificationHighProbe.effects),
             magicDefenseProbe=c.skillProbe('Đãng Bình'),magicDefenseDescriptor=magicDefenseProbe&&c.describeSkill(magicDefenseProbe.skill,'strategist',false,magicDefenseProbe.effects),
             tacticDefenseProbe=c.skillProbe('Long Tức'),tacticDefenseDescriptor=tacticDefenseProbe&&c.describeSkill(tacticDefenseProbe.skill,'strategist',false,tacticDefenseProbe.effects),
-            compoundDefenseProbe=c.skillProbe('Hủy Diệt'),compoundDefenseDescriptor=compoundDefenseProbe&&c.describeSkill(compoundDefenseProbe.skill,'strategist',false,compoundDefenseProbe.effects);
+            compoundDefenseProbe=c.skillProbe('Hủy Diệt'),compoundDefenseDescriptor=compoundDefenseProbe&&c.describeSkill(compoundDefenseProbe.skill,'strategist',false,compoundDefenseProbe.effects),
+            healingReductionProbe=c.skillProbe('Tru Tâm'),healingReductionDescriptor=healingReductionProbe&&c.describeSkill(healingReductionProbe.skill,'strategist',false,healingReductionProbe.effects),
+            lifestealProbe=c.skillProbe('Thị Chiến'),lifestealDescriptor=lifestealProbe&&c.describeSkill(lifestealProbe.skill,'infantry',false,lifestealProbe.effects),
+            shieldProbe=c.skillProbe('Bích Lũy'),shieldDescriptor=shieldProbe&&c.describeSkill(shieldProbe.skill,'support',false,shieldProbe.effects);
           const appOf=(descriptor,id)=>descriptor?.sourceApplications?.find(app=>app.sourceId===id);
           checks.mobileSourceControlDescriptor=controlDescriptor?.sourceApplications?.some(app=>app.sourceId==='2'&&app.kind==='mobile-source-control'&&app.scope==='targets'&&app.chance===.75&&app.turns===1);
           checks.mobileSourceGuardDescriptor=guardDescriptor?.sourceApplications?.some(app=>app.sourceId==='4'&&app.kind==='mobile-source-incoming'&&app.scope==='allies'&&app.values.incomingDamageMultiplier===.65&&app.turns===2);
@@ -97,7 +100,13 @@ def main():
             appOf(tacticDefenseDescriptor,'20')?.values.incomingTacticDefenseMultiplier===.6;
           checks.mobileSourceCompoundDefenseDescriptor=appOf(compoundDefenseDescriptor,'20')?.values.incomingTacticDefenseMultiplier===.7&&
             appOf(compoundDefenseDescriptor,'20')?.values.incomingPhysicalDefenseMultiplier===.7;
-          checks.mobileSourceDefenseStatusCoverage=skillAudit.sourceStatusIds===21;
+          checks.mobileSourceDefenseStatusCoverage=skillAudit.sourceStatusIds===24;
+          checks.mobileSourceHealingReductionDescriptor=appOf(healingReductionDescriptor,'30')?.scope==='targets'&&appOf(healingReductionDescriptor,'30')?.turns===2&&
+            appOf(healingReductionDescriptor,'30')?.values.incomingHealingMultiplier===.5;
+          checks.mobileSourceLifestealDescriptor=appOf(lifestealDescriptor,'31')?.scope==='self'&&appOf(lifestealDescriptor,'31')?.turns===3&&
+            appOf(lifestealDescriptor,'31')?.values.lifestealDamageMultiplier===.2&&appOf(lifestealDescriptor,'31')?.formulaClassification==='DERIVED_FROM_SOURCE_DAMAGE_RATIO';
+          checks.mobileSourceShieldDescriptor=appOf(shieldDescriptor,'37')?.scope==='allies'&&appOf(shieldDescriptor,'37')?.turns===2&&
+            appOf(shieldDescriptor,'37')?.chance===.85&&appOf(shieldDescriptor,'37')?.values.damageBlockCharges===1;
           checks.mobileSourceConditionalControlDescriptor=deathDescriptor?.sourceConditionalMorale?.onKill===500&&deathDescriptor?.sourceConditionalMorale?.onSurvival===0&&
             deathDescriptor?.sourceConditionalMorale?.onAction===50&&deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.sourceId==='2'&&
             deathDescriptor?.sourceConditionalMorale?.onSurvivalStatus?.turns===1;
@@ -113,7 +122,7 @@ def main():
             appOf(purificationDescriptor,'46')?.values.damageBonusPerBeneficialBuff===.2&&
             appOf(purificationHighDescriptor,'46')?.scope==='self'&&appOf(purificationHighDescriptor,'46')?.turns===2&&
             appOf(purificationHighDescriptor,'46')?.values.damageBonusPerBeneficialBuff===1;
-          checks.mobileSourcePurificationCoverage=skillAudit.sourceStatusIds===21;
+          checks.mobileSourcePurificationCoverage=skillAudit.sourceStatusIds===24;
           checks.mobileSourceNoBuffDiagnostics=noBuffDescriptor?.sourceApplications||[];
           if(!b)return checks;
           const enemy=b.e[0],beforeNpcSkillEvents=b.events.length;enemy.morale=100;q.perform(enemy);
@@ -276,6 +285,37 @@ def main():
             checks.mobileSourceTacticDefenseInNativeCombat=event?.skill==='Long Tức'&&event?.kind==='tactic'&&!!status&&status.turns===2&&
               status.mobileSourceValues?.incomingTacticDefenseMultiplier===.6&&tacticCompare?.reduced>tacticCompare?.plain&&magicCompare?.reduced===magicCompare?.plain;
           }else checks.mobileSourceTacticDefenseInNativeCombat=false;
+          q.closeBattle('city');
+          const healBattle=launchStatusProbe(healingReductionProbe),healActor=healBattle?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Tru Tâm');
+          if(healBattle&&healActor){for(const unit of healBattle.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}healActor.matk=1000000;healActor.morale=100;q.perform(healActor);
+            const event=healBattle.events.at(-1),hit=event?.hits?.find(row=>row.team==='p'),target=hit&&healBattle.p.find(unit=>unit.slot===hit.slot),status=target?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='30');
+            if(target){const plain=structuredClone(target);plain.effects=plain.effects.filter(effect=>effect.mobileSource?.sourceEffectId!=='30');
+              plain.hp=0;target.hp=0;const fullHeal=c.p2Heal(healActor,plain,1),reducedHeal=c.p2Heal(healActor,target,1);
+              checks.mobileSourceHealingReductionInNativeCombat=event?.skill==='Tru Tâm'&&!!status&&status.turns===2&&status.mobileSourceValues?.incomingHealingMultiplier===.5&&
+                fullHeal.amount>0&&reducedHeal.amount===Math.round(fullHeal.amount*.5);
+            }else checks.mobileSourceHealingReductionInNativeCombat=false;
+          }else checks.mobileSourceHealingReductionInNativeCombat=false;
+          q.closeBattle('city');
+          const lifeBattle=launchStatusProbe(lifestealProbe),lifeActor=lifeBattle?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Thị Chiến');
+          if(lifeBattle&&lifeActor){for(const unit of lifeBattle.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}lifeActor.morale=100;q.perform(lifeActor);
+            const status=lifeActor.effects.find(effect=>effect.mobileSource?.sourceEffectId==='31');lifeActor.hp=lifeActor.maxHp-500000;
+            const hit=c.p2Hit(lifeActor,lifeBattle.p[0],'physical',1),healed=lifeActor.hp-(lifeActor.maxHp-500000),expected=Math.min(500000,Math.floor(hit.amount*.2));
+            checks.mobileSourceLifestealInNativeCombat=!!status&&status.turns===3&&status.mobileSourceValues?.lifestealDamageMultiplier===.2&&
+              hit.amount>0&&healed===expected&&hit.mobileSourceHealing===expected;
+          }else checks.mobileSourceLifestealInNativeCombat=false;
+          q.closeBattle('city');
+          const shieldBattle=launchStatusProbe(shieldProbe),shieldActor=shieldBattle?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Bích Lũy');
+          if(shieldBattle&&shieldActor){for(const unit of shieldBattle.p){unit.hp=unit.maxHp=100000000;unit.alive=true;}
+            const shieldApp=shieldActor.nlCDescriptor.sourceApplications.find(app=>app.sourceId==='37');if(shieldApp)shieldApp.chance=1;
+            shieldActor.morale=100;q.perform(shieldActor);const shielded=shieldBattle.e.find(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='37')),
+              status=shielded?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='37'),attacker=shieldBattle.p[0],
+              allLivingShieldedBeforeHit=shieldBattle.e.filter(unit=>unit.hp>0).every(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='37'));attacker.atk=1000000;
+            if(shielded&&status){const before=shielded.hp,blocked=c.p2Hit(attacker,shielded,'physical',1),afterBlock=shielded.hp,nextHit=c.p2Hit(attacker,shielded,'physical',1);
+              checks.mobileSourceOneHitShieldInNativeCombat=allLivingShieldedBeforeHit&&
+                status.turns===2&&blocked.mobileSourceShieldBlocked===true&&blocked.amount===0&&afterBlock===before&&
+                !shielded.effects.some(effect=>effect.mobileSource?.sourceEffectId==='37')&&nextHit.amount>0&&shielded.hp<before;
+            }else checks.mobileSourceOneHitShieldInNativeCombat=false;
+          }else checks.mobileSourceOneHitShieldInNativeCombat=false;
           q.closeBattle('city');
           const pb=launchStatusProbe(purificationProbe),pa=pb?.e?.find(unit=>unit.nlMobileSource?.sourceSkillName==='Long Uy');
           if(pb&&pa){

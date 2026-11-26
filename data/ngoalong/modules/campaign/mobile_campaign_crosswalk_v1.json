@@ -267,7 +267,7 @@
     ],
     "unknownSoldierIds": {}
   },
-  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and twenty-two selected status IDs are parsed into native P2 adapters, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
+  "classificationPolicy": "Source records are exact from the captured Vietnamese Wiki edition; the 320-entry buff catalogue is source-hash verified; campaign skill names/descriptions are preserved, simple coefficient/target text and twenty-five selected status IDs are parsed into native P2 adapters, unsupported secondary mechanics are unresolved or explicitly simulated, and P2 stat scaling remains project-adapted.",
   "fields": [
     {
       "sourcePointer": "/key",
@@ -408,7 +408,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/effects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 26, 46, 49, 70 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
+      "runtimeField": "exact unit effect IDs, names, descriptions and detail strings carried onto native units; IDs 2, 3, 4, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 30, 31, 37, 46, 49, 70 and 77 have selected native P2 status adapters when their skill text, target and duration are explicit; remaining IDs stay unresolved",
       "runtimeStatus": "SOURCE_EXACT_PRESERVED_PARTIAL_EFFECT_ADAPTER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
@@ -448,7 +448,7 @@
     {
       "sourcePointer": "/vn/npcs/formation/activeSkill/desc/secondaryEffects",
       "sourceClassification": "SOURCE_EXACT",
-      "runtimeField": "Thiết Bích maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Hội Tâm, physical/Pháp/Mưu attack up and down, all-attack up, Ám Tế, Tòng Long baseline attack, Giảm Vật Phòng (physical), Giảm Chiến Phòng (magic), Giảm Mưu Phòng (tactic and physical if both stats are named), Giảm Phòng Thủ (all), Giáng Thường Kích/Giảm Tấn Công, Ngủ Say, Tịnh Hóa, Anh Dũng and Hư Nhược are adapted from source effect rows and text; source cross-effect defense-debuff stacking is SIMULATED multiplicative; Tịnh Hóa uses source per-effect X and turns with distinct-active-buff counting marked SIMULATED; Tòng Long buff-count scaling remains unresolved; conditional kill/survival morale and source Hỗn Loạn-on-survival branch are applied; source low-troop damage scaling, other statuses, multi-hit rules and conditions remain unresolved",
+      "runtimeField": "Thiết Bích maps to damage-to-1; Hỗn Loạn, Thủ Hộ, Hội Tâm, physical/Pháp/Mưu attack up and down, all-attack up, Ám Tế, Tòng Long baseline attack, Giảm Vật Phòng (physical), Giảm Chiến Phòng (magic), Giảm Mưu Phòng (tactic and physical if both stats are named), Giảm Phòng Thủ (all), Giảm Trị Liệu (source healing reduction), Hấp Huyết (source damage ratio), Hộ Thuẫn (one hit), Giáng Thường Kích/Giảm Tấn Công, Ngủ Say, Tịnh Hóa, Anh Dũng and Hư Nhược are adapted from source effect rows and text; source cross-effect defense-debuff stacking is SIMULATED multiplicative; Hấp Huyết converts its exact ratio of final damage into healing (DERIVED_FROM_SOURCE); Tịnh Hóa uses source per-effect X and turns with distinct-active-buff counting marked SIMULATED; Tòng Long buff-count scaling remains unresolved; conditional kill/survival morale and source Hỗn Loạn-on-survival branch are applied; source low-troop damage scaling, other statuses, multi-hit rules and conditions remain unresolved",
       "runtimeStatus": "PARTIAL_SOURCE_STATUS_ADAPTER_WITH_UNRESOLVED_REMAINDER",
       "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/pho-ban-chi-tiet",
       "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE"
