@@ -386,8 +386,11 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_HEAL_REDUCTION_STATUS='mobile-source-heal-reduction',MOBILE_LIFESTEAL_STATUS='mobile-source-lifesteal',MOBILE_ONE_HIT_SHIELD_STATUS='mobile-source-one-hit-shield',
  MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
  MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs',MOBILE_BOOK_GUARD_STATUS='mobile-book-guard',MOBILE_BOOK_SHIELD_STATUS='mobile-book-shield',
- MOBILE_BOOK_BREAK='mobile-book-break',MOBILE_BOOK_BREAK2='mobile-book-break2',MOBILE_BOOK_SILENCE='mobile-book-silence',MOBILE_BOOK_ATTR='mobile-book-attr',MOBILE_BOOK_SPRING='mobile-book-spring',MOBILE_BOOK_MOON='mobile-book-moon',MOBILE_BOOK_IMMUNE='mobile-book-immune',MOBILE_BOOK_VITAL='mobile-book-vital',MOBILE_BOOK_MORALE_GUARD='mobile-book-morale-guard',MOBILE_SOURCE_NO_HEAL='mobile-source-no-heal',MOBILE_SOURCE_IMMUNITY='mobile-source-immunity',MOBILE_SOURCE_HALF_MORALE='mobile-source-half-morale',MOBILE_SOURCE_DEBUFF_IMMUNE='mobile-source-debuff-immune',MOBILE_SOURCE_COUNTER_UP='mobile-source-counter-up';
+ MOBILE_BOOK_BREAK='mobile-book-break',MOBILE_BOOK_BREAK2='mobile-book-break2',MOBILE_BOOK_SILENCE='mobile-book-silence',MOBILE_BOOK_ATTR='mobile-book-attr',MOBILE_BOOK_SPRING='mobile-book-spring',MOBILE_BOOK_MOON='mobile-book-moon',MOBILE_BOOK_IMMUNE='mobile-book-immune',MOBILE_BOOK_VITAL='mobile-book-vital',MOBILE_BOOK_MORALE_GUARD='mobile-book-morale-guard',MOBILE_SOURCE_NO_HEAL='mobile-source-no-heal',MOBILE_SOURCE_IMMUNITY='mobile-source-immunity',MOBILE_SOURCE_HALF_MORALE='mobile-source-half-morale',MOBILE_SOURCE_DEBUFF_IMMUNE='mobile-source-debuff-immune',MOBILE_SOURCE_COUNTER_UP='mobile-source-counter-up',MOBILE_SOURCE_DESERTION='mobile-source-desertion',MOBILE_SOURCE_MORALE_DOT='mobile-source-morale-dot',MOBILE_SOURCE_REGEN='mobile-source-regen';
 for(const [kind,spec] of Object.entries({
+ [MOBILE_SOURCE_DESERTION]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_SOURCE_MORALE_DOT]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
+ [MOBILE_SOURCE_REGEN]:{"duration":1,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
  [MOBILE_SOURCE_NO_HEAL]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
  [MOBILE_SOURCE_IMMUNITY]:{"duration":1,"polarity":"beneficial","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
  [MOBILE_SOURCE_HALF_MORALE]:{"duration":1,"polarity":"harmful","dispelPolicy":"removable","stackingPolicy":"replace-duration","expirePhase":"round-end","removeAfterOwnAction":false},
@@ -443,6 +446,9 @@ for(const [kind,spec] of Object.entries({
 const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '2':{kind:MOBILE_CONTROL_STATUS,mechanic:'one-action-control'},
  '6':{kind:MOBILE_SOURCE_COUNTER_UP,mechanic:'counter-increase'},
+ '8':{kind:MOBILE_SOURCE_DESERTION,mechanic:'periodic-desertion'},
+ '24':{kind:MOBILE_SOURCE_MORALE_DOT,mechanic:'periodic-morale-loss'},
+ '25':{kind:MOBILE_SOURCE_REGEN,mechanic:'periodic-healing'},
  '17':{kind:MOBILE_SOURCE_NO_HEAL,mechanic:'no-healing-received'},
  '23':{kind:MOBILE_SOURCE_IMMUNITY,mechanic:'reject-all-new-status'},
  '32':{kind:MOBILE_SOURCE_HALF_MORALE,mechanic:'half-morale-gain'},
@@ -727,7 +733,10 @@ function mobileSourceApplications(skill,effects){
   if(rule.mechanic==='no-morale-gain')app.values.moraleGainMultiplier=0;
   if(rule.mechanic==='half-morale-gain')app.values.moraleGainMultiplier=.5;
   if(rule.mechanic==='counter-increase'&&percent!==null)app.values.counterChanceAdd=percent;
-  const needsValue=['counter-increase','damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','magic-defense-reduction','tactic-defense-reduction','all-defense-reduction','dragon-attack-increase',
+  if(rule.mechanic==='periodic-desertion'&&percent!==null){app.values.currentTroopLossRatio=Math.min(1,percent);app.formulaClassification='SIMULATED_CURRENT_HP_RATIO';}
+  if(rule.mechanic==='periodic-healing'&&percent!==null){app.values.maxTroopHealRatio=Math.min(1,percent);app.formulaClassification='SIMULATED_MAX_HP_RATIO';}
+  if(rule.mechanic==='periodic-morale-loss'){const m=detailFold.match(/(\d+)\s*si khi/)||following.match(/(?:giam|mat)\s+(\d+)\s*si khi/);if(!m)continue;app.values.periodicMoraleLoss=Math.min(130,Number(m[1]));}
+  const needsValue=['periodic-desertion','periodic-healing','counter-increase','damage-reduction','attack-increase','stackable-attack-increase','attack-reduction','critical-increase','defense-reduction','magic-defense-reduction','tactic-defense-reduction','all-defense-reduction','dragon-attack-increase',
    'physical-attack-increase','magic-attack-increase','tactic-attack-increase','physical-attack-reduction','magic-attack-reduction','tactic-attack-reduction',
    'skill-damage-per-beneficial-buff','healing-reduction','lifesteal'].includes(rule.mechanic);
   if(needsValue&&percent===null)continue;
@@ -857,7 +866,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['6','17','23','32','42'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['6','17','23','32','42'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['6','8','17','23','24','25','32','42'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['6','8','17','23','24','25','32','42'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1395,6 +1404,30 @@ function mobileApplyTurnPassives(actor,event){
  // normal positive hits only; living defenders, one counter per defender/action,
  // 60% physical attack, no counter chains, use the same seeded RNG and native hit owner.
 function mobileCounterChance(unit){const rate=Number(unit?.nlMobileTroop?.strikeBack)||0,add=(unit?.effects||[]).filter(e=>e.kind==='mobile-source-counter-up'&&e.turns>0).reduce((n,e)=>n+(Number(e.mobileSourceValues?.counterChanceAdd)||0),0);return Math.max(0,Math.min(1,rate+add));}
+// Periodic source effects tick once after the owner's action, including a skipped action.
+ // Existing round-end duration is retained; do not trigger attacks, morale gain or counter chains.
+function mobileTickPeriodic(actor,event,prior){
+ if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name)return [];
+ const labels=[];
+ for(const e of prior||[]){
+  if(actor.hp<=0)break;
+  if(!(actor.effects||[]).includes(e)||e.turns<=0)continue;
+  const v=e.mobileSourceValues||{};
+  if(e.kind===MOBILE_SOURCE_DESERTION&&v.currentTroopLossRatio>0){
+   const damage=Math.min(actor.hp,Math.max(1,Math.floor(actor.hp*v.currentTroopLossRatio)));
+   actor.hp-=damage;if(actor.hp<=0)actor.alive=false;
+   (event.hits||(event.hits=[])).push({team:actor.team,slot:actor.slot,number:'-'+damage,amount:damage,kind:'physical',mobilePeriodic:true});
+   labels.push('Đào Binh -'+damage);
+  }else if(e.kind===MOBILE_SOURCE_MORALE_DOT&&v.periodicMoraleLoss>0){
+   const before=actor.morale;p2Morale(actor,-v.periodicMoraleLoss);labels.push('Ám Vân -'+(before-actor.morale)+' sĩ khí');
+  }else if(e.kind===MOBILE_SOURCE_REGEN&&v.maxTroopHealRatio>0){
+   const ratio=v.maxTroopHealRatio*p2StatusFactor(actor,'incomingHealingMultiplier'),healed=mobileBookRestore(actor,ratio);
+   if(healed){(event.hits||(event.hits=[])).push({team:actor.team,slot:actor.slot,number:'+'+healed,amount:healed,kind:'heal',heal:true,mobilePeriodic:true});labels.push('Hồi Phục +'+healed);}
+  }
+ }
+ if(labels.length){event.description+=' · '+labels.join(' · ');event.state=p2Snapshot();battle.log=event.description;}
+ return labels;
+}
 function mobileResolveCounters(actor,event){
  if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name||event.mode!=='normal')return [];
  const enemies=actor.team==='p'?battle.e:battle.p,seen=new Set(),out=[];
@@ -1421,6 +1454,7 @@ p2Perform=function(actor){
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
  const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
+ const priorPeriodic=(actor?.effects||[]).filter(e=>[MOBILE_SOURCE_DESERTION,MOBILE_SOURCE_MORALE_DOT,MOBILE_SOURCE_REGEN].includes(e.kind));
  const previousSkillAction=actor?.nlMobileSourceSkillAction,hadSkillAction=!!actor&&Object.hasOwn(actor,'nlMobileSourceSkillAction');
  if(moraleOnly){
   actor.troop='drum';
@@ -1483,6 +1517,7 @@ p2Perform=function(actor){
      if(label){event.description+=' · '+label;event.state=p2Snapshot();battle.log=event.description;}
    }
    mobileResolveCounters(actor,event);
+   mobileTickPeriodic(actor,event,priorPeriodic);
    return result;
  }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };

@@ -58,6 +58,8 @@ The official source anchors are recorded in [`NL_REFERENCE_MATRIX.md`](NL_REFERE
 
 ## R5 gameplay source delta (unverified build)
 
+- Additional scoped periodic rules 8/24/25 (Đào Binh, Ám Vân, Hồi Phục) tick after the owner's action with explicitly parsed magnitude and duration. HP basis and timing simulated, no attack/reward recursion. Focused periodic execution passed with stubs; A4–A9 mocked contract 35/35 including four fort/defence checks. Native coverage and browser acceptance open.
+
 - Eight more source consumables use shared receipt ledger: weapon cores, actual Lăng La gift stacks, horse feed, seal currency and blank. Source quantities exact, wallet equivalences and prices simulated; no commander XP or hero reset introduced. Fortification 1–5, optional daily native defence and increased territory income extend existing offline war state. Defence costs a native order, bonuses/rewards original; no online claim. Isolated actual bundle transactions 24/24 passed; full native CI pending.
 
 ## R4 gameplay source delta (unverified build)

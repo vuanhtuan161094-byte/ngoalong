@@ -28,3 +28,18 @@ test('counter uses source chance, one response per defender, no recursive turns 
  assert.equal(a.hp,80);assert.equal(event.hits.length,3);assert.equal(event.hits[2].mobileCounter,true);
  ctx.battle.replay=true;vm.runInContext('mobileResolveCounters(actor,event);',ctx);assert.equal(a.hp,80);
 });
+
+test('R5 periodic effects use owner action, no recursion, no newly applied tick',()=>{
+ const code=extract('function mobileTickPeriodic(','function mobileResolveCounters(');
+ const a={name:'A',team:'p',slot:0,hp:100,maxHp:100,morale:50,effects:[]};
+ const dot={kind:'desert',turns:2,mobileSourceValues:{currentTroopLossRatio:.1}};
+ const morale={kind:'morale',turns:2,mobileSourceValues:{periodicMoraleLoss:15}};
+ const regen={kind:'regen',turns:2,mobileSourceValues:{maxTroopHealRatio:.05}};
+ a.effects=[dot,morale,regen];const event={actor:'A',mode:'stunned',hits:[],description:'test'};
+ const ctx={actor:a,event,prior:[dot,morale],battle:{},MOBILE_SOURCE_DESERTION:'desert',MOBILE_SOURCE_MORALE_DOT:'morale',MOBILE_SOURCE_REGEN:'regen',
+ p2Morale:(u,d)=>u.morale+=d,p2Snapshot:()=>({}),p2StatusFactor:()=>1,mobileBookRestore:(u,r)=>{const old=u.hp;u.hp=Math.min(u.maxHp,u.hp+Math.round(u.maxHp*r));return u.hp-old;}};
+ vm.createContext(ctx);vm.runInContext(code+';mobileTickPeriodic(actor,event,prior);',ctx);
+ assert.equal(a.hp,90);assert.equal(a.morale,35);assert.equal(event.hits.length,1);
+ ctx.prior=[regen];vm.runInContext('mobileTickPeriodic(actor,event,prior)',ctx);assert.equal(a.hp,95);
+ ctx.battle.replay=true;vm.runInContext('mobileTickPeriodic(actor,event,prior)',ctx);assert.equal(a.hp,95);
+});
