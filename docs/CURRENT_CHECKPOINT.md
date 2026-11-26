@@ -2,6 +2,13 @@
 
 **V1.0 NOT COMPLETE · ART HOLD · GAMEPLAY FIRST.** Repository `vuanhtuan161094-byte/ngoalong`, delivery branch `feature/ngoalong-v1-complete`, draft PR #1. Do not merge.
 
+## Current Mobile source-combat batch — Kiên Thủ / Tử Thủ
+
+- Connected Wiki effects 50 Kiên Thủ and 58 Tử Thủ to the native P2 battle and existing Save-backed status engine. Kiên Thủ parses each campaign unit's exact defensive percentage and duration (including different values per source stack); the combat adapter preserves heterogeneous stack values. If a detail has no percentage, the 6% current hero-skill fact is a source-backed fallback. The 99-stack engine ceiling is a safety limit, not a claimed source cap.
+- Tử Thủ uses the exact percentage and duration where the NPC effect record supplies them. Its “defense rises as troops fall” interpolation is explicitly SIMULATED because the source does not publish the curve. “Lowest ally” targeting is retained for rows whose skill says so.
+- Candidate browser QA passed all Content C checks, including exact ID 50 stacking, ID 58 magnitude/scaling and lowest-HP ally targeting, real P2 combat application, Save v5 and the 746-item routes. Current source audit remains 25,195 campaign units; 23,944 have source-exact skill records and 12,213 secondary-effect clauses remain unresolved. Coverage numbers do not mean full parity.
+- This batch is committed at the delivery branch HEAD; canonical offline `index.html` is 98,803,312 bytes, SHA-256 `ad6d40c644052bbd04b184464766c4b68680d84c3ff2feb1e1e2c3d3ad70ba82`. All four builder `--check` gates and Content C Chromium pass locally. Hosted review/full regression for this exact SHA must still be confirmed. V1.0 remains NOT COMPLETE.
+
 ## 746-item runtime batch — local candidate after `22cb214`
 
 - The canonical offline game now exposes all 746 current Mobile Wiki item IDs through a real bag/shop/action route. Existing source-specific routes remain 161; the other 585 use explicitly `SIMULATED_GENERIC_FALLBACK` purchase/open or recycling rules. All source names, groups, descriptions, and known exact quantities/ratios remain untouched; the fallback never claims to be official Mobile behavior. No source item remains `REFERENCE_ONLY`.

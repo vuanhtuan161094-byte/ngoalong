@@ -40,6 +40,25 @@ def main():
           const styles=new Set(plans.map(p=>p?.aiStyle)),arcs=new Set(plans.map(p=>p?.arcId));
           const counts=plans.map(p=>p?.units.length),keys=plans.map(p=>p?.id);
           const skillAudit=c.skillAudit();
+          const sourceStatusSamples={};
+          for(let mapId=1;mapId<=400;mapId++){
+            const map=c.map('wiki-map-'+mapId);if(!map)continue;
+            for(const npc of map.npcs||[])for(const unit of npc.units||[]){
+              for(const id of ['50','58']){
+                if(sourceStatusSamples[id])continue;
+                const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
+                const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
+                const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
+                if(app)sourceStatusSamples[id]={mapId,npcId:npc.id,skill:unit.skill,effect,app};
+              }
+              if(sourceStatusSamples['58']?.app?.scope==='lowest-ally')continue;
+              if(String(unit.effects?.find(row=>String(row.id)==='58')?.id)==='58'&&unit.skill?.desc){
+                const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
+                const app=descriptor?.sourceApplications?.find(row=>row.sourceId==='58');
+                if(app?.scope==='lowest-ally')sourceStatusSamples['58-lowest']={mapId,npcId:npc.id,skill:unit.skill,effect:unit.effects.find(row=>String(row.id)==='58'),app};
+              }
+            }
+          }
           const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
           const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
           const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
@@ -223,6 +242,19 @@ def main():
             appOf(dragonBuffDescriptor,'70')?.values.outgoingDamageMultiplier===1.2&&appOf(dragonBuffDescriptor,'70')?.unresolvedMechanics?.includes('SOURCE_BUFF_COUNT_SCALING_UNQUANTIFIED');
           checks.mobileSourceAllDefenseDescriptor=appOf(allDefenseDescriptor,'21')?.scope==='enemies'&&appOf(allDefenseDescriptor,'21')?.turns===3&&
             appOf(allDefenseDescriptor,'21')?.values.incomingDefenseMultiplier===.25;
+          const guard50=sourceStatusSamples['50'],lastStand58=sourceStatusSamples['58'],lastStandTarget58=sourceStatusSamples['58-lowest'];
+          const guardUnit={hp:1000,maxHp:1000,effects:[],team:'p',slot:0},lastStandUnit={hp:500,maxHp:1000,effects:[],team:'p',slot:0};
+          const guardApplied=!!guard50?.app&&c.applyMobileSourceStatus(guardUnit,guard50.app)&&c.applyMobileSourceStatus(guardUnit,guard50.app);
+          const lastStandApplied=!!lastStand58?.app&&c.applyMobileSourceStatus(lastStandUnit,lastStand58.app);
+          checks.mobileSourceDefenseUpExactAndStacked=guard50?.app?.turns===Number(guard50.effect.detail.match(/(\\d+)\\s*lượt/i)?.[1])&&
+            guard50?.app?.values.incomingDefensePerStack===Number(guard50.effect.detail.match(/(\\d+(?:[.,]\\d+)?)%/)?.[1]?.replace(',','.'))/100&&
+            guard50?.app?.stackingClassification==='SOURCE_EXACT_ADD_STACK'&&guardApplied&&guardUnit.effects[0]?.stacks===2&&
+            Math.abs(c.p2StatusFactor(guardUnit,'incomingDefenseMultiplier')-(1+guard50.app.values.incomingDefensePerStack*2))<1e-9;
+          checks.mobileSourceLastStandMagnitudeAndScaling=lastStand58?.app?.values.defenseBonusAtZeroTroops===Number(lastStand58.effect.detail.match(/(\\d+(?:[.,]\\d+)?)%/)?.[1]?.replace(',','.'))/100&&
+            lastStand58?.app?.formulaClassification==='SOURCE_MAGNITUDE_WITH_SIMULATED_LINEAR_INTERPOLATION'&&lastStandApplied&&
+            Math.abs(c.p2StatusFactor(lastStandUnit,'incomingDefenseMultiplier')-(1+lastStand58.app.values.defenseBonusAtZeroTroops*.5))<1e-9;
+          checks.mobileSourceLastStandLowestAllyTarget=lastStandTarget58?.app?.scope==='lowest-ally'&&lastStandTarget58?.app?.turns===3;
+          checks.mobileSourceDefenseDiagnostics={guard50:guard50&&{mapId:guard50.mapId,detail:guard50.effect.detail,app:guard50.app},lastStand58:lastStand58&&{mapId:lastStand58.mapId,detail:lastStand58.effect.detail,app:lastStand58.app},lowestAlly:lastStandTarget58&&{mapId:lastStandTarget58.mapId,detail:lastStandTarget58.effect.detail,app:lastStandTarget58.app}};
           checks.mobileSourcePurificationDescriptor=appOf(purificationDescriptor,'46')?.scope==='self'&&appOf(purificationDescriptor,'46')?.turns===2&&
             appOf(purificationDescriptor,'46')?.values.damageBonusPerBeneficialBuff===.2&&
             appOf(purificationHighDescriptor,'46')?.scope==='self'&&appOf(purificationHighDescriptor,'46')?.turns===2&&
@@ -605,6 +637,8 @@ def main():
           return checks;
         }""")
         print(out,flush=True)
+        if not out.get("mobileSourceDefenseUpExactAndStacked"):
+            print("SOURCE DEFENSE DEBUG",out.get("mobileSourceDefenseDiagnostics"),flush=True)
         browser.close()
     assert out and all(out.values()) and not errors, (out,errors)
 if __name__=="__main__":
