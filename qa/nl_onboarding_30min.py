@@ -105,7 +105,7 @@ def run(duration_minutes: int = 30) -> int:
             unlocked: set[int] = set()
             recruited_fifth = False
             training_actions = 0
-            stage5_balance_sweep: list[dict[str, object]] = []
+            stage5_balance_sweep: list[dict[str, object]] = [] # archived separate fixture; continuous play never retunes encounters
             stage9_balance_sweep: list[dict[str, object]] = []
             stage10_balance_sweep: list[dict[str, object]] = []
             history: list[dict[str, object]] = []
@@ -137,6 +137,8 @@ def run(duration_minutes: int = 30) -> int:
                 return available >= 360 and len([h for h in heroes if page.evaluate("id=>window.__P2_QA__.getGame().hero[id].troops", h) >= 30]) >= 3
 
             receipts_valid = True
+            configured_power = page.evaluate("window.__P2_QA__.data.campaign.encounters.map(e=>[e.stage,e.enemyPower])")
+            configured_power = dict(configured_power)
             for _ in range(duration_minutes // 5):
                 advance_five_minutes()
                 g = page.evaluate("window.__P2_QA__.getGame()")
@@ -154,44 +156,40 @@ def run(duration_minutes: int = 30) -> int:
                 if g["formation"] != formation:
                     page.evaluate("f=>{let g=window.__P2_QA__.getGame();g.formation=f;window.__P2_QA__.setGame(g)}", formation)
                 deterministic_seed = (seed_base + stage * 1009 + minutes * 7919) & 0xFFFFFFFF
-                if stage == 9 and not stage9_balance_sweep:
-                    trial_base = page.evaluate("window.__P2_QA__.getGame()")
-                    for candidate_power in (0.7, 0.8, 0.9, 1.0):
-                        page.evaluate("({state,power})=>{window.__P2_QA__.setGame(state);window.__P2_QA__.setEncounterPower(9,power)}", {"state": trial_base, "power": candidate_power})
-                        page.evaluate("s=>window.__P2_QA__.beginBattle(s,'campaign')", stage)
-                        page.evaluate("seed=>{window.__P2_QA__.debugBattle().seed=seed}", deterministic_seed)
-                        page.evaluate("window.__P2_QA__.skipBattle()")
-                        trial_game = page.evaluate("window.__P2_QA__.getGame()")
-                        trial_report = trial_game["battleReports"][0]
-                        stage9_balance_sweep.append({"power": candidate_power, "seed": deterministic_seed, "won": trial_report["won"], "totalTroopLosses": sum(row["casualties"] for row in trial_report.get("troopLosses", []))})
-                        page.evaluate("window.__P2_QA__.closeBattle('city')")
-                    page.evaluate("({state})=>{window.__P2_QA__.setEncounterPower(9,0.8);window.__P2_QA__.setGame(state)}", {"state": trial_base})
-                if stage == 10 and not stage10_balance_sweep:
-                    trial_base = page.evaluate("window.__P2_QA__.getGame()")
-                    for candidate_power in (0.5, 0.6, 0.7, 0.8, 0.9, 1.0):
-                        page.evaluate("({state,power})=>{window.__P2_QA__.setGame(state);window.__P2_QA__.setEncounterPower(10,power)}", {"state": trial_base, "power": candidate_power})
-                        page.evaluate("s=>window.__P2_QA__.beginBattle(s,'campaign')", stage)
-                        page.evaluate("seed=>{window.__P2_QA__.debugBattle().seed=seed}", deterministic_seed)
-                        page.evaluate("window.__P2_QA__.skipBattle()")
-                        trial_game = page.evaluate("window.__P2_QA__.getGame()")
-                        trial_report = trial_game["battleReports"][0]
-                        stage10_balance_sweep.append({"power": candidate_power, "seed": deterministic_seed, "won": trial_report["won"], "totalTroopLosses": sum(row["casualties"] for row in trial_report.get("troopLosses", []))})
-                        page.evaluate("window.__P2_QA__.closeBattle('city')")
-                    page.evaluate("({state})=>{window.__P2_QA__.setEncounterPower(10,0.7);window.__P2_QA__.setGame(state)}", {"state": trial_base})
-                if stage == 5 and minutes == 30 and recruited_fifth:
-                    # Probe actual engine difficulty from one identical Save/roster/troop state.
-                    # Restore the snapshot between candidates so only encounter power changes.
-                    trial_base = page.evaluate("window.__P2_QA__.getGame()")
-                    for candidate_power in (1.0, 1.15, 1.3, 1.9):
-                        page.evaluate("({state,power})=>{window.__P2_QA__.setGame(state);window.__P2_QA__.setEncounterPower(5,power)}", {"state": trial_base, "power": candidate_power})
-                        page.evaluate("s=>window.__P2_QA__.beginBattle(s,'campaign')", stage)
-                        page.evaluate("seed=>{window.__P2_QA__.debugBattle().seed=seed}", deterministic_seed)
-                        page.evaluate("window.__P2_QA__.skipBattle()")
-                        trial_game = page.evaluate("window.__P2_QA__.getGame()")
-                        trial_report = trial_game["battleReports"][0]
-                        stage5_balance_sweep.append({"power": candidate_power, "seed": deterministic_seed, "won": trial_report["won"], "totalTroopLosses": sum(row["casualties"] for row in trial_report.get("troopLosses", []))})
-                        page.evaluate("window.__P2_QA__.closeBattle('city')")
-                    page.evaluate("({state})=>{window.__P2_QA__.setEncounterPower(5,1.15);window.__P2_QA__.setGame(state)}", {"state": trial_base})
+                # Production encounter values are not overwritten by the continuous run.
+                # Before a difficult encounter, invest earned resources in a fifth general,
+                # native training and the real recommended formation.
+                if stage >= 5 and not recruited_fifth:
+                    before_silver = g["silver"]
+                    open_hero_system(page, "recruit")
+                    recruit_button = visible_window(page, '[data-nla-recruit="huang"]')
+                    if recruit_button.is_enabled():
+                        recruit_button.click()
+                        recruited_state = page.evaluate("window.__P2_QA__.getGame()")
+                        fifth = next((hero for hero in recruited_state["roster"] if hero not in heroes), None)
+                        if fifth:
+                            page.locator('.nav[data-tab="formation"]').click()
+                            visible_window(page, f'[data-choose-hero="{fifth}"]').click()
+                            slot = next(i for i,hero in enumerate(recruited_state["slots"]) if hero is None)
+                            visible_window(page, f'[data-slot="{slot}"]').click()
+                            visible_window(page, '[data-p3-preset="spear-van"]').click()
+                            recruited_fifth = True
+                            heroes = recruited_state["roster"]
+                            formation = "spear"
+                            history.append({"minute":minutes,"stage":stage,"event":"named-recruit","hero":fifth,"silverSpentRecruit":before_silver-recruited_state["silver"]})
+                # Spend earned Bạc before attempts at the difficult band, not only after a prescribed loss.
+                if stage >= 5:
+                    actions = page.evaluate("""ids=>{
+                      const h=window.__NL_HERO_SYSTEMS_QA__,q=window.__P2_QA__;let n=0;
+                      for(const id of ids){if(q.getGame().silver>=4200&&h.trainBatch(id,5))n++;}
+                      return n;
+                    }""", heroes)
+                    training_actions += actions
+                    if actions: history.append({"minute":minutes,"stage":stage,"event":"earned-training","batches":actions})
+                    if not recover_frontline():
+                        blocked_actions += 1
+                        history.append({"minute":minutes,"stage":stage,"event":"wait-recruit"})
+                        continue
                 page.evaluate("s=>window.__P2_QA__.beginBattle(s,'campaign')", stage)
                 battle = page.evaluate("window.__P2_QA__.getBattle()")
                 if not battle:
@@ -213,39 +211,10 @@ def run(duration_minutes: int = 30) -> int:
                     losses += 1
                     retries += 1
                 page.evaluate("window.__P2_QA__.closeBattle('city')")
-                if not report["won"] and stage == 5 and minutes < 30 and len(heroes) < 5 and settled["silver"] >= 1000:
-                    before_silver = settled["silver"]
-                    open_hero_system(page, "recruit")
-                    # The classic recruit system has no random 1800-Bạc draw.
-                    # Hoàng Trung unlocks from stage 2, so the Stage-5
-                    # recovery route is a reproducible, named WEB recruit
-                    # rather than the old RNG gacha or late-stage Mã Siêu.
-                    candidate = "huang"
-                    recruit_button = visible_window(page, f'[data-nla-recruit="{candidate}"]')
-                    if not recruit_button.is_enabled():
-                        raise AssertionError("The named Huang Zhong recovery recruit is not enabled")
-                    recruit_button.click()
-                    recruited_state = page.evaluate("window.__P2_QA__.getGame()")
-                    fifth = next((hero for hero in recruited_state["roster"] if hero not in heroes), None)
-                    if fifth:
-                        page.locator('.nav[data-tab="formation"]').click()
-                        visible_window(page, f'[data-choose-hero="{fifth}"]').click()
-                        open_slot = next(index for index, hero in enumerate(recruited_state["slots"]) if hero is None)
-                        visible_window(page, f'[data-slot="{open_slot}"]').click()
-                        visible_window(page, '[data-p3-preset="spear-van"]').click()
-                        recruited_fifth = True
-                        heroes = recruited_state["roster"]
-                        formation = "spear"
-                        open_hero_system(page, "training")
-                        before_training_silver = page.evaluate("window.__P2_QA__.getGame().silver")
-                        for hero in heroes:
-                            visible_window(page, f'[data-nlh-action="hero"][data-nlh-hero="{hero}"]').click()
-                            for _ in range(4):
-                                if page.evaluate("window.__P2_QA__.getGame().silver") >= 700:
-                                    visible_window(page, f'[data-train="{hero}"]').click()
-                                    training_actions += 1
-                        after_training = page.evaluate("window.__P2_QA__.getGame()")
-                        history.append({"minute": minutes, "stage": stage, "event": "named-recruit-train-and-spear-van", "hero": fifth, "silverSpentRecruit": before_silver - recruited_state["silver"], "silverSpentTraining": before_training_silver - after_training["silver"], "trainingActions": training_actions, "averageHeroLevel": sum(after_training["hero"][hero]["level"] for hero in heroes) / len(heroes), "levelsByHero": {hero: after_training["hero"][hero]["level"] for hero in heroes}})
+                if not report["won"]:
+                    # Any failed stage can recover; preserve earned balance and retry with preparation.
+                    formation = "spear"
+                    page.evaluate("window.__P3_QA__.assign('spear-van')")
 
             final = page.evaluate("window.__P2_QA__.getGame()")
             all_reports_valid = receipts_valid
@@ -274,26 +243,11 @@ def run(duration_minutes: int = 30) -> int:
             if duration_minutes >= 60:
                 check(f"{profile}: continuous campaign run clears the first ten stages", set(range(1, 11)).issubset(unlocked))
             stage5_attempts = [row for row in history if row.get("stage") == 5 and row.get("event") in ("win", "loss")]
-            check(f"{profile}: adapts from the stage-5 morale-lock loss to a spear-van clear after recruiting and training", len(stage5_attempts) == 2 and stage5_attempts[0]["event"] == "loss" and stage5_attempts[1]["event"] == "win" and 5 in unlocked and stage5_balance_sweep and all(row["seed"] == stage5_balance_sweep[0]["seed"] for row in stage5_balance_sweep))
-            print("NL_STAGE5_SWEEP " + json.dumps({"profile":profile,"minutes":duration_minutes,
-                  "recruit":history[-1]["hero"] if history and history[-1].get("hero") else "named",
-                  "rows":stage5_balance_sweep},ensure_ascii=False),flush=True)
-            by_power = {float(row["power"]): row for row in stage5_balance_sweep}
-            check(f"{profile}: same-seed Stage 5 keeps 1.15 playable, 1.9 lethal and monotonically harder at 1.3",
-                  by_power.get(1.15, {}).get("won") is True
-                  and by_power.get(1.9, {}).get("won") is False
-                  and all(by_power.get(p, {}).get("totalTroopLosses", -1) >= by_power.get(q, {}).get("totalTroopLosses", 10**9)
-                          for p,q in ((1.15,1.0),(1.3,1.15),(1.9,1.3))))
-            if duration_minutes >= 60:
-                print("NL_STAGE9_10_SWEEPS "+json.dumps({"profile":profile,"rows9":stage9_balance_sweep,
-                      "rows10":stage10_balance_sweep},ensure_ascii=False),flush=True)
-                stage9_by_power = {float(row["power"]): row for row in stage9_balance_sweep}
-                stage10_by_power = {float(row["power"]): row for row in stage10_balance_sweep}
-                check(f"{profile}: same-seed stage 9 (0.8 clear/1.0 fail) and 10 (0.7 clear/0.9 fail) prove progression challenge",
-                      stage9_by_power.get(0.8, {}).get("won") is True
-                      and stage9_by_power.get(1.0, {}).get("won") is False
-                      and stage10_by_power.get(0.7, {}).get("won") is True
-                      and stage10_by_power.get(0.9, {}).get("won") is False)
+            check(f"{profile}: recruits and trains using earned resources, reaches and clears the actual Stage 5",
+                  recruited_fifth and training_actions > 0 and bool(stage5_attempts) and 5 in unlocked)
+            check(f"{profile}: actual campaign power configuration was preserved throughout progression",
+                  page.evaluate("window.__P2_QA__.data.campaign.encounters.map(e=>[e.stage,e.enemyPower])") == [list(x) for x in configured_power.items()])
+            # The deterministic loss/win A/B fixture is separately required by qa/nl_r02.py.
             reported_battles = sum(row["event"] in ("win", "loss") for row in history)
             check(f"{profile}: every simulated battle has valid deterministic settlement receipts", all_reports_valid and wins + losses == reported_battles)
             check(f"{profile}: no resource underflow or negative troop counts", min(final["silver"], final["grain"], final["iron"], final["reserve"], *(final["hero"][hero]["troops"] for hero in heroes)) >= 0)

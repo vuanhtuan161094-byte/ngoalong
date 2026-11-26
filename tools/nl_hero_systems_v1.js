@@ -1,5 +1,6 @@
 // === NL-HERO-SYSTEMS-V1 ===
 // Additive hero development for the Mobile-first offline runtime. Keep Save v5 additive.
+let nlCampaignTrainBatch;
 (()=>{'use strict';
 const NL_HS=__NL_HERO_SYSTEM_CONFIG__, NL_HS_ART=__NL_HERO_ART__;
 if(NL_HS.schemaVersion!==1||NL_HS.systems?.length!==12||Object.keys(NL_HS.materialCatalog||{}).length!==10)
@@ -148,6 +149,7 @@ function nlhTrainBatch(id,requested=1){
  const total=Object.fromEntries(Object.entries(q.cost).map(([k,v])=>[k,v*n]));
  return nlhEndgameReceipt('training-batch',id,n,total,{});
 }
+nlCampaignTrainBatch=nlhTrainBatch;
 function nlhSkillQuote(level){return {silver:250*level,merit:10*level};}
 function nlhSkillUpgrade(id){
  if(battle||!nlhOwned(id)||(typeof nlMobileHeroApi!=='undefined'&&nlMobileHeroApi?.skill(id)))return false;

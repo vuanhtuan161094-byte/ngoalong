@@ -144,7 +144,7 @@ jobs:
           node --check tools/nl_classic_world_a4.js
           node --check tools/nl_classic_advanced_a5_a9.js
           node --test qa/nl_classic_world_a4.test.cjs qa/nl_classic_advanced_a5_a9.test.cjs
-          python -m py_compile tools/nl_classic_phase_a3_items.py qa/nl_onboarding_30min.py
+          python -m py_compile tools/nl_classic_phase_a3_items.py qa/nl_onboarding_30min.py qa/nl_progression_90d.py
           python -m py_compile qa/nl_classic_phase_a2_browser.py
       - name: D2-D4 native squad raster and VFX smoke (desktop/mobile)
         run: python qa/nl_art_d2_browser.py
@@ -262,3 +262,37 @@ jobs:
       - name: Deploy game
         id: deployment
         uses: actions/deploy-pages@v4
+
+  earned-progression-90d:
+    name: Earned-only 90-day progression (independent native gate)
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feature/ngoalong-v1-complete') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build canonical HTML
+        run: |
+          python tools/build_ngoa_long_mode.py
+          python tools/build_ngoa_long_r03.py
+          python tools/build_ngoa_long_r04.py
+          python tools/build_ngoa_long_items_v1.py
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.58.0
+          python -m playwright install --with-deps chromium
+      - name: Play 90 earned-only days
+        run: python qa/nl_progression_90d.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nl-earned-progression-90d
+          path: qa/NL_PROGRESSION_90D.json
+          if-no-files-found: warn
