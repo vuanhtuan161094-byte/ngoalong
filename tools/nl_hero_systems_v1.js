@@ -67,7 +67,7 @@ function nlhHeroStats(id){
  const value=k=>Number.isFinite(u?.[k])?Math.max(0,u[k]):0;
  const combat={atk:value('atk'),catk:value('catk'),matk:value('matk'),def:value('def'),tdef:value('tdef'),mdef:value('mdef'),maxHp:value('maxHp'),speed:value('speed')};
  const power=u?Math.round((combat.atk+combat.catk+combat.matk)*.8+(combat.def+combat.tdef+combat.mdef)*.65+combat.maxHp*.4+combat.speed*4):0;
- return {level:d.level||1,xp:d.xp||0,troops:d.troops||0,atk:h.atk||0,def:h.def||0,int:h.int||0,speed:h.agi||h.speed||0,power,combat};
+ return {level:d.level||1,xp:d.xp||0,troops:d.troops||0,atk:u?.nlMobileHero?.war??h.atk??0,lead:u?.nlMobileHero?.leadership??h.lead??0,def:h.def||0,int:u?.nlMobileHero?.intellect??h.int??0,speed:h.agi||h.speed||0,power,combat};
 }
 function nlhCurrentTroop(id){
  const mobileId=game.nlContentC?.mobileTroopAssigned?.[id],mobile=typeof NL_CONTENT_C!=='undefined'&&NL_CONTENT_C.mobileTroops?.units?.[mobileId];
@@ -263,6 +263,21 @@ function nlhEndgamePanel(id){
 function nlhMaterialShopPanel(){
  const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
 }
+function nlhMobileSourcePanel(id){
+ const key=typeof NL_CONTENT_C!=='undefined'?NL_CONTENT_C.mobileHeroSource?.runtimeAliases?.[id]:null;
+ const record=key?NL_CONTENT_C.mobileHeroSource.details[key]:null;
+ if(!record)return '';
+ const ranks=(record.growth||[]).filter(r=>Number.isInteger(r.q)&&[r.lead,r.war,r.int].every(Number.isFinite)).sort((a,b)=>a.q-b.q);
+ if(!ranks.length)return '';
+ const flags=game.heroDevelopment?.heroes?.[id]?.awakening,advanced=game.nlClassicAdvanced?.growth?.[id]?.awakened;
+ const requested=flags?.gold?8:flags?.orange?7:advanced?6:ranks[0].q;
+ const current=ranks.filter(r=>r.q<=requested).at(-1)||ranks[0],next=ranks.find(r=>r.q>current.q);
+ const stage=(record.stages||[]).filter(t=>t.q<=current.q).sort((a,b)=>a.q-b.q).at(-1),nextStage=(record.stages||[]).find(t=>t.q===next?.q);
+ return '<div class="nlh-feature-panel"><b>Hồ sơ Mobile · '+hsEsc(current.qn||current.q)+'</b><p class="nlh-copy">Chỉ Huy '+current.lead+' · Võ '+current.war+' · Trí '+current.int+' · tăng trưởng nguồn '+current.gl+'/'+current.gw+'/'+current.gi+'</p>'+
+ (stage?.skill?'<p class="nlh-copy">Chiến pháp nguồn: '+hsEsc(stage.skill.name)+' · '+hsEsc(stage.skill.desc||'')+'</p>':'')+
+ (next?'<p class="nlh-copy">Bậc tiếp: '+hsEsc(next.qn||next.q)+' · '+(nextStage?.cost||[]).map(x=>hsEsc(x.name)+' × '+nlhFmt(x.qty)).join(' · ')+'</p>':'')+
+ '<p class="nlh-source-note">Chỉ Huy/Võ/Trí theo bậc nguồn đã vào P2; nguồn chiêu mộ, toàn bộ chiến pháp và chi phí giác ngộ từng bậc vẫn cần thay thế cơ chế cũ.</p></div>';
+}
 function nlhSkillPanel(id){
  const h=nlhsHero(id),level=h.skillLevel,next=level+1,cost=nlhSkillQuote(next),base=P2_SKILLS[id],skill=nlhSkillDescriptor(id,base);
  const can=nlhStage()>=3&&(game.hero[id]?.level||0)>=next*4&&next<=SKILL_MAX&&!battle&&nlhCanPay(cost,{});
@@ -270,7 +285,7 @@ function nlhSkillPanel(id){
 }
 function nlhSystemBody(system,id){
  const h=nlhHero(id),d=nlhHeroStats(id),state=nlhsState(),dev=nlhsHero(id),skill=SYS[system];
- if(system==='hero')return '<div class="nlh-section-head"><span>Võ Tướng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhNeedText('hero'))+'</span></div><h3 class="nlh-section-title">Tăng trưởng và quan hệ võ tướng</h3><p class="nlh-copy">'+hsEsc(h.role||h.type||'')+' · Danh tính lịch sử, phe phái, kỹ năng và ID dữ liệu được giữ nguyên. Cân bằng cấp/công thức hiện tại là thiết kế dự án SIMULATED.</p>'+nlhProgress(d.level,nlhHeroCap(id),'Cấp tướng',d.level/nlhHeroCap(id)*100)+nlhProgress(dev.commanderLevel,5,'Thống Soái',dev.commanderLevel/5*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>CHIẾN PHÁP GỐC</small><b>'+hsEsc(h.skill||'Chưa có nguồn mô tả')+'</b></div><div class="nlh-fact"><small>BINH CHỦNG HIỆN TẠI</small><b>'+hsEsc(nlhCurrentTroop(id).name)+'</b></div></div><p class="nlh-source-note">Mobile/H5 is the primary system reference; this panel preserves existing Save IDs and does not claim parity for project formulas.</p>'+nlhSkillPanel(id)+'<div class="nlh-feature-panel"><b>Chỉ số vào trận</b><p class="nlh-copy">'+Object.entries(d.combat).map(([k,v])=>({atk:'Công',catk:'Chiến công lực',matk:'Mưu công',def:'Vật phòng',tdef:'Chiến phòng',mdef:'Mưu phòng',maxHp:'HP',speed:'Tốc'}[k]||k)+' '+nlhFmt(v)).join(' · ')+'</p></div>';
+ if(system==='hero')return '<div class="nlh-section-head"><span>Võ Tướng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhNeedText('hero'))+'</span></div><h3 class="nlh-section-title">Tăng trưởng và quan hệ võ tướng</h3><p class="nlh-copy">'+hsEsc(h.role||h.type||'')+' · Danh tính lịch sử, phe phái, kỹ năng và ID dữ liệu được giữ nguyên. Cân bằng cấp/công thức hiện tại là thiết kế dự án SIMULATED.</p>'+nlhProgress(d.level,nlhHeroCap(id),'Cấp tướng',d.level/nlhHeroCap(id)*100)+nlhProgress(dev.commanderLevel,5,'Thống Soái',dev.commanderLevel/5*100)+'<div class="nlh-facts"><div class="nlh-fact"><small>CHIẾN PHÁP GỐC</small><b>'+hsEsc(h.skill||'Chưa có nguồn mô tả')+'</b></div><div class="nlh-fact"><small>BINH CHỦNG HIỆN TẠI</small><b>'+hsEsc(nlhCurrentTroop(id).name)+'</b></div></div><p class="nlh-source-note">Mobile/H5 is the primary system reference; this panel preserves existing Save IDs and does not claim parity for project formulas.</p>'+nlhMobileSourcePanel(id)+nlhSkillPanel(id)+'<div class="nlh-feature-panel"><b>Chỉ số vào trận</b><p class="nlh-copy">'+Object.entries(d.combat).map(([k,v])=>({atk:'Công',catk:'Chiến công lực',matk:'Mưu công',def:'Vật phòng',tdef:'Chiến phòng',mdef:'Mưu phòng',maxHp:'HP',speed:'Tốc'}[k]||k)+' '+nlhFmt(v)).join(' · ')+'</p></div>';
  if(system==='training'){
  const q=nlhTrainQuote(id),need=Math.max(1,d.level*90),xp=d.xp||0;
  const controls=[1,5,10].map(n=>'<button class="nlh-button" data-nlh-action="trainBatch" data-nlh-count="'+n+'" '+(d.level>=q.cap||battle||!nlhCanPay(q.cost,{})?'disabled':'')+'>Luyện ×'+n+'</button>').join(' ');
