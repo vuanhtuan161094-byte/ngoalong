@@ -53,7 +53,7 @@
         const level=s.levels[building.id],p=building.production;
         if(!level||!p)continue;
         const cap=productionCapacity(s,building,level);
-        if(s.stock[building.id]>=cap){s.remainder[building.id]=0;continue;}
+        if(s.stock[building.id]>=cap){s.remainder[building.id]=0;s.productionBonusRemainder[building.id]=0;continue;}
         const numerator=s.remainder[building.id]+ms*p.perMinutePerLevel*level;
         const grown=Math.floor(numerator/60000);
         let additional=0;
@@ -65,6 +65,7 @@
         }
         s.stock[building.id]=Math.min(cap,s.stock[building.id]+grown+additional);
         s.remainder[building.id]=s.stock[building.id]===cap?0:numerator%60000;
+        if(s.stock[building.id]===cap)s.productionBonusRemainder[building.id]=0;
       }
     }
     function advance(game,now) {
@@ -317,17 +318,18 @@
               durationSeconds:operationSeconds(game,s,a),
               availableAt:s.cooldowns[b.id+'|'+a.id]||0,
               dailyLimit:dailyCap(game,s,a),
-              dailyUsed:dailyWindow(s,b.id+'|'+a.id,now).used})),
+              dailyUsed:dailyWindow(s,b.id+'|'+a.id,s.lastAt).used})),
             pendingOperation:s.operations[b.id]&&clone(s.operations[b.id]),
             provenance:b.provenance.classification};
         }),legacy:catalog.legacy.map(b=>({id:b.id,name:b.label,policy:b.owner,
           level:(game.buildings&&game.buildings[b.id])||0,
           operations:(b.actions||[]).map(a=>({id:a.id,label:a.label,
             cost:scaledAmounts(a.cost,Math.max(1,(game.buildings&&game.buildings[b.id])||0)),
-            reward:scaledAmounts(a.reward,Math.max(1,(game.buildings&&game.buildings[b.id])||0)),
+            reward:revenueBonus(game,s,b,a,scaledAmounts(a.reward,Math.max(1,(game.buildings&&game.buildings[b.id])||0))),
+            durationSeconds:operationSeconds(game,s,a),
             availableAt:s.cooldowns[b.id+'|'+a.id]||0,
             dailyLimit:dailyCap(game,s,a),
-            dailyUsed:dailyWindow(s,b.id+'|'+a.id,now).used})),
+            dailyUsed:dailyWindow(s,b.id+'|'+a.id,s.lastAt).used})),
           pendingOperation:s.operations[b.id]&&clone(s.operations[b.id])})),
         bonuses:bonuses(game,now)};
     }

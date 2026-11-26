@@ -375,8 +375,9 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
  MOBILE_HEAL_REDUCTION_STATUS='mobile-source-heal-reduction',MOBILE_LIFESTEAL_STATUS='mobile-source-lifesteal',MOBILE_ONE_HIT_SHIELD_STATUS='mobile-source-one-hit-shield',
  MOBILE_ATTACK_DOWN_STATUS='mobile-source-attack-down',
- MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs',MOBILE_BOOK_GUARD_STATUS='mobile-book-guard';
+ MOBILE_NO_BUFFS_STATUS='mobile-source-no-buffs',MOBILE_BOOK_GUARD_STATUS='mobile-book-guard',MOBILE_BOOK_SHIELD_STATUS='mobile-book-shield';
 for(const [kind,spec] of Object.entries({
+ [MOBILE_BOOK_SHIELD_STATUS]:{duration:2,polarity:'beneficial',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_BOOK_GUARD_STATUS]:{duration:3,polarity:'beneficial',dispelPolicy:'undispellable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_CONTROL_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1},
  [MOBILE_SLEEP_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1,wakeOnDamage:true},
@@ -1066,6 +1067,12 @@ p2Skill=function(actor){
  return d;
 };
 const nlContentCBaseHit=p2Hit;
+// Each layer consumes one positive native hit; no extra attack or reward.
+function mobileConsumeShield(target,shield){
+ const layers=shield.kind===MOBILE_BOOK_SHIELD_STATUS?Math.max(1,nat(shield.mobileSourceValues?.shieldLayers)):1;
+ if(layers>1)shield.mobileSourceValues.shieldLayers=layers-1;
+ else target.effects=target.effects.filter(effect=>effect!==shield);
+}
 function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const trait=mobileTraitFactors(attacker,target,kind,attacker?.nlMobileActionPattern||'single',battle?.round||1);
  const ar=attacker?.nlMobileRefine,tr=target?.nlMobileRefine,af=attacker?.nlMobileHero?.faction,tf=target?.nlMobileHero?.faction;
@@ -1075,7 +1082,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  mult*=Math.max(0,1-bookResist);
  mult*=trait.outgoing*trait.incoming*mobileTechDamage(attacker,target)*(1+(ar?.finalDamage||0)+(ar?.vs?.[tf]||0))*Math.max(0,1-(tr?.resist?.[af]||0));
  const protectedBySource=target?.effects?.some(effect=>effect.kind===MOBILE_DAMAGE_ONE_STATUS&&effect.turns>0);
- const oneHitShield=target?.effects?.find(effect=>effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS&&effect.turns>0);
+ const oneHitShield=target?.effects?.find(effect=>(effect.kind===MOBILE_ONE_HIT_SHIELD_STATUS||effect.kind===MOBILE_BOOK_SHIELD_STATUS)&&effect.turns>0);
  const resolvedTarget=oneHitShield?{...target,effects:structuredClone(target.effects)}:target;
  const beforeHp=target?.hp,beforeMorale=target?.morale;
  const critAdd=(attacker?.effects||[]).reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.criticalChanceAdd)||0)*(effect.stacks||1),0);
@@ -1103,7 +1110,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  finally{if(Number.isFinite(previousGuard))resolvedTarget[guardField]=previousGuard;}
  const rawDamage=beforeHp-resolvedTarget.hp;
  if(oneHitShield&&rawDamage>0){
-   target.effects=target.effects.filter(effect=>effect!==oneHitShield);
+   mobileConsumeShield(target,oneHitShield);
    hit.amount=0;hit.number='-0';hit.mobileSourceShieldBlocked=true;return hit;
  }
  const damageReduction=(target?.effects||[]).filter(effect=>effect.kind===MOBILE_INCOMING_STATUS&&effect.turns>0)
@@ -1225,6 +1232,15 @@ function mobileBookAction(actor,event){
   const targets=allies.slice().sort((a,b)=>a.hp-b.hp||a.slot-b.slot),u=targets[0],g=b.grade;
   const removed=mobileBookCleanse(u,g>=3?Infinity:g),healed=mobileBookRestore(u,[.5,.7,1,1,1][g-1]);
   changed=removed>0||healed>0;if(g>=4&&targets[1])changed=mobileBookRestore(targets[1],g===4?.2:.4)>0||changed;
+ }else if(b.id==='3'&&allies.length){
+  // Võ Hầu Kỳ Thư: exact rank odds and layers from Mobile source; duration uses P2 round-end semantics.
+  const g=b.grade,layer=g===5?2:g===4?1+(p2Random()<.5?1:0):p2Random()<[.5,.75,1][g-1]?1:0;
+  if(layer)for(const u of allies){
+   const old=u.effects?.find(e=>e.kind===MOBILE_BOOK_SHIELD_STATUS&&e.turns>0);
+   // Additive layers and a refreshed two-round duration are project adapter choices.
+   const total=Math.min(99,layer+(old?Math.max(1,nat(old.mobileSourceValues?.shieldLayers)):0));
+   changed=applyMobileSourceStatus(u,{kind:MOBILE_BOOK_SHIELD_STATUS,turns:2,values:{shieldLayers:total},sourceName:b.name,sourceDescription:b.desc})||changed;
+  }
  }else if(b.id==='4'&&allies.length){const n=desc.match(/hoi (\d+) si khi/);if(n){p2Morale(allies.slice().sort((a,b)=>a.morale-b.morale||a.slot-b.slot)[0],Number(n[1]));changed=true;const extra=desc.match(/hoi them cho toan phe ta (\d+) si khi/);if(extra)for(const u of allies)p2Morale(u,Number(extra[1]));}}
  else if(b.id==='5'){const power=[.4,.6,.6,.8,1][b.grade-1],turns=b.grade<=2?1:2;for(const u of allies)changed=applyMobileSourceStatus(u,{kind:MOBILE_ATTACK_UP_STATUS,turns,values:{outgoingDamageMultiplier:1+power},sourceName:b.name,sourceDescription:b.desc})||changed;}
  else if(b.id==='9'){const def=[.6,.6,.7,.7,.8][b.grade-1];for(const u of allies)changed=applyMobileSourceStatus(u,{kind:MOBILE_BOOK_GUARD_STATUS,turns:3,values:{outgoingDamageMultiplier:.4,incomingPhysicalDefenseMultiplier:1+def,incomingTacticDefenseMultiplier:1+def,incomingMagicDefenseMultiplier:1+def},sourceName:b.name,sourceDescription:b.desc})||changed;}
@@ -1591,7 +1607,7 @@ function trainingPanel(){
  return row(h.name,'Bậc '+t+' · '+horseStar(id)+' Sao · '+(h.tiers[0].unlock||'Mở ngay')+' · '+h.tiers[t].stats.map(x=>x.label+' '+x.base+' / '+x.pct+'%').join(' · '),(step?btn('horse-step',id,(step.complete?'Lên bậc '+(step.tier+1):'Luyện sao '+step.star)+' · '+fmt(step.points)+' điểm',!!battle||!step.gate||s.horsePoints<step.points):'')+(q?btn('horse-up',id,'Nâng · '+fmt(q.points)+' điểm',!!battle||!q.gate||s.horsePoints<q.points):'')+btn('horse-equip',id,s.horseAssigned[trainHero]===id?'Đang dùng':'Cưỡi',!!battle||!horseGate(id,0)||used||s.horseAssigned[trainHero]===id));},'horse-page');
  const own=MOBILE_ETCH.filter(x=>etchCount(x.id));etchPage=clamp(etchPage,0,Math.max(0,Math.ceil(own.length/4)-1));
  const etch=pages(own,etchPage,x=>{const up=etchQuote(x.id,'upgrade'),mix=etchQuote(x.id,'mix');return row(x.qname+' '+x.stat+' Lv'+x.level,'×'+etchCount(x.id)+' · '+fmt(x.value),(up?btn('etch-up',x.id,'Nâng · '+fmt(up.silver)+' Bạc / '+fmt(up.ngoc)+' Ngọc',!!battle||game.silver<up.silver||(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)<up.ngoc):'')+(mix?btn('etch-mix',x.id,'Ghép '+mix.count,!!battle||etchCount(x.id)<mix.count):'')+btn('etch-equip',x.id,'Khảm',!!battle));},'etch-page');
- return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá',btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; bảy Binh Thư có adapter sĩ khí/hồi lính/giải trừ/công/phòng theo lượt 3/6; hiệu ứng phụ và bốn Binh Thư khác chưa nối.</p>');
+ return pane('mobile-training','Binh Thư · Mã Trường · Khắc Văn',selector+'<h4>Thưởng luyện tập hằng ngày · '+daily.wins+'/10 trận</h4>'+DAILY_TRAINING.map((q,i)=>row(q.wins+' trận thắng',q.fragment+' Mảnh · '+fmt(q.exp)+' Thư Linh · '+fmt(q.horse)+' điểm mã · '+q.ngoc+' Ngọc · '+q.stone+' Đá',btn('training-claim',String(i),daily.claimed[i]?'Đã nhận':'Nhận thưởng',!!battle||daily.wins<q.wins||!!daily.claimed[i]))).join('')+'<p class="tiny">Thưởng mô phỏng, kiếm qua NPC Wiki (cả đánh lại) hoặc tầng tháp bổ sung. Không cần nạp tài nguyên debug.</p><h4>Binh Thư</h4><p>Mảnh '+fmt(s.bookFragments)+' · Thư Linh '+fmt(s.bookExp)+'</p>'+btn('training-buy','fragment:100','Đổi 100 Mảnh · 15.000 Bạc',!!battle||game.silver<15000)+btn('training-buy','exp:10000','Đổi 10.000 Thư Linh · 20.000 Bạc',!!battle||game.silver<20000)+books+'<h4>Mã Trường</h4><p>Điểm '+fmt(s.horsePoints)+'</p>'+btn('training-buy','horse:100000','Đổi 100.000 điểm · 100.000 Bạc',!!battle||game.silver<100000)+horses+'<h4>Khắc Văn</h4><p>Tranh Ngọc '+fmt(game.nlItemsV1?.stacks?.[MOBILE_NGOC]||0)+'</p>'+[1,2,3].map(i=>btn('etch-buy',String(i),'Mua '+(['Công','Phòng','Binh'][i-1])+' · 1.000 Bạc',!!battle||s.mobileCommanderLevel<100||game.silver<1000)).join('')+Object.entries(s.etchAssigned[trainHero]||{}).map(([a,id])=>row(ETCH.get(id)?.stat||id,'Lv'+(ETCH.get(id)?.level||0),btn('etch-remove',a,'Tháo',!!battle))).join('')+etch+'<p class="tiny">Bảng nguồn nguyên vẹn. Binh Thư có từng cấp theo bảng và nâng trọn bậc; chiến mã từng sao, chia điểm mô phỏng bảo toàn tổng từng tầng; chỉ số nguồn cập nhật khi đủ bậc; cấp Thành Chính dùng Chỉ huy đại diện. Khắc Văn dùng đúng chi phí nâng/ghép, nguồn mua cơ bản và đổi điểm mô phỏng. Chỉ số P2 quy đổi; tám Binh Thư có adapter sĩ khí/hồi lính/giải trừ/công/phòng/Hộ Thuẫn theo lượt 3/6; hiệu ứng phụ và ba Binh Thư khác chưa nối.</p>');
 }
 function mobileTechPanel(){
  const s=state();
