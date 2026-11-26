@@ -118,7 +118,13 @@
       const sourceRefine=row.mobileRefinement?.sourcePools;
       const sourceRefineDetail=sourceRefine?'<details class="nli-source-refine"><summary>Bảng thuộc tính Tinh Luyện Wiki (dữ liệu nguồn)</summary>'+Object.entries(sourceRefine).filter(([,entries])=>Array.isArray(entries)).map(([pool,entries])=>
         '<div><b>'+escape(pool)+'</b><ul>'+entries.map(x=>'<li>'+escape(x.name)+' · '+Math.round(x.rate*100)+'% · giá trị '+escape(x.value)+'</li>').join('')+'</ul></div>').join('')+
-        '<small>Chưa kết nối thành thao tác vì nguồn có hai bảng tỉ lệ vượt 100% và chưa công bố chi phí/hiệu ứng combat đầy đủ.</small></details>':'';
+        '<small>Giữ nguyên giá trị nguồn. Bảng tổng vượt 100% được dùng làm trọng số chuẩn hóa; chi phí và điều kiện mở mô phỏng.</small></details>':'';
+      const mobileRefineButtons=sourceRefine&&typeof api.mobileRefineQuote==='function'?['so','cao','dacKy'].map((pool,i)=>{
+        const q=api.mobileRefineQuote(state,uid,pool);if(!q)return '';
+        const have=state.nlItemsV1?.stacks?.[q.materialId]||0,rolls=item.mobileRefines?.[pool]||[];
+        return '<div class="nli-meta">'+['Sơ cấp','Cao cấp','Đặc kỹ'][i]+': '+(rolls.map(x=>escape(x.name)).join(' · ')||'Chưa phụ ma')+
+        ' <button data-nli-action="mobile-refine" data-uid="'+escape(uid)+'" data-pool="'+pool+'" '+(level<q.gate||state.silver<q.silver||have<q.stone?'disabled':'')+'>Phụ ma · '+money(q.silver)+' Bạc / '+q.stone+' Đá · Lv'+q.gate+'</button></div>';
+      }).join(''):'';
       return '<article class="nli-gear" data-uid="'+escape(uid)+'" data-nl-art-item="'+escape(row.id)+'" data-nl-art-kind="'+escape(row.slot)+'" data-nl-art-rarity="'+escape(row.rarity)+'">'+
         '<header><strong>'+escape(row.name)+'</strong><span>'+escape(row.rarity)+'</span></header>'+
         '<small>'+escape(SLOTS.find(s=>s[0]===row.slot)?.[1]||row.slot)+
@@ -134,7 +140,7 @@
         (sourceEnhancement?'<label class="nli-upgrade-target">Đến Lv <input type="number" min="'+(level+1)+'" max="'+maxLevel+'" value="'+targetLevel+'" data-nli-reinforce-target="'+escape(uid)+'"></label>':'')+
         '<button data-nli-action="reinforce" data-uid="'+escape(uid)+'" data-target-level="'+(sourceEnhancement?targetLevel:'')+'" '+(!canReinforce?'disabled':'')+'>'+
         (rc?'Cường hóa'+(sourceEnhancement?' đến Lv '+targetLevel:'')+' · '+priceText(rc):'Cường hóa tối đa')+'</button>'+
-        (sourceEnhancement?'<button disabled title="Bảng giá và hiệu ứng combat Tinh Luyện chưa được công khai đầy đủ">Tinh Luyện · cơ chế nguồn đang đối chiếu</button>':'<button data-nli-action="refine" data-uid="'+escape(uid)+'" '+(!canRefine?'disabled':'')+'>'+
+        (sourceEnhancement?mobileRefineButtons:'<button data-nli-action="refine" data-uid="'+escape(uid)+'" '+(!canRefine?'disabled':'')+'>'+
         (fc!=null?'Tinh luyện · '+money(fc)+' bạc / '+needMat+' tinh khoáng':'Tinh luyện tối đa')+'</button>')+'</div>'+
         (sourceEnhancement?'<div class="nli-meta">Cường Hóa theo bảng Wiki Lv1–425. Giảm Bạc theo Cấp Chỉ huy mô phỏng: '+(rc?.discount?Math.round(rc.discount*100)+'%':'0%')+'; làm tròn từng cấp là giả định vì Wiki chỉ nêu mức giảm. Không áp dụng giảm giá công trình/khoa kỹ chưa có hệ số nguồn. Đá Tôi Luyện Wiki: '+(state.nlItemsV1?.stacks?.['mobile-vng-resource-res_62']||0)+'</div>':'')+
         (row.mobileSale?'<div class="nli-meta">Giá trị bán theo Wiki; quy đổi thành Bạc là mô phỏng vì nguồn không ghi loại tiền.</div>':'')+
