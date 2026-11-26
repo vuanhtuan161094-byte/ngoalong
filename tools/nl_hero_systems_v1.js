@@ -70,6 +70,8 @@ function nlhHeroStats(id){
  return {level:d.level||1,xp:d.xp||0,troops:d.troops||0,atk:h.atk||0,def:h.def||0,int:h.int||0,speed:h.agi||h.speed||0,power,combat};
 }
 function nlhCurrentTroop(id){
+ const mobileId=game.nlContentC?.mobileTroopAssigned?.[id],mobile=typeof NL_CONTENT_C!=='undefined'&&NL_CONTENT_C.mobileTroops?.units?.[mobileId];
+ if(mobile)return {name:mobile.name,tier:mobile.tier,description:mobile.desc||mobile.typeName,kind:'Binh chủng Mobile'};
  try{const classic=typeof nlwB4Active==='function'?nlwB4Active(id):null;if(classic)return {name:classic.name,tier:classic.tier,description:classic.ability||classic.role,kind:'Legacy WEB troop profile'};}catch(_e){}
   try{const branch=typeof nlr03BranchFor==='function'?nlr03BranchFor(id):null;if(branch)return {name:branch.name,tier:branch.tier||1,description:branch.description||branch.id,kind:'Tiến hóa dự án'};}catch(_e){}
   const h=nlhHero(id),mode=game.troopModes?.[id];return {name:mode?({drum:'Cổ Vũ Sĩ',dancer:'Vũ Nữ'}[mode]||mode):(h.troopName||h.type||'Bộ binh'),tier:1,description:h.role||'Binh chủng cơ sở',kind:'Project troop profile'};
