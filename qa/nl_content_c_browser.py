@@ -51,6 +51,17 @@ def main():
             checks.mobileTroopLiveP2=liveMobile?.nlMobileTroop?.id==='10'&&liveMobile.atk>0&&liveMobile.def>0;
           }else checks.mobileTroopLiveP2=false;
           q.setGame(mobileBefore);
+          const troopBefore=q.getGame(),troopFixture=q.getGame();
+          troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
+          troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);
+          const selectBefore=q.getGame();
+          checks.mobileSelectableCoverage=c.mobileTroopPlayable().length===225&&!c.mobileTroopPlayable().includes('112');
+          checks.mobileChoose=c.mobileTroopChoose(id,'2')&&c.mobileTroopAssigned(id)?.id==='2'&&q.getGame().silver===selectBefore.silver-1000&&!c.mobileTroopChoose(id,'2');
+          checks.mobileSelectionP2=c.p2Unit(id,'p',0,1)?.nlMobileTroop?.id==='2'&&c.p2Unit(id,'p',0,1)?.troop==='infantry';
+          q.setGame(JSON.parse(JSON.stringify(q.getGame())));
+          checks.mobileTroopSave=c.mobileTroopAssigned(id)?.id==='2'&&q.getGame().version===5;
+          checks.mobileExcludeNpcShip=!c.mobileTroopChoose(id,'112')&&!c.mobileTroopChoose(id,'103');
+          q.setGame(troopBefore);
           const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders,firstMerit=q.getGame().nlClassicA.merit;
           checks.difficultyRange=c.npcDifficulty(n.id)===1&&m.npcs.every(x=>c.npcDifficulty(x.id)>=1&&c.npcDifficulty(x.id)<=90);
           checks.nativeStart=c.startNpc(n.id);checks.oneOrder=q.getGame().nlClassicA.orders===orders-1;
