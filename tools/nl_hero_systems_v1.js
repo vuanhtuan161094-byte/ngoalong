@@ -112,7 +112,7 @@ function nlhGlyph(id){const paths={hero:'<path d="M12 3l7 4v5c0 5-3 8-7 10-4-2-7
 function nlhSelectHero(id){if(!nlhOwned(id))return;const s=nlhsState();s.selectedHero=id;save();render();}
 function nlhSelectSystem(id){if(!PICKABLE.includes(id))return;const s=nlhsState();s.selectedSystem=id;save();render();}
 function nlhUpgrade(id,heroId,sub=''){
- if(battle||!nlhOwned(heroId)||(id==='awakening'&&typeof mobileHeroQuality==='function'&&mobileHeroQuality(heroId)))return false;const state=nlhsState(),h=nlhsHero(heroId),next=0;let current=0,max=0,key=id;
+ if(battle||!nlhOwned(heroId)||(id==='awakening'&&typeof nlMobileHeroApi!=='undefined'&&nlMobileHeroApi?.quality(heroId)))return false;const state=nlhsState(),h=nlhsHero(heroId),next=0;let current=0,max=0,key=id;
  if(id==='commander'){current=h.commanderLevel;max=SYS[id].maxLevel;}
  else if(id==='specialWeapon'){current=h.weaponLevel;max=SYS[id].maxLevel;}
  else if(id==='inheritance'){current=h.inheritanceLevel;max=SYS[id].maxLevel;}
@@ -264,17 +264,17 @@ function nlhMaterialShopPanel(){
  const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
 }
 function nlhMobileAwakeningPanel(id){
- if(typeof mobileHeroQuality!=='function'||!mobileHeroQuality(id))return null;
- const exact=mobileHeroQuality(id),q=mobileHeroNext(id),wallet=game.nlContentC?.mobileHeroMaterials||{};
+ if(typeof nlMobileHeroApi==='undefined'||!nlMobileHeroApi?.quality(id))return null;
+ const exact=nlMobileHeroApi?.quality(id),q=nlMobileHeroApi.next(id),wallet=game.nlContentC?.mobileHeroMaterials||{};
  const materials=q?.valid?Object.entries(q.material).map(([name,amount])=>{
-   const have=wallet[name]||0,missing=Math.max(0,amount-have),quote=missing?mobileHeroMaterialQuote(id,name,missing):null;
+   const have=wallet[name]||0,missing=Math.max(0,amount-have),quote=missing?nlMobileHeroApi.materialQuote(id,name,missing):null;
    return '<div class="nlh-action-row"><span>'+hsEsc(name)+' · '+nlhFmt(have)+'/'+nlhFmt(amount)+'</span>'+
    (quote?'<button class="nlh-button" data-nlh-action="mobileMaterial" data-nlh-name="'+hsEsc(name)+'" data-nlh-count="'+missing+'" '+(battle||game.silver<quote.silver?'disabled':'')+'>Đổi '+nlhFmt(missing)+' · '+nlhFmt(quote.silver)+' Bạc</button>':'')+'</div>';
  }).join(''):'';
  return '<div class="nlh-section-head"><span>Giác Ngộ · '+hsEsc(exact.name)+'</span><span class="nlh-status">'+hsEsc(exact.growth.qn)+'</span></div>'+
  '<h3 class="nlh-section-title">Giác ngộ theo phẩm chất nguồn</h3>'+nlhMobileSourcePanel(id)+
  (!q?'<p>Đã đạt phẩm chất tối đa có dữ liệu.</p>':'<div class="nlh-feature-panel"><b>Bậc tiếp: '+hsEsc(q.name)+'</b><p>'+hsEsc(q.stage?.access||'Chưa xác minh đường nhận')+'</p>'+materials+
- (q.valid?'<button class="nlh-button" data-nlh-action="mobileAwaken" '+(!mobileHeroCanAwaken(id)?'disabled':'')+'>Giác ngộ · cần Chỉ huy '+q.gate+'</button>':'<p>Thiếu bảng chi phí nguồn: chưa mở giao dịch.</p>')+
+ (q.valid?'<button class="nlh-button" data-nlh-action="mobileAwaken" '+(!nlMobileHeroApi.canAwaken(id)?'disabled':'')+'>Giác ngộ · cần Chỉ huy '+q.gate+'</button>':'<p>Thiếu bảng chi phí nguồn: chưa mở giao dịch.</p>')+
  '<p class="nlh-source-note">Số lượng nguyên liệu lấy nguyên Wiki; đường đổi Bạc và các ngưỡng chưa có nguồn là mô phỏng.</p></div>');
 }
 function nlhMobileSourcePanel(id){
@@ -283,7 +283,7 @@ function nlhMobileSourcePanel(id){
  if(!record)return '';
  const ranks=(record.growth||[]).filter(r=>Number.isInteger(r.q)&&[r.lead,r.war,r.int].every(Number.isFinite)).sort((a,b)=>a.q-b.q);
  if(!ranks.length)return '';
- const current=mobileHeroQuality(id)?.growth||ranks[0],next=ranks.find(r=>r.q>current.q);
+ const current=nlMobileHeroApi?.quality(id)?.growth||ranks[0],next=ranks.find(r=>r.q>current.q);
  const stage=(record.stages||[]).filter(t=>t.q<=current.q).sort((a,b)=>a.q-b.q).at(-1),nextStage=(record.stages||[]).find(t=>t.q===next?.q);
  return '<div class="nlh-feature-panel"><b>Hồ sơ Mobile · '+hsEsc(current.qn||current.q)+'</b><p class="nlh-copy">Chỉ Huy '+current.lead+' · Võ '+current.war+' · Trí '+current.int+' · tăng trưởng nguồn '+current.gl+'/'+current.gw+'/'+current.gi+'</p>'+
  (stage?.skill?'<p class="nlh-copy">Chiến pháp nguồn: '+hsEsc(stage.skill.name)+' · '+hsEsc(stage.skill.desc||'')+'</p>':'')+
@@ -345,8 +345,8 @@ document.addEventListener('click',e=>{
  else if(action==='ancient')nlhAncientUpgrade(nlhsState().selectedHero);
  else if(action==='illusion')nlhIllusionChoose(nlhsState().selectedHero,b.dataset.nlhMode);
  else if(action==='materialBuy')nlhMaterialBuy(b.dataset.nlhMaterial);
- else if(action==='mobileMaterial')mobileHeroBuyMaterial(nlhsState().selectedHero,b.dataset.nlhName,Number(b.dataset.nlhCount));
- else if(action==='mobileAwaken')mobileHeroAwaken(nlhsState().selectedHero);
+ else if(action==='mobileMaterial')nlMobileHeroApi.buyMaterial(nlhsState().selectedHero,b.dataset.nlhName,Number(b.dataset.nlhCount));
+ else if(action==='mobileAwaken')nlMobileHeroApi.awaken(nlhsState().selectedHero);
  else if(action==='artMode')nlhSetArtMode(nlhsState().selectedHero,b.dataset.nlhMode);
 });
 const NLH_NAV_ICON_PATH={
