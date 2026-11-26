@@ -25,7 +25,8 @@ def main():
           const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===4903&&c.counts.runtimeHeroes===368&&c.tiers()===40,
             towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
             towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul};
-          const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders;
+          const m=c.map('wiki-map-1'),n=m.npcs[0],orders=q.getGame().nlClassicA.orders,firstMerit=q.getGame().nlClassicA.merit;
+          checks.difficultyRange=c.npcDifficulty(n.id)===1&&m.npcs.every(x=>c.npcDifficulty(x.id)>=1&&c.npcDifficulty(x.id)<=90);
           checks.nativeStart=c.startNpc(n.id);checks.oneOrder=q.getGame().nlClassicA.orders===orders-1;
           let b=q.debugBattle();
           checks.formation=b?.e.length===n.units.length&&b.e.every((e,i)=>e.slot===n.units[i][0]&&e.name===n.units[i][1]);
@@ -37,10 +38,11 @@ def main():
           if(!b.finished)q.finishBattle();
           const s=q.getGame(),report=b.report;
           checks.settlement=b.won&&c.state().cleared[n.id]===true&&s.cleared.length===28&&report?.nlContentC?.id===n.id&&report?.rewards?.iron===undefined;
-          const balance=s.silver;q.finishBattle();checks.noDuplicate=q.getGame().silver===balance;
+          checks.firstMerit=s.nlClassicA.merit-firstMerit>=c.npcMerit(n.id)&&report?.nlContentC?.meritAward===s.nlClassicA.merit-firstMerit;
+          const balance=s.silver,meritBalance=s.nlClassicA.merit;q.finishBattle();checks.noDuplicate=q.getGame().silver===balance&&q.getGame().nlClassicA.merit===meritBalance;
           q.closeBattle('city');
           checks.tower=c.startTower()&&q.debugBattle()?.nlContentC?.floor===21&&q.getGame().activity.towerTries===2;
-          const tb=q.debugBattle(),towerBefore=q.getGame(),expected=c.towerRewards(21),soulBefore=c.state().soul;
+          const tb=q.debugBattle(),towerBefore=q.getGame(),expected=c.towerRewards(21),soulBefore=c.state().soul,towerMeritBefore=q.getGame().nlClassicA.merit;
           checks.towerPlanInNativeBattle=tb?.e.length===3&&tb?.nlContentC?.arcId===plans[0].arcId&&tb?.nlContentC?.aiStyle===plans[0].aiStyle;
           if(tb){const styles=[];for(const style of ['pressure','counter','finish','protect']){tb.nlContentC.aiStyle=style;c.towerTarget(tb.e[0],'front');styles.push(tb.aiDecisionLog?.at(-1)?.style);}tb.nlContentC.aiStyle=plans[0].aiStyle;checks.towerAIUsesArcDoctrine=new Set(styles).size===4&&tb.stage===1;}
           if(tb){for(const u of tb.e)u.hp=0;if(!tb.finished)q.finishBattle();}
@@ -48,6 +50,7 @@ def main():
           checks.towerNativeSettlement=!!tb?.won&&c.floor()===21&&c.state().extraFloor===1&&c.state().soul===soulBefore+expected.soul&&
             towerAfter.silver-towerBefore.silver===expected.silver&&towerAfter.grain-towerBefore.grain===expected.grain&&
             towerReport?.nlContentC?.floor===21&&towerReport?.nlContentC?.rank==='Thường';
+          checks.towerMerit=towerAfter.nlClassicA.merit-towerMeritBefore===57&&towerReport?.nlContentC?.meritAward===57;
           const settled=[towerAfter.silver,towerAfter.grain,towerAfter.prestige,c.floor(),c.state().soul,towerAfter.battleReports.length];
           q.finishBattle();const towerRepeated=q.getGame();
           checks.towerNoDuplicate=JSON.stringify(settled)===JSON.stringify([towerRepeated.silver,towerRepeated.grain,towerRepeated.prestige,c.floor(),c.state().soul,towerRepeated.battleReports.length]);
@@ -58,12 +61,13 @@ def main():
           // Test repeat victory through the same native settlement path; not a balance claim.
           const repeatGame=q.getGame();repeatGame.silver=1000000;repeatGame.grain=1000000;
           repeatGame.hero[id].troops=3000;repeatGame.nlClassicA.orders=60;q.setGame(repeatGame);
-          const beforeRepeat=q.getGame(),repeatSoul=c.state().soul,repeatReward=c.npcReward(n.id);
+          const beforeRepeat=q.getGame(),repeatSoul=c.state().soul,repeatReward=c.npcReward(n.id),repeatMeritBefore=q.getGame().nlClassicA.merit;
           checks.repeatLaunch=c.canReplayNpc(n.id)&&c.startNpc(n.id,true)&&q.debugBattle()?.nlContentC?.repeat===true;
           const rb=q.debugBattle();if(rb){for(const u of rb.e)u.hp=0;if(!rb.finished)q.finishBattle();}
           const afterRepeat=q.getGame();
           checks.repeatSettlement=!!rb?.won&&c.npcRepeatCount(n.id)===1&&c.state().soul===repeatSoul&&rb.report?.rewards?.silver===repeatReward.silver;
-          q.finishBattle();checks.repeatOnce=q.getGame().silver===afterRepeat.silver&&c.npcRepeatCount(n.id)===1;
+          checks.repeatMerit=afterRepeat.nlClassicA.merit-repeatMeritBefore===4&&rb.report?.nlContentC?.meritAward===4;
+          q.finishBattle();checks.repeatOnce=q.getGame().silver===afterRepeat.silver&&c.npcRepeatCount(n.id)===1&&q.getGame().nlClassicA.merit===afterRepeat.nlClassicA.merit;
           q.closeBattle('city');
           const cap=q.getGame();cap.nlContentC.npcRepeat[n.id]=3;q.setGame(cap);
           checks.repeatCap=!c.canReplayNpc(n.id)&&!c.startNpc(n.id,true);
@@ -114,6 +118,13 @@ def main():
           checks.renewableMaterials=Array.from({length:5},()=>hs.materialBuy('commandManual')).every(Boolean)&&hs.materials().commandManual===oldManual+5&&!hs.materialBuy('commandManual')&&!hs.materialBuy('unknown');
           q.setGame(JSON.parse(JSON.stringify(q.getGame())));
           checks.endgameSave=hs.state().heroes[id].ancientLevel===1&&hs.state().heroes[id].illusionMode==='assault'&&hs.state().materialShop.counts.commandManual===5;
+          const sk=q.getGame();sk.hero[id].level=60;sk.silver=100000;sk.nlClassicA.merit=10000;sk.heroDevelopment.heroes[id].skillLevel=1;q.setGame(sk);
+          const base={tag:'QA',mult:1,drainMorale:20,applyChance:.3},beforeSkill=q.getGame();
+          checks.skillUpgrade=hs.skillUpgrade(id)&&hs.state().heroes[id].skillLevel===2&&q.getGame().silver===beforeSkill.silver-500&&q.getGame().nlClassicA.merit===beforeSkill.nlClassicA.merit-20;
+          checks.skillScaling=hs.skillDescriptor(id,base).mult===1.035&&hs.skillDescriptor(id,base).drainMorale===21&&base.mult===1;
+          const train=q.getGame();train.hero[id].level=1;train.hero[id].xp=0;train.silver=100000;q.setGame(train);
+          const cost=hs.trainQuote(id),trainingBefore=q.getGame().silver;
+          checks.batchTrain=hs.trainBatch(id,5)&&q.getGame().silver===trainingBefore-cost.cost.silver*5&&q.getGame().hero[id].level>1&&!hs.trainBatch(id,99);
           return checks;
         }""")
         print(out,flush=True)
