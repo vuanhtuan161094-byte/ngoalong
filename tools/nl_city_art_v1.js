@@ -1,7 +1,9 @@
 // === NL-CITY-ART-V1: original offline capital courtyard background ===
 (()=>{
 'use strict';
-const image=__NL_CITY_ART_DATA_URL__;
+const env=__NL_WLY2_ENV_DATA__;
+const sourceCity=Boolean(env.castle);
+const image=env.castle||__NL_CITY_ART_DATA_URL__;
 if(typeof image!=='string'||!image.startsWith('data:image/webp;base64,'))
  throw Error('NL_CITY_ART_V1: embedded city scene is missing');
 const style=document.createElement('style');
@@ -32,11 +34,42 @@ style.textContent=`
  background:linear-gradient(160deg,rgba(91,69,39,.96),rgba(31,42,35,.96));
 }
 `;
+if(sourceCity){
+ const placements={palace:[56,25],farm:[19,54],market:[40,36],mine:[83,45],barracks:[52,69],academy:[78,29],tavern:[72,56]};
+ let extra=`
+ #view .city-visual{container-type:size;background-size:contain!important;background-repeat:no-repeat;background-color:#17282d!important;background-position:center!important;isolation:isolate}
+ #view .city-visual:before,#view .city-visual:after{display:none!important}
+ #view .city-visual .building{
+  position:absolute!important;transform:translate(-50%,-50%)!important;
+  width:clamp(42px,calc(min(100cqw,150.6cqh)*.16),130px)!important;
+  min-width:0!important;padding:0!important;display:flex!important;flex-direction:column;align-items:center;
+  background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;
+  height:auto!important;gap:0!important;z-index:3;
+ }
+ #view .city-visual .building .symbol{
+  display:block!important;width:100%!important;height:clamp(30px,calc(min(100cqw,150.6cqh)*.105),88px)!important;
+  background-size:contain;background-repeat:no-repeat;background-position:center bottom;
+  margin:0!important;color:transparent!important;line-height:0!important;
+ }
+ #view .city-visual .building .symbol>*{display:none!important}
+ #view .city-visual .building b,#view .city-visual .building small{
+  background:#172a25db!important;color:#f5e4b3!important;text-shadow:0 1px 2px #000;
+  padding:1px 4px;border-radius:3px;white-space:nowrap;line-height:1.15!important;
+ }
+ #view .city-visual .building:hover,#view .city-visual .building:focus-visible{z-index:5;filter:brightness(1.17)}
+ #view .world-scene{background-image:url("${env.world}")!important;background-size:cover!important;background-position:center!important}
+ `;
+ for(const [id,[x,y]] of Object.entries(placements)){
+  extra+=`#view .city-visual .building[data-focus-building="${id}"]{left:calc(50% + min(100cqw,150.6cqh)*${(x-50)/100})!important;top:calc(50% + min(100cqh,66.4cqw)*${(y-50)/100})!important;right:auto!important;bottom:auto!important}#view .city-visual .building[data-focus-building="${id}"] .symbol{background-image:url("${env.buildings[id]}")!important}`;
+ }
+ style.textContent+=extra;
+}
 document.head.appendChild(style);
 const previousCity=renderCity;
 renderCity=function(){return previousCity().replace('THÀNH TRÌ · MỸ THUẬT P4','THÀNH TRÌ · CẢNH THÀNH V1');};
 if(window.__P2_ENABLE_QA__)window.__NL_CITY_ART_QA__=Object.freeze({
- source:'image_gen.imagegen',version:1,width:1400,height:788,
+ source:sourceCity?'MatrixHan/WLY2':'image_gen.imagegen',version:1,width:sourceCity?2000:1400,height:sourceCity?1328:788,
+ sourceBuildings:()=>Object.keys(env.buildings||{}),
  cssReady:()=>document.querySelectorAll('style[data-nl-city-art="v1"]').length===1,
  background:()=>getComputedStyle(document.querySelector('.city-visual')).backgroundImage
 });

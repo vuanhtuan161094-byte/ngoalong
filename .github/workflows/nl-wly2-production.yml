@@ -20,6 +20,8 @@ jobs:
           python -m pip install pillow==11.3.0
           python tools/build_wly2_source_pack.py --cache "$RUNNER_TEMP/wly2-original" --out "$RUNNER_TEMP/wly2-pack.json"
           echo "NL_WLY2_PACK=$RUNNER_TEMP/wly2-pack.json" >> "$GITHUB_ENV"
+          python tools/acquire_wly2_environment.py --out "$RUNNER_TEMP/wly2-environment"
+          echo "NL_WLY2_ENV_PACK=$RUNNER_TEMP/wly2-environment/runtime-pack.json" >> "$GITHUB_ENV"
       - name: Build canonical game, not a mockup
         run: |
           set -euo pipefail
@@ -67,6 +69,8 @@ jobs:
               assert result['troops']==28 and result['effects']>0 and result['metrics']['sourceTroops']>0 and result['metrics']['sourceFx']>0 and result['save']==5 and not errors,(result,errors)
               browser.close()
           PY
+      - name: Actual city source map and live building interaction
+        run: python qa/nl_city_art_browser.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -74,4 +78,5 @@ jobs:
           path: |
             qa/wly2-battle-*.png
             qa/wly2-smoke.json
+            qa/nl-city-art-*.png
           if-no-files-found: warn

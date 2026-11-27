@@ -24,7 +24,8 @@ def main():
         for width, height, label in [(1280, 720, "desktop"), (390, 844, "mobile")]:
             page = browser.new_page(viewport={"width": width, "height": height})
             page.on("pageerror", lambda e: errors.append(str(e)))
-            page.set_content(HTML.replace("<script>", STUB + "<script>", 1), wait_until="domcontentloaded")
+            page.add_init_script(STUB.removeprefix("<script>").removesuffix("</script>"))
+            page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
             page.wait_for_selector("#nl-screen-select")
             command = page.locator("[data-nl-command]")
 

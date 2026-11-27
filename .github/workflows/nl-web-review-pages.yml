@@ -38,6 +38,8 @@ jobs:
           python -m pip install pillow==11.3.0
           python tools/build_wly2_source_pack.py --cache "$RUNNER_TEMP/wly2-original" --out "$RUNNER_TEMP/wly2-pack.json"
           echo "NL_WLY2_PACK=$RUNNER_TEMP/wly2-pack.json" >> "$GITHUB_ENV"
+          python tools/acquire_wly2_environment.py --out "$RUNNER_TEMP/wly2-environment"
+          echo "NL_WLY2_ENV_PACK=$RUNNER_TEMP/wly2-environment/runtime-pack.json" >> "$GITHUB_ENV"
       - name: Validate source and build one canonical HTML
         run: |
           set -euo pipefail

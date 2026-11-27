@@ -83,6 +83,10 @@ def payload(private_wly2=None) -> str:
     web_b4 = json.loads((ROOT / "data/ngoalong/modules/troops/classic_web55_v1.json").read_text(encoding="utf-8"))
     b4 = (TOOLS / "nl_classic_web_b4.js").read_text(encoding="utf-8")
     b4_css = (TOOLS / "nl_classic_web_b4.css").read_text(encoding="utf-8")
+    environment_pack = os.environ.get("NL_WLY2_ENV_PACK")
+    environment = json.loads(Path(environment_pack).read_text(encoding="utf-8")) if environment_pack else {}
+    if environment:
+        assert environment["schema"] == 1 and environment["verifiedFiles"] == 1353 and len(environment["buildings"]) == 7
     b4_art = (ROOT / "assets/ngoalong/original/battle_courtyard_b4.webp").read_bytes()
     if len(web_b4["troops"])!=55 or len(web_b4["formations"])!=10:
         raise ValueError("B4 historic content drift")
@@ -93,7 +97,7 @@ def payload(private_wly2=None) -> str:
     if "</script" in (b4+b4_css).lower() or "</style" in b4_css.lower():
         raise ValueError("Unsafe B4 embedded source")
     b4 = b4.replace("__NL_B4_DATA__", js_json(web_b4)).replace(
-         "__NL_B4_IMAGE_BASE64__", b64encode(b4_art).decode("ascii")).replace(
+         "__NL_B4_IMAGE_BASE64__", environment["battle"].split(",",1)[1] if environment else b64encode(b4_art).decode("ascii")).replace(
          "__NL_B4_CSS__", js_json(b4_css))
     if classic_b3.count("// === NL-CLASSIC-B3-V1:") != 1 or "</script" in classic_b3.lower():
         raise ValueError("Invalid B3 gameplay integration")
@@ -210,7 +214,7 @@ def payload(private_wly2=None) -> str:
         city_art.count("__NL_CITY_ART_DATA_URL__") != 1 or "</script" in city_art.lower()):
         raise ValueError("Invalid city art runtime module")
     city_url = "data:image/webp;base64," + b64encode(city_runtime_bytes).decode("ascii")
-    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url))
+    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url)).replace("__NL_WLY2_ENV_DATA__", js_json(environment))
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")

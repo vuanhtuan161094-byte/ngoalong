@@ -19,7 +19,8 @@ def open_page(browser,stored=None,width=1280):
  page=browser.new_page(viewport={"width":width,"height":720 if width>600 else 844},device_scale_factor=1)
  page.on("pageerror",lambda error:errors.append(str(error)))
  payload={SAVE_KEY:stored} if stored else {}
- page.set_content(HTML.replace("<script>",STUB.replace("__NL_STORE__",json.dumps(payload,ensure_ascii=False))+"<script>",1),wait_until="domcontentloaded")
+ page.add_init_script(STUB.replace("__NL_STORE__",json.dumps(payload,ensure_ascii=False)).removeprefix("<script>").removesuffix("</script>"))
+ page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
  return page
 def state(page): return page.evaluate("window.__P2_QA__.getGame()")
 def visible_window(page,selector):

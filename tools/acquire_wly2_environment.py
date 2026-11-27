@@ -3,7 +3,7 @@
 Build image contact sheets and stitched source maps for visual selection.
 Does not execute client code or modify gameplay.
 """
-import argparse, hashlib, json, re, urllib.request, math
+import argparse, hashlib, json, re, urllib.request, math, base64, io
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from PIL import Image,ImageDraw
@@ -62,4 +62,23 @@ def main():
     report={"verifiedFiles":len(files),"bytes":sum(f["bytes"] for f in files),"groups":[{"directory":g["directory"],"files":len(g["files"])} for g in m["groups"]]}
     (review/"report.json").write_text(json.dumps(report,indent=2))
     print(json.dumps(report))
+    # Runtime derivatives retain original map pixels and sprite transparency.
+    def url(raw):return "data:image/webp;base64,"+base64.b64encode(raw).decode("ascii")
+    def image_url(p,limit):
+        with Image.open(p) as im:
+            im=im.convert("RGBA")
+            im.thumbnail(limit,Image.Resampling.LANCZOS)
+            buf=io.BytesIO();im.save(buf,format="WEBP",quality=87,method=4)
+            return url(buf.getvalue())
+    root=out/"source"/"project_wly2_lua_client/res/img"
+    # Representative art mappings, not claims about exact WLY2 building identities.
+    buildings={"palace":"zd.png","farm":"nt1.png","market":"mj3.png","mine":"dzs.png",
+               "barracks":"xby.png","academy":"jg.png","tavern":"clf.png"}
+    pack={"schema":1,"verifiedFiles":len(files),"pin":m["pin"],
+          "castle":url((review/"map-castle.webp").read_bytes()),
+          "world":url((review/"map-world.webp").read_bytes()),
+          "battle":image_url(root/"bg/battle/BF_006.png",(1400,800)),
+          "buildings":{k:image_url(root/"building/maincity"/v,(384,384)) for k,v in buildings.items()},
+          "buildingSource":buildings}
+    (out/"runtime-pack.json").write_text(json.dumps(pack,separators=(",",":")),encoding="utf-8")
 if __name__=="__main__":main()

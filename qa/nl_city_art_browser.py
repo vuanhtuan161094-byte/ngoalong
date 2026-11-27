@@ -26,7 +26,7 @@ def read_scene(page):
       const css=q?.background()||'',match=css.match(/url\\([\"']?(data:image\\/webp;base64,[^\"')]+)[\"']?\\)/);
       if(!match)return {ready:false,cssReady:q?.cssReady()||false};
       const image=new Image();image.src=match[1];await image.decode();
-      return {ready:true,cssReady:q.cssReady(),source:q.source,width:image.naturalWidth,height:image.naturalHeight,
+      return {ready:true,cssReady:q.cssReady(),source:q.source,width:image.naturalWidth,height:image.naturalHeight,sourceBuildings:q.sourceBuildings?.()||[],
         label:view.querySelector('.p4-tag')?.textContent,
         buildings:[...view.querySelectorAll('[data-focus-building]')].map(button=>button.dataset.focusBuilding),
         box:view.getBoundingClientRect().toJSON(),pageWidth:document.documentElement.clientWidth,
@@ -45,9 +45,13 @@ def main() -> None:
         browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
         desktop = open_city_page(browser, 1280)
         scene = read_scene(desktop)
-        check("original 1400×788 WebP is embedded and decodes without a network request",
-              scene["ready"] and scene["cssReady"] and scene["source"] == "image_gen.imagegen" and
-              scene["width"] == 1400 and scene["height"] == 788)
+        expected_source = "MatrixHan/WLY2" if __import__("os").environ.get("NL_WLY2_ENV_PACK") else "image_gen.imagegen"
+        dims=(2000,1328) if expected_source=="MatrixHan/WLY2" else (1400,788)
+        check("correct offline capital WebP decodes without network",
+              scene["ready"] and scene["cssReady"] and scene["source"]==expected_source and
+              (scene["width"],scene["height"])==dims)
+        if expected_source=="MatrixHan/WLY2":
+            check("seven source building art bindings",len(scene["sourceBuildings"])==7)
         check("city scene retains all seven interactive buildings and updated art credit",
               {"palace","farm","market","mine","barracks","academy","tavern"}.issubset(set(scene["buildings"])) and
               scene["label"] == "THÀNH TRÌ · CẢNH THÀNH V1")
