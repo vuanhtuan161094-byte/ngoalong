@@ -34,3 +34,10 @@
 .nlw-mini-grid span{border:1px solid #3d4d4a;background:#263a37;border-radius:2px}.nlw-mini-grid span.filled{background:radial-gradient(circle at 35% 30%,#ffe0a4,#b36d38);border-color:#d4a16d;box-shadow:0 0 4px #f5bd6566}
 @media(max-width:760px){.nlw-grid,.nlw-form-grid{grid-template-columns:1fr}.nlw-panel{padding:9px!important}.nlw-unit button,.nlw-form button{min-width:65px}.nlw-panel h3{font-size:16px!important}}
 /* === end NL-CLASSIC-WEB-B4-ORIGINAL-STYLE === */
+
+/* Full source soldier silhouettes in the functional 55-troop Barracks catalogue. */
+.nlw-unit:has(.nlw-source-preview){background:linear-gradient(150deg,#30463a,#142929)!important;min-height:83px;box-shadow:inset 0 1px #d0b57535,0 4px 9px #0b1717aa!important}
+.nlw-source-preview{display:block;flex:0 0 72px;width:72px;height:72px;object-fit:contain;border:1px solid #8e9b68;border-radius:5px;background:radial-gradient(circle at 50% 85%,#42614f,#152a2d 73%);image-rendering:auto;filter:drop-shadow(0 1px 2px #071c15)}
+.nlw-unit:has(.nlw-source-preview) .nlw-txt b{font-size:14px!important}
+.nlw-unit:has(.nlw-source-preview) .nlw-txt small{font-size:10px!important;line-height:1.25}
+@media(max-width:650px){.nlw-source-preview{flex-basis:58px;width:58px;height:58px}.nlw-unit:has(.nlw-source-preview){min-height:70px}}

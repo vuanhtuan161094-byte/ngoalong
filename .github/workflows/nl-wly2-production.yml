@@ -95,6 +95,8 @@ jobs:
         run: python qa/nl_city_art_browser.py
       - name: Actual audio settings and P2 cue smoke
         run: python qa/nl_audio_browser.py
+      - name: Full size original-source troop art in playable Barracks
+        run: python qa/nl_source_barracks_browser.py
       - name: All 15 desktop and 15 mobile screens from the actual canonical game
         if: always()
         run: python qa/nl_review_screenshots.py --html index.html --out qa/wly2-all-screens
@@ -106,5 +108,6 @@ jobs:
             qa/wly2-battle-*.png
             qa/wly2-smoke.json
             qa/nl-city-art-*.png
+            qa/wly2-barracks-*.png
             qa/wly2-all-screens/**
           if-no-files-found: warn

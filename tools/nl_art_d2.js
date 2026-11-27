@@ -211,6 +211,41 @@ function sourceSquad(ctx,u,now,pos,v){
  for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.25,3.4,0,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
  ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(Number(u.hp||0)/Math.max(1,Number(u.maxHp||u.maxHP||u.hpMax||u.max||u.hp||1)),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#15241a';ctx.strokeText(name,x,y-42);ctx.fillStyle='#f8e5b6';ctx.fillText(name,x,y-42);ctx.fillStyle='#16231d';ctx.fillRect(bx-1,by-1,80,11);ctx.fillStyle=u.team==='e'?'#c87b60':'#87bf8a';ctx.fillRect(bx,by,78*hp,5);ctx.fillStyle='#d7b56b';ctx.fillRect(bx,by+7,78*morale,3);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
 }
+// Barracks: use the same genuine troop atlas as the battlefield, not a
+// placeholder badge. No troop selection, Save or battle-rule changes.
+let barracksDrawn=0,barracksScheduled=false;
+function paintBarracksTroops(){
+ barracksScheduled=false;
+ if(!Object.keys(sourceTroops).length)return;
+ for(const card of document.querySelectorAll('#view .nlw-unit')){
+  if(card.querySelector('.nlw-source-preview'))continue;
+  const crest=card.querySelector('.nlw-crest');if(!crest)continue;
+  const familyClass=[...crest.classList].find(v=>v.startsWith('nlw-family-'))||'';
+  const type=familyClass.replace('nlw-family-','');
+  const name=(card.querySelector('.nlw-txt b')?.textContent||'').toLowerCase();
+  const mapping={infantry:'BZ1000',spear:'BZ2000',cavalry:'BZ3000',archer:'BZ4000',strategist:'BZ5100',drum:'BZ5230',dancer:'BZ5000'};
+  const id=(/trống|đánh trống|cổ vũ/.test(name)?'BZ5230':/vũ cơ|ca cơ/.test(name)?'BZ5000':mapping[type]||'BZ1000')+'_1';
+  const a=sourceTroops[id],im=a&&atlasImages.get(id);
+  if(!a||!ready(im))continue;
+  const preview=document.createElement('canvas');preview.width=100;preview.height=100;
+  preview.className='nlw-source-preview';preview.dataset.sourceAtlas=id;
+  preview.setAttribute('role','img');preview.setAttribute('aria-label','Hình binh chủng trong chiến đấu');
+  const ctx=preview.getContext('2d'),idle=a.clips.idle||a.clips.stand||a.clips.attack;
+  if(!ctx||!idle?.length||!atlasCel(ctx,id,a,idle[0],50,95,79,88))continue;
+  crest.replaceWith(preview);barracksDrawn++;
+ }
+}
+function scheduleBarracks(){
+ if(barracksScheduled)return;barracksScheduled=true;
+ requestAnimationFrame(paintBarracksTroops);
+}
+const barracksRoot=document.getElementById('view');
+if(barracksRoot){
+ new MutationObserver(scheduleBarracks).observe(barracksRoot,{childList:true});
+ for(const id of Object.keys(sourceTroops))atlasImages.get(id)?.addEventListener('load',scheduleBarracks,{once:true});
+ document.addEventListener('click',scheduleBarracks,true);scheduleBarracks();
+}
+
 const oldDraw=drawUnit;
 drawUnit=function(ctx,u,now){
  if(!u||!battle||battle.mode==='cltq'||!Number.isFinite(now))return oldDraw.apply(this,arguments);
@@ -223,6 +258,8 @@ if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
  ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5)&&[...privateAtlases.values()].every(a=>ready(a.im)),count:()=>sheets.size,
  sourceAtlasCount:()=>Object.keys(sourceTroops).length||privateAtlases.size,
  nativeSourceRenderer:()=>Object.keys(sourceTroops).length>0,
+ barracksPreviews:()=>document.querySelectorAll('#view .nlw-source-preview').length,
+ barracksCumulative:()=>barracksDrawn,
  sourceEffectCount:()=>Object.keys(sourceEffects).length,
  sourceReady:()=>Object.keys(sourceTroops).every(id=>ready(atlasImages.get(id)))&&mappedFxIds.filter(id=>sourceEffects[id]).every(id=>ready(atlasImages.get(id))),
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),
