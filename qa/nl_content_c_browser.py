@@ -140,6 +140,17 @@ def main():
           const procStatuses=procTarget?.effects?.filter(e=>['mobile-source-no-buffs','mobile-source-no-heal'].includes(e.kind)&&e.turns===2)||[];
           checks.mobileEliteDualProcInP2=!!procApplied&&procPlan?.extraDebuff===1&&procStatuses.some(e=>e.mobileSource?.sourceEffectId==='77'&&e.mobileSource.dispelPolicy==='unremovable')&&procStatuses.some(e=>e.mobileSource?.sourceEffectId==='17'&&e.mobileSource.dispelPolicy==='unremovable');
           q.closeBattle('city');q.setGame(eliteBefore);
+          const soulFixture=structuredClone(eliteBefore),soulOwner=soulFixture.roster.find(h=>c.mobileEliteForceRole(h)==='infantry');
+          soulFixture.slots=[soulOwner,...soulFixture.slots.slice(1)];
+          soulFixture.nlContentC={...(soulFixture.nlContentC||{}),mobileTroopAssigned:{...(soulFixture.nlContentC?.mobileTroopAssigned||{}),[soulOwner]:'1'},mobileEliteUnlocked:{'24':true},mobileEliteLevels:{'24':1},mobileElitePending:{},mobileEliteSkills:{'24':[1,1,0]},mobileEliteAssigned:{[soulOwner]:'24'}};
+          q.setGame(soulFixture);q.beginBattle(1,'campaign');
+          const soulBattle=q.debugBattle(),soulActor=soulBattle?.p.find(u=>u.id===soulOwner),soulTarget=soulBattle?.e.find(u=>u.hp>0);
+          const soulEvent={actor:soulActor?.name,mode:'skill',hits:soulTarget?[{team:'e',slot:soulTarget.slot}]:[],description:'QA'};
+          const soulFirst=soulActor&&soulTarget&&c.wikiEliteApply(soulActor,soulEvent),soulOnce=soulTarget?.effects?.find(e=>e.kind==='mobile-source-progressive-vulnerability'),soulOnceStack=soulOnce?.stacks,soulSourceId=soulOnce?.mobileSource?.sourceEffectId,soulMagnitude=soulOnce?.mobileSourceValues?.damageTakenIncreasePerTargetAction;
+          const soulSecond=soulActor&&soulTarget&&c.wikiEliteApply(soulActor,{...soulEvent,hits:[{team:'e',slot:soulTarget.slot}]});
+          const soulTwice=soulTarget?.effects?.find(e=>e.kind==='mobile-source-progressive-vulnerability');
+          checks.mobileEliteSoulStacks=soulFirst&&soulSecond&&soulActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.vulnerabilityLayers===1&&p.first===5)&&soulSourceId==='29'&&soulOnceStack===1&&soulMagnitude===.03&&soulTwice?.stacks===2&&soulTwice.mobileSource?.formulaClassification==='SOURCE_QUALITATIVE_WITH_SIMULATED_MAGNITUDE_AND_DURATION';
+          q.closeBattle('city');q.setGame(eliteBefore);
           const troopBefore=q.getGame(),troopFixture=q.getGame();
           troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
           troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);

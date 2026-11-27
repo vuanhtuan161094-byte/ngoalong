@@ -44813,6 +44813,12 @@ function wikiTimed(u,key,turns,values,polarity='beneficial',undispellable=false)
 function wikiValue(u,key){return (u?.effects||[]).filter(e=>e.turns>0).reduce((n,e)=>n+(Number(e.mobileSourceValues?.[key])||0)*(e.mobileSource?.wikiStack?Math.max(1,Math.min(10,nat(e.stacks)||1)):1),0);}
 function wikiEliteShield(u){return u&&applyMobileSourceStatus(u,{kind:MOBILE_ONE_HIT_SHIELD_STATUS,turns:2,values:{},sourceName:'Hộ Thuẫn Tinh Nhuệ',formulaClassification:'SOURCE_EFFECT_WITH_P2_ADAPTER'});}
 function wikiEliteNoBuffs(u,turns,sourceName){return u&&applyMobileSourceStatus(u,{sourceId:'77',kind:MOBILE_NO_BUFFS_STATUS,turns:Math.max(1,Math.floor(turns)||1),values:{},sourceName,dispelPolicy:'unremovable',formulaClassification:'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER'});}
+function wikiEliteProgressiveSoul(u,stacks){
+ if(!u||!Number.isInteger(stacks)||stacks<1)return false;
+ return applyMobileSourceStatus(u,{sourceId:'29',sourceName:'Âm Hồn Tinh Nhuệ',sourceDescription:MOBILE_BUFFS.records?.['29']?.ing||'Sát thương đối với mục tiêu tăng dần.',kind:MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY,turns:31,
+  values:{damageTakenIncreasePerTargetAction:.03},progressiveStackAdd:stacks,simulatedStackLimit:5,dispelPolicy:'removable',
+  formulaClassification:'SOURCE_QUALITATIVE_WITH_SIMULATED_MAGNITUDE_AND_DURATION',valueEvidence:'Mobile source confirms progressive vulnerability and rank layer count; 3% per layer, five-layer cap and 31-turn duration are P2 balance choices.',unresolvedMechanics:['SOURCE_MAGNITUDE_UNPUBLISHED','SOURCE_DURATION_UNPUBLISHED']});
+}
 function wikiEliteTrample(u,n){
  if(!u||u.hp<=0)return;u.nlWikiTrample=(u.nlWikiTrample||0)+1;
  if(u.nlWikiTrample>=n){u.nlWikiTrample=0;p2Status(u,MOBILE_CONTROL_STATUS,1);}
@@ -44860,7 +44866,7 @@ function wikiEliteApply(actor,event){
    if(p.noBuffsLine)for(const u of targets)wikiEliteNoBuffs(u,p.turns,'Hư Nhược Tinh Nhuệ');
    if(p.lineMorale&&primary)for(const u of enemies.filter(x=>x.slot%3===primary.slot%3)){p2Morale(u,-p.lineMorale);if(p.lineHit)addHit(u,'physical',p.lineHit);}
    if(p.onDamageMorale||p.onDamageTrample)timed(actor,key+'-react',p,{wikiOnHitMorale:p.onDamageMorale||0,wikiOnHitTrample:p.onDamageTrample||0,wikiOnHitChance:p.onDamageChance||0});
-   if(p.vulnerabilityLayers)for(const u of enemies)timed(u,key+'-vulnerable',p,{wikiTaken:.03*p.vulnerabilityLayers},true);
+   if(p.vulnerabilityLayers)for(const u of enemies)wikiEliteProgressiveSoul(u,p.vulnerabilityLayers);
    if(p.lowHealthScaling)timed(actor,key+'-low',p,{wikiLowBase:p.lowHealthScaling,wikiLowMax:p.maxScaling||.8});
    if(p.cleanse)mobileBookCleanse(actor,p.cleanse);
    if(p.healSelf)mobileBookRestore(actor,p.healSelf);if(p.healLow&&!p.healChance&&low)mobileBookRestore(low,p.healLow);
@@ -45553,7 +45559,10 @@ function applyMobileSourceStatus(unit,app){
  if(!status)return false;
  status.mobileSourceValues=values;
  if(app.stack)status.stacks=Math.min(10,priorWikiStacks+1);
- if(app.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY)status.stacks=clamp(nat(priorProgressiveStacks)||1,1,Math.min(5,nat(app.simulatedStackLimit)||5));
+ if(app.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY){
+   const limit=Math.min(5,nat(app.simulatedStackLimit)||5),added=nat(app.progressiveStackAdd);
+   status.stacks=clamp((Number.isInteger(priorProgressiveStacks)?priorProgressiveStacks:0)+Math.max(0,added),1,limit);
+ }
  if(app.kind===MOBILE_SOURCE_REVIVAL)status.stacks=clamp(priorRevivalStacks+Math.max(1,nat(values.stackCount)||1),1,99);
  status.mobileSource={sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:app.sourceId,
    sourceName:app.sourceName,sourceDescription:app.sourceDescription,sourceDetail:app.detail,

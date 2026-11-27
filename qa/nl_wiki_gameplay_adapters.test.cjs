@@ -31,6 +31,13 @@ test('elite Hư Nhược descriptors reject buffs instead of reducing damage',()
  const normal=plan('26',0,tuongTuong.skills[0].levels[0]);
  assert.equal(normal.pattern,'row');assert.equal(normal.trample,3);assert.equal(normal.extraDebuff,.05);
 });
+test('Hoàng Cân Lực Sĩ preserves each source rank of Tụ Nghĩa layers and its five-turn gate',()=>{
+ const hoangCan=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='24');
+ for(const [i,description] of hoangCan.skills[1].levels.entries()){
+  const sourcePlan=plan('24',1,description);
+  assert.equal(sourcePlan.vulnerabilityLayers,i+1);assert.equal(sourcePlan.first,5);
+ }
+});
 test('27 gems and 9 child manuals resolve to specific wallets',()=>{for(const [g,n,w] of [['Ấn Thạch',27,'hero-gem'],['Bí Tịch',9,'child-manual']]){const rows=source.items.filter(x=>x.typeName===g);assert.equal(rows.length,n);for(const x of rows)assert.equal(typed(x,source,3)?.outputs[0].wallet,w);}});
 
 test('horse growth uses source quantity and commander gate, keys remain materials',()=>{
