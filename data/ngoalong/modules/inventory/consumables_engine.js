@@ -281,6 +281,53 @@
           outputCount:rule.outputQuantity,silver:rule.silverCost};
       });
     }
+
+    // Refund only actual receipt-backed payments. Old receipts stay immutable;
+    // refunded receipt IDs cannot be counted in a subsequent unlock/reset cycle.
+    function quoteEliteReset(state,appearanceId){
+      const id=String(appearanceId),c=state?.nlContentC,m=state?.nlItemsV1;
+      if(!/^\d+$/.test(id)||!c?.mobileEliteUnlocked?.[id]||!m?.receipts)return null;
+      const level=c.mobileElitePending?.[id]?.to??c.mobileEliteLevels?.[id]??0;
+      if(!safe(level)||level<1||level>20)return null;
+      const ranks=c.mobileEliteSkills?.[id]||[1,0,0];
+      if(!Array.isArray(ranks)||ranks.length!==3||ranks.some((r,i)=>!safe(r)||r<(i===0?1:0)||r>20))return null;
+      const expected=new Set(['unlock:'+id+':1']);
+      for(let i=2;i<=level;i++)expected.add('upgrade:'+id+':'+i);
+      for(let pos=0;pos<3;pos++)for(let rank=pos===0?2:1;rank<=ranks[pos];rank++)expected.add('skill:'+id+':'+pos+':'+rank);
+      const receipts=[],refund=Object.create(null),seen=new Set();
+      for(const [key,fingerprint] of Object.entries(m.receipts)){
+        if(c.mobileEliteRefundedReceipts?.[key]||typeof fingerprint!=='string')continue;
+        let rec;try{rec=JSON.parse(fingerprint);}catch(_){continue;}
+        if(!Array.isArray(rec)||rec[0]!=='CONSUME_SOURCE_MATERIALS'||typeof rec[1]!=='string'||!rec[1].startsWith('mobile-elite:'))continue;
+        const scope=rec[1].slice('mobile-elite:'.length);
+        if(!expected.has(scope))continue;
+        if(seen.has(scope)||!Array.isArray(rec[2])||!rec[2].length)return null;
+        seen.add(scope);receipts.push(key);
+        for(const x of rec[2]){
+          if(!x||!/^mobile-vng-item-mat_(63|73|74|75|76|77)$/.test(x.id)||!safe(x.quantity)||x.quantity<1||!safe((refund[x.id]||0)+x.quantity))return null;
+          refund[x.id]=(refund[x.id]||0)+x.quantity;
+        }
+      }
+      if(seen.size!==expected.size)return null;
+      return {id,level,refund,receipts,classification:'ACTUAL_PAID_MATERIALS'};
+    }
+    function resetElite(state,appearanceId,receipt){
+      const id=String(appearanceId),token='mobile-vng-item-856';
+      return execute(state,'RESET_ELITE',id,null,receipt,(next,m)=>{
+        requireOk(get(token).sourceTypedRoute==='elite-reset-token','BAD_ELITE_RESET_TOKEN');
+        const q=quoteEliteReset(next,id);
+        requireOk(q,'ELITE_RESET_RECEIPT_CHAIN_INCOMPLETE');
+        debitStack(m,token,1);
+        for(const [material,qty] of Object.entries(q.refund))addStack(m,material,qty);
+        const c=next.nlContentC;
+        c.mobileEliteRefundedReceipts=c.mobileEliteRefundedReceipts||{};
+        for(const key of q.receipts)c.mobileEliteRefundedReceipts[key]=true;
+        for(const field of ['mobileEliteUnlocked','mobileEliteLevels','mobileEliteSkills','mobileElitePending'])if(c[field])delete c[field][id];
+        for(const [hero,assigned] of Object.entries(c.mobileEliteAssigned||{}))if(String(assigned)===id)delete c.mobileEliteAssigned[hero];
+        return {id,refund:q.refund,classification:'SOURCE_REFUND_RECORDED_PAYMENTS_SIMULATED_PER_APPEARANCE_RESET'};
+      });
+    }
+
     function inspect(id){
       const row=items[id];
       if(!row)return {found:false};
@@ -289,7 +336,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,buySourceMaterial,buySourceMaterials,consumeSourceMaterials,giveBeautyGift,resetMobileQuality,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,buySourceMaterials,consumeSourceMaterials,giveBeautyGift,resetMobileQuality,quoteEliteReset,resetElite,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });

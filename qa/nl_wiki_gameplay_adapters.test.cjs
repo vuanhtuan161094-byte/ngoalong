@@ -27,3 +27,24 @@ test('complete loot table preserves named stacks and quantities; partial tables 
  assert.notEqual(incomplete?.route,'named-loot-all');
  assert.notEqual(incomplete?.route,'known-loot-bundle');
 });
+
+test('Tinh Nhuệ reset token is a material, not a generic reward box',()=>{
+ const row=source.items.find(x=>String(x.id)==='856');
+ assert.equal(typed(row,source,3).route,'elite-reset-token');
+ assert.equal(typed(row,source,3).material,true);
+});
+test('Elite reset returns actual debits once, clears assignment and rejects missing history',()=>{
+ const engine=require('../data/ngoalong/modules/inventory/consumables_engine.js');
+ const material=(id,route)=>({id,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK'},effectRule:null,sourceTypedRoute:route});
+ const token='mobile-vng-item-856',book='mobile-vng-item-mat_63';
+ const api=engine.createModule({items:[material(token,'elite-reset-token'),material(book)]},{limits:{stacksKinds:10,quantityEach:100,receipts:100}});
+ let s={nlItemsV1:{serial:0,receipts:{},stacks:{[token]:2,[book]:20}},nlContentC:{mobileEliteUnlocked:{'9':true},mobileEliteLevels:{'9':2},mobileEliteSkills:{},mobileElitePending:{},mobileEliteAssigned:{hero:'9'}}};
+ assert.equal(api.resetElite(s,'9','bad').ok,false);
+ s=api.consumeSourceMaterials(s,[{id:book,quantity:3}],'u1','mobile-elite:unlock:9:1').state;
+ s=api.consumeSourceMaterials(s,[{id:book,quantity:4}],'u2','mobile-elite:upgrade:9:2').state;
+ const q=api.quoteEliteReset(s,'9');assert.equal(q.refund[book],7);
+ const r=api.resetElite(s,'9','reset1');assert.equal(r.ok,true);assert.equal(r.state.nlItemsV1.stacks[book],20);
+ assert.equal(r.state.nlItemsV1.stacks[token],1);assert.equal(r.state.nlContentC.mobileEliteAssigned.hero,undefined);
+ assert.equal(api.resetElite(r.state,'9','reset1').duplicate,true);
+ assert.equal(api.resetElite(r.state,'9','reset2').ok,false);
+});
