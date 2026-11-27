@@ -14,6 +14,18 @@ const p41=new Image(),p5=new Image();
 p41.src='data:image/webp;base64,'+raster.p41;p5.src='data:image/webp;base64,'+raster.p5;
 const families=['infantry','spear','cavalry','archer','strategist','support','drum'];
 const actions=['idle','attack','hit','skill','disappear'];
+// Original presentation layouts, independent of the logical 3x3 formation.
+const squadLayouts=Object.freeze({
+ infantry:[[-23,-15],[23,-15],[-30,2],[30,2]],
+ spear:[[-25,-19],[25,-19],[-34,-1],[34,-1]],
+ cavalry:[[-26,-13],[26,-13]],
+ archer:[[-27,-21],[27,-21],[-35,-5],[35,-5]],
+ strategist:[[-27,-14],[27,-14]],
+ support:[[-26,-17],[26,-17]],
+ drum:[[-27,-17],[27,-17]]
+});
+function squadLayout(f,team){const dir=team==='e'?-1:1;return (squadLayouts[f]||squadLayouts.infantry).map(([x,y])=>[x*dir,y]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);}
+function advance(v,f,team){if(!v.actor||v.elapsed<0||v.elapsed>=1000||!['infantry','spear','cavalry'].includes(f))return 0;const t=v.elapsed,dir=team==='e'?-1:1,reach=f==='cavalry'?16:11;return dir*reach*(t<220?0:t<430?(t-220)/210:t<650?1:(1000-t)/350);}
 const metrics={groups:0,soldiers:0,fx:0,projectiles:0,raster:0,vector:0,polishFx:0,byAction:{},byFamily:{},byFxKind:{}};
 const ready=im=>im?.complete&&im.naturalWidth>0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -48,8 +60,9 @@ function cel(ctx,im,row,frame,x,y,w,h,flip){
 function rasterCel(ctx,f,team,v,x,y,w,h,offset){
  const dir=team==='e'?'left':'right';
  if(f==='infantry'&&ready(p5)){
-   const act=v.action==='disappear'?'death':v.action==='hit'?'hurt':v.action==='skill'?'attack':v.action;
-   const row=raster.p5Rows.indexOf(act+'/'+dir);
+   const act=v.moving?'move':v.action==='disappear'?'death':v.action==='hit'?'hurt':v.action==='skill'?'attack':v.action;
+   let row=raster.p5Rows.indexOf(act+'/'+dir);
+   if(row<0&&v.moving)row=raster.p5Rows.indexOf('attack/'+dir);
    if(row<0)return false;
    const frame=v.action==='idle'?(v.frame+offset)%4:v.frame;
    ctx.drawImage(p5,frame*100,row*144,100,144,x-w/2,y-h,w,h);
@@ -66,23 +79,20 @@ function rasterCel(ctx,f,team,v,x,y,w,h,offset){
 function companions(ctx,u,now,pos,v){
  const im=sheets.get(sheet(u));if(!ready(im)||(!v.hit&&u.hp<=0))return;
  const f=family(u),dir=u.team==='e'?-1:1;
- const lift=v.actor&&v.phase==='release'&&['infantry','spear','cavalry'].includes(f)?dir*9:0;
- const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?40:36;
- // The native commander remains the large middle actor. Two smaller escorts
- // share the exact logical slot and event, never become additional combat units.
+ const lift=advance(v,f,u.team);
+ const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?39:29;
+ const offsets=squadLayout(f,u.team);
  ctx.save();
  if(v.action==='disappear')ctx.globalAlpha=1-frame*.24;
- const offsets=[[-27,-12],[27,-12]];
  for(let i=0;i<offsets.length;i++){
-   const [dx,dy]=offsets[i],x=pos.x+dx+lift,y=pos.y+dy+26;
-   ctx.fillStyle='rgba(8,18,19,.29)';ctx.beginPath();ctx.ellipse(x,y-1,12,3,0,0,Math.PI*2);ctx.fill();
-   // Match the original commander scale with directional painted miniatures.
-   // The native slot, hitbox, HP and target are not altered.
-   if(rasterCel(ctx,f,u.team,v,x,y,sz,sz*1.44,i)){metrics.soldiers++;metrics.raster++;}
+   const [dx,dy]=offsets[i],x=pos.x+dx+lift,y=pos.y+dy+24;
+   const moving=v.actor&&['infantry','spear','cavalry'].includes(f)&&v.phase==='release';
+   const cv={...v,moving};
+   ctx.fillStyle='rgba(8,18,19,.29)';ctx.beginPath();ctx.ellipse(x,y-1,sz*.30,3,0,0,Math.PI*2);ctx.fill();
+   if(rasterCel(ctx,f,u.team,cv,x,y,sz,sz*1.44,i)){metrics.soldiers++;metrics.raster++;}
    else if(cel(ctx,im,row,frame,x,y,sz,sz*1.05,dir<0)){metrics.soldiers++;metrics.vector++;}
-   // Small faction pennant at the base; does not obscure the actor.
    ctx.fillStyle=u.team==='e'?'#b36a54':'#6ea0a3';
-   ctx.fillRect(x-4,y+1,8,1.5);
+   ctx.fillRect(x-3,y+1,6,1.5);
  }
  ctx.restore();
  metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;
@@ -131,7 +141,11 @@ function effects(ctx,u,now,pos,v){
    const end=coords(target);if(!end||!Number.isFinite(end.x))return;
    const t=clamp((v.elapsed-220)/210,0,1),x=pos.x+(end.x-pos.x)*t,y=pos.y+(end.y-pos.y)*t-18-Math.sin(t*Math.PI)*22;
    const dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;
-   ctx.save();ctx.strokeStyle=f==='strategist'?'#b6e4ff':'#f6dd96';ctx.lineWidth=2.5;ctx.shadowBlur=7;ctx.shadowColor=ctx.strokeStyle;ctx.beginPath();ctx.moveTo(x-dx/dist*21,y-dy/dist*21);ctx.lineTo(x,y);ctx.stroke();ctx.restore();metrics.projectiles++;
+   ctx.save();ctx.strokeStyle=f==='strategist'?'#b6e4ff':'#f6dd96';ctx.lineWidth=f==='strategist'?2.5:1.6;ctx.shadowBlur=5;ctx.shadowColor=ctx.strokeStyle;
+   // Ranged squads share the recorded target; extra trails are visual only.
+   const lanes=f==='archer'?[-5,0,5]:[0];
+   for(const lane of lanes){const ox=-dy/dist*lane,oy=dx/dist*lane;ctx.beginPath();ctx.moveTo(x+ox-dx/dist*21,y+oy-dy/dist*21);ctx.lineTo(x+ox,y+oy);ctx.stroke();metrics.projectiles++;}
+   ctx.restore();
  }
 }
 const oldDraw=drawUnit;
@@ -146,6 +160,7 @@ drawUnit=function(ctx,u,now){
 if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
  ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5),count:()=>sheets.size,
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),
+ layout:(f,team)=>squadLayout(f,team),advance:(elapsed,f,team)=>advance({actor:true,elapsed},f,team),
  visual:(u,now)=>{const v=visual(u,now);return {action:v.action,phase:v.phase,actor:v.actor,hit:v.hit,sheet:sheet(u)}},
  metrics:()=>JSON.parse(JSON.stringify(metrics)),
 });

@@ -25,6 +25,9 @@ style.textContent=`
  backdrop-filter:blur(2px);border-color:#d2ae68;
  box-shadow:0 8px 0 rgba(7,17,17,.72),0 12px 18px rgba(3,9,10,.55);
 }
+.city-visual .building:focus-visible{outline:2px solid #f5d99a;outline-offset:2px}
+.city-visual .building:hover{border-color:#f5d99a;filter:brightness(1.08)}
+@media (prefers-reduced-motion: reduce){.city-visual .building{transition:none!important}}
 .city-visual .building.palace{
  background:linear-gradient(160deg,rgba(91,69,39,.96),rgba(31,42,35,.96));
 }
