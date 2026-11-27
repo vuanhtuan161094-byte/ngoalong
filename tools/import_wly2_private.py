@@ -47,6 +47,7 @@ def main():
     with ThreadPoolExecutor(max_workers=4) as pool:
         for _ in pool.map(pull,paths): pass
     pack={}
+    gaps=[]
     for family,code in FAMILIES.items():
         for side in (1,2):
             stem=code+"_"+str(side)
@@ -67,9 +68,18 @@ def main():
                 action,rest=line.split(":",1)
                 names=rest.split(";",1)[0].split(",")
                 keys=[stem+"_"+name+".png" for name in names]
-                if not all(k in data for k in keys): raise ValueError("Missing frames: "+stem+" "+action)
-                clips[action]=keys
+                missing=[k for k in keys if k not in data]
+                if missing:
+                    gaps.append({"atlas":stem,"action":action,"missing":missing})
+                # Keep genuine frames in their original sequence; never invent image cells.
+                present=[k for k in keys if k in data]
+                if present:
+                    clips[action]=present
+            if not clips.get("idle") or not clips.get("attack"):
+                raise ValueError("Atlas lacks essential idle/attack: "+stem)
             pack[family+"/"+str(side)]={"png":base64.b64encode(raw).decode(),"frames":data,"clips":clips}
+    (out/"atlas-import-gaps.json").write_text(json.dumps(gaps,ensure_ascii=False,indent=2),encoding="utf-8")
+    print("Source clip gaps:",len(gaps),json.dumps(gaps,ensure_ascii=False))
     from build_ngoa_long_items_v1 import INDEX, payload, render
     html=render(INDEX.read_text(encoding="utf-8"),payload(private_wly2=pack))
     target=out/"index.html"

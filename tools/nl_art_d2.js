@@ -63,7 +63,7 @@ function cel(ctx,im,row,frame,x,y,w,h,flip){
 function privateCel(ctx,f,team,v,x,y,w,h,offset){
  const a=privateAtlases.get(f+'/'+(team==='e'?2:1));if(!a||!ready(a.im))return false;
  const action=v.moving?'move':v.action==='disappear'?'death':v.action;
- const clip=a.clips[action]||a.clips.idle;if(!clip?.length)return false;
+ const clip=a.clips[action]||(action==='skill'?a.clips.attack:null)||a.clips.idle;if(!clip?.length)return false;
  const n=clip.length,i=action==='idle'?(Math.floor(performance.now()/110)+offset)%n:Math.min(n-1,Math.floor(clamp(v.frame/3,0,1)*(n-1)));
  const d=a.frames[clip[i]];if(!d)return false;
  const [sx,sy,sw,sh,rot,ox,oy,fw,fh,tw,th]=d;
@@ -176,7 +176,8 @@ drawUnit=function(ctx,u,now){
  effects(ctx,u,now,pos,v);
 };
 if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
- ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5),count:()=>sheets.size,
+ ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5)&&[...privateAtlases.values()].every(a=>ready(a.im)),count:()=>sheets.size,
+ sourceAtlasCount:()=>privateAtlases.size,
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),
  layout:(f,team)=>squadLayout(f,team),advance:(elapsed,f,team)=>advance({actor:true,elapsed},f,team),
  visual:(u,now)=>{const v=visual(u,now);return {action:v.action,phase:v.phase,actor:v.actor,hit:v.hit,sheet:sheet(u)}},

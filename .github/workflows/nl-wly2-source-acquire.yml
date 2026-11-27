@@ -30,6 +30,7 @@ jobs:
           name: wly2-original-atlas-playable-preview
           path: |
             ${{ runner.temp }}/wly2-review/index.html
+            ${{ runner.temp }}/wly2-review/atlas-import-gaps.json
             ${{ runner.temp }}/wly2-review/html.sha256
             ${{ runner.temp }}/wly2-review/commit.txt
             ${{ runner.temp }}/wly2-review/source/
@@ -51,10 +52,10 @@ jobs:
               page.on('pageerror',lambda e:errors.append(str(e)))
               page.goto((root/'index.html').as_uri(),timeout=120000)
               page.wait_for_function("window.__P2_QA__ && window.__NL_ART_D2_QA__?.ready()",timeout=120000)
-              data=page.evaluate("""()=>{const q=__P2_QA__,g=q.getGame();q.beginBattle(1,'campaign');const b=q.debugBattle();return {save:g.version,p:b?.p?.length,e:b?.e?.length}}""")
+              data=page.evaluate("""()=>{const q=__P2_QA__,g=q.getGame();q.beginBattle(1,'campaign');const b=q.debugBattle();return {save:g.version,p:b?.p?.length,e:b?.e?.length,sourceAtlases:__NL_ART_D2_QA__.sourceAtlasCount()}}""")
               page.wait_for_timeout(1500)
               page.screenshot(path=str(root/'battle.png'))
-              assert data['save']==5 and 0<data['p']<=5 and 0<data['e']<=5 and not errors,(data,errors)
+              assert data['sourceAtlases']==12 and data['save']==5 and 0<data['p']<=5 and 0<data['e']<=5 and not errors,(data,errors)
               (root/'smoke.json').write_text(json.dumps(data))
               browser.close()
           PY
