@@ -4,6 +4,9 @@ on:
     branches: [feature/ngoalong-v1-complete]
     paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py']
   workflow_dispatch:
+concurrency:
+  group: wly2-production-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -15,6 +18,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Cache hash-pinned original WLY2 source assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.temp }}/wly2-original
+            ${{ runner.temp }}/wly2-environment/source
+          key: wly2-originals-v1-${{ hashFiles('data/ngoalong_external_reference_inventory_20261127.json', 'data/ngoalong_wly2_environment_inventory.json') }}
       - name: Verify and pack complete source library
         run: |
           python -m pip install pillow==11.3.0

@@ -11,8 +11,8 @@ on:
 
 concurrency:
   group: nl-web-review-pages-${{ github.head_ref || github.ref }}
-  # Allow an already running exact-SHA build to finish rather than cancel it on each production commit.
-  cancel-in-progress: false
+  # Do not strand the latest visual review behind an obsolete hour-long QA run.
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -33,6 +33,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Cache hash-pinned original WLY2 source assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.temp }}/wly2-original
+            ${{ runner.temp }}/wly2-environment/source
+          key: wly2-originals-v1-${{ hashFiles('data/ngoalong_external_reference_inventory_20261127.json', 'data/ngoalong_wly2_environment_inventory.json') }}
       - name: Prepare authorized WLY2 production asset pack
         run: |
           python -m pip install pillow==11.3.0
@@ -176,9 +183,8 @@ jobs:
       - name: Accelerated onboarding 30-minute battle and Save regression
         id: onboarding30
         run: python qa/nl_onboarding_30min.py --minutes 30
-      - name: Accelerated onboarding 60-minute battle and Save regression
-        if: ${{ success() || steps.onboarding30.outcome == 'failure' }}
-        run: python qa/nl_onboarding_30min.py --minutes 60
+      # The 60-minute simulation is redundant with the independent 90-day gate.
+      # It previously monopolized a browser runner and blocked all 30 screenshots.
       - name: Add review art and capture 15 desktop + 15 mobile screens
         run: |
           python tools/build_nl_web_review.py --html index.html
