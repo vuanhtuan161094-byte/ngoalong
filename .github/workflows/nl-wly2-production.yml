@@ -70,6 +70,27 @@ jobs:
               assert result['renderer'] and result['troops']==28 and result['effects']>0 and result['metrics']['sourceTroops']>0 and result['metrics']['sourceFx']>0 and result['save']==5 and not errors,(result,errors)
               browser.close()
           PY
+      - name: Verify source troop visual occupancy and animated clip packing
+        run: |
+          python - <<'PY'
+          import json,base64,io,statistics
+          from pathlib import Path
+          from PIL import Image
+          p=json.loads(Path(__import__('os').environ['NL_WLY2_PACK']).read_text())
+          occupancy={}
+          for sid,atlas in p['soldiers'].items():
+              assert atlas.get('normalized') is True, sid
+              image=Image.open(io.BytesIO(base64.b64decode(atlas['webp']))).convert('RGBA')
+              areas=[]
+              for idx in atlas['clips']['idle'][:6]:
+                  cell=atlas['cell'];cols=atlas['cols']
+                  cel=image.crop(((idx%cols)*cell,(idx//cols)*cell,(idx%cols+1)*cell,(idx//cols+1)*cell))
+                  b=cel.getchannel('A').point(lambda a:255 if a>=24 else 0).getbbox()
+                  if b:areas.append(max(b[2]-b[0],b[3]-b[1]))
+              assert areas and statistics.median(areas)>=45,(sid,areas)
+              occupancy[sid]=round(statistics.median(areas),1)
+          print('WLY2 source soldier idle visible span:',json.dumps(occupancy))
+          PY
       - name: Actual city source map and live building interaction
         run: python qa/nl_city_art_browser.py
       - name: Actual audio settings and P2 cue smoke

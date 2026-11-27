@@ -64,8 +64,17 @@ def choose_branch(page, hero, branch):
     # the row and silently discard the selected value on slower CI runners.
     select = visible_window(page, f'[data-r03-select="{hero}"]')
     row = select.locator("xpath=..")
-    select.select_option(branch)
-    row.locator(f'[data-r03-evolve="{hero}"]').click(timeout=10000)
+    # Atomic DOM interaction avoids the fixed-window MutationObserver
+    # hiding a selector between two Playwright RPCs on slower runners.
+    select.evaluate("""(el,args)=>{
+      const [value,hero]=args;
+      if(![...el.options].some(o=>o.value===value))throw Error('Missing troop branch '+value);
+      el.value=value;
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+      const btn=el.parentElement.querySelector('[data-r03-evolve="'+hero+'"]');
+      if(!btn)throw Error('Missing evolve action '+hero);
+      btn.click();
+    }""",[branch,hero])
 
 
 def run():

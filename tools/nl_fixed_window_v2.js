@@ -219,8 +219,9 @@
    if(viewportNarrow()&&ev.target.closest?.('[data-choose-hero]')){pageIndex.formation=0;delete pageKey.formation;}
    if(!ev.target.closest?.('#nl-screen-toolbar'))schedule();
  },true);
- document.addEventListener('change',ev=>{if(!ev.target.closest?.('#nl-screen-toolbar'))schedule()},true);
- document.addEventListener('input',ev=>{if(ev.target.closest?.('#view'))schedule()},true);
+ // Native form handlers and the childList observer already refresh pages.
+ // Scheduling on each select/input event hid the R03 evolution selector
+ // while the user was choosing a branch on slower browsers.
  requestAnimationFrame(rebuild);
 })();
 /* === END NL-WINDOW-UI-V2 === */

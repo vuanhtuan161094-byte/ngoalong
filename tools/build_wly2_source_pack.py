@@ -14,14 +14,21 @@ BASE="https://raw.githubusercontent.com/MatrixHan/-111111/"+PIN+"/"
 
 def nums(s): return [int(float(n)) for n in re.findall(r"-?\d+(?:\.\d+)?",s)]
 def natural(s): return [int(n) if n.isdigit() else n for n in re.split(r"(\d+)",s)]
-def pack_image(raw,meta,cell):
+def pack_image(raw,meta,cell,normalize_soldier=False):
     with Image.open(io.BytesIO(raw)) as original:
         im=original.convert("RGBA")
     entries=sorted(meta,key=natural) if meta else ["static"]
     cols=min(8,len(entries)); rows=math.ceil(len(entries)/cols)
     sheet=Image.new("RGBA",(cols*cell,rows*cell))
     index={}
-    for i,key in enumerate(entries):
+    source_frames=[]
+    # Keep a stable crop per action to eliminate the huge source-canvas
+    # transparency while retaining animation alignment between adjacent cels.
+    unions={}
+    def action_of(key):
+        match=re.search(r"_(idle|stand|move|attack|skill|hit|death|retreat)\\d*\\.png$",key,re.I)
+        return match.group(1).lower() if match else "other"
+    for key in entries:
         if meta:
             m=meta[key]
             x,y,_,_=nums(m["textureRect"])
@@ -37,9 +44,35 @@ def pack_image(raw,meta,cell):
             canvas=Image.new("RGBA",(fw,fh))
             canvas.paste(cel,(round((fw-tw)/2+ox),round((fh-th)/2-oy)))
         else: canvas=im.copy()
-        canvas.thumbnail((cell,cell),Image.Resampling.LANCZOS)
+        source_frames.append(canvas)
+        if normalize_soldier:
+            # Real opaque pixels occupy ~10px inside the old 96px cell.
+            # Use the unscaled source alpha, not the compressed WebP fringe.
+            bounds=canvas.getchannel("A").point(lambda a:255 if a>=24 else 0).getbbox()
+            if bounds:
+                action=action_of(key)
+                old=unions.get(action)
+                unions[action]=bounds if old is None else (
+                    min(old[0],bounds[0]),min(old[1],bounds[1]),
+                    max(old[2],bounds[2]),max(old[3],bounds[3]))
+    effective=[]
+    for i,(key,canvas) in enumerate(zip(entries,source_frames)):
+        if normalize_soldier:
+            bounds=unions.get(action_of(key))
+            if bounds:
+                pad=max(2,round(max(bounds[2]-bounds[0],bounds[3]-bounds[1])*.08))
+                bounds=(max(0,bounds[0]-pad),max(0,bounds[1]-pad),
+                        min(canvas.width,bounds[2]+pad),min(canvas.height,bounds[3]+pad))
+                canvas=canvas.crop(bounds)
+        canvas.thumbnail(((cell-8) if normalize_soldier else cell,
+                          (cell-8) if normalize_soldier else cell),Image.Resampling.LANCZOS)
         sheet.paste(canvas,((i%cols)*cell+(cell-canvas.width)//2,(i//cols)*cell+cell-canvas.height))
         index[key]=i
+        if normalize_soldier:
+            box=canvas.getchannel("A").point(lambda a:255 if a>=24 else 0).getbbox()
+            if box: effective.append(max(box[2]-box[0],box[3]-box[1]))
+    if normalize_soldier and (len(effective)<6 or sorted(effective)[len(effective)//2]<45):
+        raise ValueError("Source soldier cel remains too small after normalization")
     buf=io.BytesIO()
     sheet.save(buf,format="WEBP",quality=85,method=4)
     return {"webp":base64.b64encode(buf.getvalue()).decode(),"cell":cell,"cols":cols,"frames":len(entries)},index
@@ -67,7 +100,7 @@ def main():
         stem=path[:-4]; name=Path(stem).name; soldier="/soldier/" in path
         try:
             meta=plistlib.loads(read(stem+".plist"))["frames"] if stem+".plist" in files else None
-            atlas,index=pack_image(read(path),meta,96 if soldier else 128)
+            atlas,index=pack_image(read(path),meta,96 if soldier else 128,normalize_soldier=soldier)
             if soldier and stem+".txt" in files:
                 clips={}
                 for line in read(stem+".txt").decode("utf-8-sig").splitlines():
@@ -79,6 +112,7 @@ def main():
                     if good: clips[action]=good
                 if not clips.get("idle") or not clips.get("attack"): raise ValueError("essential clip missing")
                 atlas["clips"]=clips
+                atlas["normalized"]=True
                 output["soldiers"][name]=atlas
             else:
                 output["effects"][name]=atlas
