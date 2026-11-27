@@ -153,16 +153,67 @@ def main():
           q.closeBattle('city');q.setGame(eliteBefore);
           const cleanseFixture=structuredClone(eliteBefore),cleanseOwner=cleanseFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,2));
           cleanseFixture.slots=[cleanseOwner,...cleanseFixture.slots.slice(1)];cleanseFixture.troopModes={...(cleanseFixture.troopModes||{}),[cleanseOwner]:'spear'};
-          cleanseFixture.nlContentC={...(cleanseFixture.nlContentC||{}),mobileEliteUnlocked:{'16':true},mobileEliteLevels:{'16':1},mobileElitePending:{},mobileEliteSkills:{'16':[0,0,1]},mobileEliteAssigned:{[cleanseOwner]:'16'}};
+          cleanseFixture.nlContentC={...(cleanseFixture.nlContentC||{}),mobileTroopAssigned:{...(cleanseFixture.nlContentC?.mobileTroopAssigned||{}),[cleanseOwner]:'10'},mobileEliteUnlocked:{'16':true},mobileEliteLevels:{'16':1},mobileElitePending:{},mobileEliteSkills:{'16':[0,0,1]},mobileEliteAssigned:{[cleanseOwner]:'16'}};
           q.setGame(cleanseFixture);q.beginBattle(1,'campaign');
           const cleanseBattle=q.debugBattle(),cleanseActor=cleanseBattle?.p.find(u=>u.id===cleanseOwner);
-          if(cleanseActor)cleanseActor.nlMobileElite={...(cleanseActor.nlMobileElite||{}),plans:[c.mobileElitePlan('16',2,'Trước khi hành động, giải trừ 1 hiệu quả bất lợi ngẫu nhiên, duy trì 15 lượt.')]};
           cleanseActor?.effects?.push({kind:'mobile-source-control',turns:1,mobileSource:{dispelPolicy:'removable'},mobileSourceValues:{skipActionChance:1}});
           if(cleanseActor)cleanseActor.morale=0;
           const cleanseBeforeEvents=cleanseBattle?.events?.length||0;if(cleanseActor)q.perform(cleanseActor);
           const cleanseEvent=cleanseBattle?.events?.[cleanseBeforeEvents];
           checks.mobileEliteToshiPreAction=!!cleanseActor&&cleanseActor.nlMobileElite?.plans?.some(p=>p.pos===2&&p.cleanseBeforeAction===1&&p.first===15)&&!cleanseActor.effects?.some(e=>e.kind==='mobile-source-control')&&!!cleanseEvent&&cleanseEvent.mode!=='stunned'&&String(cleanseEvent.description||'').includes('trước hành động');
           q.closeBattle('city');q.setGame(eliteBefore);
+          const eliteFlowId='9',eliteFlowGame=structuredClone(eliteBefore),eliteSpent={},eliteLevelResults=[];
+          eliteFlowGame.silver=100000000;eliteFlowGame.nlCity={...(eliteFlowGame.nlCity||{}),levels:{...(eliteFlowGame.nlCity?.levels||{}),nl_city_hall:500}};
+          eliteFlowGame.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{'mobile-vng-item-856':1}};
+          eliteFlowGame.nlContentC={...(eliteFlowGame.nlContentC||{}),mobileTroopAssigned:{},mobileEliteUnlocked:{},mobileEliteLevels:{},mobileElitePending:{},mobileEliteSkills:{},mobileEliteAssigned:{},mobileEliteRefundedReceipts:{},mobileEliteNationMode:'same'};
+          q.setGame(eliteFlowGame);let eliteFlowOK=true;
+          for(let targetLevel=1;targetLevel<=5;targetLevel++){
+            const quote=c.mobileEliteUpgradeQuote(eliteFlowId);if(!quote||quote.to!==targetLevel){eliteFlowOK=false;break;}
+            const silverBefore=q.getGame().silver,stock='mobile-vng-item-'+quote.material.id;
+            if(!c.mobileEliteBuyMaterial(quote.material.id,quote.material.quantity)||q.getGame().silver!==silverBefore-quote.material.quantity*12)eliteFlowOK=false;
+            eliteSpent[stock]=(eliteSpent[stock]||0)+quote.material.quantity;
+            if(!c.mobileEliteUpgrade(eliteFlowId)){eliteFlowOK=false;break;}
+            const pendingGame=q.getGame();if(!pendingGame.nlContentC.mobileElitePending[eliteFlowId]){eliteFlowOK=false;break;}
+            pendingGame.nlContentC.mobileElitePending[eliteFlowId].readyAt=0;q.setGame(pendingGame);
+            eliteLevelResults.push(c.mobileEliteLevel(eliteFlowId));
+          }
+          const eliteSkillQuote=c.mobileEliteSkillQuote(eliteFlowId,1);
+          if(!eliteSkillQuote||eliteSkillQuote.requiredEliteLevel!==5)eliteFlowOK=false;
+          else for(const cost of eliteSkillQuote.costs){
+            const silverBefore=q.getGame().silver,stock='mobile-vng-item-'+cost.id;
+            if(!c.mobileEliteBuyMaterial(cost.id,cost.quantity)||q.getGame().silver!==silverBefore-cost.quantity*12)eliteFlowOK=false;
+            eliteSpent[stock]=(eliteSpent[stock]||0)+cost.quantity;
+          }
+          const eliteSkillPaid=!!eliteSkillQuote&&c.mobileEliteSkillUpgrade(eliteFlowId,1);
+          const eliteFlowState=q.getGame(),eliteFlowOwner=eliteFlowState.roster.find(h=>c.mobileHeroTroopAllowed(h,3));
+          if(!eliteFlowOwner)eliteFlowOK=false;
+          if(eliteFlowOwner){eliteFlowState.nlContentC.mobileTroopAssigned[eliteFlowOwner]='11';eliteFlowState.troopModes={...(eliteFlowState.troopModes||{}),[eliteFlowOwner]:'cavalry'};q.setGame(eliteFlowState);}
+          const eliteAssigned=!!eliteFlowOwner&&c.mobileEliteAssign(eliteFlowOwner,eliteFlowId);
+          const eliteAssignedSave=q.getGame();q.setGame(structuredClone(eliteAssignedSave));q.beginBattle(1,'campaign');
+          const eliteFlowBattle=q.debugBattle(),eliteFlowActor=eliteFlowBattle?.p.find(u=>u.id===eliteFlowOwner);
+          checks.mobileElitePurchaseUpgradeSkillAndP2=eliteFlowOK&&eliteLevelResults.join(',')==='1,2,3,4,5'&&eliteSkillPaid&&c.mobileEliteSkillLevels(eliteFlowId)[1]===1&&eliteAssigned&&eliteFlowActor?.nlMobileElite?.id===eliteFlowId&&eliteFlowActor.nlMobileElite.plans.some(p=>p.pos===1&&p.damage===.3&&p.first===5);
+          q.closeBattle('city');
+          document.querySelector('.nav[data-tab="barracks"]')?.click();
+          const forceSelect=document.querySelector('[data-nlc-elite-force]'),appearanceSelect=document.querySelector('[data-nlc-elite-appearance]');
+          if(forceSelect&&forceSelect.value!=='9'){forceSelect.value='9';forceSelect.dispatchEvent(new Event('change',{bubbles:true}));}
+          if(appearanceSelect&&appearanceSelect.value!=='9'){appearanceSelect.value='9';appearanceSelect.dispatchEvent(new Event('change',{bubbles:true}));}
+          const eliteResetButton=document.querySelector('[data-nlc-action="mobile-elite-reset"][data-nlc-id="9"]');window.confirm=()=>true;eliteResetButton?.click();
+          const eliteAfterReset=q.getGame(),resetStacks=Object.entries(eliteSpent).every(([id,count])=>eliteAfterReset.nlItemsV1.stacks[id]===count);
+          const refundedReceiptKeys=Object.keys(eliteAfterReset.nlContentC.mobileEliteRefundedReceipts||{});
+          const resetButtonGone=!document.querySelector('[data-nlc-action="mobile-elite-reset"][data-nlc-id="9"]');
+          checks.mobileEliteResetDiagnostics={eliteFlowOK,levels:eliteLevelResults,skillPaid:eliteSkillPaid,owner:eliteFlowOwner,assigned:eliteAssigned,button:!!eliteResetButton,disabled:eliteResetButton?.disabled,token:eliteAfterReset.nlItemsV1.stacks['mobile-vng-item-856'],level:c.mobileEliteLevel(eliteFlowId),resetStacks,refundKeys:refundedReceiptKeys.length,assignedAfter:eliteAfterReset.nlContentC.mobileEliteAssigned?.[eliteFlowOwner],buttonGone:resetButtonGone,activeTab:document.querySelector('.nav.active[data-tab]')?.dataset.tab,force:forceSelect?.value,appearance:appearanceSelect?.value,resetQuoteUi:c.panels().find(x=>x.includes('data-nlc-panel="mobile-elite"'))?.includes('mobile-elite-reset')};
+          checks.mobileEliteUIResetRefundSave=!!eliteResetButton&&!eliteResetButton.disabled&&Number(eliteAfterReset.nlItemsV1.stacks['mobile-vng-item-856']||0)===0&&resetStacks&&c.mobileEliteLevel(eliteFlowId)===0&&!eliteAfterReset.nlContentC.mobileEliteAssigned?.[eliteFlowOwner]&&refundedReceiptKeys.length===6&&resetButtonGone;
+          const eliteAfterResetSave=structuredClone(q.getGame());q.setGame(eliteAfterResetSave);
+          checks.mobileEliteResetReloadAndNoDuplicate=q.getGame().version===5&&c.mobileEliteLevel(eliteFlowId)===0&&Number(q.getGame().nlItemsV1.stacks['mobile-vng-item-856']||0)===0&&Object.entries(eliteSpent).every(([id,count])=>q.getGame().nlItemsV1.stacks[id]===count)&&Object.keys(q.getGame().nlContentC.mobileEliteRefundedReceipts||{}).length===6&&!document.querySelector('[data-nlc-action="mobile-elite-reset"][data-nlc-id="9"]');
+          q.setGame(eliteBefore);
+          const gemBefore=q.getGame(),gemOwner=gemBefore.roster[0],gemItem='mobile-vng-item-stone_1',gemBaselineCrit=c.p2Unit(gemOwner,'p',0,1)?.crit,gemFixture=structuredClone(gemBefore);
+          gemFixture.slots=[gemOwner,...gemFixture.slots.slice(1)];gemFixture.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{[gemItem]:1}};
+          gemFixture.nlContentC={...(gemFixture.nlContentC||{}),mobileGemSlots:{}};q.setGame(gemFixture);
+          const gemUsed=itemQa.useItem(gemItem,gemOwner),gemSaved=structuredClone(q.getGame());q.setGame(gemSaved);
+          q.beginBattle(1,'campaign');const gemBattle=q.debugBattle(),gemActor=gemBattle?.p.find(u=>u.id===gemOwner),gemSlot=c.state().mobileGemSlots?.[gemOwner];
+          checks.mobileGemItemToP2=gemUsed?.ok===true&&Number(q.getGame().nlItemsV1.stacks[gemItem]||0)===0&&gemSlot?.bao===1&&q.getGame().version===5&&gemActor?.nlWikiGems?.bao===1&&Math.abs(gemActor.crit-(gemBaselineCrit+.015))<1e-9;
+          q.closeBattle('city');const gemReload=q.getGame();q.setGame(structuredClone(gemReload));checks.mobileGemSaveReload=c.state().mobileGemSlots?.[gemOwner]?.bao===1&&q.getGame().version===5;
+          q.setGame(gemBefore);
           const troopBefore=q.getGame(),troopFixture=q.getGame();
           troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
           troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);
