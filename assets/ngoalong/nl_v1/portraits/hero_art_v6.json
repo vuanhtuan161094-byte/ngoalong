@@ -9,11 +9,11 @@
       "faction": "Ngụy",
       "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
       "character": {
-        "sourcePng": "female-xu-chu-v6-character.png",
-        "runtimeWebp": "female-xu-chu-v6-character.webp",
+        "sourcePng": "female-xu-chu-v6-r2-character.png",
+        "runtimeWebp": "female-xu-chu-v6-r2-character.webp",
         "status": "GENERATED_V6_REVIEWABLE",
-        "sourceSha256": "83f97aff8c3ec5fcdaae17acd975d79aa71b95c3592a8819b9b6c2e321b2fec4",
-        "runtimeSha256": "bd876f3bfc170f9b793bb3fd43dbf4243e1d328045b9c98fb8a2d6f0bf4540ab",
+        "sourceSha256": "b502fd4f7d87a6c06c9d50e7823318ce63963ebf994c458cfcd7a252bf3a43cb",
+        "runtimeSha256": "1ddf24bc90b4ef530a6fbfbf119b7bedfe4677b67bebcf2a5d311c79c3542516",
         "runtimeSize": [
           1024,
           1536
@@ -21,25 +21,25 @@
         "classification": "V6_GENERATED_FULL_BODY_MASTER",
         "provenance": {
           "provider": "OpenAI ImageGen",
-          "generationOutputId": "exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c",
-          "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD",
+          "generationOutputId": "exec-ffd270e8-d684-4431-8654-670dee975e84",
+          "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD_R2",
           "promptRecordStatus": "VERBATIM",
-          "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.prompt.txt",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-character.prompt.txt",
           "createdOn": "2026-11-27",
           "providerTimestamp": "unknown",
           "targetResolution": "1024x1536 vertical 2:3 full-body master",
-          "generationSourcePath": "/workspace/generated_images/exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c.png",
+          "generationSourcePath": "/workspace/generated_images/exec-ffd270e8-d684-4431-8654-670dee975e84.png",
           "cost": "unknown; provider did not return an estimate",
           "actualResolution": [
             1024,
             1536
           ],
-          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.png",
-          "sourceSizeBytes": 2711854,
-          "sourceSha256": "83f97aff8c3ec5fcdaae17acd975d79aa71b95c3592a8819b9b6c2e321b2fec4",
-          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.webp",
-          "runtimeSizeBytes": 357408,
-          "runtimeSha256": "bd876f3bfc170f9b793bb3fd43dbf4243e1d328045b9c98fb8a2d6f0bf4540ab",
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-character.png",
+          "sourceSizeBytes": 2631034,
+          "sourceSha256": "b502fd4f7d87a6c06c9d50e7823318ce63963ebf994c458cfcd7a252bf3a43cb",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-character.webp",
+          "runtimeSizeBytes": 329350,
+          "runtimeSha256": "1ddf24bc90b4ef530a6fbfbf119b7bedfe4677b67bebcf2a5d311c79c3542516",
           "runtimeDerivative": "Pillow WebP quality=90 method=6",
           "image_created": true,
           "file_exported": true,
@@ -49,11 +49,11 @@
         }
       },
       "portrait": {
-        "sourcePng": "female-xu-chu-v6-portrait.png",
-        "runtimeWebp": "female-xu-chu-v6-portrait.webp",
+        "sourcePng": "female-xu-chu-v6-r2-portrait.png",
+        "runtimeWebp": "female-xu-chu-v6-r2-portrait.webp",
         "status": "DERIVED_V6_REVIEWABLE",
-        "sourceSha256": "7c0ade3bddfd8c4812b6ce17ea841330a979890b13c9b3c2915aaafd36a2f4cb",
-        "runtimeSha256": "e7ccc4b879fa64da0435eeb13648e300ecf5d1cc4cb004ff569ff5934b267291",
+        "sourceSha256": "1f0bfac7fc8a9acfb210346c0546a794c8caa2d61f9f4707358d2b0375cdf79c",
+        "runtimeSha256": "18391fc8723170e7a563eed6eef80bf3ec29c193e2d4937d72f2a3c4b3eb231c",
         "runtimeSize": [
           1024,
           1024
@@ -62,15 +62,15 @@
         "provenance": {
           "provider": "Local Pillow crop from the V6 character master",
           "generationOutputId": null,
-          "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD",
+          "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD_R2",
           "promptRecordStatus": "VERBATIM",
-          "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.prompt.txt",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-character.prompt.txt",
           "createdOn": "2026-11-27",
           "providerTimestamp": "unknown",
           "targetResolution": "1:1 square crop derived from the 2:3 master",
-          "generationSourcePath": "/workspace/generated_images/exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c.png",
+          "generationSourcePath": "/workspace/generated_images/exec-ffd270e8-d684-4431-8654-670dee975e84.png",
           "cost": "no additional image-generation call",
-          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.png",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-character.png",
           "cropWindow": [
             0,
             0,
@@ -81,12 +81,12 @@
             1024,
             1024
           ],
-          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-portrait.png",
-          "sourceSizeBytes": 1660318,
-          "sourceSha256": "7c0ade3bddfd8c4812b6ce17ea841330a979890b13c9b3c2915aaafd36a2f4cb",
-          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-portrait.webp",
-          "runtimeSizeBytes": 221332,
-          "runtimeSha256": "e7ccc4b879fa64da0435eeb13648e300ecf5d1cc4cb004ff569ff5934b267291",
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-portrait.png",
+          "sourceSizeBytes": 1675889,
+          "sourceSha256": "1f0bfac7fc8a9acfb210346c0546a794c8caa2d61f9f4707358d2b0375cdf79c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-r2-portrait.webp",
+          "runtimeSizeBytes": 225044,
+          "runtimeSha256": "18391fc8723170e7a563eed6eef80bf3ec29c193e2d4937d72f2a3c4b3eb231c",
           "runtimeDerivative": "Pillow WebP quality=90 method=6",
           "image_created": false,
           "file_exported": true,
@@ -94,8 +94,102 @@
           "integrated_in_game": true,
           "owner_review": "PENDING"
         }
-      }
+      },
+      "previousRevisions": [
+        {
+          "revision": "v6-r1",
+          "character": {
+            "sourcePng": "female-xu-chu-v6-character.png",
+            "runtimeWebp": "female-xu-chu-v6-character.webp",
+            "status": "GENERATED_V6_REVIEWABLE",
+            "sourceSha256": "83f97aff8c3ec5fcdaae17acd975d79aa71b95c3592a8819b9b6c2e321b2fec4",
+            "runtimeSha256": "bd876f3bfc170f9b793bb3fd43dbf4243e1d328045b9c98fb8a2d6f0bf4540ab",
+            "runtimeSize": [
+              1024,
+              1536
+            ],
+            "classification": "V6_GENERATED_FULL_BODY_MASTER",
+            "provenance": {
+              "provider": "OpenAI ImageGen",
+              "generationOutputId": "exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c",
+              "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD",
+              "promptRecordStatus": "VERBATIM",
+              "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.prompt.txt",
+              "createdOn": "2026-11-27",
+              "providerTimestamp": "unknown",
+              "targetResolution": "1024x1536 vertical 2:3 full-body master",
+              "generationSourcePath": "/workspace/generated_images/exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c.png",
+              "cost": "unknown; provider did not return an estimate",
+              "actualResolution": [
+                1024,
+                1536
+              ],
+              "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.png",
+              "sourceSizeBytes": 2711854,
+              "sourceSha256": "83f97aff8c3ec5fcdaae17acd975d79aa71b95c3592a8819b9b6c2e321b2fec4",
+              "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.webp",
+              "runtimeSizeBytes": 357408,
+              "runtimeSha256": "bd876f3bfc170f9b793bb3fd43dbf4243e1d328045b9c98fb8a2d6f0bf4540ab",
+              "runtimeDerivative": "Pillow WebP quality=90 method=6",
+              "image_created": true,
+              "file_exported": true,
+              "asset_qc_pass": true,
+              "integrated_in_game": true,
+              "owner_review": "PENDING"
+            }
+          },
+          "portrait": {
+            "sourcePng": "female-xu-chu-v6-portrait.png",
+            "runtimeWebp": "female-xu-chu-v6-portrait.webp",
+            "status": "DERIVED_V6_REVIEWABLE",
+            "sourceSha256": "7c0ade3bddfd8c4812b6ce17ea841330a979890b13c9b3c2915aaafd36a2f4cb",
+            "runtimeSha256": "e7ccc4b879fa64da0435eeb13648e300ecf5d1cc4cb004ff569ff5934b267291",
+            "runtimeSize": [
+              1024,
+              1024
+            ],
+            "classification": "V6_DERIVED_PORTRAIT_CROP",
+            "provenance": {
+              "provider": "Local Pillow crop from the V6 character master",
+              "generationOutputId": null,
+              "promptVersion": "NL_CHARACTER_ART_V6_ONE_MASTER_BOLD",
+              "promptRecordStatus": "VERBATIM",
+              "promptFile": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.prompt.txt",
+              "createdOn": "2026-11-27",
+              "providerTimestamp": "unknown",
+              "targetResolution": "1:1 square crop derived from the 2:3 master",
+              "generationSourcePath": "/workspace/generated_images/exec-aff37f02-4ca4-4254-8eaa-ca57a9d6492c.png",
+              "cost": "no additional image-generation call",
+              "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-character.png",
+              "cropWindow": [
+                0,
+                0,
+                1024,
+                1024
+              ],
+              "actualResolution": [
+                1024,
+                1024
+              ],
+              "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-portrait.png",
+              "sourceSizeBytes": 1660318,
+              "sourceSha256": "7c0ade3bddfd8c4812b6ce17ea841330a979890b13c9b3c2915aaafd36a2f4cb",
+              "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-chu-v6-portrait.webp",
+              "runtimeSizeBytes": 221332,
+              "runtimeSha256": "e7ccc4b879fa64da0435eeb13648e300ecf5d1cc4cb004ff569ff5934b267291",
+              "runtimeDerivative": "Pillow WebP quality=90 method=6",
+              "image_created": false,
+              "file_exported": true,
+              "asset_qc_pass": true,
+              "integrated_in_game": true,
+              "owner_review": "PENDING"
+            }
+          },
+          "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING"
+        }
+      ],
+      "currentRevision": "v6-r2"
     }
   },
-  "lastAssetAudit": "2026-11-27; Hứa Chử V6 master and locally derived portrait crop embedded in the canonical offline HTML; owner review pending."
+  "lastAssetAudit": "2026-11-27; Hứa Chử V6-r2 master and local portrait crop verified and embedded in the canonical offline HTML; owner review pending."
 }
