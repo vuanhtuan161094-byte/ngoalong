@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "milestone": "NL_ALL_HERO_CHARACTER_ART_COVERAGE_FINAL",
+  "createdOn": "2026-11-27",
+  "repository": "vuanhtuan161094-byte/ngoalong",
+  "branch": "feature/ngoalong-v1-complete",
+  "sourceCatalogue": "data/ngoalong/modules/heroes/wiki_catalogue_v1.json",
+  "catalogueHeroCount": 364,
+  "coverage": {
+    "characterIllustrations": 364,
+    "portraitImages": 364,
+    "heroesWithBoth": 364,
+    "missingHeroIds": []
+  },
+  "manifestCounts": {
+    "v5HeroRecords": 45,
+    "v6HeroRecords": 323,
+    "combinedUniqueCatalogueCoverage": 364
+  },
+  "reusedStagedB3HeroIds": [
+    "wiki-mobile-hero-004",
+    "wiki-mobile-hero-005",
+    "wiki-mobile-hero-006",
+    "wiki-mobile-hero-007",
+    "wiki-mobile-hero-008",
+    "wiki-mobile-hero-009",
+    "wiki-mobile-hero-010",
+    "wiki-mobile-hero-011",
+    "wiki-mobile-hero-012"
+  ],
+  "derivedPortraitCropsFromExistingMasters": 9,
+  "newV6Batch": {
+    "batchId": "b81",
+    "generationOutputId": "exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03",
+    "generationCalls": 1,
+    "newHeroIds": [
+      "wiki-mobile-hero-184",
+      "wiki-mobile-hero-219",
+      "wiki-mobile-hero-351"
+    ],
+    "sourceSheet": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+    "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+    "finalFourHeroPreview": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-preview.png",
+    "finalPreviewSha256": "3f054dbf9d120f4590b1b6bf3ef32e7e41a70bcd22e1f804170170c3550faac2",
+    "reusedFourthPanelHeroId": "wiki-mobile-hero-060",
+    "sourceStillLifePanelNotRegistered": true,
+    "derivedPortraitCrops": 3
+  },
+  "qualityState": {
+    "internalVisualQc": "PASS",
+    "ownerReview": "PENDING",
+    "integratedInGame": false,
+    "htmlModified": false,
+    "fullRegressionRun": false
+  },
+  "newHeroAssets": [
+    {
+      "heroId": "wiki-mobile-hero-184",
+      "name": "Tữ Thụ",
+      "character": "female-tu-thu-quan-v6-b81-character.png",
+      "portrait": "female-tu-thu-quan-v6-b81-portrait.png"
+    },
+    {
+      "heroId": "wiki-mobile-hero-219",
+      "name": "Trương Bảo",
+      "character": "female-truong-bao-quan-v6-b81-character.png",
+      "portrait": "female-truong-bao-quan-v6-b81-portrait.png"
+    },
+    {
+      "heroId": "wiki-mobile-hero-351",
+      "name": "Trương Hoành",
+      "character": "female-truong-hoanh-trung-lap-v6-b81-character.png",
+      "portrait": "female-truong-hoanh-trung-lap-v6-b81-portrait.png"
+    }
+  ]
+}

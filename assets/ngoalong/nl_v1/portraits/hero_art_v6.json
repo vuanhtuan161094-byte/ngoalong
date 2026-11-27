@@ -46444,9 +46444,507 @@
           "owner_review": "PENDING"
         }
       }
+    },
+    "wiki-mobile-hero-184": {
+      "name": "Tữ Thụ",
+      "faction": "Quần",
+      "currentRevision": "v6-b81",
+      "generationBatchId": "b81",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-tu-thu-quan-v6-b81-character.png",
+        "runtimeWebp": "female-tu-thu-quan-v6-b81-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "c4bc42def49255619824bd94577154e9337ee67a0785daef124f0fe490f227d5",
+        "runtimeSha256": "2ae0a0ce3af0f39fd3f0f2ff2e40cab9b87e9a4c74da47dbf719f4177f8bd453",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03",
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-tu-thu-quan-v6-b81-character.png",
+          "sourceSizeBytes": 721463,
+          "sourceSha256": "c4bc42def49255619824bd94577154e9337ee67a0785daef124f0fe490f227d5",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-tu-thu-quan-v6-b81-character.webp",
+          "runtimeSizeBytes": 128726,
+          "runtimeSha256": "2ae0a0ce3af0f39fd3f0f2ff2e40cab9b87e9a4c74da47dbf719f4177f8bd453",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-tu-thu-quan-v6-b81-portrait.png",
+        "runtimeWebp": "female-tu-thu-quan-v6-b81-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "991d6f64039fef6d55e4ae49d833f749f2fd61779bdd0f9e6b3285c50b90256b",
+        "runtimeSha256": "00961f02a0a729ff016b964d2fc0abdcded20b294c866f382746337c80ef0ca7",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-tu-thu-quan-v6-b81-character.png",
+          "sourceCharacterSha256": "c4bc42def49255619824bd94577154e9337ee67a0785daef124f0fe490f227d5",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-tu-thu-quan-v6-b81-portrait.png",
+          "sourceSizeBytes": 473630,
+          "sourceSha256": "991d6f64039fef6d55e4ae49d833f749f2fd61779bdd0f9e6b3285c50b90256b",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-tu-thu-quan-v6-b81-portrait.webp",
+          "runtimeSizeBytes": 83028,
+          "runtimeSha256": "00961f02a0a729ff016b964d2fc0abdcded20b294c866f382746337c80ef0ca7",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-219": {
+      "name": "Trương Bảo",
+      "faction": "Quần",
+      "currentRevision": "v6-b81",
+      "generationBatchId": "b81",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-truong-bao-quan-v6-b81-character.png",
+        "runtimeWebp": "female-truong-bao-quan-v6-b81-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "3878cce09b96effbd30b39e7877e4c68d7c268137e382c996100bee0f062d790",
+        "runtimeSha256": "6c108ec196f71f48c3aec0b2efda71c4d99201de1b8e2efd76b049d142cce9fd",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03",
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-truong-bao-quan-v6-b81-character.png",
+          "sourceSizeBytes": 745724,
+          "sourceSha256": "3878cce09b96effbd30b39e7877e4c68d7c268137e382c996100bee0f062d790",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-truong-bao-quan-v6-b81-character.webp",
+          "runtimeSizeBytes": 134542,
+          "runtimeSha256": "6c108ec196f71f48c3aec0b2efda71c4d99201de1b8e2efd76b049d142cce9fd",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-truong-bao-quan-v6-b81-portrait.png",
+        "runtimeWebp": "female-truong-bao-quan-v6-b81-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "16244212cb70880c53501e1502a02f122839aae411739933f99d95118ef02d9e",
+        "runtimeSha256": "a5174c0a0bb11047567ba6c62f691c238d215640d337ad1956969af45aec304b",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-truong-bao-quan-v6-b81-character.png",
+          "sourceCharacterSha256": "3878cce09b96effbd30b39e7877e4c68d7c268137e382c996100bee0f062d790",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-truong-bao-quan-v6-b81-portrait.png",
+          "sourceSizeBytes": 498296,
+          "sourceSha256": "16244212cb70880c53501e1502a02f122839aae411739933f99d95118ef02d9e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-truong-bao-quan-v6-b81-portrait.webp",
+          "runtimeSizeBytes": 89452,
+          "runtimeSha256": "a5174c0a0bb11047567ba6c62f691c238d215640d337ad1956969af45aec304b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-351": {
+      "name": "Trương Hoành",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b81",
+      "generationBatchId": "b81",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-truong-hoanh-trung-lap-v6-b81-character.png",
+        "runtimeWebp": "female-truong-hoanh-trung-lap-v6-b81-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "593952e1c3a51ee41973161f053806238505a1826334f7198ef9566241f518eb",
+        "runtimeSha256": "9ffa77235d8b18dfd1ac55776f3d1be166f316e6da7ccff4342f4995f8089f80",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03",
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-truong-hoanh-trung-lap-v6-b81-character.png",
+          "sourceSizeBytes": 727706,
+          "sourceSha256": "593952e1c3a51ee41973161f053806238505a1826334f7198ef9566241f518eb",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-truong-hoanh-trung-lap-v6-b81-character.webp",
+          "runtimeSizeBytes": 122576,
+          "runtimeSha256": "9ffa77235d8b18dfd1ac55776f3d1be166f316e6da7ccff4342f4995f8089f80",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-truong-hoanh-trung-lap-v6-b81-portrait.png",
+        "runtimeWebp": "female-truong-hoanh-trung-lap-v6-b81-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "4db4fffe2021cc51b70869f77f9b5ebf4d0649560db88698ace358782ee6bb3d",
+        "runtimeSha256": "3acb9aace384948499d66d29eff4b90183033cd27674a23284f2bea342d5c6c0",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b81",
+          "generationLayout": "2x2 vertical grid; three new hero cells and one still-life reserved panel. A final four-hero preview reuses the existing Trương Bao (Thục) master in cell 3.",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b81-sheet.png",
+          "sourceSheetSha256": "825d958a3d2240c33cfb28874fbae90df327800dd0392fb7cb25da2106124021",
+          "sourceSheetSizeBytes": 3067440,
+          "referenceAssets": [
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+              "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+            },
+            {
+              "assetPath": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+              "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+            }
+          ],
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-truong-hoanh-trung-lap-v6-b81-character.png",
+          "sourceCharacterSha256": "593952e1c3a51ee41973161f053806238505a1826334f7198ef9566241f518eb",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-truong-hoanh-trung-lap-v6-b81-portrait.png",
+          "sourceSizeBytes": 484739,
+          "sourceSha256": "4db4fffe2021cc51b70869f77f9b5ebf4d0649560db88698ace358782ee6bb3d",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-truong-hoanh-trung-lap-v6-b81-portrait.webp",
+          "runtimeSizeBytes": 83198,
+          "runtimeSha256": "3acb9aace384948499d66d29eff4b90183033cd27674a23284f2bea342d5c6c0",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
     }
   },
-  "lastAssetAudit": "2026-11-27; registered 4 V6 full-body cells and local portrait crops from contact sheet b80; offline HTML embedding pending.",
+  "lastAssetAudit": "2026-11-27; added three new V6 hero cells from b81; final preview uses the existing Trương Bao (Thục) master in the fourth cell; runtime HTML embedding pending.",
   "discardedCells": [
     {
       "heroId": "wiki-mobile-hero-044",
@@ -46463,6 +46961,18 @@
         "female-huang-zhong-v6-b06-portrait.png",
         "female-huang-zhong-v6-b06-portrait.webp"
       ],
+      "htmlBuilt": false
+    },
+    {
+      "heroId": null,
+      "name": "reserved still-life panel",
+      "faction": null,
+      "generationBatchId": "b81",
+      "sheetCellIndex": 3,
+      "generationOutputId": "exec-5f2ea6a5-e46a-4996-888d-d3b18e832c03",
+      "reason": "NON_CHARACTER_RESERVED_PANEL_REUSED_FOR_EXISTING_HERO_PREVIEW",
+      "existingV5HeroId": "wiki-mobile-hero-060",
+      "assetFilesRemoved": [],
       "htmlBuilt": false
     }
   ]

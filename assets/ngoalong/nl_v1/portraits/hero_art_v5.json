@@ -5385,9 +5385,940 @@
           "owner_review": "PENDING"
         }
       }
+    },
+    "wiki-mobile-hero-004": {
+      "name": "Giả Hử",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-83d61523-44f0-45cb-9c69-41df79de3689",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+        "runtimeSha256": "51330bf552db2bcfbb468f25314e9fe01400184f5fa9a7731975a15a2b0c28c3",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-83d61523-44f0-45cb-9c69-41df79de3689",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-83d61523-44f0-45cb-9c69-41df79de3689",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.png",
+          "sourceSizeBytes": 2667961,
+          "sourceSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.webp",
+          "runtimeSizeBytes": 335002,
+          "runtimeSha256": "51330bf552db2bcfbb468f25314e9fe01400184f5fa9a7731975a15a2b0c28c3",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-004-female-jia-xu-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-004-female-jia-xu-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "fed90bb0d71d762cd0fceaa5ed82e5c7d7f5ae2840a4a60dd834a2bd1563a05a",
+        "runtimeSha256": "2ae05a04b59d49029696cd13207ee918b162d3747f94f7c03411c2ac27611519",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.png",
+          "sourceCharacterSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-004-female-jia-xu-v5-portrait.png",
+          "sourceSizeBytes": 1714471,
+          "sourceSha256": "fed90bb0d71d762cd0fceaa5ed82e5c7d7f5ae2840a4a60dd834a2bd1563a05a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-004-female-jia-xu-v5-portrait.webp",
+          "runtimeSizeBytes": 240184,
+          "runtimeSha256": "2ae05a04b59d49029696cd13207ee918b162d3747f94f7c03411c2ac27611519",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "splash": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.webp",
+        "promptFile": "art_prompts_v5.json#exec-772405c1-b4fd-4b16-9b48-879ab0016534",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "138c0449ed1d857cb65e168d47679d321468a8171bf625fe76390ec693fff6a5",
+        "runtimeSha256": "9801fbf268df548a7b490e8b8b2b72922cbb4e29ef5cf7ca13dca8e7ddb39f23",
+        "runtimeSize": [
+          1672,
+          941
+        ],
+        "classification": "RECREATED_V5_SPLASH_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-772405c1-b4fd-4b16-9b48-879ab0016534",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-772405c1-b4fd-4b16-9b48-879ab0016534",
+          "referenceAssetPath": "generated_images/exec-83d61523-44f0-45cb-9c69-41df79de3689.png",
+          "referenceSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+          "referenceAssets": [
+            {
+              "assetPath": "generated_images/exec-83d61523-44f0-45cb-9c69-41df79de3689.png",
+              "sha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e"
+            }
+          ],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.png",
+          "sourceSizeBytes": 2924701,
+          "sourceSha256": "138c0449ed1d857cb65e168d47679d321468a8171bf625fe76390ec693fff6a5",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.webp",
+          "runtimeSizeBytes": 447338,
+          "runtimeSha256": "9801fbf268df548a7b490e8b8b2b72922cbb4e29ef5cf7ca13dca8e7ddb39f23",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-005": {
+      "name": "Hạ Hầu Đôn",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-de6fe55d-8d19-4845-89f5-fad8df6bd3b1",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "da99ead17c3a59f0fe6a21199aac511d28c8ff2fff28dc22d81354178afb1a1d",
+        "runtimeSha256": "e0c9c78a42f59131eb2f5d87eb4652526c512b4981b52e553905f780c17cf9d5",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-de6fe55d-8d19-4845-89f5-fad8df6bd3b1",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-de6fe55d-8d19-4845-89f5-fad8df6bd3b1",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.png",
+          "sourceSizeBytes": 2512558,
+          "sourceSha256": "da99ead17c3a59f0fe6a21199aac511d28c8ff2fff28dc22d81354178afb1a1d",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.webp",
+          "runtimeSizeBytes": 304362,
+          "runtimeSha256": "e0c9c78a42f59131eb2f5d87eb4652526c512b4981b52e553905f780c17cf9d5",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-005-female-xiahou-dun-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-005-female-xiahou-dun-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "227a08e8baf857d99c41108cde6fe9bd0cc5fb15ef883ed263b190d0504985c7",
+        "runtimeSha256": "1a76957a3ad4710c3d57d5d92f61781cf1c78a256ffa5e9eaf5ef80917e39dcf",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.png",
+          "sourceCharacterSha256": "da99ead17c3a59f0fe6a21199aac511d28c8ff2fff28dc22d81354178afb1a1d",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-005-female-xiahou-dun-v5-portrait.png",
+          "sourceSizeBytes": 1580657,
+          "sourceSha256": "227a08e8baf857d99c41108cde6fe9bd0cc5fb15ef883ed263b190d0504985c7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-005-female-xiahou-dun-v5-portrait.webp",
+          "runtimeSizeBytes": 205428,
+          "runtimeSha256": "1a76957a3ad4710c3d57d5d92f61781cf1c78a256ffa5e9eaf5ef80917e39dcf",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-006": {
+      "name": "Tào Chương",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-c8b131fa-b514-40a5-bce2-5d1d7552dc7e",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "54b249b257fd33b59d8b810169cedeabf871702d58be0f5e8b040ed8e8034ba0",
+        "runtimeSha256": "27fbed75cc52c0e02a9cbefbd5a8f8a14ce4625ca8e6a0ee0ae072634f449c32",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-c8b131fa-b514-40a5-bce2-5d1d7552dc7e",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-c8b131fa-b514-40a5-bce2-5d1d7552dc7e",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.png",
+          "sourceSizeBytes": 2803685,
+          "sourceSha256": "54b249b257fd33b59d8b810169cedeabf871702d58be0f5e8b040ed8e8034ba0",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.webp",
+          "runtimeSizeBytes": 369962,
+          "runtimeSha256": "27fbed75cc52c0e02a9cbefbd5a8f8a14ce4625ca8e6a0ee0ae072634f449c32",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-006-female-cao-zhang-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-006-female-cao-zhang-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "b34495575e806b0c6d7d4d19d99aeecf4b971e4ca4611c74ebbb6d7ddaa7cf9e",
+        "runtimeSha256": "33e2282c5a2fdfbed82b3ffaf1182f440663ffe5d774b30b8149d19eac969163",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.png",
+          "sourceCharacterSha256": "54b249b257fd33b59d8b810169cedeabf871702d58be0f5e8b040ed8e8034ba0",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-006-female-cao-zhang-v5-portrait.png",
+          "sourceSizeBytes": 1751572,
+          "sourceSha256": "b34495575e806b0c6d7d4d19d99aeecf4b971e4ca4611c74ebbb6d7ddaa7cf9e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-006-female-cao-zhang-v5-portrait.webp",
+          "runtimeSizeBytes": 244870,
+          "runtimeSha256": "33e2282c5a2fdfbed82b3ffaf1182f440663ffe5d774b30b8149d19eac969163",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-007": {
+      "name": "Tào Duệ",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-500ab97b-d49e-4b4e-b104-a7628d7c1a75",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "4a97ed56a59ef0b1cf02064bba8ba972fb6fd4b6d0f07b8463c903db1d3f7d8f",
+        "runtimeSha256": "98caefe84424dec83c8753978403c331b34fe3534371841d4bdecb9997d1d524",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-500ab97b-d49e-4b4e-b104-a7628d7c1a75",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-500ab97b-d49e-4b4e-b104-a7628d7c1a75",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.png",
+          "sourceSizeBytes": 2913944,
+          "sourceSha256": "4a97ed56a59ef0b1cf02064bba8ba972fb6fd4b6d0f07b8463c903db1d3f7d8f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.webp",
+          "runtimeSizeBytes": 406728,
+          "runtimeSha256": "98caefe84424dec83c8753978403c331b34fe3534371841d4bdecb9997d1d524",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-007-female-cao-rui-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-007-female-cao-rui-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "b59463bc52c751aec4cf62f1585fe0476a34c0244ceb259f4df3b3b2c2e14809",
+        "runtimeSha256": "9ab0dc044c9439852bcf2f9d64fc5020cf117f808cbb7019fb74974ac348c3de",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.png",
+          "sourceCharacterSha256": "4a97ed56a59ef0b1cf02064bba8ba972fb6fd4b6d0f07b8463c903db1d3f7d8f",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-007-female-cao-rui-v5-portrait.png",
+          "sourceSizeBytes": 1896612,
+          "sourceSha256": "b59463bc52c751aec4cf62f1585fe0476a34c0244ceb259f4df3b3b2c2e14809",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-007-female-cao-rui-v5-portrait.webp",
+          "runtimeSizeBytes": 288034,
+          "runtimeSha256": "9ab0dc044c9439852bcf2f9d64fc5020cf117f808cbb7019fb74974ac348c3de",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-008": {
+      "name": "Tào Thực",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-14fb0d91-3567-49da-87f9-296207c25218",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "12ead57de4ef532e878955fe9bd6e2343457f344335562de14760a541605d32c",
+        "runtimeSha256": "92fab581f7ea08ba072d10a1f5d442cc5b23f2d2f991dec08b36b10c7d0c3916",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-14fb0d91-3567-49da-87f9-296207c25218",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-14fb0d91-3567-49da-87f9-296207c25218",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.png",
+          "sourceSizeBytes": 2811393,
+          "sourceSha256": "12ead57de4ef532e878955fe9bd6e2343457f344335562de14760a541605d32c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.webp",
+          "runtimeSizeBytes": 348172,
+          "runtimeSha256": "92fab581f7ea08ba072d10a1f5d442cc5b23f2d2f991dec08b36b10c7d0c3916",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-008-female-cao-zhi-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-008-female-cao-zhi-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "317e1cf701371d29a040e68005da00bbe1c96950a4a1c10d7f09bb7b95a17731",
+        "runtimeSha256": "3f604e593075493e69b1856bdf614a7e0477836616db67cc87ef81db42549a06",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.png",
+          "sourceCharacterSha256": "12ead57de4ef532e878955fe9bd6e2343457f344335562de14760a541605d32c",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-008-female-cao-zhi-v5-portrait.png",
+          "sourceSizeBytes": 1782175,
+          "sourceSha256": "317e1cf701371d29a040e68005da00bbe1c96950a4a1c10d7f09bb7b95a17731",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-008-female-cao-zhi-v5-portrait.webp",
+          "runtimeSizeBytes": 245026,
+          "runtimeSha256": "3f604e593075493e69b1856bdf614a7e0477836616db67cc87ef81db42549a06",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-009": {
+      "name": "Trương Hợp",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-14ca8e01-726c-40ca-bca1-9b196c31f202",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "c6a1533cf90cf23212330c4be536c32a4455a86a4c858d0522ef60574b5c2ce8",
+        "runtimeSha256": "0b842f07a19d4a730f3aaf20091266e84809554c3a5cab228375e3dd1285a1f9",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-14ca8e01-726c-40ca-bca1-9b196c31f202",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-14ca8e01-726c-40ca-bca1-9b196c31f202",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.png",
+          "sourceSizeBytes": 2959754,
+          "sourceSha256": "c6a1533cf90cf23212330c4be536c32a4455a86a4c858d0522ef60574b5c2ce8",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.webp",
+          "runtimeSizeBytes": 420352,
+          "runtimeSha256": "0b842f07a19d4a730f3aaf20091266e84809554c3a5cab228375e3dd1285a1f9",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-009-female-zhang-he-wei-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-009-female-zhang-he-wei-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "b9457f12bd09e71d66acdfd9ac4db99c73f79523cf68fd21aa49eb7cb50f64d9",
+        "runtimeSha256": "19dbc70fb14e4b6270eeb5e8cefe910abcf712a6d1e1d8fc9add2286864e5678",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.png",
+          "sourceCharacterSha256": "c6a1533cf90cf23212330c4be536c32a4455a86a4c858d0522ef60574b5c2ce8",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-009-female-zhang-he-wei-v5-portrait.png",
+          "sourceSizeBytes": 1889780,
+          "sourceSha256": "b9457f12bd09e71d66acdfd9ac4db99c73f79523cf68fd21aa49eb7cb50f64d9",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-009-female-zhang-he-wei-v5-portrait.webp",
+          "runtimeSizeBytes": 288706,
+          "runtimeSha256": "19dbc70fb14e4b6270eeb5e8cefe910abcf712a6d1e1d8fc9add2286864e5678",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-010": {
+      "name": "Trương Liêu",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-bd3a03e7-edeb-42fb-b346-494ff8215442",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "91a9bf4ef371ae2b6b2e294d91aac4f207d591f23a9d52b33ee71d3cbf7c4d67",
+        "runtimeSha256": "6bb264c09eab349741474be7672648e0dd2ee784cdf3cb200754983f8ca98fae",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-bd3a03e7-edeb-42fb-b346-494ff8215442",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-bd3a03e7-edeb-42fb-b346-494ff8215442",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.png",
+          "sourceSizeBytes": 2753865,
+          "sourceSha256": "91a9bf4ef371ae2b6b2e294d91aac4f207d591f23a9d52b33ee71d3cbf7c4d67",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.webp",
+          "runtimeSizeBytes": 342626,
+          "runtimeSha256": "6bb264c09eab349741474be7672648e0dd2ee784cdf3cb200754983f8ca98fae",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-010-female-zhang-liao-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-010-female-zhang-liao-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "2378ee8d97e027f7c7b64f51569e5846c33b19d5454b1e6a357f34bf0cf829e4",
+        "runtimeSha256": "1c7dd0fd82c7e336b605a03623b3c4d797c21df6130555c33c924f7d4c048d7b",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.png",
+          "sourceCharacterSha256": "91a9bf4ef371ae2b6b2e294d91aac4f207d591f23a9d52b33ee71d3cbf7c4d67",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-010-female-zhang-liao-v5-portrait.png",
+          "sourceSizeBytes": 1717666,
+          "sourceSha256": "2378ee8d97e027f7c7b64f51569e5846c33b19d5454b1e6a357f34bf0cf829e4",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-010-female-zhang-liao-v5-portrait.webp",
+          "runtimeSizeBytes": 228574,
+          "runtimeSha256": "1c7dd0fd82c7e336b605a03623b3c4d797c21df6130555c33c924f7d4c048d7b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-011": {
+      "name": "Tuân Vực",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-759319b4-527c-40ed-848d-444a57cdc260",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "60dc901874de2c3be878e8c9f7afc8f11a259bcb614c71c83a78081f8fc8b7ec",
+        "runtimeSha256": "5a3fde93dfbe04ac242d0ffbe3b566df185965ae93eb3b14552823488b557c46",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-759319b4-527c-40ed-848d-444a57cdc260",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-759319b4-527c-40ed-848d-444a57cdc260",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.png",
+          "sourceSizeBytes": 2772979,
+          "sourceSha256": "60dc901874de2c3be878e8c9f7afc8f11a259bcb614c71c83a78081f8fc8b7ec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.webp",
+          "runtimeSizeBytes": 342594,
+          "runtimeSha256": "5a3fde93dfbe04ac242d0ffbe3b566df185965ae93eb3b14552823488b557c46",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-011-female-xun-yu-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-011-female-xun-yu-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "8dd3c6c537005dfa59a9844cc7cea0971309678b09a90c9e15f3549879fbeaec",
+        "runtimeSha256": "3702a154aad8b9d0254b0eebf2f0013214f4e51e1079f3415901992bdb574676",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.png",
+          "sourceCharacterSha256": "60dc901874de2c3be878e8c9f7afc8f11a259bcb614c71c83a78081f8fc8b7ec",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-011-female-xun-yu-v5-portrait.png",
+          "sourceSizeBytes": 1713261,
+          "sourceSha256": "8dd3c6c537005dfa59a9844cc7cea0971309678b09a90c9e15f3549879fbeaec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-011-female-xun-yu-v5-portrait.webp",
+          "runtimeSizeBytes": 230190,
+          "runtimeSha256": "3702a154aad8b9d0254b0eebf2f0013214f4e51e1079f3415901992bdb574676",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-012": {
+      "name": "Hạ Hầu Uyên",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.png",
+        "runtimeWebp": "staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.webp",
+        "promptFile": "art_prompts_v5.json#exec-e04632b5-1d41-497b-a080-b274b073074f",
+        "status": "GENERATED_V5_REVIEWABLE",
+        "sourceSha256": "8087f478c3e244bee78c92005b5d6cb4f8163c6a245e34db9955e2c97907571e",
+        "runtimeSha256": "337731ae86ff90059f4784d5a93d4c8f00b1953d7fccfa38555a540340504dd5",
+        "runtimeSize": [
+          1024,
+          1536
+        ],
+        "classification": "RECREATED_V5_CHARACTER_CANDIDATE",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e04632b5-1d41-497b-a080-b274b073074f",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "promptLibrary": "art_prompts_v5.json",
+          "promptKey": "exec-e04632b5-1d41-497b-a080-b274b073074f",
+          "referenceAssetPath": null,
+          "referenceSha256": null,
+          "referenceAssets": [],
+          "createdOn": "2026-11-25",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.png",
+          "sourceSizeBytes": 2920932,
+          "sourceSha256": "8087f478c3e244bee78c92005b5d6cb4f8163c6a245e34db9955e2c97907571e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.webp",
+          "runtimeSizeBytes": 387908,
+          "runtimeSha256": "337731ae86ff90059f4784d5a93d4c8f00b1953d7fccfa38555a540340504dd5",
+          "runtimeDerivative": "Pre-existing staged WebP; exact encoder settings not recorded.",
+          "cost": "unknown; provider did not return an estimate",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "wiki-mobile-hero-012-female-xiahou-yuan-v5-portrait.png",
+        "runtimeWebp": "wiki-mobile-hero-012-female-xiahou-yuan-v5-portrait.webp",
+        "promptFile": null,
+        "status": "DERIVED_V5_REVIEWABLE",
+        "sourceSha256": "322eff7c663baaaf48f62064cef8e868ad057fd7bc70baffbbf73fcadcb9a999",
+        "runtimeSha256": "0a4f6dd53c8e00d775f57279750758d1ad761c8fd1e23da4c2b87219c84c4322",
+        "runtimeSize": [
+          1024,
+          1024
+        ],
+        "classification": "DERIVED_V5_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from existing V5 full-body master",
+          "generationOutputId": null,
+          "promptVersion": "DERIVED_FROM_V5_CHARACTER_MASTER",
+          "promptRecordStatus": "NOT_APPLICABLE_DERIVED_ASSET",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.png",
+          "sourceCharacterSha256": "8087f478c3e244bee78c92005b5d6cb4f8163c6a245e34db9955e2c97907571e",
+          "cropWindow": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "cropMethod": "Top square crop, RGB, no resampling",
+          "createdOn": "2026-11-27",
+          "targetResolution": "1:1 square crop from existing 2:3 full-body master",
+          "actualResolution": [
+            1024,
+            1024
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-012-female-xiahou-yuan-v5-portrait.png",
+          "sourceSizeBytes": 1816286,
+          "sourceSha256": "322eff7c663baaaf48f62064cef8e868ad057fd7bc70baffbbf73fcadcb9a999",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/wiki-mobile-hero-012-female-xiahou-yuan-v5-portrait.webp",
+          "runtimeSizeBytes": 252278,
+          "runtimeSha256": "0a4f6dd53c8e00d775f57279750758d1ad761c8fd1e23da4c2b87219c84c4322",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6; same pixel dimensions",
+          "cost": "no image-generation call; locally derived",
+          "image_created": true,
+          "generated_by_ai": false,
+          "derived_from_existing_master": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
     }
   },
-  "uncoveredHeroIds": "ART-B3A adds 2 individually designed V5 trios; continue remaining native, Shu, Wei, Wu, Qun and neutral identities in subsequent batches.",
+  "uncoveredHeroIds": "None in the combined V5/V6 coverage of wiki_catalogue_v1 as audited 2026-11-27; the V5 manifest is intentionally partial where V6 carries a hero.",
   "aliases": {},
-  "lastAssetAudit": "2026-11-25; ART-B3A registered 2 additional V5 trios after live Chromium verified all art modes and desktop/mobile rendering; 10 additional Wei characters remain staged pending missing generated assets."
+  "lastAssetAudit": "2026-11-27; recovered 9 existing ART-B3 full-body masters and added 9 local square portrait crops; combined V5/V6 roster coverage audited at 364/364 with no character or portrait gaps. Owner review remains pending."
 }
