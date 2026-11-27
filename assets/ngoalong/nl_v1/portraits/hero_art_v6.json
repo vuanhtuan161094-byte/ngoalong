@@ -189,7 +189,1747 @@
         }
       ],
       "currentRevision": "v6-r2"
+    },
+    "wiki-mobile-hero-014": {
+      "name": "Mãn Sủng",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b01",
+      "generationBatchId": "b01",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-man-chong-v6-b01-character.png",
+        "runtimeWebp": "female-man-chong-v6-b01-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "4d7125870ca8e3e66197fa306a83c17473d69aef5b3d42ecfb8f70a9a15263a7",
+        "runtimeSha256": "68dd3422bdd97ed0736797b70024b9253d62cd50be4155e48d9e00db592cb6b6",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3",
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-man-chong-v6-b01-character.png",
+          "sourceSizeBytes": 638473,
+          "sourceSha256": "4d7125870ca8e3e66197fa306a83c17473d69aef5b3d42ecfb8f70a9a15263a7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-man-chong-v6-b01-character.webp",
+          "runtimeSizeBytes": 96174,
+          "runtimeSha256": "68dd3422bdd97ed0736797b70024b9253d62cd50be4155e48d9e00db592cb6b6",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-man-chong-v6-b01-portrait.png",
+        "runtimeWebp": "female-man-chong-v6-b01-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "5a11f4b225713f55a50e6c4d4663df0f45883786b826a7f3fcfc11ad8f6cab8e",
+        "runtimeSha256": "729893963430cb8dc1953a2447917f5c80df24f11721b579c9b18f0b913c1dea",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-man-chong-v6-b01-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-man-chong-v6-b01-portrait.png",
+          "sourceSizeBytes": 424437,
+          "sourceSha256": "5a11f4b225713f55a50e6c4d4663df0f45883786b826a7f3fcfc11ad8f6cab8e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-man-chong-v6-b01-portrait.webp",
+          "runtimeSizeBytes": 62618,
+          "runtimeSha256": "729893963430cb8dc1953a2447917f5c80df24f11721b579c9b18f0b913c1dea",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-015": {
+      "name": "Mao Giới",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b01",
+      "generationBatchId": "b01",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-mao-jie-v6-b01-character.png",
+        "runtimeWebp": "female-mao-jie-v6-b01-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "c8f5deed2715e8ec00100b3cd90fa53bc0162a9b23dcd326f9a68b1036690611",
+        "runtimeSha256": "f18c3bcab333ff2c5d6c9e118adfa8e672f960813cbef2e2bf6c603ae8f42113",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3",
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-mao-jie-v6-b01-character.png",
+          "sourceSizeBytes": 723677,
+          "sourceSha256": "c8f5deed2715e8ec00100b3cd90fa53bc0162a9b23dcd326f9a68b1036690611",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-mao-jie-v6-b01-character.webp",
+          "runtimeSizeBytes": 119122,
+          "runtimeSha256": "f18c3bcab333ff2c5d6c9e118adfa8e672f960813cbef2e2bf6c603ae8f42113",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-mao-jie-v6-b01-portrait.png",
+        "runtimeWebp": "female-mao-jie-v6-b01-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "756a277eb930ee671ecc6fe4f303a411bb621099a0c70a72633697c757c28468",
+        "runtimeSha256": "71683394274033e7600954ac694753283cc3a3562f47ac5975061f5a7c61b9d2",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-mao-jie-v6-b01-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-mao-jie-v6-b01-portrait.png",
+          "sourceSizeBytes": 490821,
+          "sourceSha256": "756a277eb930ee671ecc6fe4f303a411bb621099a0c70a72633697c757c28468",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-mao-jie-v6-b01-portrait.webp",
+          "runtimeSizeBytes": 81412,
+          "runtimeSha256": "71683394274033e7600954ac694753283cc3a3562f47ac5975061f5a7c61b9d2",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-016": {
+      "name": "Quách Gia",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b01",
+      "generationBatchId": "b01",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-guo-jia-v6-b01-character.png",
+        "runtimeWebp": "female-guo-jia-v6-b01-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "76ef52492b51e564f6815fffc231cb5091ad7752d4b9be8c938cf134123c25fa",
+        "runtimeSha256": "827479c98084d1de3fcc748ef4e2a8447d038907cf014945c677c0dc3c0ea3c2",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3",
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-guo-jia-v6-b01-character.png",
+          "sourceSizeBytes": 725391,
+          "sourceSha256": "76ef52492b51e564f6815fffc231cb5091ad7752d4b9be8c938cf134123c25fa",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-guo-jia-v6-b01-character.webp",
+          "runtimeSizeBytes": 121624,
+          "runtimeSha256": "827479c98084d1de3fcc748ef4e2a8447d038907cf014945c677c0dc3c0ea3c2",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-guo-jia-v6-b01-portrait.png",
+        "runtimeWebp": "female-guo-jia-v6-b01-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "dc57560b4848c27a1b632401f8d94b95ecc89f32c31f6116128e34c4d258beb7",
+        "runtimeSha256": "05ad4e2665a5da6f88f4d26fef3b2559842b8370023dbafc650446c0b9230f3a",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-guo-jia-v6-b01-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-guo-jia-v6-b01-portrait.png",
+          "sourceSizeBytes": 488049,
+          "sourceSha256": "dc57560b4848c27a1b632401f8d94b95ecc89f32c31f6116128e34c4d258beb7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-guo-jia-v6-b01-portrait.webp",
+          "runtimeSizeBytes": 82488,
+          "runtimeSha256": "05ad4e2665a5da6f88f4d26fef3b2559842b8370023dbafc650446c0b9230f3a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-017": {
+      "name": "Tào Hồng",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b01",
+      "generationBatchId": "b01",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-cao-hong-v6-b01-character.png",
+        "runtimeWebp": "female-cao-hong-v6-b01-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "a759019fbb69ef075ebbf460a034879ca21631a8bad9e72aab7043409a94b87c",
+        "runtimeSha256": "94fd837c764be8e72cf873f0443e30379082e99a455bce9937a0a5902df85986",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3",
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-hong-v6-b01-character.png",
+          "sourceSizeBytes": 673662,
+          "sourceSha256": "a759019fbb69ef075ebbf460a034879ca21631a8bad9e72aab7043409a94b87c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-hong-v6-b01-character.webp",
+          "runtimeSizeBytes": 104536,
+          "runtimeSha256": "94fd837c764be8e72cf873f0443e30379082e99a455bce9937a0a5902df85986",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-cao-hong-v6-b01-portrait.png",
+        "runtimeWebp": "female-cao-hong-v6-b01-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "d059edf2e551d16c0ad8099c6578dfa1c41bf0ffc87aaeb84fc8090985d4f760",
+        "runtimeSha256": "67bfd4350d667d3606f8ee505ddc7238270c61f7b53def221ba73ac1ebf36fb9",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b01",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B01",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-2e4ef3cf-cfd0-4754-8ca1-d5ed50397ec3.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b01-sheet.png",
+          "sourceSheetSha256": "fc9dfd4f3a95dd829f210eecfe6d299ade112d6b8768c304ec4fb5922fb7a922",
+          "sourceSheetSizeBytes": 2925712,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-cao-hong-v6-b01-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-hong-v6-b01-portrait.png",
+          "sourceSizeBytes": 464739,
+          "sourceSha256": "d059edf2e551d16c0ad8099c6578dfa1c41bf0ffc87aaeb84fc8090985d4f760",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-hong-v6-b01-portrait.webp",
+          "runtimeSizeBytes": 71966,
+          "runtimeSha256": "67bfd4350d667d3606f8ee505ddc7238270c61f7b53def221ba73ac1ebf36fb9",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-018": {
+      "name": "Tào Nhân",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b02",
+      "generationBatchId": "b02",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-cao-ren-v6-b02-character.png",
+        "runtimeWebp": "female-cao-ren-v6-b02-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "66414195e7e3dcbc9c8114af917e9ec09827fbc0b40e42ee9a379bf379cb3f64",
+        "runtimeSha256": "27c2344d6fb3cfc6ff3c79a97c4b93fdf8026e8a5ea049cecf4f9e26b621c6cd",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a",
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-ren-v6-b02-character.png",
+          "sourceSizeBytes": 622538,
+          "sourceSha256": "66414195e7e3dcbc9c8114af917e9ec09827fbc0b40e42ee9a379bf379cb3f64",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-ren-v6-b02-character.webp",
+          "runtimeSizeBytes": 91924,
+          "runtimeSha256": "27c2344d6fb3cfc6ff3c79a97c4b93fdf8026e8a5ea049cecf4f9e26b621c6cd",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-cao-ren-v6-b02-portrait.png",
+        "runtimeWebp": "female-cao-ren-v6-b02-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "0e368e50dc82f8831945eeac44b254d7396d83d7148f1eaf733e11859948d567",
+        "runtimeSha256": "5f8aefa21f8057f65e4a747041efc1a487d6c8fff8526a42e3cd5aa94173da3c",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-cao-ren-v6-b02-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-ren-v6-b02-portrait.png",
+          "sourceSizeBytes": 417071,
+          "sourceSha256": "0e368e50dc82f8831945eeac44b254d7396d83d7148f1eaf733e11859948d567",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-ren-v6-b02-portrait.webp",
+          "runtimeSizeBytes": 60270,
+          "runtimeSha256": "5f8aefa21f8057f65e4a747041efc1a487d6c8fff8526a42e3cd5aa94173da3c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-019": {
+      "name": "Trần Thái",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b02",
+      "generationBatchId": "b02",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-chen-tai-v6-b02-character.png",
+        "runtimeWebp": "female-chen-tai-v6-b02-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "4ad7c9020c601c52c2710160536c2620e61713144e273ad8435167a5a3bc7108",
+        "runtimeSha256": "7f2991655217e7a6e4b38e39bb9b34f2dad9d44f6e6b210ad736a9b6668b76a5",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a",
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-chen-tai-v6-b02-character.png",
+          "sourceSizeBytes": 664350,
+          "sourceSha256": "4ad7c9020c601c52c2710160536c2620e61713144e273ad8435167a5a3bc7108",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-chen-tai-v6-b02-character.webp",
+          "runtimeSizeBytes": 102460,
+          "runtimeSha256": "7f2991655217e7a6e4b38e39bb9b34f2dad9d44f6e6b210ad736a9b6668b76a5",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-chen-tai-v6-b02-portrait.png",
+        "runtimeWebp": "female-chen-tai-v6-b02-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "29457598b7e7b6738bb879fb8fcb73f4adf07e88281f272bda215d266f38d1e3",
+        "runtimeSha256": "76da6204a1b7ad17b8655e48056a9d9a7e05698a47cbcb39eab0a2915c86a27e",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-chen-tai-v6-b02-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-chen-tai-v6-b02-portrait.png",
+          "sourceSizeBytes": 441457,
+          "sourceSha256": "29457598b7e7b6738bb879fb8fcb73f4adf07e88281f272bda215d266f38d1e3",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-chen-tai-v6-b02-portrait.webp",
+          "runtimeSizeBytes": 67344,
+          "runtimeSha256": "76da6204a1b7ad17b8655e48056a9d9a7e05698a47cbcb39eab0a2915c86a27e",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-020": {
+      "name": "Trình Dục",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b02",
+      "generationBatchId": "b02",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-cheng-yu-v6-b02-character.png",
+        "runtimeWebp": "female-cheng-yu-v6-b02-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "b954bcbee08eefbfb48032639c66832e06da6cd934eef6e7ef851cda66cc5d10",
+        "runtimeSha256": "5785d30b44fdf2a2f7d15ca9235ee4173be25e615884fce19b41eae62a768a3b",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a",
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cheng-yu-v6-b02-character.png",
+          "sourceSizeBytes": 662097,
+          "sourceSha256": "b954bcbee08eefbfb48032639c66832e06da6cd934eef6e7ef851cda66cc5d10",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cheng-yu-v6-b02-character.webp",
+          "runtimeSizeBytes": 103304,
+          "runtimeSha256": "5785d30b44fdf2a2f7d15ca9235ee4173be25e615884fce19b41eae62a768a3b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-cheng-yu-v6-b02-portrait.png",
+        "runtimeWebp": "female-cheng-yu-v6-b02-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "eec249841ede72ce4007da6eb53ad8b1e39e098db6fd5b4230018fe992d9835d",
+        "runtimeSha256": "589b74772463823b1e7c01931965eb72aed118238b6c25cdcbb6109e93960e0b",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-cheng-yu-v6-b02-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cheng-yu-v6-b02-portrait.png",
+          "sourceSizeBytes": 446734,
+          "sourceSha256": "eec249841ede72ce4007da6eb53ad8b1e39e098db6fd5b4230018fe992d9835d",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cheng-yu-v6-b02-portrait.webp",
+          "runtimeSizeBytes": 68720,
+          "runtimeSha256": "589b74772463823b1e7c01931965eb72aed118238b6c25cdcbb6109e93960e0b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-021": {
+      "name": "Tuân Du",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b02",
+      "generationBatchId": "b02",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-xun-you-v6-b02-character.png",
+        "runtimeWebp": "female-xun-you-v6-b02-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "0b43c4fa43d4a7352bee7d42892242188d542b99835d10622170f851b07d0cf5",
+        "runtimeSha256": "1c2999e9d3bfb1c80a59924368dff9d1d3c85d162de057279be1cd4ce1f5f6d4",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a",
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xun-you-v6-b02-character.png",
+          "sourceSizeBytes": 655282,
+          "sourceSha256": "0b43c4fa43d4a7352bee7d42892242188d542b99835d10622170f851b07d0cf5",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xun-you-v6-b02-character.webp",
+          "runtimeSizeBytes": 96040,
+          "runtimeSha256": "1c2999e9d3bfb1c80a59924368dff9d1d3c85d162de057279be1cd4ce1f5f6d4",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-xun-you-v6-b02-portrait.png",
+        "runtimeWebp": "female-xun-you-v6-b02-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "bce61ff8397b057b3abbded19309dbed01a01424637490776e38866083bc3495",
+        "runtimeSha256": "b8878732f751738af2888289b77d937442dec577de0858a825fbf967c0b7e83d",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b02",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B02",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-e6f26955-0ecb-4f08-bb3b-fddc3e2a282a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b02-sheet.png",
+          "sourceSheetSha256": "d5e1aab595c65795bfb9e10135b1fa20860277023ae9ae5257176f265b477d87",
+          "sourceSheetSizeBytes": 2752102,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-xun-you-v6-b02-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xun-you-v6-b02-portrait.png",
+          "sourceSizeBytes": 436247,
+          "sourceSha256": "bce61ff8397b057b3abbded19309dbed01a01424637490776e38866083bc3495",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xun-you-v6-b02-portrait.webp",
+          "runtimeSizeBytes": 63102,
+          "runtimeSha256": "b8878732f751738af2888289b77d937442dec577de0858a825fbf967c0b7e83d",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-022": {
+      "name": "Từ Hoảng",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b03",
+      "generationBatchId": "b03",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-xu-huang-v6-b03-character.png",
+        "runtimeWebp": "female-xu-huang-v6-b03-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "f8eaf887620a678a769462fbdd5139e5c1647ea8d83e7690f5653b5c9d10dbb7",
+        "runtimeSha256": "190a14ff38606017992b06e7bc18cce4d24a0ed99ef7a4dd6f1b005e82627c2b",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-87580541-53bf-4e18-a41f-2687d242b86a",
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-huang-v6-b03-character.png",
+          "sourceSizeBytes": 646499,
+          "sourceSha256": "f8eaf887620a678a769462fbdd5139e5c1647ea8d83e7690f5653b5c9d10dbb7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-huang-v6-b03-character.webp",
+          "runtimeSizeBytes": 97764,
+          "runtimeSha256": "190a14ff38606017992b06e7bc18cce4d24a0ed99ef7a4dd6f1b005e82627c2b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-xu-huang-v6-b03-portrait.png",
+        "runtimeWebp": "female-xu-huang-v6-b03-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "16c97102ad860d4d9ca157d239c4d8599f49a2d73a7641fda1e4f23db9d2a7ec",
+        "runtimeSha256": "d113f68d9fce49a7b5216891513747588713085fe85d80f445a041cc4970f679",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-xu-huang-v6-b03-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-xu-huang-v6-b03-portrait.png",
+          "sourceSizeBytes": 442647,
+          "sourceSha256": "16c97102ad860d4d9ca157d239c4d8599f49a2d73a7641fda1e4f23db9d2a7ec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-xu-huang-v6-b03-portrait.webp",
+          "runtimeSizeBytes": 69700,
+          "runtimeSha256": "d113f68d9fce49a7b5216891513747588713085fe85d80f445a041cc4970f679",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-023": {
+      "name": "Tào Phi",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b03",
+      "generationBatchId": "b03",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-cao-pi-v6-b03-character.png",
+        "runtimeWebp": "female-cao-pi-v6-b03-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "5783c7bb36cad9e109c06542e8a915a33847f16332b9c3837b42aa2b60a1fb29",
+        "runtimeSha256": "25f47647e7f79d8955485db6df1acf2af1c004fe079c27163b71569c924b4b8a",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-87580541-53bf-4e18-a41f-2687d242b86a",
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-pi-v6-b03-character.png",
+          "sourceSizeBytes": 700641,
+          "sourceSha256": "5783c7bb36cad9e109c06542e8a915a33847f16332b9c3837b42aa2b60a1fb29",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-pi-v6-b03-character.webp",
+          "runtimeSizeBytes": 117988,
+          "runtimeSha256": "25f47647e7f79d8955485db6df1acf2af1c004fe079c27163b71569c924b4b8a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-cao-pi-v6-b03-portrait.png",
+        "runtimeWebp": "female-cao-pi-v6-b03-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "8d4815bfed9d53289e44ca0c88d89e729bd4c4b4e48bd846d4f1a6cd879fa2c8",
+        "runtimeSha256": "bb9d4ba3c2e7b7f28840d329d12a3f6579b321e51be24b84040cc81ace19f1e2",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-cao-pi-v6-b03-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-cao-pi-v6-b03-portrait.png",
+          "sourceSizeBytes": 481654,
+          "sourceSha256": "8d4815bfed9d53289e44ca0c88d89e729bd4c4b4e48bd846d4f1a6cd879fa2c8",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-cao-pi-v6-b03-portrait.webp",
+          "runtimeSizeBytes": 82810,
+          "runtimeSha256": "bb9d4ba3c2e7b7f28840d329d12a3f6579b321e51be24b84040cc81ace19f1e2",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-024": {
+      "name": "Xa Trụ",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b03",
+      "generationBatchId": "b03",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-che-zhou-v6-b03-character.png",
+        "runtimeWebp": "female-che-zhou-v6-b03-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "ad4f49331645665f830587db8a173ddb3388d6b95bd521920b69d4f413aa62ea",
+        "runtimeSha256": "14f8b20197f6edae739246eef253953311e998e3617076572df4bd09cae39698",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-87580541-53bf-4e18-a41f-2687d242b86a",
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-che-zhou-v6-b03-character.png",
+          "sourceSizeBytes": 705192,
+          "sourceSha256": "ad4f49331645665f830587db8a173ddb3388d6b95bd521920b69d4f413aa62ea",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-che-zhou-v6-b03-character.webp",
+          "runtimeSizeBytes": 114328,
+          "runtimeSha256": "14f8b20197f6edae739246eef253953311e998e3617076572df4bd09cae39698",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-che-zhou-v6-b03-portrait.png",
+        "runtimeWebp": "female-che-zhou-v6-b03-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "6cc427995be87ebae41d4483e6e5b94c5ec3baf0d9fea14655c0e1d8a979f30a",
+        "runtimeSha256": "5650512a5453b69c3cfc640f39f7150f9e92d15cc2a87b4723ab2f9f2dac507f",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-che-zhou-v6-b03-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-che-zhou-v6-b03-portrait.png",
+          "sourceSizeBytes": 467981,
+          "sourceSha256": "6cc427995be87ebae41d4483e6e5b94c5ec3baf0d9fea14655c0e1d8a979f30a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-che-zhou-v6-b03-portrait.webp",
+          "runtimeSizeBytes": 75140,
+          "runtimeSha256": "5650512a5453b69c3cfc640f39f7150f9e92d15cc2a87b4723ab2f9f2dac507f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-028": {
+      "name": "Vương Song",
+      "faction": "Ngụy",
+      "currentRevision": "v6-b03",
+      "generationBatchId": "b03",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-wang-shuang-v6-b03-character.png",
+        "runtimeWebp": "female-wang-shuang-v6-b03-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "a5bfad13e33e699144b3122d8c4f7a80b75c4dd079fb7f5184bc737796988bfa",
+        "runtimeSha256": "544ed972d18d7b58c14bbbfebdeef250e3c19e87011506879b4af9c18beca7aa",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-87580541-53bf-4e18-a41f-2687d242b86a",
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-wang-shuang-v6-b03-character.png",
+          "sourceSizeBytes": 635338,
+          "sourceSha256": "a5bfad13e33e699144b3122d8c4f7a80b75c4dd079fb7f5184bc737796988bfa",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-wang-shuang-v6-b03-character.webp",
+          "runtimeSizeBytes": 96490,
+          "runtimeSha256": "544ed972d18d7b58c14bbbfebdeef250e3c19e87011506879b4af9c18beca7aa",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-wang-shuang-v6-b03-portrait.png",
+        "runtimeWebp": "female-wang-shuang-v6-b03-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "a0ddfd47aa0d7969bcf7d85820143ecbd4e7b9947714d1aea65a7fecc958611a",
+        "runtimeSha256": "60e45f16b180d38e854b13fb2f259908d05011abb41e5c5803b941402f1872f1",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b03",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B03",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-87580541-53bf-4e18-a41f-2687d242b86a.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-wei-v6-b03-sheet.png",
+          "sourceSheetSha256": "f1226c3acc6e1cfa152a1b5aa8ff83290ed29ebdc380614a1789955423bcce34",
+          "sourceSheetSizeBytes": 2839391,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-wang-shuang-v6-b03-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-wang-shuang-v6-b03-portrait.png",
+          "sourceSizeBytes": 436105,
+          "sourceSha256": "a0ddfd47aa0d7969bcf7d85820143ecbd4e7b9947714d1aea65a7fecc958611a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-wang-shuang-v6-b03-portrait.webp",
+          "runtimeSizeBytes": 67668,
+          "runtimeSha256": "60e45f16b180d38e854b13fb2f259908d05011abb41e5c5803b941402f1872f1",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": true,
+          "owner_review": "PENDING"
+        }
+      }
     }
   },
-  "lastAssetAudit": "2026-11-27; Hứa Chử V6-r2 master and local portrait crop verified and embedded in the canonical offline HTML; owner review pending."
+  "lastAssetAudit": "2026-11-27; V6 four-up batches b01-b03 (12 Wei heroes) split at native 512x768; local portrait crops and all 24 runtime images verified embedded in canonical offline HTML; owner review pending."
 }
