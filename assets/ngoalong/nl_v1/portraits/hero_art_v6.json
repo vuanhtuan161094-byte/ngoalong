@@ -3525,151 +3525,6 @@
         }
       }
     },
-    "wiki-mobile-hero-044": {
-      "name": "Hoàng Trung",
-      "faction": "Thục",
-      "currentRevision": "v6-b06",
-      "generationBatchId": "b06",
-      "sheetCellIndex": 3,
-      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
-      "character": {
-        "sourcePng": "female-huang-zhong-v6-b06-character.png",
-        "runtimeWebp": "female-huang-zhong-v6-b06-character.webp",
-        "status": "GENERATED_V6_GRID_REVIEWABLE",
-        "sourceSha256": "fb970710212568d2b4027b818ecabe86aa6b6ac20012045ba2558c61fa97b70b",
-        "runtimeSha256": "82487611f0c718e887ab620d4f9a318ad24836419d83ddef8729240ab5c176d7",
-        "runtimeSize": [
-          512,
-          768
-        ],
-        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
-        "provenance": {
-          "provider": "OpenAI ImageGen",
-          "generationOutputId": "exec-5265572d-6fb9-4ebd-a5e0-5ac90d441a07",
-          "generationBatchId": "b06",
-          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
-          "sheetCellIndex": 3,
-          "sheetRowColumn": [
-            1,
-            1
-          ],
-          "sheetCropWindow": [
-            512,
-            768,
-            1024,
-            1536
-          ],
-          "sheetResolution": [
-            1024,
-            1536
-          ],
-          "nativeCellResolution": [
-            512,
-            768
-          ],
-          "upscaled": false,
-          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B06_SEMIREAL_CG",
-          "promptRecordStatus": "VERBATIM",
-          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b06.prompt.txt",
-          "createdOn": "2026-11-27",
-          "providerTimestamp": "unknown",
-          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
-          "generationSourcePath": "/workspace/generated_images/exec-5265572d-6fb9-4ebd-a5e0-5ac90d441a07.png",
-          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b06-sheet.png",
-          "sourceSheetSha256": "0e2efeab8897ad6cb22dce2cf6e356cbc68712f9b0e0297433a94ba29e9ba656",
-          "sourceSheetSizeBytes": 3049317,
-          "cost": "unknown; provider did not return an estimate",
-          "actualResolution": [
-            512,
-            768
-          ],
-          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-huang-zhong-v6-b06-character.png",
-          "sourceSizeBytes": 755415,
-          "sourceSha256": "fb970710212568d2b4027b818ecabe86aa6b6ac20012045ba2558c61fa97b70b",
-          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-huang-zhong-v6-b06-character.webp",
-          "runtimeSizeBytes": 123258,
-          "runtimeSha256": "82487611f0c718e887ab620d4f9a318ad24836419d83ddef8729240ab5c176d7",
-          "runtimeDerivative": "Pillow WebP quality=90 method=6",
-          "image_created": true,
-          "file_exported": true,
-          "asset_qc_pass": true,
-          "integrated_in_game": false,
-          "owner_review": "PENDING"
-        }
-      },
-      "portrait": {
-        "sourcePng": "female-huang-zhong-v6-b06-portrait.png",
-        "runtimeWebp": "female-huang-zhong-v6-b06-portrait.webp",
-        "status": "DERIVED_V6_REVIEWABLE",
-        "sourceSha256": "2e2e0ccf24335235371fc822135dd8a68d020855be055d0b71d408a2d5511fa5",
-        "runtimeSha256": "387491fdcf26a70eb895956be16ace5f96fac09f30b2b0eef1d9494e6798017b",
-        "runtimeSize": [
-          512,
-          512
-        ],
-        "classification": "V6_DERIVED_PORTRAIT_CROP",
-        "provenance": {
-          "provider": "Local Pillow crop from the V6 grid-cell character master",
-          "generationOutputId": null,
-          "generationBatchId": "b06",
-          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
-          "sheetCellIndex": 3,
-          "sheetRowColumn": [
-            1,
-            1
-          ],
-          "sheetCropWindow": [
-            512,
-            768,
-            1024,
-            1536
-          ],
-          "sheetResolution": [
-            1024,
-            1536
-          ],
-          "nativeCellResolution": [
-            512,
-            768
-          ],
-          "upscaled": false,
-          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_GRID_B06_SEMIREAL_CG",
-          "promptRecordStatus": "VERBATIM",
-          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b06.prompt.txt",
-          "createdOn": "2026-11-27",
-          "providerTimestamp": "unknown",
-          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
-          "generationSourcePath": "/workspace/generated_images/exec-5265572d-6fb9-4ebd-a5e0-5ac90d441a07.png",
-          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b06-sheet.png",
-          "sourceSheetSha256": "0e2efeab8897ad6cb22dce2cf6e356cbc68712f9b0e0297433a94ba29e9ba656",
-          "sourceSheetSizeBytes": 3049317,
-          "cost": "no additional image-generation call",
-          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-huang-zhong-v6-b06-character.png",
-          "cropWindow": [
-            0,
-            0,
-            512,
-            512
-          ],
-          "actualResolution": [
-            512,
-            512
-          ],
-          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-huang-zhong-v6-b06-portrait.png",
-          "sourceSizeBytes": 496211,
-          "sourceSha256": "2e2e0ccf24335235371fc822135dd8a68d020855be055d0b71d408a2d5511fa5",
-          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-huang-zhong-v6-b06-portrait.webp",
-          "runtimeSizeBytes": 80598,
-          "runtimeSha256": "387491fdcf26a70eb895956be16ace5f96fac09f30b2b0eef1d9494e6798017b",
-          "runtimeDerivative": "Pillow WebP quality=90 method=6",
-          "image_created": false,
-          "file_exported": true,
-          "asset_qc_pass": true,
-          "integrated_in_game": false,
-          "owner_review": "PENDING"
-        }
-      }
-    },
     "wiki-mobile-hero-054": {
       "name": "Mã Lương",
       "faction": "Thục",
@@ -4251,5 +4106,24 @@
       }
     }
   },
-  "lastAssetAudit": "2026-11-27; registered 4 V6 full-body cells and local portrait crops from contact sheet b07; offline HTML embedding pending."
+  "lastAssetAudit": "2026-11-27; V6 b06 retained only three unique heroes after removing duplicate Hoàng Trung (existing V5 ID huang); b07 retained four unique Shu heroes. Art-only change; no HTML build.",
+  "discardedCells": [
+    {
+      "heroId": "wiki-mobile-hero-044",
+      "name": "Hoàng Trung",
+      "faction": "Thục",
+      "generationBatchId": "b06",
+      "sheetCellIndex": 3,
+      "generationOutputId": "exec-5265572d-6fb9-4ebd-a5e0-5ac90d441a07",
+      "reason": "DUPLICATE_OF_EXISTING_V5_ART",
+      "existingV5HeroId": "huang",
+      "assetFilesRemoved": [
+        "female-huang-zhong-v6-b06-character.png",
+        "female-huang-zhong-v6-b06-character.webp",
+        "female-huang-zhong-v6-b06-portrait.png",
+        "female-huang-zhong-v6-b06-portrait.webp"
+      ],
+      "htmlBuilt": false
+    }
+  ]
 }
