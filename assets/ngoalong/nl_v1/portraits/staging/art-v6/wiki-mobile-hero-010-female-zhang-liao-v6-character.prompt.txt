@@ -1,0 +1,22 @@
+Art direction: NL_CHARACTER_ART_V6; user-approved rosy skin and lively eye rendering; style references are for rendering only.
+Provider: OpenAI ImageGen. Output ID: exec-bc31f5f4-b8ed-4570-b1c8-13bf2b5d45e8.
+Generated source: /workspace/generated_images/exec-bc31f5f4-b8ed-4570-b1c8-13bf2b5d45e8.png
+Created: 2026-11-27 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: b53d0fc1a53a511d9a2d27224953668f9999cabbf607c195ef3b2d09706f81d1. Cost: unknown; provider did not return an estimate.
+Wiki identity: wiki-mobile-hero-010 / Trương Liêu; source raw hero ID 4228.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official biography fact.
+Visual motif: Tiger crest, dark halberd and scarlet streamers; owner-directed visual motif based on source skill Triệu Hổ Phá Trận.
+
+Style references (rendering only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+- assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png (SHA-256 e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f)
+
+VERBATIM GENERATION PROMPT
+Create one premium full-body vertical 2:3 illustration for an adult-oriented 18+ fantasy mobile game, target 1024x1536. Match the approved Cao Cao / Ma Chao / Diao Chan art direction for rendering style only: premium semi-realistic anime CG, beautiful stylized adult face, soft painterly shading, detailed flowing hair, luxurious fabric and cinematic lighting; refined anime and realistic anatomy, not photoreal, plastic or doll-like. Clearly adult 18-year-old woman with mature adult features and an hourglass figure, full bust and long legs. Skin: healthy warm pink undertone, soft rosy blush on cheeks and shoulders, luminous satin sheen with gentle cheekbone, collarbone and abdomen highlights. Eyes: vivid iris gradients, crisp catchlights, clear focus and an expressive gaze; natural, not glassy or plastic. Sexy daring fantasy lingerie/cosplay: opaque lace corset cups, exposed waist, back and upper thighs, high slits/cutouts, high-cut but fully covering briefs, thigh-high stockings, garters, body chains. Bust and groin remain covered. One woman, one distinctive face, pose, hair, outfit silhouette and palette. Full head-to-foot body with margins and supportive background. No childlike features, nudity, exposed nipples/genitals, explicit sexual activity, malformed anatomy, extra limbs/fingers, cropped limbs, text, watermark, logo, collage or border.
+Character: Trương Liêu, faction Ngụy. Signature motif: tiger crest, dark halberd and scarlet battle streamers, inspired by the source skill Triệu Hổ Phá Trận.
+Face: strong square jaw, warm bronze skin with a healthy rose glow, intense dark-amber eyes with bright catchlights, thick brows, small scar over one brow and a determined smile.
+Hair: dark chestnut hair in a tight high ponytail with a braided crown and red cord.
+Expression: bold, charismatic, battle-ready.
+Pose: fast diagonal charge into frame, torso twisted as a long halberd sweeps horizontally behind her; front knee drives forward, rear leg extended and one hand reaches toward the viewer. Streamers trail opposite the motion; keep the weapon and whole figure inside frame.
+Costume: charcoal, vermilion and antique-gold battle lingerie; opaque lace corset with one sculpted shoulder guard, exposed abdomen and back, high-slit side panels over covered briefs, black thigh-high stockings with red garters and a tiger-pattern waist chain. Storm-lit fortress courtyard.

@@ -21,3 +21,13 @@ Four more character masters use the same V6 prompt: Giả Hử, Hạ Hầu Đôn
 - Provenance and manifest: [hero_art_v6_batch2.json](hero_art_v6_batch2.json)
 
 All four batch 2 Wiki rows remain reference-only in the runtime adapter, so these assets do not alter recruitability or game mechanics.
+
+## Batch 3
+
+Four more V6 characters: Tào Thực, Trương Hợp, Trương Liêu and Hạ Hầu Uyên. Their skin uses a healthy rosy tone with a soft satin sheen, and their eyes have detailed irises and catchlights. Each gets its own face, pose and costume; the batch includes character and portrait sheets plus prompts and hashes.
+
+- Character contact sheet: [hero-art-v6-batch3-contact-sheet.jpg](hero-art-v6-batch3-contact-sheet.jpg)
+- Portrait crop sheet: [hero-art-v6-batch3-portrait-sheet.jpg](hero-art-v6-batch3-portrait-sheet.jpg)
+- Provenance and manifest: [hero_art_v6_batch3.json](hero_art_v6_batch3.json)
+
+All four batch 3 Wiki rows remain reference-only in the runtime adapter; the art does not change recruitability or game mechanics.

@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "batchId": "NL_CHARACTER_ART_V6_BATCH_003",
+  "edition": "NL_CHARACTER_ART_V6_USER_PROMPT_LOCKED_ROSY_SKIN_LIVELY_EYES",
+  "createdDate": "2026-11-27",
+  "status": "STAGED_FOR_OWNER_REVIEW",
+  "batchSize": 4,
+  "artDirection": {
+    "allCharacters": "female presentation; clearly adult women age 18 per owner direction",
+    "style": "premium semi-realistic anime CG; approved Cao Cao / Ma Chao / Diao Chan rendering style only; healthy rosy skin with satin highlights, lively detailed eyes; individualized faces, poses and costumes",
+    "bodyAndCostume": "hourglass adult proportions; bold lingerie-inspired fantasy/cosplay; exposed waist/back/hips/thighs; stockings, garters and body chains; opaque bust/groin coverage",
+    "userPrompt": "User-provided V6 prompt accepted as production master; this batch follows owner feedback for rosy skin, soft sheen and lively detailed eyes.",
+    "referenceImages": [
+      {
+        "path": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+        "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+      },
+      {
+        "path": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+        "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+      },
+      {
+        "path": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png",
+        "sha256": "e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f"
+      }
+    ]
+  },
+  "sources": {
+    "wikiCatalogue": "data/ngoalong/modules/heroes/wiki_catalogue_v1.json",
+    "wikiSnapshotDate": "2026-11-18",
+    "wikiIndexSourceId": "WIKI_HERO_INDEX_20261118",
+    "rawMobileSnapshot": "data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw/data/hero/",
+    "genderAndAgeNote": "Female presentation and age 18 are owner-directed art design choices, not claims about official biography."
+  },
+  "contactSheets": {
+    "characters": "assets/ngoalong/nl_v1/portraits/staging/art-v6/hero-art-v6-batch3-contact-sheet.jpg",
+    "portraits": "assets/ngoalong/nl_v1/portraits/staging/art-v6/hero-art-v6-batch3-portrait-sheet.jpg"
+  },
+  "runtimeNote": "All four Wiki rows are reference-only in the runtime adapter; these files do not grant recruitability or change mechanics.",
+  "runtimeIntegration": {
+    "adapterManifest": "data/ngoalong/integration/heroes207_runtime_manifest_v1.json",
+    "integratedInExistingHeroArtUi": [],
+    "referenceOnlyNotIntegrated": [
+      "wiki-mobile-hero-008",
+      "wiki-mobile-hero-009",
+      "wiki-mobile-hero-010",
+      "wiki-mobile-hero-012"
+    ],
+    "noRecruitmentOrMechanicsChange": true
+  },
+  "assetLifecycle": {
+    "imagesCreated": 4,
+    "fileExport": "PASS_PNG_MASTERS_CHARACTER_WEBP_PORTRAIT_WEBP_PROMPTS_AND_MANIFEST",
+    "assetQc": "PASS_DIMENSIONS_SHA256_AND_CONTACT_SHEET_REVIEW",
+    "integratedInGame": 0,
+    "referenceOnlyNotIntegrated": 4
+  },
+  "heroes": [
+    {
+      "wikiId": "wiki-mobile-hero-008",
+      "wikiOrdinal": 8,
+      "name": "Tào Thực",
+      "faction": "Ngụy",
+      "indexGrade": "Thần Hoàng",
+      "wikiSourceId": "WIKI_HERO_INDEX_20261118",
+      "wikiSourceUrl": "https://ngoalong.vnggames.com/ngoa-long-wiki/vo-tuong",
+      "sourceRawHeroId": 4079,
+      "sourceRawName": "Tào Thực",
+      "runtimeStatus": "REFERENCE_ONLY",
+      "genderPresentation": {
+        "value": "female",
+        "status": "OWNER_DIRECTED_ART_REDESIGN"
+      },
+      "agePresentation": {
+        "value": 18,
+        "status": "OWNER_DIRECTED_ADULT_CHARACTER_DESIGN"
+      },
+      "artCue": {
+        "description": "Calligraphy brush, ink strokes and plum-blossom paper; owner-directed visual motif based on source skill Ca Tụng Công Đức.",
+        "provenance": "OWNER_DIRECTED_VISUAL_INTERPRETATION_OF_SOURCE_SKILL"
+      },
+      "character": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-character.png",
+        "sourceSha256": "1be64c82657a3b1e759dd558b84417a66463519423dffcfdb25dc0a93fc0637b",
+        "sourceBytes": 2656073,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-character.webp",
+        "runtimeSha256": "3808ea450054a4469c1ae0a92d2c2774753e00f53decc6e58319c0f4ace5aaff",
+        "runtimeBytes": 378178,
+        "dimensions": [
+          1024,
+          1536
+        ],
+        "status": "STAGED_FOR_OWNER_REVIEW"
+      },
+      "portrait": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-character.png",
+        "sourceSha256": "1be64c82657a3b1e759dd558b84417a66463519423dffcfdb25dc0a93fc0637b",
+        "sourceBytes": 2656073,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-portrait.webp",
+        "runtimeSha256": "758f08e41f232c53efab82d2aa8ce22f5046b0a8d41b45cbb77e53fb2789ec7b",
+        "runtimeBytes": 149100,
+        "dimensions": [
+          768,
+          768
+        ],
+        "derivedFrom": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-character.png",
+        "cropBoxPixels": [
+          128,
+          0,
+          896,
+          768
+        ],
+        "status": "DERIVED_FROM_CHARACTER_MASTER"
+      },
+      "promptFile": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-008-female-cao-zhi-v6-character.prompt.txt",
+      "provenance": {
+        "provider": "OpenAI ImageGen",
+        "outputId": "exec-c500bbe2-3b8c-47b9-9183-5531e800b4cb",
+        "generatedSource": "/workspace/generated_images/exec-c500bbe2-3b8c-47b9-9183-5531e800b4cb.png",
+        "createdDate": "2026-11-27",
+        "cost": "unknown; provider did not return an estimate",
+        "styleReferences": [
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+            "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+            "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png",
+            "sha256": "e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f"
+          }
+        ],
+        "promptVersion": "NL_CHARACTER_ART_V6_ROSY_SKIN_LIVELY_EYES_2026-11-27",
+        "promptRecordStatus": "VERBATIM"
+      },
+      "reviewStatus": "VISUALLY_REVIEWED_STAGING; OWNER_REVIEW_PENDING",
+      "runtimeIntegration": "REFERENCE_ONLY_NOT_INTEGRATED",
+      "assetLifecycle": {
+        "imageCreated": "PASS_OPENAI_IMAGEGEN",
+        "filesExported": "PASS_MASTER_AND_RUNTIME_DERIVATIVES",
+        "assetQc": "PASS_DIMENSIONS_SHA256_AND_VISUAL_CONTACT_SHEET_REVIEW",
+        "integratedInGame": false
+      }
+    },
+    {
+      "wikiId": "wiki-mobile-hero-009",
+      "wikiOrdinal": 9,
+      "name": "Trương Hợp",
+      "faction": "Ngụy",
+      "indexGrade": "Thần Hoàng",
+      "wikiSourceId": "WIKI_HERO_INDEX_20261118",
+      "wikiSourceUrl": "https://ngoalong.vnggames.com/ngoa-long-wiki/vo-tuong",
+      "sourceRawHeroId": 4126,
+      "sourceRawName": "Trương Hợp",
+      "runtimeStatus": "REFERENCE_ONLY",
+      "genderPresentation": {
+        "value": "female",
+        "status": "OWNER_DIRECTED_ART_REDESIGN"
+      },
+      "agePresentation": {
+        "value": 18,
+        "status": "OWNER_DIRECTED_ADULT_CHARACTER_DESIGN"
+      },
+      "artCue": {
+        "description": "Eight-direction formation ribbons, feather crest and ceremonial spear; owner-directed motif based on source skill Binh Hình Cửu Độn.",
+        "provenance": "OWNER_DIRECTED_VISUAL_INTERPRETATION_OF_SOURCE_SKILL"
+      },
+      "character": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-character.png",
+        "sourceSha256": "b0ebfd4dba1e3f7fd928fad2d8b284681ceaea73de354925273aee3f98b7b593",
+        "sourceBytes": 2884721,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-character.webp",
+        "runtimeSha256": "8145535c524a1c1da176ebd6d37233c81107f45b93a9b00225042f69647f2e57",
+        "runtimeBytes": 460918,
+        "dimensions": [
+          1024,
+          1536
+        ],
+        "status": "STAGED_FOR_OWNER_REVIEW"
+      },
+      "portrait": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-character.png",
+        "sourceSha256": "b0ebfd4dba1e3f7fd928fad2d8b284681ceaea73de354925273aee3f98b7b593",
+        "sourceBytes": 2884721,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-portrait.webp",
+        "runtimeSha256": "c4829580badc391634860fbd2fbb5ba6b7b8da49cd175dc6e4dce325fb01a6b7",
+        "runtimeBytes": 190626,
+        "dimensions": [
+          768,
+          768
+        ],
+        "derivedFrom": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-character.png",
+        "cropBoxPixels": [
+          128,
+          0,
+          896,
+          768
+        ],
+        "status": "DERIVED_FROM_CHARACTER_MASTER"
+      },
+      "promptFile": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-009-female-zhang-he-v6-character.prompt.txt",
+      "provenance": {
+        "provider": "OpenAI ImageGen",
+        "outputId": "exec-c88521ec-693c-473d-9cdf-2eb5a650378c",
+        "generatedSource": "/workspace/generated_images/exec-c88521ec-693c-473d-9cdf-2eb5a650378c.png",
+        "createdDate": "2026-11-27",
+        "cost": "unknown; provider did not return an estimate",
+        "styleReferences": [
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+            "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+            "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png",
+            "sha256": "e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f"
+          }
+        ],
+        "promptVersion": "NL_CHARACTER_ART_V6_ROSY_SKIN_LIVELY_EYES_2026-11-27",
+        "promptRecordStatus": "VERBATIM"
+      },
+      "reviewStatus": "VISUALLY_REVIEWED_STAGING; OWNER_REVIEW_PENDING",
+      "runtimeIntegration": "REFERENCE_ONLY_NOT_INTEGRATED",
+      "assetLifecycle": {
+        "imageCreated": "PASS_OPENAI_IMAGEGEN",
+        "filesExported": "PASS_MASTER_AND_RUNTIME_DERIVATIVES",
+        "assetQc": "PASS_DIMENSIONS_SHA256_AND_VISUAL_CONTACT_SHEET_REVIEW",
+        "integratedInGame": false
+      }
+    },
+    {
+      "wikiId": "wiki-mobile-hero-010",
+      "wikiOrdinal": 10,
+      "name": "Trương Liêu",
+      "faction": "Ngụy",
+      "indexGrade": "Thần Hoàng",
+      "wikiSourceId": "WIKI_HERO_INDEX_20261118",
+      "wikiSourceUrl": "https://ngoalong.vnggames.com/ngoa-long-wiki/vo-tuong",
+      "sourceRawHeroId": 4228,
+      "sourceRawName": "Trương Liêu",
+      "runtimeStatus": "REFERENCE_ONLY",
+      "genderPresentation": {
+        "value": "female",
+        "status": "OWNER_DIRECTED_ART_REDESIGN"
+      },
+      "agePresentation": {
+        "value": 18,
+        "status": "OWNER_DIRECTED_ADULT_CHARACTER_DESIGN"
+      },
+      "artCue": {
+        "description": "Tiger crest, dark halberd and scarlet streamers; owner-directed visual motif based on source skill Triệu Hổ Phá Trận.",
+        "provenance": "OWNER_DIRECTED_VISUAL_INTERPRETATION_OF_SOURCE_SKILL"
+      },
+      "character": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-character.png",
+        "sourceSha256": "b53d0fc1a53a511d9a2d27224953668f9999cabbf607c195ef3b2d09706f81d1",
+        "sourceBytes": 2830938,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-character.webp",
+        "runtimeSha256": "4dd847213d32a2f9e4c8a7f57d0220738580ec784d4f38b9b54138c0044bca57",
+        "runtimeBytes": 428748,
+        "dimensions": [
+          1024,
+          1536
+        ],
+        "status": "STAGED_FOR_OWNER_REVIEW"
+      },
+      "portrait": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-character.png",
+        "sourceSha256": "b53d0fc1a53a511d9a2d27224953668f9999cabbf607c195ef3b2d09706f81d1",
+        "sourceBytes": 2830938,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-portrait.webp",
+        "runtimeSha256": "242c27953aaf7d3f97d899db0aeac58147443dc5ecf49bf1f4e0ba82603106cd",
+        "runtimeBytes": 167860,
+        "dimensions": [
+          768,
+          768
+        ],
+        "derivedFrom": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-character.png",
+        "cropBoxPixels": [
+          128,
+          0,
+          896,
+          768
+        ],
+        "status": "DERIVED_FROM_CHARACTER_MASTER"
+      },
+      "promptFile": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-010-female-zhang-liao-v6-character.prompt.txt",
+      "provenance": {
+        "provider": "OpenAI ImageGen",
+        "outputId": "exec-bc31f5f4-b8ed-4570-b1c8-13bf2b5d45e8",
+        "generatedSource": "/workspace/generated_images/exec-bc31f5f4-b8ed-4570-b1c8-13bf2b5d45e8.png",
+        "createdDate": "2026-11-27",
+        "cost": "unknown; provider did not return an estimate",
+        "styleReferences": [
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+            "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+            "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png",
+            "sha256": "e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f"
+          }
+        ],
+        "promptVersion": "NL_CHARACTER_ART_V6_ROSY_SKIN_LIVELY_EYES_2026-11-27",
+        "promptRecordStatus": "VERBATIM"
+      },
+      "reviewStatus": "VISUALLY_REVIEWED_STAGING; OWNER_REVIEW_PENDING",
+      "runtimeIntegration": "REFERENCE_ONLY_NOT_INTEGRATED",
+      "assetLifecycle": {
+        "imageCreated": "PASS_OPENAI_IMAGEGEN",
+        "filesExported": "PASS_MASTER_AND_RUNTIME_DERIVATIVES",
+        "assetQc": "PASS_DIMENSIONS_SHA256_AND_VISUAL_CONTACT_SHEET_REVIEW",
+        "integratedInGame": false
+      }
+    },
+    {
+      "wikiId": "wiki-mobile-hero-012",
+      "wikiOrdinal": 12,
+      "name": "Hạ Hầu Uyên",
+      "faction": "Ngụy",
+      "indexGrade": "Thái Sơ",
+      "wikiSourceId": "WIKI_HERO_INDEX_20261118",
+      "wikiSourceUrl": "https://ngoalong.vnggames.com/ngoa-long-wiki/vo-tuong",
+      "sourceRawHeroId": 3984,
+      "sourceRawName": "Hạ Hầu Uyên",
+      "runtimeStatus": "REFERENCE_ONLY",
+      "genderPresentation": {
+        "value": "female",
+        "status": "OWNER_DIRECTED_ART_REDESIGN"
+      },
+      "agePresentation": {
+        "value": 18,
+        "status": "OWNER_DIRECTED_ADULT_CHARACTER_DESIGN"
+      },
+      "artCue": {
+        "description": "Sun-gold arrow fletching, cavalry pennant and crescent bow; owner-directed motif based on source skill Tế Nhật Thiên Kỵ.",
+        "provenance": "OWNER_DIRECTED_VISUAL_INTERPRETATION_OF_SOURCE_SKILL"
+      },
+      "character": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-character.png",
+        "sourceSha256": "7733ca03e8c618074b57368708dad4aecd307bb21181dacd79ee330364ab105d",
+        "sourceBytes": 2761613,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-character.webp",
+        "runtimeSha256": "61a81686c253e80161ade43e72b46514c57955e120b8afb7e8098ff888b204f0",
+        "runtimeBytes": 425652,
+        "dimensions": [
+          1024,
+          1536
+        ],
+        "status": "STAGED_FOR_OWNER_REVIEW"
+      },
+      "portrait": {
+        "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-character.png",
+        "sourceSha256": "7733ca03e8c618074b57368708dad4aecd307bb21181dacd79ee330364ab105d",
+        "sourceBytes": 2761613,
+        "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-portrait.webp",
+        "runtimeSha256": "861f762bd720754f8f7111824a16a974525eb4d6500710a8e3affeeede2885bc",
+        "runtimeBytes": 173578,
+        "dimensions": [
+          768,
+          768
+        ],
+        "derivedFrom": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-character.png",
+        "cropBoxPixels": [
+          128,
+          0,
+          896,
+          768
+        ],
+        "status": "DERIVED_FROM_CHARACTER_MASTER"
+      },
+      "promptFile": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-012-female-xiahou-yuan-v6-character.prompt.txt",
+      "provenance": {
+        "provider": "OpenAI ImageGen",
+        "outputId": "exec-a4a8ab3e-b2f4-4826-bb2e-f358f556dd55",
+        "generatedSource": "/workspace/generated_images/exec-a4a8ab3e-b2f4-4826-bb2e-f358f556dd55.png",
+        "createdDate": "2026-11-27",
+        "cost": "unknown; provider did not return an estimate",
+        "styleReferences": [
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png",
+            "sha256": "cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png",
+            "sha256": "126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6"
+          },
+          {
+            "path": "assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png",
+            "sha256": "e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f"
+          }
+        ],
+        "promptVersion": "NL_CHARACTER_ART_V6_ROSY_SKIN_LIVELY_EYES_2026-11-27",
+        "promptRecordStatus": "VERBATIM"
+      },
+      "reviewStatus": "VISUALLY_REVIEWED_STAGING; OWNER_REVIEW_PENDING",
+      "runtimeIntegration": "REFERENCE_ONLY_NOT_INTEGRATED",
+      "assetLifecycle": {
+        "imageCreated": "PASS_OPENAI_IMAGEGEN",
+        "filesExported": "PASS_MASTER_AND_RUNTIME_DERIVATIVES",
+        "assetQc": "PASS_DIMENSIONS_SHA256_AND_VISUAL_CONTACT_SHEET_REVIEW",
+        "integratedInGame": false
+      }
+    }
+  ]
+}

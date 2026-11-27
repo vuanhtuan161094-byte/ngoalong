@@ -1,0 +1,22 @@
+Art direction: NL_CHARACTER_ART_V6; user-approved rosy skin and lively eye rendering; style references are for rendering only.
+Provider: OpenAI ImageGen. Output ID: exec-c500bbe2-3b8c-47b9-9183-5531e800b4cb.
+Generated source: /workspace/generated_images/exec-c500bbe2-3b8c-47b9-9183-5531e800b4cb.png
+Created: 2026-11-27 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 1be64c82657a3b1e759dd558b84417a66463519423dffcfdb25dc0a93fc0637b. Cost: unknown; provider did not return an estimate.
+Wiki identity: wiki-mobile-hero-008 / Tào Thực; source raw hero ID 4079.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official biography fact.
+Visual motif: Calligraphy brush, ink strokes and plum-blossom paper; owner-directed visual motif based on source skill Ca Tụng Công Đức.
+
+Style references (rendering only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+- assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png (SHA-256 e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f)
+
+VERBATIM GENERATION PROMPT
+Create one premium full-body vertical 2:3 illustration for an adult-oriented 18+ fantasy mobile game, target 1024x1536. Match the approved Cao Cao / Ma Chao / Diao Chan art direction for rendering style only: premium semi-realistic anime CG, beautiful stylized adult face, soft painterly shading, detailed flowing hair, luxurious fabric and cinematic lighting; refined anime and realistic anatomy, not photoreal, plastic or doll-like. Clearly adult 18-year-old woman with mature adult features and an hourglass figure, full bust and long legs. Skin: healthy warm pink undertone, soft rosy blush on cheeks and shoulders, luminous satin sheen with gentle cheekbone, collarbone and abdomen highlights. Eyes: vivid iris gradients, crisp catchlights, clear focus and an expressive gaze; natural, not glassy or plastic. Sexy daring fantasy lingerie/cosplay: opaque lace corset cups, exposed waist, back and upper thighs, high slits/cutouts, high-cut but fully covering briefs, thigh-high stockings, garters, body chains. Bust and groin remain covered. One woman, one distinctive face, pose, hair, outfit silhouette and palette. Full head-to-foot body with margins and supportive background. No childlike features, nudity, exposed nipples/genitals, explicit sexual activity, malformed anatomy, extra limbs/fingers, cropped limbs, text, watermark, logo, collage or border.
+Character: Tào Thực, faction Ngụy. Signature motif: calligraphy brush, flowing ink strokes and plum-blossom paper, inspired by the source skill Ca Tụng Công Đức.
+Face: refined long oval face, warm ivory complexion with rosy cheek color, soft hazel eyes with sharp catchlights, neat brows, dimple and rose-gloss lips.
+Hair: espresso-brown hair in a loose side braid with plum blossoms and wisps at the temples.
+Expression: thoughtful, playful smile.
+Pose: standing three-quarter, torso gently twisted as she sweeps a calligraphy brush through the air; the free hand gathers a long silk sleeve while a ribbon of ink curls around her. One leg crosses forward, full silhouette and shoes visible.
+Costume: plum, cream and muted gold lingerie-inspired poet couture; opaque lace corset, exposed waist and back, asymmetric high-slit silk overskirt over covered shorts, plum thigh-high stockings with garters and a fine brush-shaped body chain. Candlelit poetry pavilion.

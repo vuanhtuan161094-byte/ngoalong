@@ -1,0 +1,22 @@
+Art direction: NL_CHARACTER_ART_V6; user-approved rosy skin and lively eye rendering; style references are for rendering only.
+Provider: OpenAI ImageGen. Output ID: exec-c88521ec-693c-473d-9cdf-2eb5a650378c.
+Generated source: /workspace/generated_images/exec-c88521ec-693c-473d-9cdf-2eb5a650378c.png
+Created: 2026-11-27 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: b0ebfd4dba1e3f7fd928fad2d8b284681ceaea73de354925273aee3f98b7b593. Cost: unknown; provider did not return an estimate.
+Wiki identity: wiki-mobile-hero-009 / Trương Hợp; source raw hero ID 4126.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official biography fact.
+Visual motif: Eight-direction formation ribbons, feather crest and ceremonial spear; owner-directed motif based on source skill Binh Hình Cửu Độn.
+
+Style references (rendering only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+- assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png (SHA-256 e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f)
+
+VERBATIM GENERATION PROMPT
+Create one premium full-body vertical 2:3 illustration for an adult-oriented 18+ fantasy mobile game, target 1024x1536. Match approved Cao Cao / Ma Chao / Diao Chan art direction for rendering style and quality only: premium semi-realistic anime CG, beautiful stylized adult facial features, smooth luminous skin, expressive eyes, detailed flowing hair, soft painterly shading, luxurious materials, cinematic light. Keep refined anime aesthetics and realistic anatomy; no photorealism, no plastic or doll-like face. Clearly adult 18-year-old woman with mature adult facial and physical features, pronounced hourglass figure, full bust, slim exposed midriff, wide hips, long elegant legs. Skin should look healthy and softly rosy: warm pink undertone, subtle blush across cheeks and shoulders, luminous satin sheen with gentle highlights on cheekbones, collarbone and abdomen. Eyes should feel alive: vivid iris gradients, crisp catchlights, clear focus and expressive gaze; natural shine, never glassy or plastic. Sexy daring fantasy lingerie/cosplay with lace corset, deep neckline, high slits and cutouts; thigh-high stockings, decorative garters and body chains. Expose shoulders, waist, abdomen, back, cleavage, hips and upper thighs. Opaque fabric fully covers breasts and groin; no nudity or explicit sexual activity. One unique character, one specific alluring fashion-model pose, one distinct face, hair, makeup, outfit silhouette and color palette. Full body head to footwear, safe margins, simple cinematic background. No childlike features, exposed nipples/genitals, malformed anatomy, extra limbs/fingers, cropped limbs, text, watermark, logo, collage or border.
+Character: Trương Hợp, faction Ngụy. Signature motif: eight-direction formation ribbons, elegant feather crest and a slim ceremonial spear; owner-directed motif from skill Binh Hình Cửu Độn.
+Face: sharply tapered diamond face, golden-peach skin with soft pink blush, narrow teal eyes with bright catchlights, arched brows, defined cupid's bow and one beauty mark near the cheek.
+Hairstyle: glossy blue-black hair with silver tips, cut in a high asymmetrical ponytail and fine face-framing strands.
+Expression: elegant, confident and faintly teasing.
+Pose: a poised martial-dance turn, body seen in profile as both arms sweep opposite directions with long feathered sleeves; one heel lifted, legs crossed with one knee bent, head turns directly toward the viewer. No chair or throne; full silhouette.
+Costume: peacock blue, silver and black lace corset couture, opaque cups, bare midriff and shoulders, high-cut covered briefs beneath a side-slit robe, patterned thigh-high stockings with jeweled garters, delicate shoulder chains. Moonlit palace garden.
