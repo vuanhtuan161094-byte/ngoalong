@@ -37164,9 +37164,3489 @@
           "owner_review": "PENDING"
         }
       }
+    },
+    "wiki-mobile-hero-300": {
+      "name": "Du Thiệp",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b65",
+      "generationBatchId": "b65",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-du-thiep-v6-b65-character.png",
+        "runtimeWebp": "female-du-thiep-v6-b65-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "0f14b18a206e6a67a142089ad4faa52a24bcc9280d56cb6071cd819136d1cacb",
+        "runtimeSha256": "985171dd0cacefcaa66c36a4fcd6e774082ffcbf59e6e61ce9bc11df217ecc62",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-51dd8179-4a78-4f66-bb7c-140708884fbb",
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-du-thiep-v6-b65-character.png",
+          "sourceSizeBytes": 771896,
+          "sourceSha256": "0f14b18a206e6a67a142089ad4faa52a24bcc9280d56cb6071cd819136d1cacb",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-du-thiep-v6-b65-character.webp",
+          "runtimeSizeBytes": 132776,
+          "runtimeSha256": "985171dd0cacefcaa66c36a4fcd6e774082ffcbf59e6e61ce9bc11df217ecc62",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-du-thiep-v6-b65-portrait.png",
+        "runtimeWebp": "female-du-thiep-v6-b65-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "a23e4aa147a95d5e72bfcc88a3a7300dc903838520dd2de9859d79424118ed22",
+        "runtimeSha256": "187d4680b9c42ceb82ac1d29da5fcd14c52c7a4a54fb19afd4d6bfc23e0a63d8",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-du-thiep-v6-b65-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-du-thiep-v6-b65-portrait.png",
+          "sourceSizeBytes": 525012,
+          "sourceSha256": "a23e4aa147a95d5e72bfcc88a3a7300dc903838520dd2de9859d79424118ed22",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-du-thiep-v6-b65-portrait.webp",
+          "runtimeSizeBytes": 92204,
+          "runtimeSha256": "187d4680b9c42ceb82ac1d29da5fcd14c52c7a4a54fb19afd4d6bfc23e0a63d8",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-301": {
+      "name": "Dương Hoài",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b65",
+      "generationBatchId": "b65",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-duong-hoai-v6-b65-character.png",
+        "runtimeWebp": "female-duong-hoai-v6-b65-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "74ccc602c7dc25762d3d0c554bfe31b780fb20962a22563b85b687e2e7ec7378",
+        "runtimeSha256": "6a5f54502d7a60fc698e84fc995e5c766fc009fd5ec8c046f3e2ee6e302d4aa9",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-51dd8179-4a78-4f66-bb7c-140708884fbb",
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoai-v6-b65-character.png",
+          "sourceSizeBytes": 737272,
+          "sourceSha256": "74ccc602c7dc25762d3d0c554bfe31b780fb20962a22563b85b687e2e7ec7378",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoai-v6-b65-character.webp",
+          "runtimeSizeBytes": 122410,
+          "runtimeSha256": "6a5f54502d7a60fc698e84fc995e5c766fc009fd5ec8c046f3e2ee6e302d4aa9",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-duong-hoai-v6-b65-portrait.png",
+        "runtimeWebp": "female-duong-hoai-v6-b65-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "49a1f5e58ce12e2adaaecf56c17f253512e3e7ae45c2fdb53749dfae8e729683",
+        "runtimeSha256": "f27e86c093f2a8e42f6f81a5a95b804b7719a404470c615cd90469866517afa0",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-duong-hoai-v6-b65-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoai-v6-b65-portrait.png",
+          "sourceSizeBytes": 475678,
+          "sourceSha256": "49a1f5e58ce12e2adaaecf56c17f253512e3e7ae45c2fdb53749dfae8e729683",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoai-v6-b65-portrait.webp",
+          "runtimeSizeBytes": 75086,
+          "runtimeSha256": "f27e86c093f2a8e42f6f81a5a95b804b7719a404470c615cd90469866517afa0",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-302": {
+      "name": "Dương Hoằng",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b65",
+      "generationBatchId": "b65",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-duong-hoang-v6-b65-character.png",
+        "runtimeWebp": "female-duong-hoang-v6-b65-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "3e1edacf234c769f0b097a5c819c81c6577e08bef17a98e16789dc34225316b6",
+        "runtimeSha256": "1eaa6d06a2cdeaa4717db152a41bec0238603c6f0dabaf922dbddd33adf2fe0a",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-51dd8179-4a78-4f66-bb7c-140708884fbb",
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoang-v6-b65-character.png",
+          "sourceSizeBytes": 746172,
+          "sourceSha256": "3e1edacf234c769f0b097a5c819c81c6577e08bef17a98e16789dc34225316b6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoang-v6-b65-character.webp",
+          "runtimeSizeBytes": 127786,
+          "runtimeSha256": "1eaa6d06a2cdeaa4717db152a41bec0238603c6f0dabaf922dbddd33adf2fe0a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-duong-hoang-v6-b65-portrait.png",
+        "runtimeWebp": "female-duong-hoang-v6-b65-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "afaff4b9f949b8dbfb116e62c39f307b97af9f41f6285ef8c9a784dc0d75c1bf",
+        "runtimeSha256": "d1e2eb969447e62a8180197c19cf1039c8c3a10f97ad23ca610d31fba145cab7",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-duong-hoang-v6-b65-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoang-v6-b65-portrait.png",
+          "sourceSizeBytes": 510176,
+          "sourceSha256": "afaff4b9f949b8dbfb116e62c39f307b97af9f41f6285ef8c9a784dc0d75c1bf",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-hoang-v6-b65-portrait.webp",
+          "runtimeSizeBytes": 89408,
+          "runtimeSha256": "d1e2eb969447e62a8180197c19cf1039c8c3a10f97ad23ca610d31fba145cab7",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-303": {
+      "name": "Dương Sửu",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b65",
+      "generationBatchId": "b65",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-duong-suu-v6-b65-character.png",
+        "runtimeWebp": "female-duong-suu-v6-b65-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "f36425088840a193ef809c90132cb2c6212ebfec000faab692292793ce9132f7",
+        "runtimeSha256": "5b0af77ecad5d175c1a73dfeddbd50837ddff4c4539faefa9715447b9e2da71e",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-51dd8179-4a78-4f66-bb7c-140708884fbb",
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-suu-v6-b65-character.png",
+          "sourceSizeBytes": 737243,
+          "sourceSha256": "f36425088840a193ef809c90132cb2c6212ebfec000faab692292793ce9132f7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-suu-v6-b65-character.webp",
+          "runtimeSizeBytes": 118632,
+          "runtimeSha256": "5b0af77ecad5d175c1a73dfeddbd50837ddff4c4539faefa9715447b9e2da71e",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-duong-suu-v6-b65-portrait.png",
+        "runtimeWebp": "female-duong-suu-v6-b65-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "52102d7c899d9b8f7da415034d4d66c6f54efc0a36cd7d28123921ab55162058",
+        "runtimeSha256": "fb6f26364301a3bb2eb3a568ecbc2823d9cf7486eb8930b44c1833ab1bbd255f",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b65",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-51dd8179-4a78-4f66-bb7c-140708884fbb.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b65-sheet.png",
+          "sourceSheetSha256": "c08d3424b756a9463edb9e4228a7b5edc6b3e83d20fdf73a5fabd39cbd1ab09a",
+          "sourceSheetSizeBytes": 3215319,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-duong-suu-v6-b65-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-suu-v6-b65-portrait.png",
+          "sourceSizeBytes": 477575,
+          "sourceSha256": "52102d7c899d9b8f7da415034d4d66c6f54efc0a36cd7d28123921ab55162058",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-suu-v6-b65-portrait.webp",
+          "runtimeSizeBytes": 74914,
+          "runtimeSha256": "fb6f26364301a3bb2eb3a568ecbc2823d9cf7486eb8930b44c1833ab1bbd255f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-304": {
+      "name": "Dương Thu",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b66",
+      "generationBatchId": "b66",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-duong-thu-v6-b66-character.png",
+        "runtimeWebp": "female-duong-thu-v6-b66-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "25436e20f627fb6d746ce1f5928354c365b2775d239bbb0582a7973f59200054",
+        "runtimeSha256": "92856cccdf08b8b9dbe0d5e3e194c96a7538165e4a2c42bb4fb22e44e47bfc70",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4",
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-thu-v6-b66-character.png",
+          "sourceSizeBytes": 695406,
+          "sourceSha256": "25436e20f627fb6d746ce1f5928354c365b2775d239bbb0582a7973f59200054",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-thu-v6-b66-character.webp",
+          "runtimeSizeBytes": 110516,
+          "runtimeSha256": "92856cccdf08b8b9dbe0d5e3e194c96a7538165e4a2c42bb4fb22e44e47bfc70",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-duong-thu-v6-b66-portrait.png",
+        "runtimeWebp": "female-duong-thu-v6-b66-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "ce36eb3d89cb42edc07a29a30369d96939237e3f376484fec3e19115fd0b429f",
+        "runtimeSha256": "2cb6e11567fb8e641db2fba2760e40e01a4e9420a25823f22736985b77f52b6c",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-duong-thu-v6-b66-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-duong-thu-v6-b66-portrait.png",
+          "sourceSizeBytes": 469770,
+          "sourceSha256": "ce36eb3d89cb42edc07a29a30369d96939237e3f376484fec3e19115fd0b429f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-duong-thu-v6-b66-portrait.webp",
+          "runtimeSizeBytes": 74484,
+          "runtimeSha256": "2cb6e11567fb8e641db2fba2760e40e01a4e9420a25823f22736985b77f52b6c",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-305": {
+      "name": "Đặng Mậu",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b66",
+      "generationBatchId": "b66",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-dang-mau-v6-b66-character.png",
+        "runtimeWebp": "female-dang-mau-v6-b66-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "a1c351af5b1ffcde59b7ebfcc4cf0676cb3f5c4700961ca631e6293b714005bd",
+        "runtimeSha256": "53e2cf05527f2f22bd629e957100ea25070f7ee5f9bb4fc3758df8c6d061d08b",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4",
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dang-mau-v6-b66-character.png",
+          "sourceSizeBytes": 733313,
+          "sourceSha256": "a1c351af5b1ffcde59b7ebfcc4cf0676cb3f5c4700961ca631e6293b714005bd",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dang-mau-v6-b66-character.webp",
+          "runtimeSizeBytes": 119834,
+          "runtimeSha256": "53e2cf05527f2f22bd629e957100ea25070f7ee5f9bb4fc3758df8c6d061d08b",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-dang-mau-v6-b66-portrait.png",
+        "runtimeWebp": "female-dang-mau-v6-b66-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "903fa26339aca01f188abd26f36b1ff33216a601fa23ecf60a48b3ce40178d57",
+        "runtimeSha256": "d1ceba15ebe3dee660518b5cff0470c1ad5a141a1a92d6d79ac6e4b297452ea8",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-dang-mau-v6-b66-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dang-mau-v6-b66-portrait.png",
+          "sourceSizeBytes": 463228,
+          "sourceSha256": "903fa26339aca01f188abd26f36b1ff33216a601fa23ecf60a48b3ce40178d57",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dang-mau-v6-b66-portrait.webp",
+          "runtimeSizeBytes": 71126,
+          "runtimeSha256": "d1ceba15ebe3dee660518b5cff0470c1ad5a141a1a92d6d79ac6e4b297452ea8",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-306": {
+      "name": "Đổng Hòa",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b66",
+      "generationBatchId": "b66",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-dong-hoa-v6-b66-character.png",
+        "runtimeWebp": "female-dong-hoa-v6-b66-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "c40c41b2a8d41fdc784760b16351a92e1a539228419968f223fd32bd6501b54f",
+        "runtimeSha256": "2755ec086dffda2a1330c32c7ca0d25bbfc8ce67e92e4cdbf0b83bb8f12fb357",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4",
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-hoa-v6-b66-character.png",
+          "sourceSizeBytes": 711999,
+          "sourceSha256": "c40c41b2a8d41fdc784760b16351a92e1a539228419968f223fd32bd6501b54f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-hoa-v6-b66-character.webp",
+          "runtimeSizeBytes": 119540,
+          "runtimeSha256": "2755ec086dffda2a1330c32c7ca0d25bbfc8ce67e92e4cdbf0b83bb8f12fb357",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-dong-hoa-v6-b66-portrait.png",
+        "runtimeWebp": "female-dong-hoa-v6-b66-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "5672179033a71d632d90f51f20a790716c943914532c1f9dc10e0edbda2330be",
+        "runtimeSha256": "13009d04799d4e5853b9655ea7a3c4fa30bdd3b55d2cf5e21dc72e30511ecf5a",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-dong-hoa-v6-b66-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-hoa-v6-b66-portrait.png",
+          "sourceSizeBytes": 481195,
+          "sourceSha256": "5672179033a71d632d90f51f20a790716c943914532c1f9dc10e0edbda2330be",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-hoa-v6-b66-portrait.webp",
+          "runtimeSizeBytes": 81042,
+          "runtimeSha256": "13009d04799d4e5853b9655ea7a3c4fa30bdd3b55d2cf5e21dc72e30511ecf5a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-307": {
+      "name": "Đổng Mân",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b66",
+      "generationBatchId": "b66",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-dong-man-v6-b66-character.png",
+        "runtimeWebp": "female-dong-man-v6-b66-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "63169f918ed4f7e18cadde7ca4bad103b454043ba2df0f066a3862ec2db969c7",
+        "runtimeSha256": "7e7da64a64a2ffed417f9d72e396392ea377005232c043c65707a65593dfbe11",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4",
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-man-v6-b66-character.png",
+          "sourceSizeBytes": 743564,
+          "sourceSha256": "63169f918ed4f7e18cadde7ca4bad103b454043ba2df0f066a3862ec2db969c7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-man-v6-b66-character.webp",
+          "runtimeSizeBytes": 122562,
+          "runtimeSha256": "7e7da64a64a2ffed417f9d72e396392ea377005232c043c65707a65593dfbe11",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-dong-man-v6-b66-portrait.png",
+        "runtimeWebp": "female-dong-man-v6-b66-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "15d6dfbeb434c1af26026f6b01bc0be69ffc9870f1e71087fdd7104f1b6b332f",
+        "runtimeSha256": "72ae3a916e381b2b818bcae70796d9ad1116efdfc30a2df9dd3455b771eeb38a",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b66",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ecd51d63-70b5-41c2-9ea2-0959adc9bfd4.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b66-sheet.png",
+          "sourceSheetSha256": "de4b19006a86750943799586d5f858ba5b37ebc8506e50b2f2c63b1ef7df02b6",
+          "sourceSheetSizeBytes": 3098534,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-dong-man-v6-b66-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-man-v6-b66-portrait.png",
+          "sourceSizeBytes": 501458,
+          "sourceSha256": "15d6dfbeb434c1af26026f6b01bc0be69ffc9870f1e71087fdd7104f1b6b332f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-man-v6-b66-portrait.webp",
+          "runtimeSizeBytes": 82718,
+          "runtimeSha256": "72ae3a916e381b2b818bcae70796d9ad1116efdfc30a2df9dd3455b771eeb38a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-308": {
+      "name": "Đổng Trà Na",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b67",
+      "generationBatchId": "b67",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-dong-tra-na-v6-b67-character.png",
+        "runtimeWebp": "female-dong-tra-na-v6-b67-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "1ae3fcc380e4c0eed528fd1545fabc51a7e57f7cf8a9f078f313688c57cc08ab",
+        "runtimeSha256": "5fdefbb47c125188eea53eb58078e42113743bba2255e34106dbc2c0f104e6f1",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-9c898bc7-8961-4e4d-a732-e281a362ab32",
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-tra-na-v6-b67-character.png",
+          "sourceSizeBytes": 819125,
+          "sourceSha256": "1ae3fcc380e4c0eed528fd1545fabc51a7e57f7cf8a9f078f313688c57cc08ab",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-tra-na-v6-b67-character.webp",
+          "runtimeSizeBytes": 153848,
+          "runtimeSha256": "5fdefbb47c125188eea53eb58078e42113743bba2255e34106dbc2c0f104e6f1",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-dong-tra-na-v6-b67-portrait.png",
+        "runtimeWebp": "female-dong-tra-na-v6-b67-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "44d7a57587aaf94d50917ba0956d0924bb63454e4f9ed0c4ac28aed3b8553d94",
+        "runtimeSha256": "07da278ceebe84bb3b741d8ea312489b5f13e7a42766db95de0dfbf03f71ba8d",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-dong-tra-na-v6-b67-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-dong-tra-na-v6-b67-portrait.png",
+          "sourceSizeBytes": 532050,
+          "sourceSha256": "44d7a57587aaf94d50917ba0956d0924bb63454e4f9ed0c4ac28aed3b8553d94",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-dong-tra-na-v6-b67-portrait.webp",
+          "runtimeSizeBytes": 98322,
+          "runtimeSha256": "07da278ceebe84bb3b741d8ea312489b5f13e7a42766db95de0dfbf03f71ba8d",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-309": {
+      "name": "Hà Nghi",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b67",
+      "generationBatchId": "b67",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-ha-nghi-v6-b67-character.png",
+        "runtimeWebp": "female-ha-nghi-v6-b67-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "4cf95b74b1d681c1c9c44d3ee8fa6773a035c6dbccf689fe889bb304f3f924ec",
+        "runtimeSha256": "c54f507ac60e9a5a04d6757e7a68b8976d1353b8f6d849f5326ae383d4b67d42",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-9c898bc7-8961-4e4d-a732-e281a362ab32",
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ha-nghi-v6-b67-character.png",
+          "sourceSizeBytes": 725861,
+          "sourceSha256": "4cf95b74b1d681c1c9c44d3ee8fa6773a035c6dbccf689fe889bb304f3f924ec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ha-nghi-v6-b67-character.webp",
+          "runtimeSizeBytes": 113982,
+          "runtimeSha256": "c54f507ac60e9a5a04d6757e7a68b8976d1353b8f6d849f5326ae383d4b67d42",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-ha-nghi-v6-b67-portrait.png",
+        "runtimeWebp": "female-ha-nghi-v6-b67-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "425bb5d3a74ed7938176c0447bef9f2f3ef2f77c4ab42f46891f0d758e214b55",
+        "runtimeSha256": "3692bbc59fa527fb2c82de020d905dff94df330e6744f2a47fe814e806deb40f",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-ha-nghi-v6-b67-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ha-nghi-v6-b67-portrait.png",
+          "sourceSizeBytes": 471830,
+          "sourceSha256": "425bb5d3a74ed7938176c0447bef9f2f3ef2f77c4ab42f46891f0d758e214b55",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ha-nghi-v6-b67-portrait.webp",
+          "runtimeSizeBytes": 72888,
+          "runtimeSha256": "3692bbc59fa527fb2c82de020d905dff94df330e6744f2a47fe814e806deb40f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-310": {
+      "name": "Hàn Dận",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b67",
+      "generationBatchId": "b67",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-han-dan-v6-b67-character.png",
+        "runtimeWebp": "female-han-dan-v6-b67-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "ab27a9f082b35c4c200d86b695f7ee1a7bf82a4b6a3fbe53a3776ba1d149e4a5",
+        "runtimeSha256": "84161f1fa6a6d14c4b80b59dc66a741d913184add9b0caccae2864d9285bf4e3",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-9c898bc7-8961-4e4d-a732-e281a362ab32",
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-han-dan-v6-b67-character.png",
+          "sourceSizeBytes": 775897,
+          "sourceSha256": "ab27a9f082b35c4c200d86b695f7ee1a7bf82a4b6a3fbe53a3776ba1d149e4a5",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-han-dan-v6-b67-character.webp",
+          "runtimeSizeBytes": 138654,
+          "runtimeSha256": "84161f1fa6a6d14c4b80b59dc66a741d913184add9b0caccae2864d9285bf4e3",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-han-dan-v6-b67-portrait.png",
+        "runtimeWebp": "female-han-dan-v6-b67-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "41ca15a27fa59b0c8e4296548c63a75b7430d93ef8710c883f31773ecab2bce8",
+        "runtimeSha256": "cd21d60feda9525d04db1a2ab110943649124de64b7fb60b8fb0e47adf5799e5",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-han-dan-v6-b67-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-han-dan-v6-b67-portrait.png",
+          "sourceSizeBytes": 520003,
+          "sourceSha256": "41ca15a27fa59b0c8e4296548c63a75b7430d93ef8710c883f31773ecab2bce8",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-han-dan-v6-b67-portrait.webp",
+          "runtimeSizeBytes": 93150,
+          "runtimeSha256": "cd21d60feda9525d04db1a2ab110943649124de64b7fb60b8fb0e47adf5799e5",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-311": {
+      "name": "Hàn Trung",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b67",
+      "generationBatchId": "b67",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-han-trung-v6-b67-character.png",
+        "runtimeWebp": "female-han-trung-v6-b67-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "af4080488251f7be302bb1cd5af7f9623047cf3c63d2635264abe885463ccc6a",
+        "runtimeSha256": "a7f06663bf50e45358508706460969ef15990f87a50dc1fafeb19b3b7e1c65ef",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-9c898bc7-8961-4e4d-a732-e281a362ab32",
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-han-trung-v6-b67-character.png",
+          "sourceSizeBytes": 743882,
+          "sourceSha256": "af4080488251f7be302bb1cd5af7f9623047cf3c63d2635264abe885463ccc6a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-han-trung-v6-b67-character.webp",
+          "runtimeSizeBytes": 126184,
+          "runtimeSha256": "a7f06663bf50e45358508706460969ef15990f87a50dc1fafeb19b3b7e1c65ef",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-han-trung-v6-b67-portrait.png",
+        "runtimeWebp": "female-han-trung-v6-b67-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "d7c37284407a8c9992d42e8b1adf9b5dba38a5e0769ae4ea4882420803fe7575",
+        "runtimeSha256": "3a417a9241c4e3cb05a33e8d2959a95e3a3825b22522f0d0c49d4e6eadb87781",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b67",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-9c898bc7-8961-4e4d-a732-e281a362ab32.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b67-sheet.png",
+          "sourceSheetSha256": "37c123079d490d3304f004eee9397607cd4cf0eda2124d084dd0b90d4beab2f2",
+          "sourceSheetSizeBytes": 3351711,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-han-trung-v6-b67-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-han-trung-v6-b67-portrait.png",
+          "sourceSizeBytes": 483350,
+          "sourceSha256": "d7c37284407a8c9992d42e8b1adf9b5dba38a5e0769ae4ea4882420803fe7575",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-han-trung-v6-b67-portrait.webp",
+          "runtimeSizeBytes": 78378,
+          "runtimeSha256": "3a417a9241c4e3cb05a33e8d2959a95e3a3825b22522f0d0c49d4e6eadb87781",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-312": {
+      "name": "Hầu Thành",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b68",
+      "generationBatchId": "b68",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hau-thanh-v6-b68-character.png",
+        "runtimeWebp": "female-hau-thanh-v6-b68-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "cdd5d5198c3915ef3955fe5cc832496f119ec1980c1fb119446eeada2913e96f",
+        "runtimeSha256": "8b126985afff217b28420eea4093a5823538042a3d8a095bd0f73c7385355a94",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-25b8a957-dad8-4dc7-8080-e80925e10c69",
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hau-thanh-v6-b68-character.png",
+          "sourceSizeBytes": 748061,
+          "sourceSha256": "cdd5d5198c3915ef3955fe5cc832496f119ec1980c1fb119446eeada2913e96f",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hau-thanh-v6-b68-character.webp",
+          "runtimeSizeBytes": 125012,
+          "runtimeSha256": "8b126985afff217b28420eea4093a5823538042a3d8a095bd0f73c7385355a94",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hau-thanh-v6-b68-portrait.png",
+        "runtimeWebp": "female-hau-thanh-v6-b68-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "3b1739df7b37d03484eed6c4af2230c4837f97412340982504f4a11b5e76913a",
+        "runtimeSha256": "06fba15f2f08b14352691de7a3ed759a1499775a3d75e6e11f1d5f0ee650f4ba",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hau-thanh-v6-b68-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hau-thanh-v6-b68-portrait.png",
+          "sourceSizeBytes": 497810,
+          "sourceSha256": "3b1739df7b37d03484eed6c4af2230c4837f97412340982504f4a11b5e76913a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hau-thanh-v6-b68-portrait.webp",
+          "runtimeSizeBytes": 83196,
+          "runtimeSha256": "06fba15f2f08b14352691de7a3ed759a1499775a3d75e6e11f1d5f0ee650f4ba",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-313": {
+      "name": "Hậu Tuyển",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b68",
+      "generationBatchId": "b68",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hau-tuyen-v6-b68-character.png",
+        "runtimeWebp": "female-hau-tuyen-v6-b68-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "6800749daed398920289a9625d7ff32cfcdb8c1ea51d0e31e1704ce7de2c20d3",
+        "runtimeSha256": "860088169b44a67123f17573d617f41f3e148047915be1042a640d286a6aeb3d",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-25b8a957-dad8-4dc7-8080-e80925e10c69",
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hau-tuyen-v6-b68-character.png",
+          "sourceSizeBytes": 765900,
+          "sourceSha256": "6800749daed398920289a9625d7ff32cfcdb8c1ea51d0e31e1704ce7de2c20d3",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hau-tuyen-v6-b68-character.webp",
+          "runtimeSizeBytes": 135534,
+          "runtimeSha256": "860088169b44a67123f17573d617f41f3e148047915be1042a640d286a6aeb3d",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hau-tuyen-v6-b68-portrait.png",
+        "runtimeWebp": "female-hau-tuyen-v6-b68-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "37a2c008a308ef746c084a94c5d65be45b2bc67f0692e2f07e8f856abc0731d6",
+        "runtimeSha256": "392e4ce25d489a028f69025abf8c72c94a59df609bf5e6189488023800837fd9",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hau-tuyen-v6-b68-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hau-tuyen-v6-b68-portrait.png",
+          "sourceSizeBytes": 492153,
+          "sourceSha256": "37a2c008a308ef746c084a94c5d65be45b2bc67f0692e2f07e8f856abc0731d6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hau-tuyen-v6-b68-portrait.webp",
+          "runtimeSizeBytes": 81912,
+          "runtimeSha256": "392e4ce25d489a028f69025abf8c72c94a59df609bf5e6189488023800837fd9",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-314": {
+      "name": "Hoàng Quyền",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b68",
+      "generationBatchId": "b68",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hoang-quyen-v6-b68-character.png",
+        "runtimeWebp": "female-hoang-quyen-v6-b68-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "f214f966b11b3206c5dc970f4b2de31241615df192336bfbeb3715b5b6302ed6",
+        "runtimeSha256": "be54e29513e2b43099a1f05cdc5dc435aa959adfc06ace5aa63e527eb9ffc43f",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-25b8a957-dad8-4dc7-8080-e80925e10c69",
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hoang-quyen-v6-b68-character.png",
+          "sourceSizeBytes": 751092,
+          "sourceSha256": "f214f966b11b3206c5dc970f4b2de31241615df192336bfbeb3715b5b6302ed6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hoang-quyen-v6-b68-character.webp",
+          "runtimeSizeBytes": 130038,
+          "runtimeSha256": "be54e29513e2b43099a1f05cdc5dc435aa959adfc06ace5aa63e527eb9ffc43f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hoang-quyen-v6-b68-portrait.png",
+        "runtimeWebp": "female-hoang-quyen-v6-b68-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "8cedebeb3eda9d1ee59343cd3e43aa9af8f911e8c2ada772cf9f5623ede81d70",
+        "runtimeSha256": "09881a6e3d544bbe4858a0233c7118b84840ebcb523679630bb9375ebbf4bf9f",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hoang-quyen-v6-b68-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hoang-quyen-v6-b68-portrait.png",
+          "sourceSizeBytes": 492651,
+          "sourceSha256": "8cedebeb3eda9d1ee59343cd3e43aa9af8f911e8c2ada772cf9f5623ede81d70",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hoang-quyen-v6-b68-portrait.webp",
+          "runtimeSizeBytes": 83392,
+          "runtimeSha256": "09881a6e3d544bbe4858a0233c7118b84840ebcb523679630bb9375ebbf4bf9f",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-315": {
+      "name": "Hoàng Sùng",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b68",
+      "generationBatchId": "b68",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hoang-sung-v6-b68-character.png",
+        "runtimeWebp": "female-hoang-sung-v6-b68-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "ebd27664ed1496700359c72551efdda6e240b297b44d3654db35848b7b4451a7",
+        "runtimeSha256": "9f881e1911ea61f0c549a080d15ee7e097b3ecbeaf15ee442a89bbb5dedb07fc",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-25b8a957-dad8-4dc7-8080-e80925e10c69",
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hoang-sung-v6-b68-character.png",
+          "sourceSizeBytes": 777245,
+          "sourceSha256": "ebd27664ed1496700359c72551efdda6e240b297b44d3654db35848b7b4451a7",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hoang-sung-v6-b68-character.webp",
+          "runtimeSizeBytes": 133464,
+          "runtimeSha256": "9f881e1911ea61f0c549a080d15ee7e097b3ecbeaf15ee442a89bbb5dedb07fc",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hoang-sung-v6-b68-portrait.png",
+        "runtimeWebp": "female-hoang-sung-v6-b68-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "ec71ba290979ac9aaef8ad8f2982127ad64a806863ff7a369ce59041c52e6a17",
+        "runtimeSha256": "44113cbcfc8607ca08b539b5017efd34523d2eef4033dba6c704048457edb2ef",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b68",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-25b8a957-dad8-4dc7-8080-e80925e10c69.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b68-sheet.png",
+          "sourceSheetSha256": "a503cb34c86a998c04f22089f1d2311669270b50d29a8c68b8091ab5168243b8",
+          "sourceSheetSizeBytes": 3289162,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hoang-sung-v6-b68-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hoang-sung-v6-b68-portrait.png",
+          "sourceSizeBytes": 527658,
+          "sourceSha256": "ec71ba290979ac9aaef8ad8f2982127ad64a806863ff7a369ce59041c52e6a17",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hoang-sung-v6-b68-portrait.webp",
+          "runtimeSizeBytes": 92358,
+          "runtimeSha256": "44113cbcfc8607ca08b539b5017efd34523d2eef4033dba6c704048457edb2ef",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-316": {
+      "name": "Hồ Chẩn",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b69",
+      "generationBatchId": "b69",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-ho-chan-v6-b69-character.png",
+        "runtimeWebp": "female-ho-chan-v6-b69-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "b69dfd559a8685156b0af4d99be2713e3656eb86cef2d91ebc8045be14a56bec",
+        "runtimeSha256": "b161217b486440631b58c8d35fbb07b3b0d25439e548b1a457c19797b86d701a",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-745feed1-5906-4147-887b-6eefcf3983dd",
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ho-chan-v6-b69-character.png",
+          "sourceSizeBytes": 711024,
+          "sourceSha256": "b69dfd559a8685156b0af4d99be2713e3656eb86cef2d91ebc8045be14a56bec",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ho-chan-v6-b69-character.webp",
+          "runtimeSizeBytes": 113204,
+          "runtimeSha256": "b161217b486440631b58c8d35fbb07b3b0d25439e548b1a457c19797b86d701a",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-ho-chan-v6-b69-portrait.png",
+        "runtimeWebp": "female-ho-chan-v6-b69-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "1cbf4e2b70053800a79b80bd6255ee4ea084b26c2726895ccf92555921f75b81",
+        "runtimeSha256": "3bdf57ec73cd6e6d3b27876e8f129bc1856c022bad71e5d4f6c9b11bf1260965",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-ho-chan-v6-b69-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-ho-chan-v6-b69-portrait.png",
+          "sourceSizeBytes": 460930,
+          "sourceSha256": "1cbf4e2b70053800a79b80bd6255ee4ea084b26c2726895ccf92555921f75b81",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-ho-chan-v6-b69-portrait.webp",
+          "runtimeSizeBytes": 70754,
+          "runtimeSha256": "3bdf57ec73cd6e6d3b27876e8f129bc1856c022bad71e5d4f6c9b11bf1260965",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-317": {
+      "name": "Hứa Cống",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b69",
+      "generationBatchId": "b69",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hua-cong-v6-b69-character.png",
+        "runtimeWebp": "female-hua-cong-v6-b69-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "2990a7c6961ef5d784634e9fa12ed9270ae2f0890ad199dc72480730db163248",
+        "runtimeSha256": "5d5d94d460a127b3a9e6df1a74b3acf46ee09b44c6274861f8839d12e480d237",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-745feed1-5906-4147-887b-6eefcf3983dd",
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hua-cong-v6-b69-character.png",
+          "sourceSizeBytes": 652411,
+          "sourceSha256": "2990a7c6961ef5d784634e9fa12ed9270ae2f0890ad199dc72480730db163248",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hua-cong-v6-b69-character.webp",
+          "runtimeSizeBytes": 95976,
+          "runtimeSha256": "5d5d94d460a127b3a9e6df1a74b3acf46ee09b44c6274861f8839d12e480d237",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hua-cong-v6-b69-portrait.png",
+        "runtimeWebp": "female-hua-cong-v6-b69-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "8fd694fae3973eb11775f5c4cf1a7d8a8612367da6bdab7ef392df027b675596",
+        "runtimeSha256": "5918878fb7f7e7cf46f7d668011f51c30daf895e534349323f7d437e430c1e65",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hua-cong-v6-b69-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hua-cong-v6-b69-portrait.png",
+          "sourceSizeBytes": 428141,
+          "sourceSha256": "8fd694fae3973eb11775f5c4cf1a7d8a8612367da6bdab7ef392df027b675596",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hua-cong-v6-b69-portrait.webp",
+          "runtimeSizeBytes": 62170,
+          "runtimeSha256": "5918878fb7f7e7cf46f7d668011f51c30daf895e534349323f7d437e430c1e65",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-318": {
+      "name": "Hứa Du",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b69",
+      "generationBatchId": "b69",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-hua-du-v6-b69-character.png",
+        "runtimeWebp": "female-hua-du-v6-b69-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "b875e7ea2a837c01eca39bcc7ada53fde8bb9dac967124add9b7789dc34d8284",
+        "runtimeSha256": "658e378eb270d7e84576c0f6cb4f201d712eb1df08bde50a24463b7695f66b04",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-745feed1-5906-4147-887b-6eefcf3983dd",
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hua-du-v6-b69-character.png",
+          "sourceSizeBytes": 709451,
+          "sourceSha256": "b875e7ea2a837c01eca39bcc7ada53fde8bb9dac967124add9b7789dc34d8284",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hua-du-v6-b69-character.webp",
+          "runtimeSizeBytes": 117710,
+          "runtimeSha256": "658e378eb270d7e84576c0f6cb4f201d712eb1df08bde50a24463b7695f66b04",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-hua-du-v6-b69-portrait.png",
+        "runtimeWebp": "female-hua-du-v6-b69-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "542412818c64323308771879cb6f452525671e459ab5386d34352031236bed15",
+        "runtimeSha256": "7aa7c93624f33000c6d2f0b3fe65ecbcbb239a03a37354de11a494b31b926190",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-hua-du-v6-b69-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-hua-du-v6-b69-portrait.png",
+          "sourceSizeBytes": 478326,
+          "sourceSha256": "542412818c64323308771879cb6f452525671e459ab5386d34352031236bed15",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-hua-du-v6-b69-portrait.webp",
+          "runtimeSizeBytes": 78894,
+          "runtimeSha256": "7aa7c93624f33000c6d2f0b3fe65ecbcbb239a03a37354de11a494b31b926190",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-319": {
+      "name": "Kiều Nhuy",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b69",
+      "generationBatchId": "b69",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-kieu-nhuy-v6-b69-character.png",
+        "runtimeWebp": "female-kieu-nhuy-v6-b69-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "86797747b39803857b048d709571ae0f7198149cd780ed23907b119f027e07c1",
+        "runtimeSha256": "9c531a52ecb7036323c537aea3a61f3816ef461902042a7d5b950861a95351dd",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-745feed1-5906-4147-887b-6eefcf3983dd",
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-kieu-nhuy-v6-b69-character.png",
+          "sourceSizeBytes": 709596,
+          "sourceSha256": "86797747b39803857b048d709571ae0f7198149cd780ed23907b119f027e07c1",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-kieu-nhuy-v6-b69-character.webp",
+          "runtimeSizeBytes": 116404,
+          "runtimeSha256": "9c531a52ecb7036323c537aea3a61f3816ef461902042a7d5b950861a95351dd",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-kieu-nhuy-v6-b69-portrait.png",
+        "runtimeWebp": "female-kieu-nhuy-v6-b69-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "36a4274b71da0add90f086bf82d5a5a4a9a983dfed8fe8286636c99ac45f8123",
+        "runtimeSha256": "ec62aa92cdbd01c310f3b4d6c4745f20140cf6773ae9e1446e6d10dca5b84731",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b69",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-745feed1-5906-4147-887b-6eefcf3983dd.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b69-sheet.png",
+          "sourceSheetSha256": "be347b2a7ddbd302acc5f69e37d6017de18b916affb7738c031be07a1be991ca",
+          "sourceSheetSizeBytes": 2958184,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-kieu-nhuy-v6-b69-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-kieu-nhuy-v6-b69-portrait.png",
+          "sourceSizeBytes": 492286,
+          "sourceSha256": "36a4274b71da0add90f086bf82d5a5a4a9a983dfed8fe8286636c99ac45f8123",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-kieu-nhuy-v6-b69-portrait.webp",
+          "runtimeSizeBytes": 82262,
+          "runtimeSha256": "ec62aa92cdbd01c310f3b4d6c4745f20140cf6773ae9e1446e6d10dca5b84731",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-320": {
+      "name": "Lữ Khoáng",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b70",
+      "generationBatchId": "b70",
+      "sheetCellIndex": 0,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-lu-khoang-v6-b70-character.png",
+        "runtimeWebp": "female-lu-khoang-v6-b70-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "2b47024eb4f33de2a080a7e8065e3b22b222c90f1c2aac88ce59acce93d6acce",
+        "runtimeSha256": "361ed3469c071a5d152d23b92e0a918f27a73d60fb36d44473ed70c9558cda32",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b",
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-khoang-v6-b70-character.png",
+          "sourceSizeBytes": 724067,
+          "sourceSha256": "2b47024eb4f33de2a080a7e8065e3b22b222c90f1c2aac88ce59acce93d6acce",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-khoang-v6-b70-character.webp",
+          "runtimeSizeBytes": 116072,
+          "runtimeSha256": "361ed3469c071a5d152d23b92e0a918f27a73d60fb36d44473ed70c9558cda32",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-lu-khoang-v6-b70-portrait.png",
+        "runtimeWebp": "female-lu-khoang-v6-b70-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "e45c836c67752077e3ea7998405db845c7f5ded8b9ce67c96717e40a6f6730b6",
+        "runtimeSha256": "87db10715641aa22cb7428194ee296de869365d09e931b54cfd1e014327e1c5e",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 0,
+          "sheetRowColumn": [
+            0,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            0,
+            512,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-lu-khoang-v6-b70-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-khoang-v6-b70-portrait.png",
+          "sourceSizeBytes": 471076,
+          "sourceSha256": "e45c836c67752077e3ea7998405db845c7f5ded8b9ce67c96717e40a6f6730b6",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-khoang-v6-b70-portrait.webp",
+          "runtimeSizeBytes": 74436,
+          "runtimeSha256": "87db10715641aa22cb7428194ee296de869365d09e931b54cfd1e014327e1c5e",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-321": {
+      "name": "Lữ Tường",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b70",
+      "generationBatchId": "b70",
+      "sheetCellIndex": 1,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-lu-tuong-v6-b70-character.png",
+        "runtimeWebp": "female-lu-tuong-v6-b70-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "60f35286ddf6c19e5b0409301db790170b4c09d175049b7eb09fac7d9f6f899a",
+        "runtimeSha256": "36762c1f558329fca66cae42bb0e470856ab84a9b508023f733c7fa3aa3a8b44",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b",
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-tuong-v6-b70-character.png",
+          "sourceSizeBytes": 778733,
+          "sourceSha256": "60f35286ddf6c19e5b0409301db790170b4c09d175049b7eb09fac7d9f6f899a",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-tuong-v6-b70-character.webp",
+          "runtimeSizeBytes": 133916,
+          "runtimeSha256": "36762c1f558329fca66cae42bb0e470856ab84a9b508023f733c7fa3aa3a8b44",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-lu-tuong-v6-b70-portrait.png",
+        "runtimeWebp": "female-lu-tuong-v6-b70-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "a9084f0a3fa6b8b4c1e62a55bb2bb4317155cd2d54d80c2f79e9302c039fdc7c",
+        "runtimeSha256": "fb10ecac09498d49889dae16aaa95a84d69e1c69a1688f1627c2ad427b63f739",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 1,
+          "sheetRowColumn": [
+            0,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            0,
+            1024,
+            768
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-lu-tuong-v6-b70-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-tuong-v6-b70-portrait.png",
+          "sourceSizeBytes": 505645,
+          "sourceSha256": "a9084f0a3fa6b8b4c1e62a55bb2bb4317155cd2d54d80c2f79e9302c039fdc7c",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-tuong-v6-b70-portrait.webp",
+          "runtimeSizeBytes": 84312,
+          "runtimeSha256": "fb10ecac09498d49889dae16aaa95a84d69e1c69a1688f1627c2ad427b63f739",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-322": {
+      "name": "Lữ Uy Hoàng",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b70",
+      "generationBatchId": "b70",
+      "sheetCellIndex": 2,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-lu-uy-hoang-v6-b70-character.png",
+        "runtimeWebp": "female-lu-uy-hoang-v6-b70-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "b7c2ab7ca6716a969dbec300d5f753cde0c9f3de5a4fd41f7c9248f016fed7dd",
+        "runtimeSha256": "3ee82a62edb51b30f653cd0bf46b57cb4e5a8bdb34ea2f2e9391fc4958a3b2d0",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b",
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-uy-hoang-v6-b70-character.png",
+          "sourceSizeBytes": 782409,
+          "sourceSha256": "b7c2ab7ca6716a969dbec300d5f753cde0c9f3de5a4fd41f7c9248f016fed7dd",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-uy-hoang-v6-b70-character.webp",
+          "runtimeSizeBytes": 133024,
+          "runtimeSha256": "3ee82a62edb51b30f653cd0bf46b57cb4e5a8bdb34ea2f2e9391fc4958a3b2d0",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-lu-uy-hoang-v6-b70-portrait.png",
+        "runtimeWebp": "female-lu-uy-hoang-v6-b70-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "00bdf19bd4a6ddd79204838a41a6a56985a9c68321c4a8aa3b11e9ad9ddb470e",
+        "runtimeSha256": "141cff4e83765de8622e5635c23e872f750cd131f8e6e50ac260326aa50e8a76",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 2,
+          "sheetRowColumn": [
+            1,
+            0
+          ],
+          "sheetCropWindow": [
+            0,
+            768,
+            512,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-lu-uy-hoang-v6-b70-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-lu-uy-hoang-v6-b70-portrait.png",
+          "sourceSizeBytes": 528632,
+          "sourceSha256": "00bdf19bd4a6ddd79204838a41a6a56985a9c68321c4a8aa3b11e9ad9ddb470e",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-lu-uy-hoang-v6-b70-portrait.webp",
+          "runtimeSizeBytes": 91672,
+          "runtimeSha256": "141cff4e83765de8622e5635c23e872f750cd131f8e6e50ac260326aa50e8a76",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
+    },
+    "wiki-mobile-hero-323": {
+      "name": "Lương Hưng",
+      "faction": "Trung lập",
+      "currentRevision": "v6-b70",
+      "generationBatchId": "b70",
+      "sheetCellIndex": 3,
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "character": {
+        "sourcePng": "female-luong-hung-v6-b70-character.png",
+        "runtimeWebp": "female-luong-hung-v6-b70-character.webp",
+        "status": "GENERATED_V6_GRID_REVIEWABLE",
+        "sourceSha256": "b2b0af4d04902322c52fbed1009382b0cf4a8f23b5c97662f1684ad603d5367d",
+        "runtimeSha256": "5dd286e7c2d742716d4c66f83e80e5fbddca002c4f71bb36a7b0e7b95a3118b1",
+        "runtimeSize": [
+          512,
+          768
+        ],
+        "classification": "V6_GENERATED_FULL_BODY_GRID_CELL",
+        "provenance": {
+          "provider": "OpenAI ImageGen",
+          "generationOutputId": "exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b",
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "2:3 full-body cell from a 2x2 sheet; native 512x768",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "unknown; provider did not return an estimate",
+          "actualResolution": [
+            512,
+            768
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-luong-hung-v6-b70-character.png",
+          "sourceSizeBytes": 738172,
+          "sourceSha256": "b2b0af4d04902322c52fbed1009382b0cf4a8f23b5c97662f1684ad603d5367d",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-luong-hung-v6-b70-character.webp",
+          "runtimeSizeBytes": 123420,
+          "runtimeSha256": "5dd286e7c2d742716d4c66f83e80e5fbddca002c4f71bb36a7b0e7b95a3118b1",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "portrait": {
+        "sourcePng": "female-luong-hung-v6-b70-portrait.png",
+        "runtimeWebp": "female-luong-hung-v6-b70-portrait.webp",
+        "status": "DERIVED_V6_REVIEWABLE",
+        "sourceSha256": "d08d69465c0efd28d2115157954f2592c65d28346d68ce4218299e480e7ccfd3",
+        "runtimeSha256": "569a9f57040653cbc1841b6482ecc6f900b702928aeb9e3fbcae026bd74c4494",
+        "runtimeSize": [
+          512,
+          512
+        ],
+        "classification": "V6_DERIVED_PORTRAIT_CROP",
+        "provenance": {
+          "provider": "Local Pillow crop from the V6 grid-cell character master",
+          "generationOutputId": null,
+          "generationBatchId": "b70",
+          "generationLayout": "2x2 contact sheet; one full-body hero per cell",
+          "sheetCellIndex": 3,
+          "sheetRowColumn": [
+            1,
+            1
+          ],
+          "sheetCropWindow": [
+            512,
+            768,
+            1024,
+            1536
+          ],
+          "sheetResolution": [
+            1024,
+            1536
+          ],
+          "nativeCellResolution": [
+            512,
+            768
+          ],
+          "upscaled": false,
+          "promptVersion": "NL_CHARACTER_ART_V6_FOUR_UP_DISTINCT_FACES_R3",
+          "promptRecordStatus": "VERBATIM",
+          "promptFile": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70.prompt.txt",
+          "createdOn": "2026-11-27",
+          "providerTimestamp": "unknown",
+          "targetResolution": "1:1 square crop derived from one 2:3 grid cell",
+          "generationSourcePath": "/workspace/generated_images/exec-ab8e42f6-eab9-4d6b-a45c-2c0e5be1145b.png",
+          "sourceSheetArchivePath": "assets/ngoalong/nl_v1/portraits/female-four-up-v6-b70-sheet.png",
+          "sourceSheetSha256": "8e550487116c4b8d9cd25a22f286dcd2e40c33eb290595e2cd0698fd7d9c188a",
+          "sourceSheetSizeBytes": 3271827,
+          "cost": "no additional image-generation call",
+          "sourceCharacterMaster": "assets/ngoalong/nl_v1/portraits/female-luong-hung-v6-b70-character.png",
+          "cropWindow": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "actualResolution": [
+            512,
+            512
+          ],
+          "sourcePath": "assets/ngoalong/nl_v1/portraits/female-luong-hung-v6-b70-portrait.png",
+          "sourceSizeBytes": 472532,
+          "sourceSha256": "d08d69465c0efd28d2115157954f2592c65d28346d68ce4218299e480e7ccfd3",
+          "runtimePath": "assets/ngoalong/nl_v1/portraits/female-luong-hung-v6-b70-portrait.webp",
+          "runtimeSizeBytes": 75066,
+          "runtimeSha256": "569a9f57040653cbc1841b6482ecc6f900b702928aeb9e3fbcae026bd74c4494",
+          "runtimeDerivative": "Pillow WebP quality=90 method=6",
+          "image_created": false,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      }
     }
   },
-  "lastAssetAudit": "2026-11-27; registered 4 V6 full-body cells and local portrait crops from contact sheet b64; offline HTML embedding pending.",
+  "lastAssetAudit": "2026-11-27; registered 4 V6 full-body cells and local portrait crops from contact sheet b70; offline HTML embedding pending.",
   "discardedCells": [
     {
       "heroId": "wiki-mobile-hero-044",
