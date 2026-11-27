@@ -13,7 +13,8 @@ def main():
         page=context.new_page()
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
-        page.goto(HTML.as_uri(),wait_until="domcontentloaded")
+        page.goto(HTML.as_uri(),wait_until="domcontentloaded",timeout=120_000)
+        page.wait_for_function("() => !!window.__NL_A3_QA__ && typeof window.__P2_QA__?.getGame === 'function'", timeout=60_000)
         outcome=page.evaluate("""() => {
           const q=window.__NL_A3_QA__,g=window.__P2_QA__.getGame();
           const all=q.prices(),shop=all.filter(x=>x.cost);
