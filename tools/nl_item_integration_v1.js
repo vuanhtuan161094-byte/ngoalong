@@ -240,7 +240,7 @@ function nlTypedWikiFallback(row,source,tier){
  // Parse complete named loot tables, preserving actual stack identities and all options.
  // Missing quantities and lottery probabilities are explicitly simulated, never source claims.
  const id=String(row.id),keys={'1233':'res_125'};
- if(['694','1089','res_125','856'].includes(id))return {route:id==='856'?'elite-reset-token':'locked-chest-key',material:true,outputs:[]};
+ if(['694','1089','res_125','856','560','561','562'].includes(id))return {route:id==='856'?'elite-reset-token':['560','561','562'].includes(id)?'hero-reset-token':'locked-chest-key',material:true,outputs:[]};
  if(id==='1233'){
   const stack=(id,qty)=>({name:id,qty,wallet:'stack',itemId:'mobile-vng-item-'+id});
   return {route:'named-loot-random',random:true,requiredKey:'mobile-vng-item-res_125',outputs:[
@@ -376,7 +376,7 @@ function nlExposeMobileWikiCatalogue(source){
   NL_ITEM_CATALOGUE.items.push(fallback);bySourceId.set(sourceId,fallback);added.push(fallback);genericFallbacks.push(fallback);
  }
  if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
- if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||(!['locked-chest-key','elite-reset-token'].includes(x.sourceTypedRoute)&&x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER')))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
+ if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||(!['locked-chest-key','elite-reset-token','hero-reset-token'].includes(x.sourceTypedRoute)&&x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER')))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
  return {added,genericFallbacks};
 }
 const NL_MOBILE_WIKI_CATALOGUE=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);

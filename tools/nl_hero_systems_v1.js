@@ -29,6 +29,8 @@ function nlhsState(){
   if(!s.heroes||typeof s.heroes!=='object'||Array.isArray(s.heroes))s.heroes={};
   if(!s.materials||typeof s.materials!=='object'||Array.isArray(s.materials))s.materials={};
   if(!Array.isArray(s.receipts))s.receipts=[];
+  if(!s.refundLedger||typeof s.refundLedger!=='object'||Array.isArray(s.refundLedger))s.refundLedger={};
+  for(const id of game.roster||[])if(!Array.isArray(s.refundLedger[id]))s.refundLedger[id]=s.receipts.filter(r=>r?.heroId===id&&r.currency&&r.materials).map(r=>({...r}));
   if(!s.firstClearClaims||typeof s.firstClearClaims!=='object'||Array.isArray(s.firstClearClaims))s.firstClearClaims={};
   for(const r of s.receipts)if(r?.system==='rewards'&&Number.isInteger(r.stage))s.firstClearClaims[r.stage]=true;
   if(!s.materialShop||typeof s.materialShop!=='object'||Array.isArray(s.materialShop)||s.materialShop.day!==dayId())s.materialShop={day:dayId(),counts:{}};
@@ -126,7 +128,7 @@ function nlhUpgrade(id,heroId,sub=''){
  if(!nlhPay(cost,materials)){toast('Chưa đủ Bạc, Chiến công hoặc nguyên liệu.');return false;}
  if(id==='commander')h.commanderLevel=level;else if(id==='specialWeapon')h.weaponLevel=level;else if(id==='inheritance')h.inheritanceLevel=level;
  else if(id==='destiny')h.destinyLevel=level;else if(sub==='orange')h.awakening.orange=true;else h.awakening.gold=true;
- state.receipts.push({id:'hero-system:'+key+':'+heroId+':'+level+':'+Date.now(),system:key,heroId,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});state.receipts=state.receipts.slice(-500);
+ nlhRecordDevelopmentReceipt(state,{id:'hero-system:'+key+':'+heroId+':'+level+':'+Date.now(),system:key,heroId,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});
  log('Phát triển '+nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level+' (SIMULATED).');save();render();toast(nlhHero(heroId).name+' · '+SYS[id].label+' cấp '+level);return true;
 }
 function nlhPickDestiny(id,heroId){if(nlhSourceOptions(heroId).length||battle||!['war','guard','tactic'].includes(id)||!nlhIsOpen('destiny')||!nlhOwned(heroId))return false;const h=nlhsHero(heroId);h.destinyId=id;save();render();return true;}
@@ -176,8 +178,17 @@ p2Skill=function(actor){
 function nlhEndgameReady(id){return nlhOwned(id)&&nlhStage()>=28&&nlhsHero(id).awakening.gold&&(game.hero[id]?.level||0)>=40;}
 function nlhAncientQuote(level){return {currency:{silver:5000*level,merit:150*level},materials:{quynhTuong:level,xichQua:level,hoangTrungLy:level}};}
 function nlhIllusionQuote(){return {currency:{silver:8000,merit:250},materials:{destinyJade:2,blank:2}};}
+function nlhRecordDevelopmentReceipt(s,r){
+ if(!s.refundLedger||typeof s.refundLedger!=='object')s.refundLedger={};
+ if(!Array.isArray(s.refundLedger[r.heroId]))s.refundLedger[r.heroId]=[];
+ if(game.roster?.includes(r.heroId)&&r.currency&&r.materials){
+  const ledger=s.refundLedger[r.heroId];if(ledger.some(x=>x.id===r.id))r={...r,id:r.id+':'+ledger.length};
+  ledger.push({...r,currency:{...r.currency},materials:{...r.materials}});
+ }
+ s.receipts.push(r);s.receipts=s.receipts.slice(-500);
+}
 function nlhEndgameReceipt(system,id,level,cost,materials){
- const s=nlhsState();s.receipts.push({id:'hero-endgame:'+system+':'+id+':'+level+':'+Date.now(),system,heroId:id,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});s.receipts=s.receipts.slice(-500);save();render();return true;
+ const s=nlhsState();nlhRecordDevelopmentReceipt(s,{id:'hero-endgame:'+system+':'+id+':'+level+':'+Date.now(),system,heroId:id,level,currency:cost,materials,at:Date.now(),classification:'SIMULATED'});save();render();return true;
 }
 function nlhAncientUpgrade(id){
  if(battle||!nlhEndgameReady(id))return false;
@@ -355,10 +366,21 @@ function nlhEndgamePanel(id){
 function nlhMaterialShopPanel(){
  const s=nlhsState();return '<h3 class="nlh-section-title">Đổi vật liệu · tối đa 5 món mỗi loại/ngày</h3>'+Object.entries(MATERIAL_SHOP).map(([id,[gate,silver,merit]])=>{const n=s.materialShop.counts[id]||0;return '<div class="nlh-action-row"><span class="nlh-quote">'+hsEsc(NL_HS.materialCatalog[id].name)+' · '+n+'/5 · '+silver+' Bạc + '+merit+' Chiến công</span><button class="nlh-button" data-nlh-action="materialBuy" data-nlh-material="'+id+'" '+(battle||nlhStage()<gate||n>=5||!nlhCanPay({silver,merit},{})?'disabled':'')+'>'+(nlhStage()<gate?'Ải '+gate:'Đổi')+'</button></div>';}).join('')+'<p class="nlh-source-note">Nguồn vật liệu tái tạo bằng Bạc/Chiến công; giá và giới hạn SIMULATED.</p>';
 }
+function nlhDevelopmentRefundPanel(id){
+ if(typeof nlItemConsumableApi==='undefined'||!nlItemConsumableApi.heroDevelopmentRefundQuote)return '';
+ const options=[['560','Hạ Chức Lệnh-Sơ'],['561','Hạ Chức Lệnh-Trung'],['562','Hạ Chức Lệnh-Cao']];
+ const rows=options.map(([token,name])=>{
+  const q=nlItemConsumableApi.heroDevelopmentRefundQuote(game,id,token);
+  if(!q)return '';
+  const owned=Number(game.nlItemsV1?.stacks?.['mobile-vng-item-'+token])||0;
+  return '<div class="nlh-feature-panel"><b>'+hsEsc(name)+' · '+q.rate+'%</b><p>'+hsEsc(nlhCostText(q.currency,q.materials))+'</p><p>'+q.plan.length+' nhóm có chứng từ đầy đủ'+(q.blocked.length?' · '+q.blocked.length+' nhóm giữ nguyên do thiếu chứng từ':'')+'</p><button class="nlh-button" data-nlh-action="developmentReset" data-nlh-mode="'+token+'" '+(battle||!owned?'disabled':'')+'>Hạ chức · Có '+owned+' lệnh</button></div>';
+ }).join('');
+ return '<h3 class="nlh-section-title">Hạ chức phát triển</h3><p>Hoàn trả 60/80/100% chi phí thực trả của các nhóm nâng cấp có đủ chứng từ. Giữ nguyên cấp tướng, trang bị, giác ngộ nguồn và các nhóm thiếu chứng từ; đây là mô phỏng phạm vi hạ chức.</p>'+ (rows||'<p>Chưa có nhóm đầu tư đủ chứng từ.</p>');
+}
 function nlhMobileResetPanel(id){
  if(typeof nlMobileHeroApi==='undefined'||!nlMobileHeroApi?.resetQuote)return '';
  const rows=['normal','super'].map(kind=>{const q=nlMobileHeroApi.resetQuote(id,kind);return q?'<div class="nlh-feature-panel"><b>'+hsEsc(kind==='super'?'Truyền Thừa Lệnh-Siêu':'Truyền Thừa Lệnh')+'</b><p>Hạ phẩm chất '+q.from+' → '+q.to+' · Hoàn trả '+Object.entries(q.refund).map(([k,v])=>hsEsc(k)+' ×'+nlhFmt(v)).join(' · ')+'</p><button class="nlh-button" data-nlh-action="mobileReset" data-nlh-mode="'+kind+'" '+(battle||!q.owned?'disabled':'')+'>Hạ phẩm chất · Có '+q.owned+' lệnh</button></div>':'';}).join('');
- return '<h3 class="nlh-section-title">Hạ chức / Truyền thừa</h3><p>Chỉ hoàn trả giác ngộ có chứng từ đầy đủ; không hạ cấp, không đổi trang bị, Mệnh Cách, Quý Tử hoặc các đầu tư khác. Chưa phải toàn bộ cơ chế Mobile.</p>'+(rows||'<p>Chưa đủ chuỗi chứng từ từ phẩm chất gốc hoặc chưa đạt điều kiện.</p>');
+ return nlhDevelopmentRefundPanel(id)+'<h3 class="nlh-section-title">Hạ chức / Truyền thừa</h3><p>Chỉ hoàn trả giác ngộ có chứng từ đầy đủ; không hạ cấp, không đổi trang bị, Mệnh Cách, Quý Tử hoặc các đầu tư khác. Chưa phải toàn bộ cơ chế Mobile.</p>'+(rows||'<p>Chưa đủ chuỗi chứng từ từ phẩm chất gốc hoặc chưa đạt điều kiện.</p>');
 }
 function nlhMobileAwakeningPanel(id){
  if(typeof nlMobileHeroApi==='undefined'||!nlMobileHeroApi?.quality(id))return null;
@@ -454,6 +476,7 @@ document.addEventListener('click',e=>{
  else if(action==='materialBuy')nlhMaterialBuy(b.dataset.nlhMaterial);
  else if(action==='mobileMaterial')nlMobileHeroApi.buyMaterial(nlhsState().selectedHero,b.dataset.nlhName,Number(b.dataset.nlhCount));
  else if(action==='mobileAwaken')nlMobileHeroApi.awaken(nlhsState().selectedHero);
+ else if(action==='developmentReset'){const id=nlhsState().selectedHero,token=b.dataset.nlhMode,q=nlItemConsumableApi.heroDevelopmentRefundQuote(game,id,token);if(!battle&&q&&window.confirm('Hạ chức '+q.plan.length+' nhóm có đủ chứng từ và hoàn trả '+q.rate+'%?')){const nonce=nlItemHydrate().actionNonce+1;nlItemApply(nlItemConsumableApi.resetHeroDevelopment(game,id,token,'nli:ui:'+nonce),{actionNonce:nonce});}}
  else if(action==='mobileReset'){const id=nlhsState().selectedHero,kind=b.dataset.nlhMode,q=nlMobileHeroApi.resetQuote(id,kind);if(q&&window.confirm('Hạ phẩm chất '+q.from+' về '+q.to+' và dùng một lệnh?'))nlMobileHeroApi.reset(id,kind);}
  else if(action==='artMode')nlhSetArtMode(nlhsState().selectedHero,b.dataset.nlhMode);
 });

@@ -328,6 +328,93 @@
       });
     }
 
+
+    // The base hero level includes earned battle XP and old saves cannot distinguish it
+    // from purchased training. Leave it intact. Refund only complete paid rank lanes.
+    const DEMOTION_RATES={'560':60,'561':80,'562':100};
+    function heroDevelopmentRefundQuote(state,heroId,tokenId){
+      const id=String(heroId),rate=DEMOTION_RATES[String(tokenId)],d=state?.heroDevelopment,h=d?.heroes?.[id];
+      if(!rate||!goodId(id)||id==='mobile-quy-tu'||!state?.roster?.includes(id)||!h)return null;
+      const ledger=Array.isArray(d.refundLedger?.[id])?d.refundLedger[id]:(d.receipts||[]).filter(r=>r?.heroId===id);
+      const plan=[],used=new Set(),currency=Object.create(null),materials=Object.create(null),blocked=[];
+      function lane(system,levels,field,base=0,option=null){
+        if(!Array.isArray(levels)||!levels.length)return;
+        const records=ledger.filter(r=>r?.system===system&&(option===null||r.option===option));
+        // Compare the full level multiset, not just number of entries.
+        if(records.length!==levels.length||records.map(r=>r.level).sort((a,b)=>a-b).join(',')!==levels.slice().sort((a,b)=>a-b).join(',')||
+          records.some(r=>!goodId(r.id)||!r.currency||!r.materials||used.has(r.id))){
+          blocked.push(option===null?system:system+':'+option);return;
+        }
+        const local={currency:Object.create(null),materials:Object.create(null)};
+        for(const r of records)for(const k of ['currency','materials'])for(const [name,amount] of Object.entries(r[k])){
+          if(!goodId(name)||!safe(amount)||k==='currency'&&!['silver','gold','iron','gems','merit'].includes(name)||
+             k==='materials'&&!own(d.materials||{},name)||!safe((local[k][name]||0)+amount)){
+            blocked.push(system);return;
+          }
+          local[k][name]=(local[k][name]||0)+amount;
+        }
+        for(const r of records)used.add(r.id);
+        for(const k of ['currency','materials'])for(const [name,amount] of Object.entries(local[k])){
+          const wallet=k==='currency'?currency:materials;wallet[name]=(wallet[name]||0)+amount;
+        }
+        plan.push({system,field,base,option});
+      }
+      const range=(from,to)=>safe(to)&&to>=from&&to<=100?Array.from({length:to-from+1},(_,i)=>from+i):[];
+      lane('commander',range(1,h.commanderLevel),'commanderLevel');
+      lane('inheritance',range(1,h.inheritanceLevel),'inheritanceLevel');
+      lane('skill',range(2,h.skillLevel),'skillLevel',1);
+      // A migrated legacy weapon baseline is retained; only newly paid Mobile ranks are refunded.
+      lane('mobile-weapon',range((h.weaponLevel||0)+1,h.mobileBuild?.weapon),'mobileWeapon',h.weaponLevel||0);
+      if(!h.mobileBuild?.weapon)lane('specialWeapon',range(1,h.weaponLevel),'weaponLevel');
+      lane('destiny',range(1,h.destinyLevel),'destinyLevel');
+      const ranks=h.mobileBuild?.ranks||{};
+      const rankEntries=Object.entries(ranks).filter(([,rank])=>safe(rank)&&rank>0);
+      // Legacy receipts omit the chosen option. If every option's rank multiset
+      // is represented, reset all options together (no invented historical payment).
+      const allRanks=rankEntries.flatMap(([,rank])=>range(1,rank));
+      lane('mobile-destiny',allRanks,'mobileDestinyAll');
+      lane('ancient',range(1,h.ancientLevel),'ancientLevel');
+      // Illusion depends on ancient level. Refuse ancient reset if any illusion is unlocked
+      // without its own complete paid receipt; do not destroy earned unlocks.
+      if((h.illusionUnlocked||[]).length&&plan.some(p=>p.field==='ancientLevel')){
+        // quote is recomputed in a later supported transaction; preserve this dependency now.
+        return null;
+      }
+      if(!plan.length)return null;
+      for(const wallet of [currency,materials])for(const name of Object.keys(wallet)){
+        if(!safe(wallet[name]))return null;
+        wallet[name]=Math.floor(wallet[name]*rate/100);
+      }
+      return {heroId:id,tokenId:String(tokenId),rate,currency,materials,plan,blocked,receiptIds:[...used],classification:'SIMULATED_SCOPED_ACTUAL_PAYMENT_REFUND'};
+    }
+    function resetHeroDevelopment(state,heroId,tokenId,receipt){
+      const id=String(heroId),token='mobile-vng-item-'+String(tokenId);
+      return execute(state,'RESET_HERO_DEVELOPMENT',id,String(tokenId),receipt,(next,m)=>{
+        requireOk(get(token).sourceTypedRoute==='hero-reset-token','BAD_HERO_RESET_TOKEN');
+        const q=heroDevelopmentRefundQuote(next,id,tokenId);
+        requireOk(q,'NO_COMPLETE_HERO_DEVELOPMENT_RECEIPTS');
+        const d=next.heroDevelopment,h=d.heroes[id],refundIds=new Set(q.receiptIds);
+        debitStack(m,token,1);
+        for(const [name,qty] of Object.entries(q.currency)){
+          const wallet=name==='merit'?next.nlClassicA:next;
+          requireOk(wallet&&safe(wallet[name]||0)&&safe((wallet[name]||0)+qty),'REFUND_OVERFLOW');
+          wallet[name]=(wallet[name]||0)+qty;
+        }
+        for(const [name,qty] of Object.entries(q.materials)){
+          requireOk(safe(d.materials[name]||0)&&safe((d.materials[name]||0)+qty),'REFUND_OVERFLOW');
+          d.materials[name]=(d.materials[name]||0)+qty;
+        }
+        for(const p of q.plan){
+          if(p.field==='mobileWeapon')h.mobileBuild.weapon=p.base;
+          else if(p.field==='mobileDestinyAll'){h.mobileBuild.ranks={};h.mobileBuild.destiny=null;}
+          else {h[p.field]=p.base;if(p.field==='destinyLevel')h.destinyId=null;}
+        }
+        d.receipts=(d.receipts||[]).filter(r=>!refundIds.has(r.id));
+        d.refundLedger=d.refundLedger||{};d.refundLedger[id]=(d.refundLedger[id]||[]).filter(r=>!refundIds.has(r.id));
+        return {heroId:id,rate:q.rate,currency:q.currency,materials:q.materials,plan:q.plan,blocked:q.blocked,classification:q.classification};
+      });
+    }
+
     function inspect(id){
       const row=items[id];
       if(!row)return {found:false};
@@ -336,7 +423,7 @@
         effect:row.integration==='PLAYABLE'?copy(row.effectRule):null,
         provenance:row.provenance.classification};
     }
-    return {use,process,buySourceBundle,buySourceMaterial,buySourceMaterials,consumeSourceMaterials,giveBeautyGift,resetMobileQuality,quoteEliteReset,resetElite,inspect,validate:()=>validatePack(pack,config)};
+    return {use,process,buySourceBundle,buySourceMaterial,buySourceMaterials,consumeSourceMaterials,giveBeautyGift,resetMobileQuality,quoteEliteReset,resetElite,heroDevelopmentRefundQuote,resetHeroDevelopment,inspect,validate:()=>validatePack(pack,config)};
   }
   return {createModule,validatePack};
 });

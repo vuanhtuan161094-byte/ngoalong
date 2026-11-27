@@ -48,3 +48,20 @@ test('Elite reset returns actual debits once, clears assignment and rejects miss
  assert.equal(api.resetElite(r.state,'9','reset1').duplicate,true);
  assert.equal(api.resetElite(r.state,'9','reset2').ok,false);
 });
+
+test('three demotion tokens refund recorded rank costs at 60/80/100 percent only once',()=>{
+ const engine=require('../data/ngoalong/modules/inventory/consumables_engine.js');
+ for(const [id,rate] of [['560',60],['561',80],['562',100]]){
+  const token='mobile-vng-item-'+id;
+  assert.equal(typed(source.items.find(x=>String(x.id)===id),source,3).route,'hero-reset-token');
+  const api=engine.createModule({items:[{id:token,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK'},effectRule:null,sourceTypedRoute:'hero-reset-token'}]},{limits:{stacksKinds:10,quantityEach:100,receipts:100}});
+  const records=[{id:'a',system:'commander',heroId:'cao',level:1,currency:{silver:100,merit:10},materials:{commandManual:5}},{id:'b',system:'commander',heroId:'cao',level:2,currency:{silver:200,merit:10},materials:{commandManual:5}}];
+  const s={silver:0,nlClassicA:{merit:0},roster:['cao'],hero:{cao:{level:40}},heroDevelopment:{heroes:{cao:{commanderLevel:2,inheritanceLevel:1}},materials:{commandManual:0},receipts:records,refundLedger:{cao:records}},nlItemsV1:{serial:0,receipts:{},stacks:{[token]:2}}};
+  const q=api.heroDevelopmentRefundQuote(s,'cao',id);
+  assert.equal(q.currency.silver,3*rate);assert.equal(q.materials.commandManual,rate/10);assert.equal(q.plan.length,1);
+  const r=api.resetHeroDevelopment(s,'cao',id,'reset');assert.ok(r.ok);
+  assert.equal(r.state.silver,3*rate);assert.equal(r.state.heroDevelopment.heroes.cao.commanderLevel,0);
+  assert.equal(r.state.heroDevelopment.heroes.cao.inheritanceLevel,1);assert.equal(r.state.hero.cao.level,40);
+  assert.equal(api.resetHeroDevelopment(r.state,'cao',id,'again').ok,false);
+ }
+});
