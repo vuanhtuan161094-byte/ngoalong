@@ -10,6 +10,9 @@ const fx=new Image();fx.src='data:image/svg+xml;base64,'+__NL_D2_FX__;
 // D4: original P41/P5 raster sprites are used for four family groups; the
 // specialist R06 spear, support and war-drum art remains identifiable.
 const raster=__NL_D4_RASTER__;
+// Optional, local-only source atlas preview. Canonical/public builds contain none.
+const privateAtlases=new Map();
+for(const [id,a] of Object.entries(raster.privateWly2||{})){const im=new Image();im.src='data:image/png;base64,'+a.png;privateAtlases.set(id,{...a,im});}
 const p41=new Image(),p5=new Image();
 p41.src='data:image/webp;base64,'+raster.p41;p5.src='data:image/webp;base64,'+raster.p5;
 const families=['infantry','spear','cavalry','archer','strategist','support','drum'];
@@ -57,7 +60,22 @@ function cel(ctx,im,row,frame,x,y,w,h,flip){
  ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);
  ctx.drawImage(im,frame*160,row*168,160,168,-w/2,-h,w,h);ctx.restore();return true;
 }
+function privateCel(ctx,f,team,v,x,y,w,h,offset){
+ const a=privateAtlases.get(f+'/'+(team==='e'?2:1));if(!a||!ready(a.im))return false;
+ const action=v.moving?'move':v.action==='disappear'?'death':v.action;
+ const clip=a.clips[action]||a.clips.idle;if(!clip?.length)return false;
+ const n=clip.length,i=action==='idle'?(Math.floor(performance.now()/110)+offset)%n:Math.min(n-1,Math.floor(clamp(v.frame/3,0,1)*(n-1)));
+ const d=a.frames[clip[i]];if(!d)return false;
+ const [sx,sy,sw,sh,rot,ox,oy,fw,fh,tw,th]=d;
+ const scale=Math.min(w/fw,h/fh),dw=tw*scale,dh=th*scale;
+ const dx=x+ox*scale-dw/2,dy=y-fh*scale/2-oy*scale-dh/2;
+ ctx.save();
+ if(rot){ctx.translate(dx,dy+dh);ctx.rotate(-Math.PI/2);ctx.drawImage(a.im,sx,sy,sw,sh,0,0,dh,dw);}
+ else ctx.drawImage(a.im,sx,sy,sw,sh,dx,dy,dw,dh);
+ ctx.restore();return true;
+}
 function rasterCel(ctx,f,team,v,x,y,w,h,offset){
+ if(privateCel(ctx,f,team,v,x,y,w,h,offset))return true;
  const dir=team==='e'?'left':'right';
  if(f==='infantry'&&ready(p5)){
    const act=v.moving?'move':v.action==='disappear'?'death':v.action==='hit'?'hurt':v.action==='skill'?'attack':v.action;

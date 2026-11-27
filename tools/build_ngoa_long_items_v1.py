@@ -20,7 +20,7 @@ END = "// === END-NL-ITEMS-INJECTED-BY-BUILDER ==="
 BOOT = "setInterval(tick,1000);setInterval(save,15000);window.addEventListener('beforeunload',save);tick();render();"
 
 
-def payload() -> str:
+def payload(private_wly2=None) -> str:
     catalogue = json.loads((DATA / "catalogue.json").read_text(encoding="utf-8"))
     rules = json.loads((DATA / "rules.json").read_text(encoding="utf-8"))
     from nl_classic_phase_a3_items import project_a3
@@ -179,6 +179,8 @@ def payload() -> str:
     raster_d4 = {"p41":raster_pack(raster_dir / "troops_p41.webp", p41_manifest["atlasSha256"]),
                  "p5":raster_pack(scout_dir / "cl-p5-infantry-scout-atlas.webp", p5_manifest["atlas"]["sha256"]),
                  "p41Units":p41_manifest["units"],"p5Rows":p5_manifest["atlas"]["rowOrder"]}
+    if private_wly2 is not None:
+        raster_d4["privateWly2"] = private_wly2
     assert art_d2.count("__NL_D4_RASTER__") == 1
     art_d2 = art_d2.replace("__NL_D2_SHEETS__", js_json(art_sheets)).replace("__NL_D2_FX__", js_json(art_fx)).replace("__NL_D4_RASTER__", js_json(raster_d4))
     city_dir = ROOT / "assets/ngoalong/original"
