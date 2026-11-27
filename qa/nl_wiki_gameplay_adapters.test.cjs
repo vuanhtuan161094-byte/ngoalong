@@ -65,3 +65,28 @@ test('three demotion tokens refund recorded rank costs at 60/80/100 percent only
   assert.equal(api.resetHeroDevelopment(r.state,'cao',id,'again').ok,false);
  }
 });
+
+test('wiki lethal settlement caps hits, executes below threshold and consumes one life without negative HP',()=>{
+ const code=between(read('tools/nl_content_c_runtime.js'),'function wikiHitLimits(','function mobileSingleHit(');
+ const limit=new Function(code+'\nreturn wikiHitLimits')();
+ assert.deepEqual(limit(100,100,80,.25,0,0),{damage:25,restored:0});
+ assert.deepEqual(limit(40,100,30,0,.15,0),{damage:40,restored:0});
+ assert.deepEqual(limit(40,100,100,0,0,.15),{damage:25,restored:15});
+ assert.deepEqual(limit(40,100,0,0,.95,0),{damage:0,restored:0});
+});
+test('new Wiki statuses map to functional combat fields and keep undispellable variants separate',()=>{
+ const code=between(read('tools/nl_content_c_runtime.js'),'function wikiExtraSourceApplications(','// === END WIKI-SHARED-STATUS-ADAPTER ===');
+ const records=JSON.parse(read('data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw/data/buff-map.json'));
+ const data={statusEffects:{effects:{}}};
+ const build=new Function('MOBILE_BUFFS','NL_GAME_DATA','mobileTextKey','clamp','MOBILE_SOURCE_CONFUSION',code+'\nreturn wikiExtraSourceApplications')({records},data,x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase(),(v,a,b)=>Math.max(a,Math.min(b,v)),'confused');
+ const ids=['57','59','60','61','62','66','69','71','72','75','76','79','80','81','84','85','89','93','94','95','96','97','98'];
+ const rows=build({desc:''},ids.map(id=>({id,detail:'20%'})),[]);
+ assert.equal(rows.length,23);
+ const find=id=>rows.find(r=>r.sourceId===id);
+ assert.equal(find('57').values.wikiExecuteBelow,.2);
+ assert.equal(find('59').values.wikiExtraHits,1);
+ assert.equal(find('71').stack,true);
+ assert.equal(find('71').dispelPolicy,'undispellable');
+ assert.equal(data.statusEffects.effects[find('76').kind].skipActionChance,1);
+ assert.equal(find('98').mechanic,'instant-dispel-limited');
+});

@@ -830,7 +830,7 @@ function wikiTimed(u,key,turns,values,polarity='beneficial',undispellable=false)
  if(!NL_GAME_DATA.statusEffects.effects[kind])NL_GAME_DATA.statusEffects.effects[kind]={duration:1,polarity,dispelPolicy:undispellable?'undispellable':'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false};
  return applyMobileSourceStatus(u,{kind,turns:Math.max(1,Math.min(31,Math.floor(turns)||1)),values,sourceName:key,formulaClassification:'SIMULATED_WIKI_P2_ADAPTER',dispelPolicy:undispellable?'undispellable':'removable'});
 }
-function wikiValue(u,key){return (u?.effects||[]).filter(e=>e.turns>0).reduce((n,e)=>n+(Number(e.mobileSourceValues?.[key])||0),0);}
+function wikiValue(u,key){return (u?.effects||[]).filter(e=>e.turns>0).reduce((n,e)=>n+(Number(e.mobileSourceValues?.[key])||0)*(e.mobileSource?.wikiStack?Math.max(1,Math.min(10,nat(e.stacks)||1)):1),0);}
 function wikiEliteShield(u){return u&&applyMobileSourceStatus(u,{kind:MOBILE_ONE_HIT_SHIELD_STATUS,turns:2,values:{},sourceName:'Hộ Thuẫn Tinh Nhuệ',formulaClassification:'SOURCE_EFFECT_WITH_P2_ADAPTER'});}
 function wikiEliteTrample(u,n){
  if(!u||u.hp<=0)return;u.nlWikiTrample=(u.nlWikiTrample||0)+1;
@@ -1051,23 +1051,46 @@ function wikiExtraSourceApplications(skill,effects,existing){
  const spec={
   '27':{kind:MOBILE_SOURCE_CONFUSION,values:{}},
   '28':{values:n=>({wikiDamage:n,'wiki-def':-n,'wiki-tdef':-n,'wiki-mdef':-n})},
-  '38':{values:n=>({wikiDamage:n})},
-  '44':{kind:MOBILE_SOURCE_COUNTER_UP,values:n=>({counterChanceAdd:n})},
-  '53':{kind:MOBILE_SOURCE_RESIST,values:n=>({debuffResistance:n})},
-  '56':{values:n=>({wikiDamage:n})},
+  '38':{values:n=>({wikiHealthyDamage:n})},
+  '44':{values:n=>({wikiCounterAny:n})},
+  '53':{values:n=>({wikiConfusionResist:n})},
+  '56':{stack:true,values:n=>({wikiDamage:n})},
   '63':{values:n=>({wikiLowerDamage:n})},
-  '64':{values:n=>({wikiHigherDamage:n})}
+  '64':{values:n=>({wikiHigherDamage:n})},
+  '57':{values:n=>({wikiExecuteBelow:n})},
+  '59':{values:()=>({wikiExtraHits:1})},
+  '60':{values:n=>({wikiNormalMagic:n,moraleGainMultiplier:0})},
+  '61':{values:n=>({wikiNormalTactic:n,moraleGainMultiplier:0})},
+  '62':{values:n=>({wikiNormalPhysical:n,moraleGainMultiplier:0})},
+  '66':{values:n=>({wikiLastLife:n})},
+  '69':{values:()=>({wikiKillMorale:25})},
+  '71':{stack:true,values:n=>({'wiki-def':n,'wiki-tdef':n,'wiki-mdef':n})},
+  '72':{values:n=>({wikiHitCapRatio:n})},
+  '75':{stack:true,values:()=>({wikiTrampleStack:1})},
+  '76':{control:true,values:{}},
+  '79':{values:n=>({'wiki-def':-n,'wiki-tdef':-n,'wiki-mdef':-n})},
+  '80':{values:n=>({wikiDamage:n})},
+  '81':{values:n=>({'wiki-def':n,'wiki-tdef':n,'wiki-mdef':n})},
+  '84':{values:()=>({wikiPreCleanse:1})},
+  '85':{kind:MOBILE_SOURCE_CONFUSION,values:{}},
+  '89':{values:()=>({wikiMoraleGuard:1})},
+  '93':{values:n=>({wikiControlledBonus:n})},
+  '94':{values:n=>({wikiDecayAttack:n})},
+  '95':{values:n=>({wikiLateAttack:n})},
+  '96':{instant:'instant-cleanse-limited',values:()=>({count:1})},
+  '97':{instant:'instant-cleanse-limited',values:()=>({count:2})},
+  '98':{instant:'instant-dispel-limited',values:()=>({count:2})}
  };
  for(const ef of effects||[]){
   const id=String(ef.id),rule=spec[id],source=MOBILE_BUFFS.records?.[id];
   if(!rule||!source||done.has(id))continue;
   const detail=mobileTextKey(ef.detail||''),name=mobileTextKey(source.name),at=f.indexOf('['+name+']'),context=at>=0?f.slice(Math.max(0,at-110),at+150):'';
-  const pct=detail.match(/(\d+(?:[.,]\d+)?)\s*%/)||context.match(/(\d+(?:[.,]\d+)?)\s*%/),n=pct?clamp(Number(pct[1].replace(',','.'))/100,0,.95):.15;
+  const pct=detail.match(/(\d+(?:[.,]\d+)?)\s*%/)||context.match(/(?:tang|giam|toi da|thap hon|khong vuot qua)\s*(\d+(?:[.,]\d+)?)\s*%/),n=pct?clamp(Number(pct[1].replace(',','.'))/100,0,.95):.15;
   const turns=clamp(Number((detail.match(/(\d+)\s*luot/)||context.match(/duy tri\s*(\d+)\s*luot/))?.[1])||2,1,31);
   const polarity=source.type==='debuff'?'harmful':'beneficial',scope=/toan phe ta/.test(context)?'allies':/toan phe dich/.test(context)?'enemies':/ban than|tu than/.test(context)?'self':polarity==='harmful'?'targets':'self';
   const kind=rule.kind||'mobile-wiki-source-'+id;
-  if(!NL_GAME_DATA.statusEffects.effects[kind])NL_GAME_DATA.statusEffects.effects[kind]={duration:1,polarity,dispelPolicy:source.und?'undispellable':'removable',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false};
-  rows.push({sourceId:id,sourceName:source.name,sourceDescription:source.ing,detail:ef.detail||'',kind,mechanic:'wiki-shared',scope,turns,chance:1,values:typeof rule.values==='function'?rule.values(n):rule.values,dispelPolicy:source.und?'undispellable':'removable',formulaClassification:'SIMULATED_SOURCE_SEMANTICS_SCOPE_AND_MISSING_MAGNITUDE'});
+  if(!NL_GAME_DATA.statusEffects.effects[kind])NL_GAME_DATA.statusEffects.effects[kind]={duration:1,polarity,dispelPolicy:source.und?'undispellable':'removable',stackingPolicy:'replace-duration',expirePhase:rule.control?'owner-action':'round-end',removeAfterOwnAction:!!rule.control,...(rule.control?{skipActionChance:1}:{})};
+  rows.push({sourceId:id,sourceName:source.name,sourceDescription:source.ing,detail:ef.detail||'',kind,mechanic:rule.instant||'wiki-shared',scope:rule.instant==='instant-dispel-limited'?'targets':id==='96'?'self':scope,turns,chance:1,stack:!!rule.stack,values:typeof rule.values==='function'?rule.values(n):rule.values,dispelPolicy:source.und?'undispellable':'removable',formulaClassification:'SIMULATED_SOURCE_SEMANTICS_SCOPE_AND_MISSING_MAGNITUDE'});
   done.add(id);
  }
  return rows;
@@ -1400,7 +1423,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152','27','28','38','44','53','56','63','64'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152','27','28','38','44','53','56','63','64'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152','27','28','38','44','53','56','63','64','57','59','60','61','62','66','69','71','72','75','76','79','80','81','84','85','89','93','94','95','96','97','98'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152','27','28','38','44','53','56','63','64','57','59','60','61','62','66','69','71','72','75','76','79','80','81','84','85','89','93','94','95','96','97','98'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1418,6 +1441,7 @@ p2Status=function(unit,kind,turns,...rest){
  const polarity=NL_GAME_DATA.statusEffects.effects[kind]?.polarity;
  if(mobileBookHas(unit,MOBILE_SOURCE_IMMUNITY)&&['beneficial','harmful'].includes(polarity))return false;
  if(mobileBookHas(unit,MOBILE_SOURCE_DEBUFF_IMMUNE)&&polarity==='harmful')return false;
+ if(kind===MOBILE_SOURCE_CONFUSION&&battle&&!battle.replay&&battle.mode!=='cltq'&&wikiValue(unit,'wikiConfusionResist')>0&&p2Random()<Math.min(1,wikiValue(unit,'wikiConfusionResist')))return false;
  if(polarity==='harmful'&&battle&&!battle.replay&&battle.mode!=='cltq'){const resist=(unit?.effects||[]).filter(e=>e.kind===MOBILE_SOURCE_RESIST&&e.turns>0).reduce((v,e)=>v+(Number(e.mobileSourceValues?.debuffResistance)||0),0);if(resist>0&&p2Random()<Math.min(1,resist))return false;}
  if(mobileBookHas(unit,MOBILE_BOOK_IMMUNE)&&NL_GAME_DATA.statusEffects.effects[kind]?.polarity==='harmful')return false;
  if(unit?.nlMobileControlCharges>0&&['daze','sleep','fear',MOBILE_CONTROL_STATUS,MOBILE_SLEEP_STATUS,MOBILE_SOURCE_FREEZE,MOBILE_NO_NORMAL].includes(kind)){unit.nlMobileControlCharges--;return false;}
@@ -1452,7 +1476,7 @@ p2StatusFactor=function(unit,field){
 const nlContentCMobileBaseMorale=p2Morale;
 p2Morale=function(unit,delta){
  if(unit&&delta>0)delta=Math.floor(delta*p2StatusFactor(unit,'moraleGainMultiplier'));
- if(unit&&delta<0&&(unit.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_MORALE_IMMUNITY&&effect.turns>0))delta=0;
+ if(unit&&delta<0&&((unit.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_MORALE_IMMUNITY&&effect.turns>0)||wikiValue(unit,'wikiMoraleGuard')>0))delta=0;
  else if(unit&&delta<0&&mobileBookHas(unit,MOBILE_BOOK_MORALE_GUARD))delta=Math.ceil(delta*.5);
  return nlContentCMobileBaseMorale(unit,delta);
 };
@@ -1472,19 +1496,21 @@ function applyMobileSourceStatus(unit,app){
    values.shieldMaximum=Math.max(0,Math.round(Math.max(0,Number(unit.maxHp)||0)*ratio));
    values.shieldRemaining=values.shieldMaximum;
  }
- const priorProgressiveStacks=existing?.stacks;
+ const priorWikiStacks=nat(existing?.stacks),priorProgressiveStacks=existing?.stacks;
  const priorRevivalStacks=existing?.kind===MOBILE_SOURCE_REVIVAL?nat(existing.stacks):0;
  if(!p2Status(unit,app.kind,app.turns))return false;
  const status=unit.effects.find(effect=>effect.kind===app.kind);
  if(!status)return false;
  status.mobileSourceValues=values;
+ if(app.stack)status.stacks=Math.min(10,priorWikiStacks+1);
  if(app.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY)status.stacks=clamp(nat(priorProgressiveStacks)||1,1,Math.min(5,nat(app.simulatedStackLimit)||5));
  if(app.kind===MOBILE_SOURCE_REVIVAL)status.stacks=clamp(priorRevivalStacks+Math.max(1,nat(values.stackCount)||1),1,99);
  status.mobileSource={sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:app.sourceId,
    sourceName:app.sourceName,sourceDescription:app.sourceDescription,sourceDetail:app.detail,
    dispelPolicy:app.dispelPolicy||NL_GAME_DATA.statusEffects.effects[app.kind]?.dispelPolicy||'removable',
-   formulaClassification:app.formulaClassification||'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER',valueEvidence:app.valueEvidence||null,
+   formulaClassification:app.formulaClassification||'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER',wikiStack:!!app.stack,valueEvidence:app.valueEvidence||null,
    unresolvedMechanics:app.unresolvedMechanics||[]};
+ if(app.sourceId==='75'&&status.stacks>=3){unit.effects=unit.effects.filter(e=>e!==status);const kind='mobile-wiki-source-76';NL_GAME_DATA.statusEffects.effects[kind]={duration:1,polarity:'harmful',dispelPolicy:'undispellable',stackingPolicy:'replace-duration',expirePhase:'owner-action',removeAfterOwnAction:true,skipActionChance:1};applyMobileSourceStatus(unit,{sourceId:'76',sourceName:'Hôn Mê',kind,turns:1,values:{},dispelPolicy:'undispellable'});}
  return true;
 }
 function awakeningDescriptor(id){
@@ -1768,6 +1794,16 @@ function mobileConsumeShield(target,shield){
  if(layers>1)shield.mobileSourceValues.shieldLayers=layers-1;
  else target.effects=target.effects.filter(effect=>effect!==shield);
 }
+// Source 57/66/72 share one settlement path; thresholds/caps are simulated
+// when no magnitude is exposed. Do not bypass one-hit shields or settle rewards twice.
+function wikiHitLimits(hp,maxHp,damage,cap,threshold,revive){
+ let n=Math.min(hp,Math.max(0,Math.floor(damage)));
+ if(n>0&&cap>0)n=Math.min(n,Math.max(1,Math.floor(maxHp*Math.min(1,cap))));
+ if(n>0&&threshold>0&&(hp-n)/Math.max(1,maxHp)<Math.min(.95,threshold))n=hp;
+ let restored=0;
+ if(n>=hp&&hp>0&&revive>0){restored=Math.max(1,Math.min(hp,Math.floor(maxHp*Math.min(1,revive))));n=hp-restored;}
+ return {damage:n,restored};
+}
 function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const trait=mobileTraitFactors(attacker,target,kind,attacker?.nlMobileActionPattern||'single',battle?.round||1);
  const normalElite=attacker?.nlWikiEliteNormal,normalPlan=normalElite&&attacker.nlMobileElite?.plans?.find(p=>p.pos===0);
@@ -1775,7 +1811,9 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  if(normalPlan?.mult)mult*=normalPlan.mult;
  const aHp=attacker?.hp/Math.max(1,attacker?.maxHp||1),tHp=target?.hp/Math.max(1,target?.maxHp||1),ak=({physical:'atk',tactic:'catk',magic:'matk'})[kind],dk=({physical:'def',tactic:'tdef',magic:'mdef'})[kind];
  const lowBonus=u=>wikiValue(u,'wikiLowBase')+(wikiValue(u,'wikiLowMax')-wikiValue(u,'wikiLowBase'))*(1-u.hp/Math.max(1,u.maxHp));
- const atkWiki=wikiValue(attacker,'wikiDamage')+wikiValue(attacker,'wiki-'+ak)+(aHp>.5?wikiValue(attacker,'wikiHealthSplit'):0)+lowBonus(attacker)+(aHp>tHp?wikiValue(attacker,'wikiLowerDamage'):wikiValue(attacker,'wikiHigherDamage'));
+ const normal=!attacker?.nlMobileSourceSkillAction&&attacker?.morale<100,normalKey=({physical:'wikiNormalPhysical',magic:'wikiNormalMagic',tactic:'wikiNormalTactic'})[kind];
+ const controlled=(target?.effects||[]).some(e=>e.turns>0&&NL_GAME_DATA.statusEffects.effects[e.kind]?.skipActionChance>0);
+ const atkWiki=wikiValue(attacker,'wikiHealthyDamage')*aHp+(normal?wikiValue(attacker,normalKey):0)+(controlled?wikiValue(attacker,'wikiControlledBonus'):0)+wikiValue(attacker,'wikiDecayAttack')*Math.max(0,1-((attacker.nlWikiActionCount||1)-1)/4)+wikiValue(attacker,'wikiLateAttack')*Math.min(5,Math.max(0,(attacker.nlWikiActionCount||1)-4))+wikiValue(attacker,'wikiDamage')+wikiValue(attacker,'wiki-'+ak)+(aHp>.5?wikiValue(attacker,'wikiHealthSplit'):0)+lowBonus(attacker)+(aHp>tHp?wikiValue(attacker,'wikiLowerDamage'):wikiValue(attacker,'wikiHigherDamage'));
  const defWiki=wikiValue(target,'wiki-'+dk)+(tHp<=.5?wikiValue(target,'wikiHealthSplit'):0)+lowBonus(target);
  mult*=Math.max(.05,1+atkWiki)*Math.max(.05,1+wikiValue(target,'wikiTaken'));
  if((attacker?.effects||[]).some(e=>e.turns>0&&['undispellable','unremovable'].includes(e.mobileSource?.dispelPolicy)))mult*=Math.max(.05,1-wikiValue(target,'wikiUndispellableReduction'));
@@ -1850,6 +1888,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
    if(hpShield.mobileSourceValues.shieldRemaining<=0)target.effects=target.effects.filter(effect=>effect!==hpShield);
  }
  if(damage>0&&target?.nlMobileAbsorb>0){const blocked=Math.min(damage,target.nlMobileAbsorb);target.nlMobileAbsorb-=blocked;damage-=blocked;hit.mobileTraitAbsorbed=blocked;}
+ if(damage>0){const revive=(target.effects||[]).find(e=>e.turns>0&&Number(e.mobileSourceValues?.wikiLastLife)>0),limit=wikiHitLimits(beforeHp,target.maxHp,damage,wikiValue(target,'wikiHitCapRatio'),wikiValue(target,'wikiExecuteBelow'),revive?.mobileSourceValues?.wikiLastLife||0);damage=limit.damage;if(limit.restored&&revive){target.effects=target.effects.filter(e=>e!==revive);hit.mobileSourceLastLife=limit.restored;}}
  if(damage!==rawDamage||mobileSourceShieldAbsorbed>0){target.hp=beforeHp-damage;target.alive=target.hp>0;target.morale=beforeMorale;
    if(damage>0)p2Morale(target,target.type==='strategist'?34:25);
    hit.amount=damage;hit.number='-'+damage;}
@@ -1865,6 +1904,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
    const morale=wikiValue(target,'wikiOnHitMorale');if(morale)p2Morale(target,morale);
    const trample=wikiValue(target,'wikiOnHitTrample'),chance=wikiValue(target,'wikiOnHitChance');if(trample&&p2Random()<Math.min(1,chance))wikiEliteTrample(attacker,trample);
  }
+ if(beforeHp>0&&target.hp<=0&&wikiValue(attacker,'wikiKillMorale')>0)p2Morale(attacker,wikiValue(attacker,'wikiKillMorale'));
  if(normalPlan?.noMorale&&Number.isFinite(beforeMorale)&&target.hp>0)target.morale=beforeMorale;
  const lifeSteal=(attacker?.effects||[]).filter(effect=>effect.kind===MOBILE_LIFESTEAL_STATUS&&effect.turns>0)
    .reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.lifestealDamageMultiplier)||0),0);
@@ -1898,7 +1938,7 @@ function mobileAppendSourceRedirectHits(event){
 }
 p2Hit=function(attacker,target,kind,mult=1,opts={}){
  const d=attacker?.nlMobileSourceSkillAction?(attacker.team==='e'?attacker.nlCDescriptor:mobileHeroSkill(attacker.id)):null;
- const count=Number.isSafeInteger(d?.sourceHitCount)?clamp(d.sourceHitCount,1,20):1;
+ const count=clamp((Number.isSafeInteger(d?.sourceHitCount)?d.sourceHitCount:1)+(!battle?.replay&&battle?.mode!=='cltq'?Math.floor(wikiValue(attacker,'wikiExtraHits')):0),1,20);
  // Each hit is the existing P2 hit path; no additional action, reward or skill settlement.
  return count>1&&!battle?.replay?mobileRepeatHit(mobileSingleHit,attacker,target,kind,mult,opts,count):mobileSingleHit(attacker,target,kind,mult,opts);
 };
@@ -1971,7 +2011,7 @@ function applyMobileSourceApplications(actor,event,descriptor){
   for(const target of new Set(mobileSourceApplicationTargets(actor,event,app,descriptor))){
    if(app.condition==='TARGET_SURVIVES'&&target.hp<=0)continue;
    if(app.chance<1&&p2Random()>=app.chance)continue;
-   if((app.mechanic==='instant-cleanse'?mobileBookCleanse(target,Infinity)>0:app.mechanic==='instant-dispel'?mobileBookDispel(target,1)>0:applyMobileSourceStatus(target,app)))applied.push({target:target.name,name:app.sourceName,turns:app.turns});
+   if((app.mechanic==='instant-cleanse'?mobileBookCleanse(target,Infinity)>0:app.mechanic==='instant-dispel'?mobileBookDispel(target,1)>0:app.mechanic==='instant-cleanse-limited'?mobileBookCleanse(target,app.values.count)>0:app.mechanic==='instant-dispel-limited'?mobileBookDispel(target,app.values.count)>0:applyMobileSourceStatus(target,app)))applied.push({target:target.name,name:app.sourceName,turns:app.turns});
   }
  }
  if(!applied.length)return;
@@ -2138,13 +2178,13 @@ function mobileTickPeriodic(actor,event,prior){
  return labels;
 }
 function mobileResolveCounters(actor,event){
- if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name||event.mode!=='normal')return [];
+ if(!battle||battle.replay||battle.mode==='cltq'||!actor||actor.hp<=0||!event||event.actor!==actor.name||event.mode==='stunned')return [];
  const enemies=actor.team==='p'?battle.e:battle.p,seen=new Set(),out=[];
  for(const hit of (event.hits||[]).slice()){
   if(actor.hp<=0)break;
   if(hit.team===actor.team||!(hit.amount>0)||hit.heal||hit.mobileSourceRedirect||seen.has(hit.slot))continue;
   seen.add(hit.slot);
-  const u=enemies.find(x=>x.slot===hit.slot&&x.hp>0),chance=mobileCounterChance(u);
+  const u=enemies.find(x=>x.slot===hit.slot&&x.hp>0),chance=Math.min(1,(event.mode==='normal'?mobileCounterChance(u):0)+wikiValue(u,'wikiCounterAny'));
   if(!u||!chance||mobileBookHas(u,MOBILE_CONTROL_STATUS)||mobileBookHas(u,MOBILE_SLEEP_STATUS)||mobileBookHas(u,'mobile-source-freeze')||p2Random()>=chance)continue;
   const counter=mobileSingleHit(u,actor,'physical',.6,{});
   if(counter)out.push({...counter,mobileCounter:true,counterActorTeam:u.team,counterActorSlot:u.slot,counterActor:u.name});
@@ -2165,6 +2205,7 @@ function mobileAdvanceProgressiveVulnerability(actor,event){
 }
 p2Perform=function(actor){
  // A silence blocks the morale action, not the normal action or stored morale.
+ if(actor&&battle&&!battle.replay&&battle.mode!=='cltq'){actor.nlWikiActionCount=(actor.nlWikiActionCount||0)+1;const cleanse=wikiValue(actor,'wikiPreCleanse');if(cleanse>0)mobileBookCleanse(actor,cleanse);}
  const savedMorale=actor?.morale;
  const silenced=!!actor&&savedMorale>=100&&(mobileBookHas(actor,MOBILE_BOOK_SILENCE)||(actor.effects||[]).some(effect=>effect.kind===MOBILE_SOURCE_SILENCE_STATUS&&effect.turns>0));
  const confusionActive=!!actor&&mobileBookHas(actor,MOBILE_SOURCE_CONFUSION)&&battle?.mode!=='cltq'&&!battle?.replay;
