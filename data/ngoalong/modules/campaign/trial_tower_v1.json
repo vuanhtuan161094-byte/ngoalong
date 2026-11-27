@@ -2,15 +2,26 @@
   "schemaVersion": 1,
   "id": "nl-trial-tower-100-v1",
   "provenance": "PROJECT_SIMULATED",
-  "sourceNote": "The 100-floor count is reference context. Floors 21-100 below are original simulated encounters, not recovered official floor data.",
+  "sourceNote": "The captured Mobile Wiki page describes Võ Khôi Tháp difficulty tiers gated by commander level, not numbered floors 420 or 500. Native floors 1-20 remain the baseline; floors 21-100 keep their original project-simulated encounters; floors 101-500 are generated project-simulated encounters, not recovered official floor data.",
   "nativeFloors": 20,
-  "maxFloor": 100,
+  "maxFloor": 500,
+  "generatedExpansion": {
+    "firstFloor": 101,
+    "lastFloor": 500,
+    "provenance": "PROJECT_SIMULATED",
+    "arcLength": 10,
+    "templateCount": 8,
+    "layoutCount": 10,
+    "note": "Rotate the eight existing tactical templates and ten 3x3 layouts; enemy count and strength rise by milestone. Do not describe generated floors as official source records."
+  },
   "eliteEvery": 5,
   "chapterBossEvery": 10,
   "enemyCountBands": [
     {"first": 21, "last": 30, "count": 3},
     {"first": 31, "last": 50, "count": 4},
-    {"first": 51, "last": 100, "count": 5}
+    {"first": 51, "last": 100, "count": 5},
+    {"first": 101, "last": 200, "count": 4},
+    {"first": 201, "last": 500, "count": 5}
   ],
   "rewardFormula": {
     "normal": {"silverBase": 1100, "silverPerFloor": 420, "grainBase": 150, "grainPerFloor": 30, "prestigeBase": 60, "prestigePerFloor": 30, "soulBase": 30, "soulPerFloor": 1},

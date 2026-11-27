@@ -1755,19 +1755,30 @@ function startNpc(id,repeat=false){
 const TOWER_ROLE_NAMES={infantry:'Bộ binh',spear:'Thương binh',cavalry:'Kỵ binh',archer:'Cung thủ',strategist:'Mưu sĩ',support:'Hỗ trợ',drum:'Cổ thủ',dancer:'Vũ cơ'};
 function towerPlan(n){
  if(!Number.isInteger(n)||n<=NL_CONTENT_C_TOWER.nativeFloors||n>NL_CONTENT_C_TOWER.maxFloor)return null;
- const arc=NL_CONTENT_C_TOWER.arcs.find(x=>n>=x.firstFloor&&n<x.firstFloor+10),local=arc?n-arc.firstFloor:-1;
+ const expansion=NL_CONTENT_C_TOWER.generatedExpansion,generated=n>=expansion.firstFloor;
+ let arc,local,templateIndex=0,cycle=0;
+ if(generated){
+  const offset=n-expansion.firstFloor,segment=Math.floor(offset/expansion.arcLength);
+  templateIndex=segment%NL_CONTENT_C_TOWER.arcs.length;cycle=Math.floor(segment/ NL_CONTENT_C_TOWER.arcs.length)+1;
+  const template=NL_CONTENT_C_TOWER.arcs[templateIndex],firstFloor=expansion.firstFloor+segment*expansion.arcLength;
+  arc={...template,id:template.id+'-sim-'+cycle,firstFloor,name:template.name+' · Vòng mô phỏng '+cycle};
+  local=n-firstFloor;
+ }else{
+  arc=NL_CONTENT_C_TOWER.arcs.find(x=>n>=x.firstFloor&&n<x.firstFloor+10);local=arc?n-arc.firstFloor:-1;
+ }
  if(!arc||local<0||local>=NL_CONTENT_C_TOWER.layouts.length)return null;
- const layout=NL_CONTENT_C_TOWER.layouts[local],band=NL_CONTENT_C_TOWER.enemyCountBands.find(x=>n>=x.first&&n<=x.last);
+ const layoutIndex=(local+(generated?(cycle-1)*3:0))%NL_CONTENT_C_TOWER.layouts.length;
+ const layout=NL_CONTENT_C_TOWER.layouts[layoutIndex],band=NL_CONTENT_C_TOWER.enemyCountBands.find(x=>n>=x.first&&n<=x.last);
  if(!band)return null;
  const boss=n%NL_CONTENT_C_TOWER.eliteEvery===0,chapterBoss=n%NL_CONTENT_C_TOWER.chapterBossEvery===0;
  const units=layout.order.slice(0,band.count).map((idx,i)=>{
-  const source=arc.roster[idx],isLeader=boss&&i===band.count-1;
+  const rotation=generated?(templateIndex+cycle-1)%arc.roster.length:0,source=arc.roster[(idx+rotation)%arc.roster.length],isLeader=boss&&i===band.count-1;
   return {slot:layout.slots[i],name:(isLeader?'Thủ lĩnh ':'')+source.name,role:source.role,skill:source.skill,
    troops:Math.round((500+n*90)*(source.troopScale||1)),level:n,boss:isLeader};
  });
  return {kind:'tower',id:'tower-'+n,floor:n,arcId:arc.id,arcName:arc.name,doctrine:arc.doctrine,counterplay:arc.counterplay,
   title:'Tháp Thí Luyện · Tầng '+n+' · '+arc.name,rank:chapterBoss?'Boss chương':boss?'Tinh anh':'Thường',boss,
-  chapterBoss,aiStyle:arc.aiStyle,layoutIndex:local,units};
+  chapterBoss,aiStyle:arc.aiStyle,layoutIndex,generated,cycle:generated?cycle:null,provenance:'PROJECT_SIMULATED',units};
 }
 function towerRewards(n){
  const f=NL_CONTENT_C_TOWER.rewardFormula,b=f.normal,bonus=n%NL_CONTENT_C_TOWER.chapterBossEvery===0?f.chapterBossBonus:{silver:0,grain:0,prestige:0,soul:0};
@@ -2639,7 +2650,7 @@ function towerPanel(){
   next=locked?NL_CONTENT_C_TOWER.nativeFloors+1:Math.min(NL_CONTENT_C_TOWER.maxFloor,completed+1),plan=!locked&&!done?towerPlan(next):null,
   tries=game.activity?.towerTries||0,reward=plan?towerRewards(next):null;
  const roster=plan?plan.units.map(u=>esc(u.name)+' · '+esc(TOWER_ROLE_NAMES[u.role]||u.role)+' · '+esc(u.skill)).join('<br>'):'';
- const preview=plan?'<div class="nlc-tower-plan"><b>'+esc(plan.arcName)+' · '+esc(plan.rank)+'</b><small>'+esc(plan.doctrine)+'</small><p>'+esc(plan.counterplay)+'</p><div class="nlc-tower-lineup">'+roster+'</div></div>':locked?'<div class="nlc-tower-plan"><b>Mở rộng từ tầng '+next+'</b><small>Hoàn thành 20 tầng gốc để mở 8 chặng mô phỏng đến tầng 100.</small></div>':row('Tháp đã chinh phục','Đã hoàn thành đủ '+NL_CONTENT_C_TOWER.maxFloor+' tầng.');
+ const preview=plan?'<div class="nlc-tower-plan"><b>'+esc(plan.arcName)+' · '+esc(plan.rank)+'</b><small>'+esc(plan.doctrine)+' · PROJECT_SIMULATED</small><p>'+esc(plan.counterplay)+'</p><div class="nlc-tower-lineup">'+roster+'</div></div>':locked?'<div class="nlc-tower-plan"><b>Mở rộng từ tầng '+next+'</b><small>Hoàn thành 20 tầng gốc để mở tuyến mô phỏng đến tầng '+NL_CONTENT_C_TOWER.maxFloor+'. Dữ liệu phát sinh là mô phỏng, không phải hồ sơ tầng chính thức.</small></div>':row('Tháp đã chinh phục','Đã hoàn thành đủ '+NL_CONTENT_C_TOWER.maxFloor+' tầng.');
  const loot=reward?'<p class="nlc-tower-reward">Thưởng mô phỏng: Bạc +'+fmt(reward.silver)+' · Lương +'+fmt(reward.grain)+' · Uy danh +'+fmt(reward.prestige)+' · Tướng Hồn +'+fmt(reward.soul)+(plan.chapterBoss?' · thưởng Boss chương':'')+'</p>':'';
  const progress=locked?'Đã vượt '+completed+'/'+NL_CONTENT_C_TOWER.nativeFloors+' tầng gốc':`Đã vượt ${completed}/${NL_CONTENT_C_TOWER.maxFloor}`;
  return pane('tower','Tháp Thí Luyện · '+NL_CONTENT_C_TOWER.maxFloor+' tầng','<p>'+progress+' · lượt hôm nay '+tries+'/3 · Tướng Hồn '+state().soul+'</p>'+preview+loot+row(done?'Hoàn tất':locked?'Tầng '+NL_CONTENT_C_TOWER.nativeFloors+' → '+next:'Tầng '+next,locked?'Mở rộng sau khi vượt đủ 20 tầng gốc.':done?'Đã hoàn thành Tháp Thí Luyện.':'Đội hình '+plan.units.length+' quân · '+plan.aiStyle+' · PROJECT_SIMULATED',btn('tower','','Khiêu chiến',!!battle||locked||done||!tries)));

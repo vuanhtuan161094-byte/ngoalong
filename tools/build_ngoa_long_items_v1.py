@@ -130,10 +130,13 @@ def payload() -> str:
         raise ValueError("Invalid Content C bundle")
     tower_roles={"infantry","spear","cavalry","archer","strategist","support","drum","dancer"}
     tower_styles={"pressure","counter","finish","protect"}
-    arcs=tower.get("arcs",[]);layouts=tower.get("layouts",[])
+    arcs=tower.get("arcs",[]);layouts=tower.get("layouts",[]);expansion=tower.get("generatedExpansion",{})
     if (tower.get("schemaVersion")!=1 or tower.get("provenance")!="PROJECT_SIMULATED" or
-        tower.get("nativeFloors")!=20 or tower.get("maxFloor")!=100 or
+        tower.get("nativeFloors")!=20 or tower.get("maxFloor")!=500 or
         tower.get("eliteEvery")!=5 or tower.get("chapterBossEvery")!=10 or
+        expansion.get("firstFloor")!=101 or expansion.get("lastFloor")!=500 or
+        expansion.get("provenance")!="PROJECT_SIMULATED" or expansion.get("arcLength")!=10 or
+        expansion.get("templateCount")!=8 or expansion.get("layoutCount")!=10 or
         len(arcs)!=8 or len(layouts)!=10 or
         [a.get("firstFloor") for a in arcs]!=list(range(21,101,10)) or
         len({a.get("id") for a in arcs})!=8):
@@ -147,7 +150,7 @@ def payload() -> str:
             len(set(layout["slots"]))!=5 or any(not isinstance(slot,int) or slot<0 or slot>8 for slot in layout["slots"])):
             raise ValueError("Invalid Trial Tower formation layout")
     bands=tower.get("enemyCountBands",[])
-    if (not bands or bands[0].get("first")!=21 or bands[-1].get("last")!=100 or
+    if (not bands or bands[0].get("first")!=21 or bands[-1].get("last")!=500 or
         any(b.get("count") not in (3,4,5) or b.get("first")>b.get("last") for b in bands) or
         any(a["last"]+1!=b["first"] for a,b in zip(bands,bands[1:]))):
         raise ValueError("Invalid Trial Tower enemy-count coverage")

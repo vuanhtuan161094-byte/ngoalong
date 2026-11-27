@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import copy
 import json
+import os
+import shutil
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -37,7 +39,12 @@ def main() -> int:
 
     try:
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
+            executable = os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH") or shutil.which("chromium")
+            browser = playwright.chromium.launch(
+                headless=True,
+                executable_path=executable,
+                args=["--no-sandbox", "--disable-dev-shm-usage"],
+            )
             try:
                 page = browser.new_page(viewport={"width": 1280, "height": 720})
                 page.on("pageerror", lambda error: errors.append(str(error)))

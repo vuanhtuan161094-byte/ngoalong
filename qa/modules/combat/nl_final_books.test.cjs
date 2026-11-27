@@ -3,6 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const src=fs.readFileSync(path.resolve(__dirname,'../../../tools/nl_content_c_runtime.js'),'utf8');
 const extract=(a,b)=>src.slice(src.indexOf(a),src.indexOf(b));
 const helpers=extract('function mobileBookHas(','function mobileSingleHit(')+extract('function mobileBookCleanse(','function mobileApplyTurnPassives(');
+const wikiValueHelper=extract('function wikiValue(','function wikiEliteShield(');
 function run(id,grade,roll,turn=2){
  const ally={name:'A',hp:50,maxHp:100,morale:0,slot:0,effects:[],nlMobileTraining:{book:{id,grade,name:'Book',desc:'test'}},nlMobileBookTurns:turn};
  const enemy={hp:100,maxHp:100,morale:100,slot:0,effects:[{kind:'buff',turns:2}]};
@@ -19,10 +20,10 @@ test('attribute book uses bounded temporary flat modifier',()=>{const c=run('11'
 test('Spring consumes a layer, heals actual HP and respects Break',()=>{const c=run('7',5,0);assert.equal(vm.runInContext('mobileBookSpring(ally)',c),41);assert.equal(c.ally.hp,91);assert.equal(c.ally.effects[0].mobileSourceValues.layers,1);});
 
 test('counter uses source chance, one response per defender, no recursive turns or replay',()=>{
- const source=extract('function mobileCounterChance(','p2Perform=function(actor){\n // A silence');
- const a={name:'A',team:'p',slot:0,hp:100},b={name:'B',team:'e',slot:0,hp:100,nlMobileTroop:{strikeBack:.5}};
+ const source=wikiValueHelper+extract('function mobileCounterChance(','p2Perform=function(actor){\n // A silence');
+ const a={name:'A',team:'p',slot:0,hp:100},b={name:'B',team:'e',slot:0,hp:100,nlMobileTroop:{strikeBack:.25},effects:[{turns:2,stacks:1,mobileSource:{wikiStack:true},mobileSourceValues:{wikiCounterAny:.25}}]};
  const event={actor:'A',mode:'normal',description:'normal',hits:[{team:'e',slot:0,amount:20},{team:'e',slot:0,amount:10}]};
- const ctx={actor:a,event,battle:{p:[a],e:[b]},p2Random:()=>.49,p2Snapshot:()=>({}),mobileBookHas:()=>false,MOBILE_CONTROL_STATUS:'control',MOBILE_SLEEP_STATUS:'sleep',
+ const ctx={actor:a,event,battle:{p:[a],e:[b]},nat:x=>Math.max(0,Math.floor(Number(x)||0)),p2Random:()=>.49,p2Snapshot:()=>({}),mobileBookHas:()=>false,MOBILE_CONTROL_STATUS:'control',MOBILE_SLEEP_STATUS:'sleep',
  mobileSingleHit:(attacker,target,kind,mult)=>{assert.equal(mult,.6);target.hp-=20;return {team:target.team,slot:target.slot,amount:20};}};
  vm.createContext(ctx);vm.runInContext(source+';mobileResolveCounters(actor,event);',ctx);
  assert.equal(a.hp,80);assert.equal(event.hits.length,3);assert.equal(event.hits[2].mobileCounter,true);

@@ -36,9 +36,10 @@ def main():
           g.hero[id].troops=3000;g.hero[id].level=60;
           g.nlClassicA.orders=60;g.towerFloor=20;g.activity.towerTries=3;
           q.setGame(g);
-          const plans=Array.from({length:80},(_,i)=>c.towerPlan(i+21));
+          const plans=Array.from({length:480},(_,i)=>c.towerPlan(i+21));
           const styles=new Set(plans.map(p=>p?.aiStyle)),arcs=new Set(plans.map(p=>p?.arcId));
           const counts=plans.map(p=>p?.units.length),keys=plans.map(p=>p?.id);
+          const planDiversity=new Set(plans.map(p=>JSON.stringify([p?.aiStyle,p?.boss,p?.units?.map(u=>[u.slot,u.role,u.skill])]))).size;
           const skillAudit=c.skillAudit();
           const sourceStatusSamples={};
           for(let mapId=1;mapId<=400;mapId++){
@@ -61,9 +62,9 @@ def main():
               }
             }
           }
-          const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
-          const planCounts=counts.every((v,i)=>v===(i<10?3:i<30?4:5));
-          const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29);
+          const planCoverage=plans.every((p,i)=>p&&p.floor===i+21&&p.provenance==='PROJECT_SIMULATED'&&p.generated===(p.floor>=101)&&p.units.every(u=>u.slot>=0&&u.slot<9&&u.role&&u.skill));
+          const planCounts=counts.every((v,i)=>{const n=i+21;return v===(n<=30?3:n<=50?4:n<=100?5:n<=200?4:5);});
+          const reward21=c.towerRewards(21),reward30=c.towerRewards(30),reward29=c.towerRewards(29),reward500=c.towerRewards(500),plan420=c.towerPlan(420),plan500=c.towerPlan(500);
           const checks={loaded:true,coverage:c.counts.maps===249&&c.counts.npcs===5063&&c.counts.legacyNpcCount===4903&&c.counts.runtimeHeroes===374&&c.counts.mobileHeroDetails===373&&c.counts.mobileExtraRosterHeroes===6&&c.counts.mobileBuffs===320&&c.mobileBuffCount()===320&&c.tiers()===40,
             mobileExtraHeroRecruitment:extraBought.every(Boolean)&&extraRows.every(x=>x.record&&x.record.leadership>0&&x.quality?.growth)&&extraSaveOk,
             mobileExtraHeroP2Runtime:extraUnits,
@@ -71,8 +72,10 @@ def main():
             mobileItemRuntimeCount:itemCounts?.mobilePlayable===itemCounts?.sourceSpecificActive+itemCounts?.sourceGenericFallbacks&&itemCounts?.mobilePlayable===746&&itemCounts?.sourceSpecificActive===itemCounts?.sourceRouteMaterials+itemCounts?.sourceEliteMaterials+itemCounts?.sourceBundles+itemCounts?.sourceExchangeMaterials+itemCounts?.sourceGifts+itemCounts?.sourceResetItems+itemCounts?.sourceCraftNewMaterials+itemCounts?.sourceSeriesNewMaterials&&itemCounts?.sourceRouteMaterials===34&&itemCounts?.sourceEliteMaterials===6&&itemCounts?.sourceGenericFallbacks===585&&itemCounts?.mobileSourceReferenceOnly===0,
             mobileItemGenericFallback:itemFallbackProbe?.ok&&itemFallbackProbe?.duplicateOpen&&itemFallbackProbe?.processed,
             mobileItemCatalogueUI:wikiResults===746&&wikiPageCards===25,
-            towerPlanCoverage:planCoverage&&new Set(keys).size===80&&arcs.size===8&&styles.size===4&&planCounts,
-            towerBossRewards:plans.filter(p=>p.chapterBoss).length===8&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
+            towerPlanCoverage:planCoverage&&new Set(keys).size===480&&arcs.size===48&&styles.size===4&&planCounts&&planDiversity>=400,
+            towerPlanDiversity:planDiversity>=400,
+            towerBossRewards:plans.filter(p=>p.chapterBoss).length===48&&reward30.silver-reward29.silver>420&&reward30.soul>reward21.soul,
+            tower420And500Milestones:plan420?.generated&&plan420?.chapterBoss&&plan500?.generated&&plan500?.chapterBoss&&plan500?.floor===500&&reward500.silver>reward21.silver&&c.towerPlan(501)===null,
             mobileNpcSkillAudit:skillAudit.totalUnits===25195&&skillAudit.sourceExactUnits===23944&&
               skillAudit.sourceExactWithNameAndDescription===23944&&skillAudit.sourceExactSkillNames===694&&
               skillAudit.sourceExactDamageAdapted>5000&&skillAudit.sourceExactHealAdapted>1000&&
@@ -838,6 +841,28 @@ def main():
           q.finishBattle();const towerRepeated=q.getGame();
           checks.towerNoDuplicate=JSON.stringify(settled)===JSON.stringify([towerRepeated.silver,towerRepeated.grain,towerRepeated.prestige,c.floor(),c.state().soul,towerRepeated.battleReports.length]);
           q.closeBattle('city');
+          const at419=q.getGame();at419.nlContentC.extraFloor=399;at419.activity.towerTries=3;q.setGame(at419);
+          checks.tower420Entry=c.startTower()&&q.debugBattle()?.nlContentC?.floor===420&&q.debugBattle()?.nlContentC?.generated===true;
+          q.closeBattle('city');
+          const at499=q.getGame();at499.nlContentC.extraFloor=479;at499.activity.towerTries=3;q.setGame(at499);
+          const before500=q.getGame(),expected500=c.towerRewards(500),soul500=c.state().soul,merit500=q.getGame().nlClassicA.merit;
+          const started500=c.startTower(),lastTower=q.debugBattle();
+          checks.tower500Entry=started500&&lastTower?.nlContentC?.floor===500&&lastTower?.nlContentC?.generated===true&&lastTower?.e.length===5;
+          const afterStart500=q.getGame();
+          if(lastTower){for(const u of lastTower.e)u.hp=0;if(!lastTower.finished)q.finishBattle();}
+          const after500=q.getGame(),report500=lastTower?.report;
+          const settled500=[after500.silver,after500.grain,after500.prestige,c.floor(),c.state().soul,after500.nlClassicA.merit,after500.battleReports.length];
+          const raw500=localStorage.getItem('muu_dinh_tam_quoc_v1');q.finishBattle();const duplicate500=q.getGame();
+          checks.tower500NativeSettlement=!!lastTower?.won&&c.floor()===500&&c.state().extraFloor===480&&
+            afterStart500.grain-before500.grain===-lastTower.cost&&after500.grain-before500.grain===expected500.grain-lastTower.cost&&
+            after500.silver-afterStart500.silver===expected500.silver&&
+            after500.grain-afterStart500.grain===expected500.grain&&after500.prestige-afterStart500.prestige===expected500.prestige&&
+            c.state().soul===soul500+expected500.soul&&after500.nlClassicA.merit-merit500===1015&&
+            report500?.nlContentC?.floor===500&&report500?.rewards?.silver===expected500.silver&&report500?.rewards?.grain===expected500.grain;
+          checks.tower500NoDuplicate=JSON.stringify(settled500)===JSON.stringify([duplicate500.silver,duplicate500.grain,duplicate500.prestige,c.floor(),c.state().soul,duplicate500.nlClassicA.merit,duplicate500.battleReports.length]);
+          q.setGame(JSON.parse(raw500));
+          checks.tower500SaveReloadAndStop=q.getGame().version===5&&c.floor()===500&&q.getGame().battleReports.some(r=>r.nlContentC?.floor===500)&&!c.startTower()&&c.towerPlan(501)===null;
+          q.closeBattle('city');
           checks.seals=c.seals()===25&&c.sealReady('1001')&&c.sealLevel('1002')===1&&!('unlockSeal'in c)&&!('equipSeal'in c);
           checks.panels=c.panels().every(x=>x.includes('data-nlc-panel'))&&c.panels().some(x=>x.includes('mobile-troops'));
           const exactMapBonus=c.mapBonus('wiki-map-1');
@@ -848,7 +873,7 @@ def main():
           const atGate=q.getGame();atGate.nlContentC.mobileCommanderLevel=30;q.setGame(atGate);
           checks.mobileSourceUnlock=campaignLocked&&!!campaignTarget&&c.readyNpc(campaignTarget.id)&&c.state().mobileCommanderLevel===30;
           q.setGame(campaignGateBefore);
-          checks.saveV5=q.getGame().version===5&&c.floor()===21&&c.state().soul===soulBefore+expected.soul;
+          checks.saveV5=q.getGame().version===5&&c.floor()===500&&c.state().soul>=soulBefore+expected.soul;
           // Test repeat victory through the same native settlement path; not a balance claim.
           const repeatGame=q.getGame();repeatGame.silver=1000000;repeatGame.grain=1000000;
           repeatGame.hero[id].troops=3000;repeatGame.nlClassicA.orders=60;q.setGame(repeatGame);
