@@ -228,6 +228,65 @@ function nlMobileWikiRecord(row){
   upgradeTo:row.upgradeTo,stats:row.stats,refundGold:row.refundGold,refundTiers:row.refundTiers,
   usage:row.usage,desc:row.desc||''};
 }
+// === WIKI-TYPED-ITEMS ===
+function nlTypedWikiFallback(row,source,tier){
+ const fold=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
+ const name=fold(row.name),desc=fold(row.desc),both=name+' '+desc,group=row.typeName;
+ const output=(wallet,qty,extra={})=>({name:row.name,qty,wallet,...extra});
+ const resource={
+  'bac':'silver','vang':'gold','lua':'grain','quan luong':'grain','chien cong':'merit','hon tuong':'hero-soul','chien tich':'seal-credit','quan lenh':'orders','linh':'reserve','ho phu':'tiger-token','diem khoa ky':'science','long phuong boi':'beauty-pendant','exp chua cong':'commander-xp','menh hon luyen ngoc':'destiny-jade','da toi luyen':'tempering-stone','manh binh thu ngau nhien':'book-fragment','manh phoi van nang ngau nhien':'blank'
+ };
+ if(group==='Ấn Thạch'){
+  const m=name.match(/ngoc (bao|ne|phan)\s*lv\s*(\d+)/);
+  if(m)return {route:'gem-'+m[1],outputs:[output('hero-gem',Number(m[2]),{gem:m[1]})]};
+ }
+ if(group==='Bí Tịch'){
+  const match=String(row.desc||'').match(/kỹ năng ([^,.]+?)(?:\.|,|$)/iu);
+  if(match)return {route:'child-manual',outputs:[output('child-manual',1,{skill:match[1].trim(),faction:row.id==='611'?'wei':row.id==='608'?'shu-wu':null})]};
+ }
+ if(group==='Tài Nguyên'&&resource[name]){
+  const wallet=resource[name],qty=wallet==='silver'?100:wallet==='grain'?100:wallet==='merit'?10:wallet==='reserve'?50:wallet==='commander-xp'?100:wallet==='seal-credit'?100:1;
+  return {route:'resource-'+wallet,outputs:[output(wallet,qty,wallet==='commander-xp'?{maxQty:qty}:{})]};
+ }
+ // Direct exact quantities only when the source names the recipient wallet.
+ // For random loot, draw one known option using receipt-seeded RNG; unknown odds are simulated.
+ const options=[];
+ for(const [key,wallet] of Object.entries(resource)){
+  const pattern=new RegExp('(?:^|[^a-z0-9])'+key.replace(/[.*+?^$\x7b\x7d()|[\]\\]/g,'\\function nlExposeMobileWikiCatalogue(source){')+'\\s*(?:x|×|\\*)\\s*([\\d.,]+)\\s*(van|trieu|nghin|ngan)?','g');
+  for(const m of desc.matchAll(pattern)){
+   const base=Number(m[1].replace(/[.,]/g,'')),factor=m[2]==='van'?10000:m[2]==='trieu'?1000000:m[2]?1000:1,qty=base*factor;
+   if(!Number.isSafeInteger(qty)||qty<=0||qty>100000000)continue;
+   if(wallet==='commander-xp'&&qty>1000000)continue;
+   options.push(output(wallet,qty,wallet==='commander-xp'?{maxQty:qty}:{}));
+  }
+ }
+ if(options.length&&/mo|nhan|ruong|tui/.test(both)){
+  const random=/ngau nhien|co hoi|mot trong|xac suat|mot mon/.test(desc);
+  return {route:random?'known-loot-option':'known-loot-bundle',outputs:options.slice(0,10),random};
+ }
+ // Materials with no exact recipe retain their source category, but produce a useful,
+ // themed progression resource rather than universally recycling into mineral.
+ const rules=[
+  [/binh thu|thu linh|sach|bi tich|kinh nghiem.*thu/, 'book-exp',80*tier],
+  [/chien ma|ngua|co kho|ma truong|linh lang|thanh tri thao/, 'horse-points',500*tier],
+  [/menh cach|menh hon|luyen ngoc/, 'destiny-jade',1],
+  [/vu khi|chuyen dung|phoi|v.v.k|vo khi/, 'blank',1],
+  [/tinh nhue|ho bao|vo ve|cam quan/, 'merit',10*tier],
+  [/giac ngo|tuong hon|hon tuong|chieu mo|tuong khi/, 'hero-soul',2*tier],
+  [/quan an|an tran|chien tich|an hon|an thach/, 'seal-credit',100*tier],
+  [/khoa ky|khoa hoc|nghien cuu/, 'science',tier],
+  [/tri ky|thien cam|danh pham|long phuong boi/, 'beauty-pendant',1],
+  [/quan luong|luong thao|luong thuc/, 'grain',160*tier],
+  [/chien cong|thuong lenh|quan cong/, 'merit',10*tier],
+  [/linh luc|binh luc|quan linh|chieu binh/, 'reserve',30*tier],
+  [/exp chua cong|kinh nghiem chua cong/, 'commander-xp',100*tier],
+  [/tinh luyen|toi luyen|cuong hoa|trang bi|ghep/, 'tempering-stone',1]
+ ];
+ for(const [re,wallet,qty] of rules)if(re.test(both))return {route:'themed-'+wallet,outputs:[output(wallet,qty,wallet==='commander-xp'?{maxQty:qty}:{})]};
+ return null;
+}
+// === END WIKI-TYPED-ITEMS ===
+
 function nlExposeMobileWikiCatalogue(source){
  const bySourceId=new Map(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null)
   .map(x=>[String(x.sourceId),x]));
@@ -245,6 +304,17 @@ function nlExposeMobileWikiCatalogue(source){
    sourceFallback:{classification:'SIMULATED_GENERIC_FALLBACK',reason:'Wiki chưa công bố đường mua hoặc công thức sử dụng cho ID này; thêm lối dùng chung mô phỏng cho bản offline. Tên và mô tả vẫn giữ nguyên dữ liệu Wiki.'},
    fieldProvenance:{name:'SOURCE_EXACT',sourceDescription:'SOURCE_EXACT',sourceCategory:'SOURCE_EXACT',effectRule:'SIMULATED_GENERIC_FALLBACK',acquisitionRule:'SIMULATED_GENERIC_FALLBACK'},
    acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:0,shopCost:{silver:price}}};
+  const typed=nlTypedWikiFallback(row,source,tier);
+  if(typed){
+   // Source identity and UI search remain unchanged; use existing bundle transaction.
+   const silver=Math.max(0,...typed.outputs.filter(x=>x.wallet==='silver').map(x=>x.qty));
+   const gold=Math.max(0,...typed.outputs.filter(x=>x.wallet==='gold').map(x=>x.qty));
+   const cost=Math.max(price,silver+100,gold*200);
+   return {...common,category:'consumable',sourceTypedRoute:typed.route,
+    acquisitionRule:{...common.acquisitionRule,shopCost:{silver:cost}},
+    sourceFallback:{...common.sourceFallback,route:typed.route,classification:'SIMULATED_TYPED_WIKI_ADAPTER'},
+    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:typed.outputs,randomOne:!!typed.random,minCommander:0,classification:'SIMULATED_TYPED_WIKI_ADAPTER'}};
+  }
   if(materialGroups.has(row.typeName))return {...common,effectRule:{kind:'CRAFT_REAGENT',needPieces:3+(tier>=4?1:0),silverCost:150+tier*75,
    output:'mdt-tinh-khoang',outputQuantity:1,classification:'SIMULATED_GENERIC_RECYCLING'}};
   let outputs;
@@ -262,7 +332,7 @@ function nlExposeMobileWikiCatalogue(source){
   NL_ITEM_CATALOGUE.items.push(fallback);bySourceId.set(sourceId,fallback);added.push(fallback);genericFallbacks.push(fallback);
  }
  if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
- if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
+ if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER'))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
  return {added,genericFallbacks};
 }
 const NL_MOBILE_WIKI_CATALOGUE=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);
@@ -591,6 +661,8 @@ if(window.__P2_ENABLE_QA__){
       sourceRouteMaterials:NL_MOBILE_INVENTORY.runtimeMaterials.length,sourceEliteMaterials:NL_MOBILE_ELITE_MATERIALS.length,
       mobileSourceCatalogueIds:new Set(NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.sourceId!=null).map(x=>String(x.sourceId))).size,
       sourceGenericFallbacks:NL_MOBILE_WIKI_GENERIC_FALLBACKS.length,
+      sourceTypedFallbacks:NL_MOBILE_WIKI_GENERIC_FALLBACKS.filter(x=>x.sourceTypedRoute).length,
+      sourceUntypedFallbacks:NL_MOBILE_WIKI_GENERIC_FALLBACKS.filter(x=>!x.sourceTypedRoute).length,
       sourceSpecificActive:NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.integration==='PLAYABLE'&&!x.sourceFallback).length,
       mobileSourceReferenceOnly:NL_ITEM_CATALOGUE.items.filter(x=>x.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&x.integration==='REFERENCE_ONLY').length,
       references:NL_ITEM_CATALOGUE.items.filter(x=>x.integration==='REFERENCE_ONLY').length

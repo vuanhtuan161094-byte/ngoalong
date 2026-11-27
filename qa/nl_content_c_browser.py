@@ -89,7 +89,7 @@ def main():
             troopRuntimeCoverage.campaignFormationUnits===23944&&troopRuntimeCoverage.campaignResolvedSourceIds===346&&
             troopRuntimeCoverage.campaignUnknownSourceIds===0&&troopRuntimeCoverage.campaignMaps===249&&
             troopRuntimeCoverage.campaignNpcs===5063&&troopRuntimeCoverage.sourceTraitsBound===21&&
-            troopRuntimeCoverage.sourceCatalogueOnlyProfiles===43;
+            troopRuntimeCoverage.sourceCatalogueOnlyProfiles===0&&troopRuntimeCoverage.sourceTrialProfiles===43;
           checks.mobileTroopRuntimeCounts=troopRuntimeCoverage;
           const troopProfileAudit=c.mobileTroopRuntimeProfileAudit();
           checks.mobileTroopProfileRuntimeAll=troopProfileAudit.profiles===408&&troopProfileAudit.applied===408&&

@@ -173,15 +173,33 @@
         return {heroId,from,to,refund,classification:'PARTIAL_SOURCE_RESET_RECORDED_AWAKENING_ONLY'};
       });
     }
-    function grantSourceBundle(next,m,rule,receipt){
+    function grantSourceBundle(next,m,rule,receipt,heroId){
       requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
       const c=next.nlContentC;
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
-      for(const x of rule.outputs){
-        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','grain','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
-        if(x.wallet==='silver'||x.wallet==='grain'){addResource(next,x.wallet,x.qty);continue;}
+      let outputs=rule.outputs;
+      if(rule.randomOne){let hash=2166136261;for(const ch of receipt)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;outputs=[outputs[hash%outputs.length]];}
+      for(const x of outputs){
+        requireOk(safe(x.qty)&&x.qty>0&&goodId(x.name)&&['awakening','science','tripod','book-exp','horse-points','weapon-core','destiny-jade','stack','seal-credit','blank','commander-xp','silver','grain','gold','merit','hero-soul','orders','reserve','book-fragment','tempering-stone','hero-gem','child-manual','tiger-token','beauty-pendant'].includes(x.wallet),'INVALID_SOURCE_BUNDLE_OUTPUT');
+        if(['silver','grain','gold'].includes(x.wallet)){addResource(next,x.wallet,x.qty);continue;}
+        if(x.wallet==='hero-gem'){
+          requireOk(goodId(heroId)&&next.hero?.[heroId]&&['bao','ne','phan'].includes(x.gem)&&x.qty<=9,'HERO_GEM_REQUIRED');
+          c.mobileGemSlots=c.mobileGemSlots||{};const slots=c.mobileGemSlots[heroId]||(c.mobileGemSlots[heroId]={});
+          requireOk((slots[x.gem]||0)<x.qty,'GEM_NOT_UPGRADE');slots[x.gem]=x.qty;continue;
+        }
+        if(x.wallet==='child-manual'){
+          const child=c.mobileChild;requireOk(child&&['school2','chooseSkill','graduated'].includes(child.stage)&&!child.manualName&&goodId(x.skill),'CHILD_MANUAL_NOT_READY');
+          const nation=next.nlClassicWorldA4?.nation||next.nation||null;
+          if(x.faction&&nation&&['wei','shu','wu'].includes(nation))requireOk(x.faction==='wei'?nation==='wei':nation!=='wei','CHILD_MANUAL_FACTION');
+          child.manualName=x.skill;continue;
+        }
+        if(['merit','orders','reserve','hero-soul','book-fragment'].includes(x.wallet)){
+          const owner=['merit','orders'].includes(x.wallet)?(next.nlClassicA||(next.nlClassicA={})):x.wallet==='reserve'?next:c;
+          const key=({'hero-soul':'soul','book-fragment':'bookFragments'})[x.wallet]||x.wallet;
+          const prior=owner[key]||0,cap=x.wallet==='orders'?60:1000000000;requireOk(safe(prior)&&safe(prior+x.qty)&&prior<cap,'SOURCE_BUNDLE_OVERFLOW');owner[key]=Math.min(cap,prior+x.qty);continue;
+        }
         if(x.wallet==='commander-xp'){
           requireOk(safe(x.maxQty)&&x.maxQty>=x.qty&&x.maxQty<=1000000,'INVALID_EXP_RANGE');
           const level=Math.min(440,Math.max(10,safe(c.mobileCommanderLevel)?c.mobileCommanderLevel:10,10+2*Object.keys(c.cleared||{}).length));
@@ -191,9 +209,9 @@
           const total=xp+earned,levels=Math.min(440-level,Math.floor(total/1000));c.mobileCommanderLevel=level+levels;c.mobileCommanderXp=c.mobileCommanderLevel===440?0:total-levels*1000;continue;
         }
         if(x.wallet==='stack'){requireOk(goodId(x.itemId),'INVALID_SOURCE_BUNDLE_OUTPUT');addStack(m,x.itemId,x.qty);continue;}
-        const map={'tiger-token':'hoPhu','beauty-pendant':'mobileBeautyPendants','seal-credit':'chienTich','blank':'blank','science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade'};
+        const map={'tiger-token':'hoPhu','beauty-pendant':'mobileBeautyPendants','seal-credit':'chienTich','blank':'blank','science':'mobileTechPoints','tripod':'mobileTechTripods','book-exp':'bookExp','horse-points':'horsePoints','weapon-core':'weaponCore','destiny-jade':'destinyJade','tempering-stone':'temperingStone'};
         let owner=x.wallet==='awakening'?c.mobileHeroMaterials:c;
-        if(['weapon-core','destiny-jade','blank'].includes(x.wallet)){
+        if(['weapon-core','destiny-jade','blank','tempering-stone'].includes(x.wallet)){
           if(!next.heroDevelopment||typeof next.heroDevelopment!=='object')next.heroDevelopment={};
           if(!next.heroDevelopment.materials||typeof next.heroDevelopment.materials!=='object')next.heroDevelopment.materials={};
           owner=next.heroDevelopment.materials;
@@ -226,7 +244,7 @@
         }
         debitStack(m,id,1);
         if(rule.kind==='GRANT_RESOURCE')addResource(next,rule.resource,rule.amount);
-        else if(rule.kind==='OPEN_SOURCE_BUNDLE')grantSourceBundle(next,m,rule,receipt);
+        else if(rule.kind==='OPEN_SOURCE_BUNDLE')grantSourceBundle(next,m,rule,receipt,heroId);
         else if(rule.kind==='OPEN_BUNDLE'){
           for(const [res,qty] of Object.entries(rule.resources))addResource(next,res,qty);
           for(const [item,qty] of Object.entries(rule.stacks))addStack(m,item,qty);
