@@ -123,11 +123,19 @@ def main():
           if(noBuffFixture.hero[noBuffOwner]){noBuffFixture.hero[noBuffOwner].troops=3000;noBuffFixture.hero[noBuffOwner].level=60;}
           noBuffFixture.nlContentC={...(noBuffFixture.nlContentC||{}),mobileTroopAssigned:{...(noBuffFixture.nlContentC?.mobileTroopAssigned||{}),[noBuffOwner]:'12'},mobileEliteUnlocked:{'8':true},mobileEliteLevels:{'8':1},mobileElitePending:{},mobileEliteSkills:{'8':[1,1,0]},mobileEliteAssigned:{[noBuffOwner]:'8'}};
           q.setGame(noBuffFixture);q.beginBattle(1,'campaign');
-          const noBuffBattle=q.debugBattle(),noBuffActor=noBuffBattle?.p.find(u=>u.id===noBuffOwner),noBuffTarget=noBuffBattle?.e.find(u=>u.hp>0&&u.slot%3===noBuffActor?.slot%3);
-          const noBuffEvent={actor:noBuffActor?.name,mode:'skill',hits:noBuffTarget?[{team:'e',slot:noBuffTarget.slot}]:[],description:'QA'};
-          const noBuffApplied=noBuffActor&&noBuffTarget&&c.wikiEliteApply(noBuffActor,noBuffEvent);
+          const noBuffBattle=q.debugBattle(),noBuffActor=noBuffBattle?.p.find(u=>u.id===noBuffOwner),noBuffPrimary=noBuffBattle?.e.find(u=>u.hp>0),noBuffTarget=noBuffBattle?.e.find(u=>u.hp>0&&u.slot%3===noBuffPrimary?.slot%3);
+          const noBuffEvent=noBuffBattle?.events?.find(e=>e.actor===noBuffActor?.name&&e.mobileSourceEliteBattleStart===true);
           const noBuffStatus=noBuffTarget?.effects?.find(e=>e.kind==='mobile-source-no-buffs'&&e.turns===2);
-          checks.mobileEliteHuuNhuocInP2=!!noBuffApplied&&noBuffActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.noBuffsLine)&&noBuffStatus?.mobileSource?.sourceEffectId==='77'&&noBuffStatus.mobileSource.dispelPolicy==='unremovable';
+          checks.mobileEliteHuuNhuocInP2=!!noBuffEvent&&noBuffActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.noBuffsLine&&p.battleStart)&&noBuffStatus?.mobileSource?.sourceEffectId==='77'&&noBuffStatus.mobileSource.dispelPolicy==='unremovable'&&noBuffBattle?.opening?.e?.find(u=>u.slot===noBuffTarget?.slot)?.effects?.some(e=>e.kind==='mobile-source-no-buffs');
+          q.closeBattle('city');q.setGame(eliteBefore);
+          const canDamFixture=structuredClone(eliteBefore),canDamOwner=canDamFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,1))||canDamFixture.roster[0];
+          canDamFixture.slots=[canDamOwner,...canDamFixture.slots.filter(h=>h!==canDamOwner)];canDamFixture.troopModes={...(canDamFixture.troopModes||{}),[canDamOwner]:'infantry'};
+          canDamFixture.nlContentC={...(canDamFixture.nlContentC||{}),mobileTroopAssigned:{...(canDamFixture.nlContentC?.mobileTroopAssigned||{}),[canDamOwner]:'1'},mobileEliteUnlocked:{'12':true},mobileEliteLevels:{'12':5},mobileElitePending:{},mobileEliteSkills:{'12':[0,0,1]},mobileEliteAssigned:{[canDamOwner]:'12'}};
+          q.setGame(canDamFixture);q.beginBattle(1,'campaign');
+          const canDamBattle=q.debugBattle(),canDamActor=canDamBattle?.p.find(u=>u.id===canDamOwner),canDamPlan=canDamActor?.nlMobileElite?.plans?.find(p=>p.pos===2);if(canDamActor)canDamActor.morale=0;if(canDamPlan)canDamPlan.highImmunity=1;
+          const canDamEventStart=canDamBattle?.events?.length||0;if(canDamActor)q.perform(canDamActor);
+          const canDamEvent=canDamBattle?.events?.[canDamEventStart],canDamDefense=canDamActor?.effects?.find(e=>Number(e.mobileSourceValues?.['wiki-def'])===.6),canDamImmune=canDamBattle?.p.flatMap(u=>u.effects||[]).find(e=>e.kind==='mobile-source-debuff-immune'&&e.mobileSource?.sourceName==='Can Đảm Tinh Nhuệ');
+          checks.mobileEliteCanDamEffectSpecificDispel=!!canDamEvent&&canDamEvent.mode!=='stunned'&&canDamPlan?.undispellable===false&&canDamPlan?.highImmunityUndispellable===true&&canDamDefense?.mobileSource?.dispelPolicy==='removable'&&canDamImmune?.mobileSource?.dispelPolicy==='undispellable';
           q.closeBattle('city');q.setGame(eliteBefore);
           const procFixture=structuredClone(eliteBefore),procOwner=procFixture.roster.find(h=>c.mobileEliteForceRole(h)==='cavalry');
           procFixture.slots=[procOwner,...procFixture.slots.slice(1)];
@@ -162,6 +170,27 @@ def main():
           const cleanseEvent=cleanseBattle?.events?.[cleanseBeforeEvents];
           checks.mobileEliteToshiPreAction=!!cleanseActor&&cleanseActor.nlMobileElite?.plans?.some(p=>p.pos===2&&p.cleanseBeforeAction===1&&p.first===15)&&!cleanseActor.effects?.some(e=>e.kind==='mobile-source-control')&&!!cleanseEvent&&cleanseEvent.mode!=='stunned'&&String(cleanseEvent.description||'').includes('trước hành động');
           q.closeBattle('city');q.setGame(eliteBefore);
+          const baiFixture=structuredClone(eliteBefore),baiOwner=baiFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,4))||baiFixture.roster[0];
+          baiFixture.slots=[baiOwner,...baiFixture.slots.filter(h=>h!==baiOwner)];
+          baiFixture.troopModes={...(baiFixture.troopModes||{}),[baiOwner]:'archer'};
+          baiFixture.nlContentC={...(baiFixture.nlContentC||{}),mobileTroopAssigned:{...(baiFixture.nlContentC?.mobileTroopAssigned||{}),[baiOwner]:'12'},mobileEliteUnlocked:{'27':true},mobileEliteLevels:{'27':5},mobileElitePending:{},mobileEliteSkills:{'27':[0,1,0]},mobileEliteAssigned:{[baiOwner]:'27'}};
+          q.setGame(baiFixture);q.beginBattle(1,'campaign');
+          const baiBattle=q.debugBattle(),baiActor=baiBattle?.p.find(u=>u.id===baiOwner),baiEnemySlots=(baiBattle?.e||[]).filter(u=>u.hp>0).map(u=>u.slot);
+          for(const unit of baiBattle?.e||[]){unit.maxHp=Math.max(unit.maxHp,100000000);unit.hp=unit.maxHp;}
+          if(baiActor)baiActor.morale=0;
+          const baiEventStart=baiBattle?.events?.length||0;if(baiActor)q.perform(baiActor);
+          const baiEvent=baiBattle?.events?.[baiEventStart],baiPreHits=(baiEvent?.hits||[]).filter(h=>h.mobileSourceElitePreAction),baiAttribute=baiActor?.effects?.find(e=>String(e.kind).startsWith('mobile-wiki-elite-'+baiOwner+'-1-attr-'));
+          checks.mobileElitePhaoXaBeforeAction=!!baiActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.allHitBeforeAction===.6&&p.attributeBeforeAction===6&&p.attributeStackCap===5)&&baiEnemySlots.length>0&&baiPreHits.length===baiEnemySlots.length&&baiPreHits.every((h,i)=>h.team==='e'&&h.slot===baiEnemySlots[i])&&(baiEvent?.hits||[]).slice(0,baiPreHits.length).every(h=>h.mobileSourceElitePreAction)&&baiEvent?.mobileSourceElitePreAction===true&&String(baiEvent?.description||'').includes('Pháo Xạ trước hành động')&&Number(baiAttribute?.mobileSourceValues?.['wiki-atk'])===.06&&baiAttribute?.mobileSource?.dispelPolicy==='removable';
+          q.closeBattle('city');q.setGame(eliteBefore);
+          const baiWipeFixture=structuredClone(eliteBefore),baiWipeOwner=baiWipeFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,4))||baiWipeFixture.roster[0];
+          baiWipeFixture.slots=[baiWipeOwner,...baiWipeFixture.slots.filter(h=>h!==baiWipeOwner)];baiWipeFixture.troopModes={...(baiWipeFixture.troopModes||{}),[baiWipeOwner]:'archer'};
+          baiWipeFixture.nlContentC={...(baiWipeFixture.nlContentC||{}),mobileTroopAssigned:{...(baiWipeFixture.nlContentC?.mobileTroopAssigned||{}),[baiWipeOwner]:'12'},mobileEliteUnlocked:{'27':true},mobileEliteLevels:{'27':5},mobileElitePending:{},mobileEliteSkills:{'27':[0,1,0]},mobileEliteAssigned:{[baiWipeOwner]:'27'}};
+          q.setGame(baiWipeFixture);q.beginBattle(1,'campaign');
+          const baiWipeBattle=q.debugBattle(),baiWipeActor=baiWipeBattle?.p.find(u=>u.id===baiWipeOwner);for(const unit of baiWipeBattle?.e||[]){unit.maxHp=10;unit.hp=10;}
+          if(baiWipeActor)baiWipeActor.morale=0;if(baiWipeActor)q.perform(baiWipeActor);
+          const baiWipeEvent=baiWipeBattle?.events?.[0];
+          checks.mobileElitePhaoXaWipeReceipt=!!baiWipeBattle?.finished&&!!baiWipeEvent?.mobileSourceElitePreAction&&baiWipeEvent.mode==='elite-preaction'&&(baiWipeEvent.hits||[]).length>0&&baiWipeBattle.report?.events?.[0]?.mobileSourceElitePreAction===true;
+          q.closeBattle('city');q.setGame(eliteBefore);
           const eliteFlowId='9',eliteFlowGame=structuredClone(eliteBefore),eliteSpent={},eliteLevelResults=[];
           eliteFlowGame.silver=100000000;eliteFlowGame.nlCity={...(eliteFlowGame.nlCity||{}),levels:{...(eliteFlowGame.nlCity?.levels||{}),nl_city_hall:500}};
           eliteFlowGame.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{'mobile-vng-item-856':1}};
@@ -192,6 +221,9 @@ def main():
           const eliteAssignedSave=q.getGame();q.setGame(structuredClone(eliteAssignedSave));q.beginBattle(1,'campaign');
           const eliteFlowBattle=q.debugBattle(),eliteFlowActor=eliteFlowBattle?.p.find(u=>u.id===eliteFlowOwner);
           checks.mobileElitePurchaseUpgradeSkillAndP2=eliteFlowOK&&eliteLevelResults.join(',')==='1,2,3,4,5'&&eliteSkillPaid&&c.mobileEliteSkillLevels(eliteFlowId)[1]===1&&eliteAssigned&&eliteFlowActor?.nlMobileElite?.id===eliteFlowId&&eliteFlowActor.nlMobileElite.plans.some(p=>p.pos===1&&p.damage===.3&&p.first===5);
+          const eliteActionStart=eliteFlowBattle?.events?.length||0;if(eliteFlowActor){eliteFlowActor.morale=0;q.perform(eliteFlowActor);}
+          const eliteAction=eliteFlowBattle?.events?.[eliteActionStart],eliteExactBuff=eliteFlowActor?.effects?.find(e=>Number(e.mobileSourceValues?.wikiDamage)===.3);
+          checks.mobileEliteExactUndispellableP2=!!eliteAction&&eliteAction.mode!=='stunned'&&eliteExactBuff?.mobileSource?.dispelPolicy==='undispellable';
           q.closeBattle('city');
           document.querySelector('.nav[data-tab="barracks"]')?.click();
           const forceSelect=document.querySelector('[data-nlc-elite-force]'),appearanceSelect=document.querySelector('[data-nlc-elite-appearance]');

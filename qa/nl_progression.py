@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -49,14 +51,28 @@ def visible_window(page, selector):
                 element = elements.nth(element_index)
                 if element.is_visible():
                     return element
-    raise AssertionError(f"No visible pane contains {selector}")
+    diagnostic = page.evaluate("""selector => ({
+        selector,
+        activeTab: document.querySelector('.nav.active[data-tab]')?.dataset.tab || null,
+        optionCount: document.querySelector('#nl-screen-select')?.options.length || 0,
+        selectedIndex: document.querySelector('#nl-screen-select')?.value || null,
+        selectedLabel: document.querySelector('#nl-screen-select option:checked')?.textContent || null,
+        matches: [...document.querySelectorAll(selector)].map(el => ({
+            visible: !!(el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden'),
+            pane: el.closest('.nl-pane-hidden')?.className || null,
+            parent: el.parentElement?.className || el.parentElement?.tagName || null
+        })),
+        visibleTrainingActions: [...document.querySelectorAll('[data-nlh-action="trainBatch"]')].filter(el => el.getClientRects().length).map(el => el.dataset.nlhCount)
+    })""", selector)
+    raise AssertionError(f"No visible pane contains {selector}: {json.dumps(diagnostic, ensure_ascii=False)}")
 
 
 def run() -> int:
     expected_items = {item["id"] for item in PACK["equipment"]["projectItems"]}
     expected_research = set(PACK["research"]["systemIds"])
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        executable = os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH") or shutil.which("chromium")
+        browser = playwright.chromium.launch(headless=True, executable_path=executable, args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = open_page(browser)
         initial = state(page)
         catalog = page.evaluate("window.__NL_R03_QA__.catalog")
@@ -144,9 +160,16 @@ def run() -> int:
         page.locator('.nav[data-tab="heroes"]').click()
         training_before = state(page)
         current_hero = training_before["hero"][hero]
-        visible_window(page, f'[data-train="{hero}"]').click()
+        training_quote = page.evaluate("id=>window.__NL_HERO_SYSTEMS_QA__.trainQuote(id)", hero)
+        visible_window(page, '[data-nlh-action="system"][data-nlh-target="training"]').click()
+        visible_window(page, '[data-nlh-action="trainBatch"][data-nlh-count="1"]').click()
         trained = state(page)
-        check("hero training uses data-driven cost, XP threshold and academy bonus", trained["silver"] == training_before["silver"] - PACK["heroes"]["training"]["silverCost"] and trained["hero"][hero]["level"] == current_hero["level"] + 1 and trained["hero"][hero]["xp"] == current_hero["xp"] + PACK["heroes"]["training"]["baseXp"] + training_before["buildings"]["academy"] * PACK["heroes"]["training"]["academyXpPerLevel"] - current_hero["level"] * PACK["heroes"]["training"]["xpRequiredPerHeroLevel"])
+        expected_level, expected_xp = current_hero["level"], current_hero["xp"] + training_quote["xp"]
+        while expected_xp >= expected_level * 90 and expected_level < training_quote["cap"]:
+            expected_xp -= expected_level * 90
+            expected_level += 1
+        expected_cost = training_quote["cost"]
+        check("hero training uses the live Hero Systems quote, applies XP to the classic level curve and records its transaction", trained["silver"] == training_before["silver"] - expected_cost.get("silver", 0) and trained.get("nlClassicA", {}).get("merit", 0) == training_before.get("nlClassicA", {}).get("merit", 0) - expected_cost.get("merit", 0) and trained["hero"][hero]["level"] == expected_level and trained["hero"][hero]["xp"] == expected_xp and any(receipt.get("system") == "training-batch" for receipt in trained.get("heroDevelopment", {}).get("receipts", [])))
         check("training, equipment and research retain the unchanged v5 Save key and schema", trained["version"] == 5 and trained["gear"][hero]["weapon"] == sword["uid"] and trained["technology"]["arms"] == 2)
 
         page.evaluate("()=>{const q=window.__P2_QA__,g=q.getGame();g.lastTick=Date.now();q.setGame(g)}")

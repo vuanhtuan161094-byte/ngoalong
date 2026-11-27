@@ -757,7 +757,10 @@ function mobileElitePlan(id,pos,text){
  const f=mobileTextKey(text),ps=[...f.matchAll(/(\d+(?:[.,]\d+)?)\s*%/g)].map(m=>Number(m[1].replace(',','.'))/100),
  ms=[...f.matchAll(/(\d+)\s*si khi/g)].map(m=>Number(m[1])),duration=Number(f.match(/(?:duy tri|trong)\s+(\d+)\s+luot/)?.[1])||3,
  first=Number(f.match(/(\d+)\s+luot dau/)?.[1])||0;
- const p={id:root,pos,text,turns:duration,first,classification:'SOURCE_TEXT_WITH_SIMULATED_P2_TIMING'};
+ const p={id:root,pos,text,turns:duration,first,
+  undispellable:/hii?eu qua khong the (?:bi )?giai tru/.test(f)||/nguyet hon khong the giai tru|bao thuong khong the giai tru/.test(f)||root==='23'&&pos===1||root==='16'&&pos===1,
+  battleStart:(/khai chien|dau tran|bat dau tran/.test(f)&&!/\d+ luot dau tran|moi luot/.test(f)),
+  classification:'SOURCE_TEXT_WITH_SIMULATED_P2_TIMING'};
  const q=ps[0]??.15,second=ps[1]??q,m=ms[0]||0;
  if(pos===0){
   p.phase='normal';p.noMorale=/khong tang si khi dich/.test(f);p.selfMorale=/ban than.*(?:hoi|tang).*si khi/.test(f)?m:0;
@@ -784,7 +787,7 @@ function mobileElitePlan(id,pos,text){
   case '9:1':p.damage=q;p.first=first||5;break;
   case '9:2':p.pierce=q;p.first=31;break;
   case '12:1':p.teamDefense=q;p.defenseFields=['tdef','mdef'];p.first=duration;break;
-  case '12:2':p.selfDefense=q;p.defenseFields=['def'];p.first=first||10;p.highImmunity=ps[1]||0;break;
+  case '12:2':p.selfDefense=q;p.defenseFields=['def'];p.first=first||10;p.highImmunity=ps[1]||0;p.highImmunityUndispellable=/loai bo\]? khong the giai tru/.test(f);break;
   case '23:1':p.stackDamage=q;p.first=first||6;break;
   case '23:2':p.shieldLow=q;break;
   case '1:1':p.attack=q;p.attackFields=['atk'];p.first=duration;break;
@@ -807,7 +810,7 @@ function mobileElitePlan(id,pos,text){
   case '32:2':p.teamReduction=q;p.first=first||7;break;
   case '20:1':p.attack=q;p.attackFields=['atk'];p.first=duration;break;
   case '20:2':p.shieldChance=ps.length?q:1;p.selfDefense=ps[1]||(/kien thu/.test(f)?.04:0);break;
-  case '27:1':p.allHit=.60;p.attribute=Number(f.match(/(\d+)\s+diem/)?.[1])||6;break;
+  case '27:1':p.allHitBeforeAction=.60;p.attributeBeforeAction=Number(f.match(/(\d+)\s+diem/)?.[1])||6;p.attributeStackCap=Number(f.match(/toi da cong don (\d+) tang/)?.[1])||5;break;
   case '27:2':p.only=3;p.healSelf=q;p.healLow=second;p.teamCritDamage=ps[2]||.2;break;
   case '26:1':p.undispellableReduction=q;p.first=duration;break;
   case '26:2':p.onDamageTrample=5;p.onDamageChance=ps.length?q:1;break;
@@ -831,9 +834,34 @@ function wikiEliteBeforeAction(actor){
  const turn=nat(actor.nlWikiEliteTurns)+1;
  let removed=0;
  for(const p of actor.nlMobileElite?.plans||[]){
-  if(p.phase!=='turn'||!p.cleanseBeforeAction||(p.first&&turn>p.first))continue;
+  if(p.phase!=='turn'||p.battleStart||!p.cleanseBeforeAction||(p.first&&turn>p.first))continue;
   removed+=mobileBookCleanseRandom(actor,p.cleanseBeforeAction);
  }
+ const blocked=(actor.effects||[]).some(e=>e.turns>0&&(Number(NL_GAME_DATA.statusEffects.effects[e.kind]?.skipActionChance)||0)>=1);
+ const preHits=[];
+ if(!blocked){
+  const enemies=wikiLiving(actor,false);
+  for(const p of actor.nlMobileElite?.plans||[]){
+   if(p.phase!=='turn'||p.first&&turn>p.first||p.from&&turn<p.from||p.only&&turn!==p.only)continue;
+   if(p.allHitBeforeAction){
+    for(const target of enemies){
+     if(target.hp<=0||actor.hp<=0)continue;
+     const hit=mobileSingleHit(actor,target,'physical',p.allHitBeforeAction);
+     if(hit){hit.mobileSourceElitePreAction=true;hit.mobileSource='Tinh Nhuệ · Pháo Xạ';preHits.push(hit);}
+    }
+   }
+   if(p.attributeBeforeAction){
+    const prefix='mobile-wiki-elite-'+actor.id+'-'+p.pos+'-attr-';
+    const active=(actor.effects||[]).filter(e=>e.turns>0&&String(e.kind).startsWith(prefix)).length;
+    if(active<p.attributeStackCap){
+     const stack=actor.nlWikiEliteAttributeStacks=(actor.nlWikiEliteAttributeStacks||0)+1;
+     const values=Object.fromEntries(['atk','catk','matk'].map(k=>['wiki-'+k,p.attributeBeforeAction*.01]));
+     wikiTimed(actor,'elite-'+actor.id+'-'+p.pos+'-attr-'+stack,p.turns,values,'beneficial',p.undispellable);
+    }
+   }
+  }
+ }
+ if(preHits.length)actor.nlWikiElitePreActionHits=preHits;
  return removed;
 }
 // === END WIKI-ELITE-SKILLS ===
@@ -862,16 +890,17 @@ function wikiEliteTrample(u,n){
  if(!u||u.hp<=0)return;u.nlWikiTrample=(u.nlWikiTrample||0)+1;
  if(u.nlWikiTrample>=n){u.nlWikiTrample=0;p2Status(u,MOBILE_CONTROL_STATUS,1);}
 }
-function wikiEliteApply(actor,event){
+function wikiEliteApply(actor,event,options={}){
  if(!battle||battle.replay||battle.mode==='cltq'||!actor?.nlMobileElite?.plans?.length||event?.actor!==actor.name||event.mode==='stunned'||actor.hp<=0)return false;
- const plans=actor.nlMobileElite.plans,turn=actor.nlWikiEliteTurns=(actor.nlWikiEliteTurns||0)+1,allies=wikiLiving(actor),enemies=wikiLiving(actor,false);
+ const plans=actor.nlMobileElite.plans,turn=options.battleStart?1:actor.nlWikiEliteTurns=(actor.nlWikiEliteTurns||0)+1,allies=wikiLiving(actor),enemies=wikiLiving(actor,false);
  const firstHit=(event.hits||[]).find(h=>h.team!==actor.team),primary=firstHit?(actor.team==='p'?battle.e:battle.p).find(u=>u.slot===firstHit.slot):enemies[0],low=wikiLowest(allies),normal=event.mode==='normal';
  const chance=n=>n>=1||n>0&&p2Random()<n,labels=[];
  const addHit=(u,kind,mult)=>{if(u&&u.hp>0&&actor.hp>0){const h=mobileSingleHit(actor,u,kind,mult);if(h)(event.hits||(event.hits=[])).push(h);}};
- const timed=(u,k,p,v,harmful=false)=>wikiTimed(u,k,p.turns||2,v,harmful?'harmful':'beneficial',p.phase==='turn'&&!harmful);
+ const timed=(u,k,p,v,harmful=false)=>wikiTimed(u,k,p.turns||2,v,harmful?'harmful':'beneficial',p.undispellable);
  const stats=(fields,n,def=false)=>Object.fromEntries((fields|| (def?['def','tdef','mdef']:['atk','catk','matk'])).map(k=>['wiki-'+k,n]));
  const shield=(u,n)=>{if(chance(n))wikiEliteShield(u);};
  for(const p of plans){
+   if(options.battleStart?(!p.battleStart||p.phase!=='turn'):p.battleStart)continue;
    if(p.phase==='normal'&&!normal||p.phase==='turn'&&(p.first&&turn>p.first||p.from&&turn<p.from||p.only&&turn!==p.only))continue;
    const key='elite-'+actor.id+'-'+p.pos,targets=primary?(p.pattern==='all'?enemies:p.pattern==='row'?enemies.filter(u=>Math.floor(u.slot/3)===Math.floor(primary.slot/3)):p.pattern==='column'?enemies.filter(u=>u.slot%3===primary.slot%3):[primary]):[];
    if(normal&&p.phase==='normal'){
@@ -888,7 +917,7 @@ function wikiEliteApply(actor,event){
    if(p.extraHeal&&chance(p.extraHeal)&&allies.length)mobileBookRestore(allies[Math.floor(p2Random()*allies.length)],.12);
    if(p.shield)wikiEliteShield(actor);if(p.shieldLow)shield(low,p.shieldLow);if(p.shieldChance)shield(actor,p.shieldChance);
    if(p.immunity)applyMobileSourceStatus(actor,{kind:MOBILE_SOURCE_DEBUFF_IMMUNE,turns:p.turns,values:{},sourceName:'Loại Bỏ Tinh Nhuệ'});
-   if(p.highImmunity&&chance(p.highImmunity)){const high=[...allies].sort((x,y)=>y.hp-x.hp)[0];if(high)applyMobileSourceStatus(high,{kind:MOBILE_SOURCE_DEBUFF_IMMUNE,turns:2,values:{},sourceName:'Can Đảm Tinh Nhuệ'});}
+   if(p.highImmunity&&chance(p.highImmunity)){const high=[...allies].sort((x,y)=>y.hp-x.hp)[0];if(high)applyMobileSourceStatus(high,{kind:MOBILE_SOURCE_DEBUFF_IMMUNE,turns:2,values:{},sourceName:'Can Đảm Tinh Nhuệ',dispelPolicy:p.highImmunityUndispellable?'undispellable':'removable'});}
    if(p.attack)timed(actor,key+'-attack',p,stats(p.attackFields,p.attack));
    if(p.magicAttack)timed(actor,key+'-magic',p,stats(['matk'],p.magicAttack));
    if(p.selfDefense)timed(actor,key+'-def',p,stats(p.defenseFields,p.selfDefense,true));
@@ -912,8 +941,6 @@ function wikiEliteApply(actor,event){
    if(p.healReceived)timed(actor,key+'-heal',p,{incomingHealingMultiplier:1+p.healReceived});
    if(p.teamShield)for(const u of allies)applyMobileSourceStatus(u,{kind:MOBILE_SOURCE_MAX_HP_SHIELD,turns:p.turns,values:{maxHpShieldRatio:p.teamShield},sourceName:'Đề Kháng Tinh Nhuệ'});
    if(p.teamReduction)for(const u of allies)timed(u,key+'-protect',p,{wikiTaken:-p.teamReduction});
-   if(p.allHit)for(const u of enemies)addHit(u,'physical',p.allHit);
-   if(p.attribute)timed(actor,key+'-attr-'+Math.min(turn,5),p,stats(null,p.attribute*.01));
    if(p.teamCritDamage)for(const u of allies)timed(u,key+'-teamcrit',p,{wikiCritDamage:p.teamCritDamage});
    if(p.trample)for(const u of targets){wikiEliteTrample(u,p.trample);if(p.extraDebuff&&chance(p.extraDebuff)){wikiEliteNoBuffs(u,p.turns,'Hư Nhược Tinh Nhuệ');applyMobileSourceStatus(u,{sourceId:'17',kind:MOBILE_SOURCE_NO_HEAL,turns:p.turns,values:{},sourceName:'Tỏa Binh Tinh Nhuệ',dispelPolicy:'unremovable',formulaClassification:'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER'});}}
    if(p.perAllyAttack||p.perAllyDefense)timed(actor,key+'-formation',p,{...stats(null,Math.max(0,allies.length-1)*p.perAllyAttack),...stats(null,Math.max(0,allies.length-1)*p.perAllyDefense,true)});
@@ -922,6 +949,27 @@ function wikiEliteApply(actor,event){
  if(labels.length){event.description+=' · Tinh Nhuệ: '+labels.join(', ');event.state=p2Snapshot();battle.log=event.description;}
  return labels.length>0;
 }
+function wikiEliteBattleStart(){
+ if(!battle||battle.replay||battle.mode==='cltq')return 0;
+ let applied=0;
+ for(const actor of battle.p||[]){
+  if(!actor?.nlMobileElite?.plans?.some(p=>p.phase==='turn'&&p.battleStart))continue;
+  const event={round:battle.round,actorTeam:actor.team,actorSlot:actor.slot,actor:actor.name,mode:'elite-battle-start',kind:'normal',skill:'Tinh Nhuệ',description:'Khai chiến',hits:[],cleansed:[]};
+  if(!wikiEliteApply(actor,event,{battleStart:true}))continue;
+  event.mobileSourceEliteBattleStart=true;event.state=p2Snapshot();battle.events.push(event);battle.log=event.description;
+  if(typeof p2ApplyFrame==='function')p2ApplyFrame(event);
+  applied++;
+ }
+ if(applied&&battle.opening)battle.opening=p2Snapshot();
+ return applied;
+}
+const nlContentCNativeBeginBattle=beginBattle;
+beginBattle=function(stage,mode='campaign'){
+ const previous=battle,result=nlContentCNativeBeginBattle(stage,mode);
+ if(!previous&&battle&&!battle.replay&&battle.mode!=='cltq')wikiEliteBattleStart();
+ return result;
+};
+if(window.__P2_QA__)window.__P2_QA__.beginBattle=beginBattle;
 
 function mobileEliteRuntimeAudit(){
  let rows=0,axes=0,allFinite=true,costRows=0,timeRows=0,skillTracks=0;
@@ -2372,10 +2420,23 @@ p2Perform=function(actor){
    if(actor?.nlMobileElite?.plans?.length&&battle?.mode!=='cltq')actor.nlWikiEliteNormal=actor.morale<100;
    if(actor?.nlMobileTroop?.plan&&battle?.mode!=='cltq'&&!battle?.replay&&!confusionActive)actor.nlWikiTroopNormal=actor.morale<100;
    const elitePreActionCleanse=wikiEliteBeforeAction(actor);
+   const elitePreActionHits=actor?.nlWikiElitePreActionHits||[];
+   if(actor)delete actor.nlWikiElitePreActionHits;
    let result;try{result=nlContentCNativePerform(actor);}finally{if(actor)delete actor.nlWikiEliteNormal;}
    restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
-   const event=battle?.events?.[eventIndex];
+   let event=battle?.events?.[eventIndex],synthesizedElitePreAction=false;
+   if(!event&&battle&&!battle.finished&&actor&&elitePreActionHits.length&&!p2CountAlive(actor.team==='p'?'e':'p').length){
+     actor.actions=(actor.actions||0)+1;battle.turns=(battle.turns||0)+1;
+     event={round:battle.round,actorTeam:actor.team,actorSlot:actor.slot,actor:actor.name,mode:'elite-preaction',kind:'physical',skill:null,
+       description:'Tinh Nhuệ: Pháo Xạ trước hành động, gây '+elitePreActionHits.reduce((sum,h)=>sum+(Number(h.amount)||0),0)+' sát thương.',
+       hits:elitePreActionHits,cleansed:[],mobileSourceElitePreAction:true,state:p2Snapshot()};
+     battle.events.push(event);battle.log=event.description;p2ApplyFrame(event);synthesizedElitePreAction=true;
+   }
+   if(!synthesizedElitePreAction&&event?.actor===actor?.name&&elitePreActionHits.length){
+     event.hits=[...elitePreActionHits,...(event.hits||[])];event.mobileSourceElitePreAction=true;
+     event.description='Tinh Nhuệ: Pháo Xạ trước hành động · '+event.description;event.state=p2Snapshot();battle.log=event.description;
+   }
    if(elitePreActionCleanse&&event?.actor===actor.name){event.description+=' · Tỏ Chí: giải '+elitePreActionCleanse+' hiệu ứng bất lợi trước hành động';event.state=p2Snapshot();battle.log=event.description;}
    mobileAppendSourceRedirectHits(event);
    mobileAppendSourceRevivalHits(event);
@@ -2418,6 +2479,7 @@ p2Perform=function(actor){
    mobileResolveCounters(actor,event);
    mobileTickPeriodic(actor,event,priorPeriodic);
    mobileAdvanceProgressiveVulnerability(actor,event);
+   if(synthesizedElitePreAction&&battle&&!battle.finished)finishBattle();
    return result;
  }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlWikiTroopNormal;delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;if(hadFateMultiplier)actor.nlMobileFateDamageMultiplier=priorFateMultiplier;else delete actor.nlMobileFateDamageMultiplier;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };

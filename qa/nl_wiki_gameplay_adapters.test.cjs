@@ -5,7 +5,7 @@ const between=(s,a,b)=>s.slice(s.indexOf(a),s.indexOf(b));
 const itemCode=between(read('tools/nl_item_integration_v1.js'),'// === WIKI-TYPED-ITEMS ===','// === END WIKI-TYPED-ITEMS ===');
 const eliteCode=between(read('tools/nl_content_c_runtime.js'),'// === WIKI-ELITE-SKILLS ===','// === END WIKI-ELITE-SKILLS ===');
 const typed=new Function(itemCode+'\nreturn nlTypedWikiFallback')();
-const eliteRuntime=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').toLowerCase();"+eliteCode+'\nreturn {plan:mobileElitePlan,conditionalBonuses:mobileEliteConditionalBonuses}')();
+const eliteRuntime=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('vi').replace(/đ/g,'d');"+eliteCode+'\nreturn {plan:mobileElitePlan,conditionalBonuses:mobileEliteConditionalBonuses}')();
 const plan=eliteRuntime.plan;
 const source=JSON.parse(read('data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw/data/item-detail.json')),elite=JSON.parse(read('data/ngoalong/modules/troops/mobile_elite_v1.json'));
 test('20 appearances × 3 skill tracks, every source level compiles',()=>{let tracks=0,ranks=0;for(const f of elite.forces)for(const a of f.appearances)for(const [pos,skill] of a.skills.entries()){tracks++;for(const desc of skill.levels){const p=plan(a.id,pos,desc);assert.ok(p);assert.ok(Object.values(p).every(v=>typeof v!=='number'||Number.isFinite(v)));ranks++;}}assert.equal(tracks,60);assert.equal(ranks,256);});
@@ -45,6 +45,32 @@ test('Hãm Trận Doanh Tỏ Chí is a timed pre-action removable-debuff cleanse
   assert.equal(sourcePlan.cleanseBeforeAction,1);assert.equal(sourcePlan.cleanse,undefined);
   assert.equal(sourcePlan.first,Number(description.match(/duy trì (\d+) lượt/i)?.[1]));
  }
+});
+test('Bạch Mã Pháo Xạ parses its pre-action hit, capped stat stacks and two-turn duration',()=>{
+ const baiMa=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='27');
+ for(const [i,description] of baiMa.skills[1].levels.entries()){
+  const sourcePlan=plan('27',1,description);
+  assert.equal(sourcePlan.allHitBeforeAction,.60);assert.equal(sourcePlan.allHit,undefined);
+  assert.equal(sourcePlan.attributeBeforeAction,[6,8,10,12][i]);assert.equal(sourcePlan.attribute,undefined);
+  assert.equal(sourcePlan.attributeStackCap,5);assert.equal(sourcePlan.turns,2);assert.equal(sourcePlan.undispellable,false);
+ }
+});
+test('Tinh Nhuệ timed effects follow the source dispel clause for each distinct effect',()=>{
+ const appearance=id=>elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)===String(id));
+ const hoBao=appearance('9'),voVe=appearance('12'),baiMa=appearance('27');
+ assert.equal(plan('9',1,hoBao.skills[1].levels[0]).undispellable,true);
+ assert.equal(plan('12',2,voVe.skills[2].levels[0]).undispellable,false);
+ assert.equal(plan('12',2,voVe.skills[2].levels[0]).highImmunityUndispellable,true);
+ assert.equal(plan('27',1,baiMa.skills[1].levels[0]).undispellable,false);
+});
+test('Tinh Nhuệ distinguishes battle-start effects from repeated first-turn effects',()=>{
+ const appearance=id=>elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)===String(id));
+ const giaCat=appearance('1'),camPhan=appearance('8'),voVe=appearance('12'),nguyVu=appearance('23');
+ assert.equal(plan('1',1,giaCat.skills[1].levels[0]).battleStart,true);
+ assert.equal(plan('8',1,camPhan.skills[1].levels[0]).battleStart,true);
+ assert.equal(plan('12',2,voVe.skills[2].levels[0]).battleStart,false);
+ assert.equal(plan('12',2,voVe.skills[2].levels[3]).battleStart,true);
+ assert.equal(plan('23',1,nguyVu.skills[1].levels[0]).battleStart,false);
 });
 test('27 gems and 9 child manuals resolve to specific wallets',()=>{for(const [g,n,w] of [['Ấn Thạch',27,'hero-gem'],['Bí Tịch',9,'child-manual']]){const rows=source.items.filter(x=>x.typeName===g);assert.equal(rows.length,n);for(const x of rows)assert.equal(typed(x,source,3)?.outputs[0].wallet,w);}});
 
@@ -205,7 +231,7 @@ test('festival gold keeps literal random-one amounts and exact fixed reward',()=
 
 test('Wiki troop descriptions compile normal attacks, literal control chances and morale behavior',()=>{
  const code=between(read('tools/nl_content_c_runtime.js'),'// === WIKI-TROOP-DESCRIPTION-ADAPTER ===','// === END WIKI-TROOP-DESCRIPTION-ADAPTER ===');
- const compile=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').toLowerCase();"+code+'\nreturn wikiTroopPlan')();
+ const compile=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('vi').replace(/đ/g,'d');"+code+'\nreturn wikiTroopPlan')();
  const {units}=JSON.parse(read('data/ngoalong/modules/troops/mobile_units_v1.json'));
  const plans=Object.values(units).map(compile);assert.equal(plans.length,408);
  assert.ok(plans.filter(p=>p.pattern!=='single'||p.control||p.moraleLock||p.drain||p.selfMorale||p.teamMorale||p.burn||p.poison||p.noMorale||p.extraMagic).length>80);
