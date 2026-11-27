@@ -6,6 +6,7 @@ import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 ROOT=Path(__file__).resolve().parents[1]
 HTML=(ROOT/'index.html').read_text(encoding='utf-8')
@@ -18,7 +19,7 @@ def open_page(browser,width=1280,height=720,stored=None):
     page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=1)
     page.on('pageerror',lambda err:errors.append(str(err)))
     store={} if stored is None else {SAVE_KEY:stored}
-    page.set_content(HTML.replace('<script>',STUB.replace('__NL_STORE__',json.dumps(store,ensure_ascii=False))+'<script>',1),wait_until='domcontentloaded')
+    navigate_markup(page, HTML.replace('<script>',STUB.replace('__NL_STORE__',json.dumps(store,ensure_ascii=False))+'<script>',1),wait_until='domcontentloaded')
     page.wait_for_timeout(250)
     return page
 

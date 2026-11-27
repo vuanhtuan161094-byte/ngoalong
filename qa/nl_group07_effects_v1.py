@@ -7,6 +7,7 @@ import json
 import subprocess
 import sys
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 ROOT=Path(__file__).resolve().parents[1]
 HTML=(ROOT/"index.html").read_text(encoding="utf-8")
@@ -23,7 +24,7 @@ with sync_playwright() as pw:
     browser=pw.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
     page=browser.new_page(viewport={"width":1280,"height":720},device_scale_factor=1)
     page.on("pageerror",lambda error:errors.append(str(error)))
-    page.set_content(HTML.replace("<script>",STUB+"<script>",1),wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("<script>",STUB+"<script>",1),wait_until="domcontentloaded")
     check("single canonical Chromium UI is playable",page.locator("[data-nl-command]").count()==1)
     check("approved original engine is wired before bootstrap",page.evaluate(
         "typeof window.NLCombatEffectsV1==='object' && typeof window.NLCombatEffectBridgeV1==='object' && !!window.__P2_QA__?.nlEffectBridge"

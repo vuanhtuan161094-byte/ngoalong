@@ -4,6 +4,7 @@ import json
 import shutil
 import sys
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -27,7 +28,7 @@ def open_page(browser, width=1280, height=720, stored=None):
     page.on("pageerror", lambda error: errors.append(str(error)))
     store = {} if stored is None else {SAVE_KEY: stored}
     stub = STUB.replace("__NL_STORE__", json.dumps(store, ensure_ascii=False))
-    page.set_content(HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
     return page
 
 

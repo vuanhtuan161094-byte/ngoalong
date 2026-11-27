@@ -1,5 +1,6 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json, traceback, sys, hashlib, time
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'qa'
@@ -31,7 +32,7 @@ def run():
   browser=p.chromium.launch(headless=True,executable_path=('/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None),args=['--no-sandbox','--disable-dev-shm-usage'])
   page=browser.new_page(viewport={'width':1440,'height':900},device_scale_factor=1)
   errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-  page.set_content(HTML,wait_until='domcontentloaded',timeout=25000)
+  navigate_markup(page, HTML,wait_until='domcontentloaded',timeout=25000)
   page.wait_for_timeout(600)
   check('boots on Chromium without JS error', len(errors)==0 and page.locator('[data-tab="formation"]').count()==1)
   check('P2 diagnostics enabled',page.evaluate("typeof window.__P2_QA__ === 'object'"))
@@ -82,7 +83,7 @@ def run():
   persisted=page.evaluate("__P2_TEST_DATA__['muu_dinh_tam_quoc_v1']")
   # use a fresh document to avoid duplicate global declarations during set_content
   html2=HTML.replace('const __data={};','const __data='+json.dumps({'muu_dinh_tam_quoc_v1':persisted},ensure_ascii=False)+';')
-  page.close();page=browser.new_page(viewport={'width':1440,'height':900});page.on('pageerror',lambda e:errors.append(str(e)));page.set_content(html2,wait_until='domcontentloaded')
+  page.close();page=browser.new_page(viewport={'width':1440,'height':900});page.on('pageerror',lambda e:errors.append(str(e)));navigate_markup(page, html2,wait_until='domcontentloaded')
   loaded=page.evaluate('window.__P2_QA__.getGame()')
   check('V0.3 cross-document save roundtrip',len(loaded['battleReports'])==1 and loaded['troopModes'].get('liu')=='drum')
   page.locator('[data-tab="replays"]').click()
@@ -96,7 +97,7 @@ def run():
   if isinstance(v2.get('cltq'),dict) and isinstance(v2['cltq'].get('economy'),dict):v2['cltq']['economy']['lastAt']=migration_now
   if isinstance(v2.get('nlCity'),dict) and isinstance(v2['nlCity'].get('lastAt'),int):v2['nlCity']['lastAt']=migration_now
   html_old=HTML.replace('const __data={};','const __data='+json.dumps({'muu_dinh_tam_quoc_v1':json.dumps(v2,ensure_ascii=False)},ensure_ascii=False)+';')
-  page.close();page=browser.new_page(viewport={'width':1440,'height':900});page.on('pageerror',lambda e:errors.append(str(e)));page.set_content(html_old,wait_until='domcontentloaded')
+  page.close();page=browser.new_page(viewport={'width':1440,'height':900});page.on('pageerror',lambda e:errors.append(str(e)));navigate_markup(page, html_old,wait_until='domcontentloaded')
   legacy=page.evaluate('window.__P2_QA__.getGame()')
   check('V0.2 save migrates without loss of progress',legacy['version']==5 and isinstance(legacy['battleReports'],list) and 'troopModes' in legacy and 'cltq' in legacy and legacy['silver']==v2['silver'])
   print('CHROMIUM ERRORS',errors)
@@ -110,7 +111,7 @@ def run():
   visible_window(page,'[data-replay-last]').click();visible_window(page,'[data-replay-step]').click();page.screenshot(path=str(OUT/'p2-replay.png'),full_page=False)
   mobile=browser.new_page(viewport={'width':390,'height':844},device_scale_factor=1)
   mobileerrors=[];mobile.on('pageerror',lambda e:mobileerrors.append(str(e)))
-  mobile.set_content(HTML,wait_until='domcontentloaded')
+  navigate_markup(mobile, HTML,wait_until='domcontentloaded')
   mobile.locator('[data-tab="formation"]').click()
   drum=visible_window(mobile,'[data-troop-mode="liu:drum"]')
   mobile.screenshot(path=str(OUT/'p2-mobile-formation.png'),full_page=True)

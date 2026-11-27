@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -22,7 +23,7 @@ def check(name, condition):
 def open_page(browser,width,height):
     page=browser.new_page(viewport={"width":width,"height":height},device_scale_factor=1)
     page.on("pageerror",lambda e:errors.append(str(e)))
-    page.set_content(HTML.replace("__NL_STORE__",json.dumps({},ensure_ascii=False),1).replace("<script>",STUB.replace("__NL_STORE__",json.dumps({},ensure_ascii=False))+"<script>",1),wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("__NL_STORE__",json.dumps({},ensure_ascii=False),1).replace("<script>",STUB.replace("__NL_STORE__",json.dumps({},ensure_ascii=False))+"<script>",1),wait_until="domcontentloaded")
     return page
 def stage25_fixture(page):
     page.evaluate("""()=>{const g=__P2_QA__.getGame();g.cleared=Array.from({length:24},(_,i)=>i+1);for(const id of ["sun","zhou"]){if(!g.roster.includes(id))g.roster.push(id);g.hero[id]={level:32,xp:0,troops:900}}g.slots=["guan","zhang","liu","sun","zhou",null,null,null,null];g.silver=50000;g.grain=30000;g.iron=18000;for(const id of g.roster)g.hero[id]={...(g.hero[id]||{}),level:32,xp:0,troops:900};g.p3TroopTier=Object.fromEntries(g.roster.map(id=>[id,4]));__P2_QA__.setGame(g)}""")

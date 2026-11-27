@@ -4,6 +4,7 @@ import json
 import sys
 import time
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -33,7 +34,7 @@ def open_page(browser, width=1280, height=720, stored=None):
         saved_tick = json.loads(stored).get('lastTick')
         if isinstance(saved_tick, int):
             stub = stub.replace('</script>', f'Date.now=()=>{saved_tick};</script>')
-    page.set_content(HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
     return page
 
 

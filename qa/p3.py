@@ -1,6 +1,7 @@
 """P3 deterministic end-to-end functional/combat/balance QA; no fake combat results."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json, sys, traceback, math
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'qa'
@@ -15,7 +16,7 @@ def main():
  with sync_playwright() as p:
   browser=p.chromium.launch(headless=True,executable_path=('/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None),args=['--no-sandbox','--disable-dev-shm-usage'])
   page=browser.new_page(viewport={'width':1280,'height':720});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-  page.set_content(HTML,wait_until='domcontentloaded');page.wait_for_timeout(300)
+  navigate_markup(page, HTML,wait_until='domcontentloaded');page.wait_for_timeout(300)
   check('P3 QA runtime available',page.evaluate('typeof window.__P3_QA__ === "object"'))
   presets=page.evaluate('window.__P3_QA__.presets')
   check('24 distinct named tactical presets',len(presets)==24 and len({x['id'] for x in presets})==24)
@@ -102,7 +103,7 @@ def main():
   page.locator('[data-tab="formation"]').first.click();page.screenshot(path=str(OUT/'p3-formation-1280x720.png'),full_page=False)
   check('no JS errors in 24 battles',not errors)
   mobile=browser.new_page(viewport={'width':390,'height':844});moberr=[];mobile.on('pageerror',lambda e:moberr.append(str(e)))
-  mobile.set_content(HTML,wait_until='domcontentloaded');mobile.locator('[data-tab="formation"]').first.click()
+  navigate_markup(mobile, HTML,wait_until='domcontentloaded');mobile.locator('[data-tab="formation"]').first.click()
   mobile.screenshot(path=str(OUT/'p3-mobile-390.png'),full_page=True)
   check('mobile 390px has no horizontal document overflow',mobile.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
   mobile_p3=mobile.locator('[data-p3-preset-panel] [data-p3-preset]')

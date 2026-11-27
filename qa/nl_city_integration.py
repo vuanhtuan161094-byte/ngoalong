@@ -7,6 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -31,7 +32,7 @@ def page_for(browser, saved=None, width=1280):
     payload = {} if saved is None else {SAVE_KEY: saved}
     markup = HTML.replace("<script>", STUB.replace("__NL_STORE__",
         json.dumps(payload, ensure_ascii=False)) + "<script>", 1)
-    page.set_content(markup, wait_until="domcontentloaded")
+    navigate_markup(page, markup, wait_until="domcontentloaded")
     return page
 
 def visible_window(page, selector):

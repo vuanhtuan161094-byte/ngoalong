@@ -2,6 +2,7 @@
 from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 from io import BytesIO
 import hashlib, json, base64, os
 ROOT=Path(__file__).resolve().parents[1]
@@ -22,7 +23,7 @@ with sync_playwright() as p:
     page=browser.new_page(viewport={'width':1280,'height':720},device_scale_factor=1)
     errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
     SHIM="""<script>window.__P2_ENABLE_QA__=true;const __store={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>__store[k]??null,setItem:(k,v)=>__store[k]=String(v),removeItem:k=>delete __store[k]}});</script>"""
-    page.set_content(HTML.replace('<script>',SHIM+'<script>',1),wait_until='domcontentloaded')
+    navigate_markup(page, HTML.replace('<script>',SHIM+'<script>',1),wait_until='domcontentloaded')
     page.wait_for_function('window.__P41_QA__?.image?.complete && window.__P41_QA__.image.naturalWidth === 800',timeout=30000)
     check('atlas loads offline in Chromium',page.evaluate('window.__P41_QA__.image.naturalHeight===5184'))
     check('all 288 coordinates available',page.evaluate('(()=>{for(const u of ["infantry","cavalry","archer","strategist"])for(const d of ["front","right","back","left"])for(const a of ["idle","attack","hit"])for(let f=0;f<6;f++)if(__P41_QA__.index(u,d,a,f)<0)return false;return true})()'))

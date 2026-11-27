@@ -1,5 +1,6 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json,sys,traceback
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'qa'
@@ -26,7 +27,7 @@ def main():
  with sync_playwright() as p:
   browser=p.chromium.launch(executable_path=('/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None),headless=True,args=['--no-sandbox'])
   page=browser.new_page(viewport={'width':1380,'height':900});errors=[];page.on('pageerror',lambda e:errors.append(getattr(e, 'stack', str(e))))
-  page.set_content(HTML,wait_until='domcontentloaded');page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
+  navigate_markup(page, HTML,wait_until='domcontentloaded');page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
   check('front-row target beats nearer rear',page.evaluate('''() => {const qa=__P2_QA__,b=qa.debugBattle();b.e=b.e.slice(0,3);[b.e[0].slot,b.e[1].slot,b.e[2].slot]=[0,2,6];let a=b.p.find(u=>u.id==='guan');return qa.p2Target(a,'front').slot===2}'''))
   check('ranged target prioritizes backline',page.evaluate('''() => {const qa=__P2_QA__,b=qa.debugBattle(),a={...b.p[0],type:'archer',troop:'archer',slot:4};return qa.p2Target(a,'back').slot===0}'''))
   values=page.evaluate('''() => {

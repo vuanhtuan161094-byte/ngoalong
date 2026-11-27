@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -31,7 +32,7 @@ def open_page(browser, width: int = 1280, height: int = 720, stored: str | None 
     page = browser.new_page(viewport={"width": width, "height": height}, device_scale_factor=1)
     page.on("pageerror", lambda error: errors.append(str(error)))
     payload = {} if stored is None else {SAVE_KEY: stored}
-    page.set_content(HTML.replace("<script>", STUB.replace("__NL_STORE__", json.dumps(payload, ensure_ascii=False)) + "<script>", 1), wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("<script>", STUB.replace("__NL_STORE__", json.dumps(payload, ensure_ascii=False)) + "<script>", 1), wait_until="domcontentloaded")
     return page
 
 

@@ -1,6 +1,7 @@
 """P4 official visual QA: real original embedded artwork rendered by Chromium, without altered combat outcome."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json, os, sys
 ROOT=Path(__file__).resolve().parents[1]
 html=(ROOT/'index.html').read_text('utf-8')
@@ -13,7 +14,7 @@ with sync_playwright() as p:
  b=p.chromium.launch(headless=True,executable_path=os.environ.get('CHROMIUM_BIN') or None,args=['--no-sandbox'])
  page=b.new_page(viewport={'width':1280,'height':720})
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
- page.set_content(html.replace('<script>',stub+'<script>',1),wait_until='domcontentloaded')
+ navigate_markup(page, html.replace('<script>',stub+'<script>',1),wait_until='domcontentloaded')
  page.wait_for_function('window.__P4_QA__ && Object.values(window.__P4_QA__.images).every(i=>i.complete && i.naturalWidth>0)')
  check('P4 image loader + artwork',page.evaluate('Object.values(window.__P4_QA__.images).length === 2'))
  check('city image embedded offline',page.evaluate('getComputedStyle(document.querySelector(".city-visual")).backgroundImage.includes("data:image/webp;base64")'))
@@ -43,7 +44,7 @@ with sync_playwright() as p:
  check('no Chromium JS errors desktop',not errors)
  mobile=b.new_page(viewport={'width':390,'height':844},device_scale_factor=1)
  mobile_errors=[];mobile.on('pageerror',lambda e:mobile_errors.append(str(e)))
- mobile.set_content(html.replace('<script>',stub+'<script>',1),wait_until='domcontentloaded')
+ navigate_markup(mobile, html.replace('<script>',stub+'<script>',1),wait_until='domcontentloaded')
  mobile.wait_for_function('window.__P4_QA__ && Object.values(window.__P4_QA__.images).every(i=>i.complete && i.naturalWidth>0)')
  check('mobile responsive width',mobile.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
  mobile.screenshot(path=str(ROOT/'qa/p4-mobile.png'),full_page=True)
