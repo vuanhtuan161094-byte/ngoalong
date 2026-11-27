@@ -206,10 +206,10 @@ function sourceSquad(ctx,u,now,pos,v){
  const f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id];if(!a||!ready(atlasImages.get(id)))return false;if(u.hp<=0&&!v.hit)return true;
  const sz=f==='cavalry'?64:53,target=v.ev?.hits?.[0]?.target;let mx=0,my=0;
  const moving=v.actor&&['infantry','spear','cavalry'].includes(f)&&target&&v.elapsed>=170&&v.elapsed<940;
- if(moving){const end=coords(target),dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;const distance=Math.min(145,Math.max(0,dist-100));const t=v.elapsed<430?clamp((v.elapsed-170)/260,0,1):v.elapsed<650?1:clamp((940-v.elapsed)/290,0,1);mx=dx/dist*distance*t;my=dy/dist*distance*t;}
+ if(moving){const end=coords(target),dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;const distance=Math.max(0,dist-105);const t=v.elapsed<430?clamp((v.elapsed-170)/260,0,1):v.elapsed<650?1:clamp((940-v.elapsed)/290,0,1);mx=dx/dist*distance*t;my=dy/dist*distance*t;}
  const offsets=[[0,-3],...squadLayout(f,u.team)].sort((a,b)=>a[1]-b[1]||a[0]-b[0]);ctx.save();if(v.action==='disappear')ctx.globalAlpha=1-v.frame*.23;const x=pos.x+mx,y=pos.y+my;
- for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.25,3.4,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
- ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(u.hp/Math.max(1,u.maxHp),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#15241a';ctx.strokeText(name,x,y-42);ctx.fillStyle='#f8e5b6';ctx.fillText(name,x,y-42);ctx.fillStyle='#16231d';ctx.fillRect(bx-1,by-1,80,11);ctx.fillStyle=u.team==='e'?'#c87b60':'#87bf8a';ctx.fillRect(bx,by,78*hp,5);ctx.fillStyle='#d7b56b';ctx.fillRect(bx,by+7,78*morale,3);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
+ for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.25,3.4,0,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
+ ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(Number(u.hp||0)/Math.max(1,Number(u.maxHp||u.maxHP||u.hpMax||u.max||u.hp||1)),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#15241a';ctx.strokeText(name,x,y-42);ctx.fillStyle='#f8e5b6';ctx.fillText(name,x,y-42);ctx.fillStyle='#16231d';ctx.fillRect(bx-1,by-1,80,11);ctx.fillStyle=u.team==='e'?'#c87b60':'#87bf8a';ctx.fillRect(bx,by,78*hp,5);ctx.fillStyle='#d7b56b';ctx.fillRect(bx,by+7,78*morale,3);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
 }
 const oldDraw=drawUnit;
 drawUnit=function(ctx,u,now){
@@ -222,6 +222,7 @@ drawUnit=function(ctx,u,now){
 if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
  ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5)&&[...privateAtlases.values()].every(a=>ready(a.im)),count:()=>sheets.size,
  sourceAtlasCount:()=>Object.keys(sourceTroops).length||privateAtlases.size,
+ nativeSourceRenderer:()=>Object.keys(sourceTroops).length>0,
  sourceEffectCount:()=>Object.keys(sourceEffects).length,
  sourceReady:()=>Object.keys(sourceTroops).every(id=>ready(atlasImages.get(id)))&&mappedFxIds.filter(id=>sourceEffects[id]).every(id=>ready(atlasImages.get(id))),
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),

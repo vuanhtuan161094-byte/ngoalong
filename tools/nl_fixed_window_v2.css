@@ -182,3 +182,6 @@ body{background:#0a1417!important}
 #app #view .nl-city-map-root .small-data b{font-size:12px!important}
 #app #view .nl-city-map-root .small-data span{font-size:8px!important}
 #app #view .city-caption{display:none!important}}
+
+/* Mobile resource HUD: reserve both complete resource rows. */
+@media(max-width:650px){#app>.topbar{height:122px!important;min-height:122px!important;max-height:122px!important;flex-basis:122px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:32px minmax(0,1fr)!important;padding:4px 6px!important;gap:3px!important}#app>.topbar .resources{grid-area:2/1/3/3!important;height:100%!important;min-height:0!important;grid-template-rows:repeat(2,minmax(0,1fr))!important}#app>.topbar .resources .res{height:100%!important;min-height:0!important;max-height:none!important;box-sizing:border-box!important;padding:3px 4px!important}#app>.topbar .resources .res span{line-height:1!important;font-size:9px!important}#app>.topbar .resources .res b{line-height:1.15!important;font-size:12px!important}#app #view .city-visual{height:clamp(230px,calc(100dvh - 375px),470px)!important}}
