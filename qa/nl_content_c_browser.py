@@ -46,7 +46,7 @@ def main():
             for(let npcIndex=0;npcIndex<(map.npcs||[]).length;npcIndex++){
               const npc=map.npcs[npcIndex];
               for(const unit of npc.units||[]){
-                for(const id of ['33','50','58','74','184','54','55','51','108','29','65','68','123']){
+                for(const id of ['33','50','58','74','184','54','55','51','108','29','65','68','123','152']){
                   const effect=(unit.effects||[]).find(row=>String(row.id)===id);if(!effect||!unit.skill?.desc)continue;
                   const descriptor=c.describeSkill(unit.skill,unit.role||'infantry',npc.boss,unit.effects);
                   const app=descriptor?.sourceApplications?.find(row=>row.sourceId===id);
@@ -265,6 +265,7 @@ def main():
           const fortune65=sourceStatusSamples['65'];
           const heavenlyFire68=sourceStatusSamples['68'];
           const octagram123=sourceStatusSamples['123'];
+          const revival152=sourceStatusSamples['152'];
           const bountyRawMagnitude=Number(bounty54?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           const insightRawMagnitude=Number(insight55?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]\\s*\\d+\\s*lượt/i)?.[1]?.replace(',','.'));
           checks.mobileSourceBountySelectors=sourceStatusSamples['54-least-enemy']?.app?.scope==='least-enemy'&&
@@ -302,6 +303,12 @@ def main():
           checks.mobileSourceOctagramDescriptor=!!octagram123&&octagram123.app.scope==='lowest-ally'&&octagram123.app.turns===octagramDuration&&
             octagram123.app.values.damageBlockCharges===1&&octagram123.app.sourceMagnitude===octagramMagnitude&&
             octagram123.app.formulaClassification==='SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SIMULATED_UNIFORM_RANDOM_TARGET';
+          const revivalDuration=Number(revival152?.effect?.detail?.match(/(\\d+)\\s*lượt/i)?.[1]);
+          const revivalMagnitude=Number(revival152?.effect?.detail?.match(/^(\\d+(?:[.,]\\d+)?)\\s*[·x*]/)?.[1]?.replace(',','.'));
+          checks.mobileSourceRevivalDescriptor=!!revival152&&['self','allies','targets','lowest-ally'].includes(revival152.app.scope)&&
+            revival152.app.turns===revivalDuration&&revival152.app.values.healPerConsumedStack>0&&
+            revival152.app.values.stackCount>0&&revival152.app.sourceMagnitude===revivalMagnitude&&
+            revival152.app.dispelPolicy==='unknown'&&revival152.app.formulaClassification==='SIMULATED_SOURCE_MAGNITUDE_AS_FLAT_TROOP_HEAL_PER_CONSUMED_STACK';
           checks.mobileSourceSilenceDescriptor=silence184?.app?.scope==='targets'&&silenceTurns>0&&silence184?.app?.turns===silenceTurns&&
             silence184?.app?.kind==='mobile-source-skill-silence';
           const moraleProtected={morale:80,effects:[],team:'p',slot:0};
@@ -589,6 +596,41 @@ def main():
               redirectVictim:{slot:redirectVictim?.slot,hp:redirectVictim?.hp},playerHpBefore};
           }else {checks.mobileSourceOctagramNativeRedirect=false;checks.mobileSourceOctagramTargetPolicy=false;
             checks.mobileSourceOctagramDiagnostics={battle:!!octagramBattle,caster:!!octagramCaster,sample:octagram123};}
+          q.closeBattle('city');q.setGame(beforeStatusProbe);
+          const revivalBattle=launchStatusProbe(revival152,true),revivalCaster=revivalBattle?.e?.find(unit=>unit.slot===revival152?.slot);
+          if(revivalBattle&&revivalCaster){
+            for(const unit of [...revivalBattle.p,...revivalBattle.e]){unit.hp=unit.maxHp=1000000000000;unit.alive=true;if(unit.nlMobileTroop)unit.nlMobileTroop.strikeBack=0;}
+            const revivalApplication=revivalCaster.nlCDescriptor.sourceApplications.find(row=>row.sourceId==='152');
+            if(revivalApplication)revivalApplication.chance=1;
+            revivalCaster.morale=100;q.perform(revivalCaster);
+            const revivalSourceEvent=revivalBattle.events.at(-1),revivalTarget=[...revivalBattle.p,...revivalBattle.e].find(unit=>unit.effects.some(effect=>effect.mobileSource?.sourceEffectId==='152'));
+            const revivalStatus=revivalTarget?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='152'),revivalInitialStacks=revivalStatus?.stacks;
+            const revivalProbe={team:'p',slot:8,hp:500,maxHp:1000,alive:true,effects:[]};
+            const revivalStackFirst=c.applyMobileSourceStatus(revivalProbe,revival152.app),revivalStackSecond=c.applyMobileSourceStatus(revivalProbe,revival152.app);
+            const revivalExpectedStacks=revival152.app.values.stackCount*2;
+            let revivalHpBefore=0,revivalDamageHit=null,revivalHealHit=null,revivalActionEvent=null;
+            if(revivalTarget){
+              const revivalTeam=revivalTarget.team==='p'?revivalBattle.p:revivalBattle.e,attackerTeam=revivalTarget.team==='p'?revivalBattle.e:revivalBattle.p;
+              for(const unit of revivalTeam)if(unit!==revivalTarget)unit.hp=0;
+              revivalTarget.hp=revivalTarget.maxHp/2;revivalTarget.def=revivalTarget.tdef=revivalTarget.mdef=0;
+              const revivalAttacker=attackerTeam.find(unit=>unit.hp>0);
+              if(revivalAttacker){revivalAttacker.morale=40;revivalAttacker.atk=revivalAttacker.catk=revivalAttacker.matk=1000000000;
+                revivalHpBefore=revivalTarget.hp;q.perform(revivalAttacker);revivalActionEvent=revivalBattle.events.at(-1);
+                revivalDamageHit=revivalActionEvent?.hits?.find(hit=>hit.team===revivalTarget.team&&hit.slot===revivalTarget.slot&&hit.amount>0&&!hit.heal);
+                revivalHealHit=revivalActionEvent?.hits?.find(hit=>hit.team===revivalTarget.team&&hit.slot===revivalTarget.slot&&hit.mobileSourceRevival&&hit.heal);}
+            }
+            const revivalRemaining=revivalTarget?.effects.find(effect=>effect.mobileSource?.sourceEffectId==='152')?.stacks||0;
+            checks.mobileSourceRevivalNativeCombat=revivalSourceEvent?.skill===revival152.skill.name&&revivalSourceEvent?.mode==='skill'&&
+              revivalTarget&&revivalInitialStacks===revival152.app.values.stackCount&&revivalDamageHit?.amount>0&&revivalHealHit?.amount===revival152.app.values.healPerConsumedStack&&
+              revivalTarget.hp===revivalHpBefore-revivalDamageHit.amount+revivalHealHit.amount&&revivalRemaining===Math.max(0,revivalInitialStacks-1)&&
+              revivalActionEvent?.description?.includes('Hồi Xuân hồi quân');
+            checks.mobileSourceRevivalStacking=revivalStackFirst&&revivalStackSecond&&revivalProbe.effects[0]?.stacks===revivalExpectedStacks&&
+              revivalProbe.effects[0]?.mobileSource?.dispelPolicy==='unknown'&&revival152.app.stackingClassification==='SIMULATED_ADDITIVE_STACKS_CAP_99';
+            checks.mobileSourceRevivalDiagnostics={sample:{mapId:revival152.mapId,npcId:revival152.npcId,skill:revival152.skill,app:revival152.app},
+              revivalSourceEvent,revivalInitialStacks,revivalDamageHit,revivalHealHit,revivalHpBefore,revivalHpAfter:revivalTarget?.hp,revivalRemaining,
+              revivalActionEvent:{actor:revivalActionEvent?.actor,mode:revivalActionEvent?.mode,description:revivalActionEvent?.description}};
+          }else {checks.mobileSourceRevivalNativeCombat=false;checks.mobileSourceRevivalStacking=false;
+            checks.mobileSourceRevivalDiagnostics={battle:!!revivalBattle,caster:!!revivalCaster,sample:revival152};}
           q.closeBattle('city');q.setGame(beforeStatusProbe);
           const silenceBattle=launchStatusProbe(silence184),silenceCaster=silenceBattle?.e?.find(unit=>unit.slot===silence184?.slot);
           if(silenceBattle&&silenceCaster){

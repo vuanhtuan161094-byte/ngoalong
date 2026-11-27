@@ -422,6 +422,7 @@ const MOBILE_CONTROL_STATUS='mobile-source-control',MOBILE_SLEEP_STATUS='mobile-
  MOBILE_SOURCE_FORTUNE='mobile-source-fortune',
  MOBILE_SOURCE_HEAVENLY_FIRE='mobile-source-heavenly-fire',
  MOBILE_SOURCE_OCTAGRAM='mobile-source-octagram-redirect',
+ MOBILE_SOURCE_REVIVAL='mobile-source-revival',
  MOBILE_DRAGON_ATTACK_STATUS='mobile-source-dragon-attack-up',MOBILE_ALL_DEFENSE_DOWN_STATUS='mobile-source-all-defense-down',
  MOBILE_MAGIC_DEFENSE_DOWN_STATUS='mobile-source-magic-defense-down',MOBILE_TACTIC_DEFENSE_DOWN_STATUS='mobile-source-tactic-defense-down',
  MOBILE_PURIFICATION_STATUS='mobile-source-purification',
@@ -493,6 +494,8 @@ for(const [kind,spec] of Object.entries({
   provenance:{classification:'SOURCE_UNREMOVABLE_SPREADING_BURN_WITH_SIMULATED_TICK_AND_SPREAD',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'68',behavior:'burns current HP each affected action and may spread using a simulated chance'}},
  [MOBILE_SOURCE_OCTAGRAM]:{duration:2,polarity:'beneficial',dispelPolicy:'unknown',stackingPolicy:'replace-duration',expirePhase:'round-end',removeAfterOwnAction:false,
   provenance:{classification:'SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SOURCE_MAGNITUDE_AND_DISPEL_UNRESOLVED',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'123',behavior:'blocks one incoming hit and redirects its damage to a random enemy'}},
+ [MOBILE_SOURCE_REVIVAL]:{duration:2,polarity:'beneficial',dispelPolicy:'unknown',stackingPolicy:'add-stack',stackLimit:99,expirePhase:'round-end',removeAfterOwnAction:false,
+  provenance:{classification:'SOURCE_STACK_CONSUMED_ON_DAMAGE_WITH_SIMULATED_FLAT_HEAL',sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:'152',behavior:'consumes one stack after damage and restores troop; healing amount interpretation and stack cap are simulated'}},
  [MOBILE_PHYSICAL_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_MAGIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
  [MOBILE_TACTIC_ATTACK_DOWN_STATUS]:{duration:1,polarity:'harmful',dispelPolicy:'removable',stackingPolicy:'refresh-longer',expirePhase:'round-end',removeAfterOwnAction:false},
@@ -568,6 +571,7 @@ const MOBILE_SOURCE_STATUS_RULES=Object.freeze({
  '65':{kind:MOBILE_SOURCE_FORTUNE,mechanic:'random-maximum-damage'},
  '68':{kind:MOBILE_SOURCE_HEAVENLY_FIRE,mechanic:'spreading-burn'},
  '123':{kind:MOBILE_SOURCE_OCTAGRAM,mechanic:'one-hit-random-redirect'},
+ '152':{kind:MOBILE_SOURCE_REVIVAL,mechanic:'consume-stack-and-heal-on-damage'},
  '70':{kind:MOBILE_DRAGON_ATTACK_STATUS,mechanic:'dragon-attack-increase'},
  '16':{kind:MOBILE_ATTACK_DOWN_STATUS,mechanic:'attack-reduction'},
  '26':{kind:MOBILE_SLEEP_STATUS,mechanic:'sleep-wakes-on-damage'},
@@ -918,6 +922,9 @@ function mobileSourceApplications(skill,effects){
   else if(['9','10','11','13','14','15'].includes(id)&&/muc tieu|doi phuong/.test(context))scope='targets';
   else if(id==='58'&&/(?:dong doi|tuong phe ta).{0,80}(?:linh it nhat|it linh nhat|linh thap nhat)/.test(fold))scope='lowest-ally';
   else if(id==='123'&&/tuong linh it nhat phe ta/.test(context))scope='lowest-ally';
+  else if(id==='152'&&/(?:tuong linh it nhat phe ta|dong doi linh it nhat phe ta)/.test(context))scope='lowest-ally';
+  else if(id==='152'&&/(?:ban than|tu than).{0,65}(?:nhan|duoc)\s+\d+\s+tang/.test(context))scope='self';
+  else if(id==='152'&&/(?:muc tieu|dong doi|tuong phe ta).{0,65}(?:nhan|duoc)\s+\d+\s+tang/.test(context))scope='targets';
   else if(id==='108'&&/toan phe ta.{0,90}(?:nhan|ho thuan|de khang)/.test(context))scope='allies';
   else if(id==='108'&&/(?:ban than|tu than).{0,90}(?:nhan|ho thuan|de khang)/.test(context))scope='self';
   else if(id==='54'&&/(?:tuong dich linh nhieu nhat|don vi dich linh nhieu nhat).{0,70}(?:va\s+\d+\s+tuong dich ngau nhien khac)/.test(context))scope='highest-troops-and-random';
@@ -1005,6 +1012,17 @@ function mobileSourceApplications(skill,effects){
     app.values.damageBlockCharges=1;app.formulaClassification='SOURCE_EXACT_ONE_HIT_REDIRECT_WITH_SIMULATED_UNIFORM_RANDOM_TARGET';
     app.targetSelectionClassification='SIMULATED_UNIFORM_RANDOM_LIVING_ENEMY';app.dispelPolicy='unknown';
     app.stackingClassification='SIMULATED_REPLACE_DURATION';app.unresolvedMechanics=['SOURCE_MAGNITUDE_SEMANTICS_UNPUBLISHED','SOURCE_DISPELLABILITY_UNPUBLISHED','SOURCE_STACKING_RULE_UNPUBLISHED'];
+  }
+  if(id==='152'){
+    const rawHeal=detailFold.match(/^(\d+(?:[.,]\d+)?)\s*[·x*]\s*\d+\s*luot/),rawValue=rawHeal?Number(rawHeal[1].replace(',','.')):null,
+      stackMatch=context.match(/(\d+)\s+tang\s*$/),stackCount=stackMatch?Number(stackMatch[1]):1;
+    app.sourceMagnitude=rawValue;app.values.healPerConsumedStack=rawValue??50000;app.values.stackCount=stackCount;
+    app.stackCountClassification=stackMatch?'SOURCE_EXACT_STACK_COUNT':'SIMULATED_DEFAULT_ONE_STACK';
+    app.stackingClassification='SIMULATED_ADDITIVE_STACKS_CAP_99';app.dispelPolicy='unknown';
+    app.formulaClassification='SIMULATED_SOURCE_MAGNITUDE_AS_FLAT_TROOP_HEAL_PER_CONSUMED_STACK';
+    app.valueEvidence=rawValue!==null?{classification:'SOURCE_VALUE_OBSERVED_SEMANTICS_UNKNOWN',sourceDetail:detail,sourceValue:rawValue}:
+      {classification:'SIMULATED_DEFAULT_FROM_MOST_COMMON_SOURCE_DETAIL',sourceEffectId:'152',mostCommonObservedSourceValue:50000,sourceDetail:detail,defaultValue:50000};
+    app.unresolvedMechanics=['SOURCE_HEAL_AMOUNT_SEMANTICS_UNPUBLISHED','SOURCE_STACKING_RULE_UNPUBLISHED','SOURCE_DISPELLABILITY_UNPUBLISHED'];
   }
   if(id==='77'&&/neu khong/.test(context))app.condition='TARGET_SURVIVES';
   if(rule.mechanic==='damage-reduction'&&percent!==null)app.values.incomingDamageMultiplier=Math.max(0,1-percent);
@@ -1197,7 +1215,7 @@ function mobileSkillAudit(){
    if(String(d.skillFieldProvenance?.secondaryEffects||'').startsWith('UNRESOLVED'))rows.unresolvedSecondaryEffects++;
  }
  return {...rows,skillNames:rows.skillNames.size,sourceExactSkillNames:rows.sourceExactSkillNames.size,
-   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123'].includes(id)).sort(),
+   sourceEffectIds:rows.sourceEffectIds.size,sourceEffectNames:rows.sourceEffectNames.size,sourceStatusIds:rows.sourceStatusIds.size,legacySourceStatusIds:[...rows.sourceStatusIds].filter(id=>!['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152'].includes(id)).length,newSourceStatusIds:[...rows.sourceStatusIds].filter(id=>['1','6','8','17','22','23','24','25','32','33','35','41','42','43','45','47','50','51','52','58','74','184','54','55','108','29','65','68','123','152'].includes(id)).sort(),
    sourceEdition:NL_CONTENT_C.sourceEdition};
 }
 function skillProbe(name){
@@ -1270,11 +1288,13 @@ function applyMobileSourceStatus(unit,app){
    values.shieldRemaining=values.shieldMaximum;
  }
  const priorProgressiveStacks=existing?.stacks;
+ const priorRevivalStacks=existing?.kind===MOBILE_SOURCE_REVIVAL?nat(existing.stacks):0;
  if(!p2Status(unit,app.kind,app.turns))return false;
  const status=unit.effects.find(effect=>effect.kind===app.kind);
  if(!status)return false;
  status.mobileSourceValues=values;
  if(app.kind===MOBILE_SOURCE_PROGRESSIVE_VULNERABILITY)status.stacks=clamp(nat(priorProgressiveStacks)||1,1,Math.min(5,nat(app.simulatedStackLimit)||5));
+ if(app.kind===MOBILE_SOURCE_REVIVAL)status.stacks=clamp(priorRevivalStacks+Math.max(1,nat(values.stackCount)||1),1,99);
  status.mobileSource={sourceEdition:MOBILE_BUFFS.sourceEdition,sourceEffectId:app.sourceId,
    sourceName:app.sourceName,sourceDescription:app.sourceDescription,sourceDetail:app.detail,
    dispelPolicy:app.dispelPolicy||NL_GAME_DATA.statusEffects.effects[app.kind]?.dispelPolicy||'removable',
@@ -1637,6 +1657,10 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  if(hit.amount>0&&target?.effects?.some(effect=>effect.kind===MOBILE_SLEEP_STATUS))
    target.effects=target.effects.filter(effect=>effect.kind!==MOBILE_SLEEP_STATUS);
  if(hit.amount>0&&target.hp>0){const rage=(target.effects||[]).filter(e=>e.kind==='mobile-source-rage'&&e.turns>0).reduce((n,e)=>n+(Number(e.mobileSourceValues?.moraleOnDamage)||0),0);if(rage>0)p2Morale(target,Math.min(130,rage));const recovered=mobileBookSpring(target);if(recovered)hit.mobileBookSpringHealing=recovered;}
+ if(hit.amount>0&&target.hp>0){const revival=(target.effects||[]).find(effect=>effect.kind===MOBILE_SOURCE_REVIVAL&&effect.turns>0&&nat(effect.stacks)>0);
+   if(revival){const stacks=nat(revival.stacks),heal=mobileSourceRestoreFlat(target,Number(revival.mobileSourceValues?.healPerConsumedStack)||0);
+     revival.stacks=stacks-1;hit.mobileSourceRevivalStackConsumed=1;hit.mobileSourceRevivalHealing=heal;
+     if(revival.stacks<=0)target.effects=target.effects.filter(effect=>effect!==revival);}}
  const lifeSteal=(attacker?.effects||[]).filter(effect=>effect.kind===MOBILE_LIFESTEAL_STATUS&&effect.turns>0)
    .reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.lifestealDamageMultiplier)||0),0);
  if(hit.amount>0&&lifeSteal>0&&!mobileBookHas(attacker,MOBILE_SOURCE_NO_HEAL)&&Number.isFinite(attacker.hp)&&Number.isFinite(attacker.maxHp)){
@@ -1679,6 +1703,19 @@ function mobileSourceHealingMultiplier(target){
    const value=effect.mobileSourceValues?.incomingHealingMultiplier;
    return Number.isFinite(value)?factor*Math.max(0,value):factor;
  },1);
+}
+function mobileSourceRestoreFlat(target,amount){
+ if(!target||target.hp<=0||mobileBookHas(target,MOBILE_SOURCE_NO_HEAL)||!Number.isFinite(target.maxHp))return 0;
+ const raw=Math.max(0,Math.round(amount*mobileSourceHealingMultiplier(target))),healed=Math.min(Math.max(0,target.maxHp-target.hp),mobileBookBroken(target)?Math.min(1,raw):raw);
+ target.hp+=healed;return healed;
+}
+function mobileAppendSourceRevivalHits(event){
+ if(!event?.hits?.length)return 0;
+ const healing=event.hits.flatMap(hit=>hit.mobileSourceHits||[hit]).filter(hit=>hit.mobileSourceRevivalHealing>0)
+  .map(hit=>({team:hit.team,slot:hit.slot,number:'+'+hit.mobileSourceRevivalHealing,amount:hit.mobileSourceRevivalHealing,kind:'heal',heal:true,mobileSourceRevival:true}));
+ if(!healing.length)return 0;
+ event.hits.push(...healing);event.description+=' · Hồi Xuân hồi quân '+healing.map(hit=>hit.amount).join(', ');
+ event.state=p2Snapshot();battle.log=event.description;return healing.length;
 }
 p2Heal=function(attacker,target,mult){
  if(mobileBookHas(target,MOBILE_SOURCE_NO_HEAL))return {team:target.team,slot:target.slot,amount:0,number:'+0',heal:true,kind:'heal'};
@@ -1945,6 +1982,7 @@ p2Perform=function(actor){
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
    mobileAppendSourceRedirectHits(event);
+   mobileAppendSourceRevivalHits(event);
    if(confusionActive&&event?.actor===actor.name){event.mobileSourceConfusionRedirected=true;event.description+=' · Mê Hoặc: đánh nhầm đồng minh';event.state=p2Snapshot();battle.log=event.description;}
    if(appliedFateMultiplier&&event?.actor===actor.name){event.mobileSourceFateDamageMultiplier=appliedFateMultiplier;event.description+=' · Thiên Vận ×'+appliedFateMultiplier;event.state=p2Snapshot();battle.log=event.description;}
    if(locked&&silenced&&event){event.description+=' · Thanh Lĩnh';event.state=p2Snapshot();battle.log=event.description;}
