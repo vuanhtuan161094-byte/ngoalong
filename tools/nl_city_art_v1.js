@@ -63,6 +63,20 @@ if(sourceCity){
   extra+=`#view .city-visual .building[data-focus-building="${id}"]{left:calc(50% + min(100cqw,150.6cqh)*${(x-50)/100})!important;top:calc(50% + min(100cqh,66.4cqw)*${(y-50)/100})!important;right:auto!important;bottom:auto!important}#view .city-visual .building[data-focus-building="${id}"] .symbol{background-image:url("${env.buildings[id]}")!important}`;
  }
  style.textContent+=extra;
+ if(env.ui){
+  const ui=env.ui;
+  style.textContent+=`
+   #app #view .gold-button{background-image:url("${ui.buttonGold}")!important;background-size:100% 100%!important;color:#17271f!important;border-color:#cba960!important}
+   #app #view .dark-button,#app .nl-screen-ctrl button:not(:disabled){background-image:url("${ui.buttonGreen}")!important;background-size:100% 100%!important;color:#f4e9c9!important}
+   #app>.shell>.sidebar .nav.active{background-image:url("${ui.navActive}")!important;background-size:100% 100%!important;border-color:#78aaa7!important}
+   #app #view .panel{background-image:url("${ui.panel}")!important;background-size:100% 100%!important}
+   @media(min-width:1000px){
+    #app #view>.grid-2:has(.city-visual){grid-template-columns:minmax(0,1.75fr) minmax(260px,1fr)!important;align-items:start}
+    #app #view .city-visual{height:clamp(390px,63vh,520px)!important}
+   }
+   @media(max-width:600px){#app #view .city-visual{height:320px!important}}
+  `;
+ }
 }
 document.head.appendChild(style);
 const previousCity=renderCity;
@@ -70,6 +84,7 @@ renderCity=function(){return previousCity().replace('THÀNH TRÌ · MỸ THUẬT
 if(window.__P2_ENABLE_QA__)window.__NL_CITY_ART_QA__=Object.freeze({
  source:sourceCity?'MatrixHan/WLY2':'image_gen.imagegen',version:1,width:sourceCity?2000:1400,height:sourceCity?1328:788,
  sourceBuildings:()=>Object.keys(env.buildings||{}),
+ sourceUI:()=>Object.keys(env.ui||{}),
  cssReady:()=>document.querySelectorAll('style[data-nl-city-art="v1"]').length===1,
  background:()=>getComputedStyle(document.querySelector('.city-visual')).backgroundImage
 });

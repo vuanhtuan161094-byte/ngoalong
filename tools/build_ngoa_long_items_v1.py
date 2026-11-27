@@ -214,10 +214,11 @@ def payload(private_wly2=None) -> str:
         city_art.count("__NL_CITY_ART_DATA_URL__") != 1 or "</script" in city_art.lower()):
         raise ValueError("Invalid city art runtime module")
     city_url = "data:image/webp;base64," + b64encode(city_runtime_bytes).decode("ascii")
-    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url)).replace("__NL_WLY2_ENV_DATA__", js_json(environment))
+    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url)).replace("__NL_WLY2_ENV_DATA__", js_json({k:v for k,v in environment.items() if k not in ("audio","audioSource")}))
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")
+    audio = audio.replace("__NL_SOURCE_AUDIO__", js_json(environment.get("audio",{})))
     # V4 heroine art is bound to stable gameplay IDs. Masters remain as source
     # PNGs; only optimized local WebP data URLs enter the offline game bundle.
     hero_data = json.loads((ROOT / "data/ngoalong/modules/heroes/hero_systems_v1.json").read_text(encoding="utf-8"))

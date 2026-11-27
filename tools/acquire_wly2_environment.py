@@ -80,5 +80,14 @@ def main():
           "battle":image_url(root/"bg/battle/BF_006.png",(1400,800)),
           "buildings":{k:image_url(root/"building/maincity"/v,(384,384)) for k,v in buildings.items()},
           "buildingSource":buildings}
+    ui_names={"panel":"g01_00001.png","buttonGold":"g02_000001.png","buttonGreen":"g02_000002.png","navActive":"g02_000081.png"}
+    pack["ui"]={k:image_url(root/"common/ui"/v,(640,320)) for k,v in ui_names.items()}
+    soundroot=out/"source"/"project_wly2_lua_client/res/sound"
+    sound_names={"click":"UItongyongdianji.ogg","preview":"UIdianjijianzhu.ogg","strike":"Attack_hit_1.ogg",
+                 "victory":"UIzhandoushengli.ogg","defeat":"UIzhandoushibai.ogg",
+                 "cityMusic":"zhucheng.ogg","battleMusic":"zhandou.ogg"}
+    pack["audio"]={k:"data:audio/ogg;base64,"+base64.b64encode((soundroot/v).read_bytes()).decode("ascii") for k,v in sound_names.items()}
+    pack["audioSource"]=sound_names
+    pack["uiSource"]=ui_names
     (out/"runtime-pack.json").write_text(json.dumps(pack,separators=(",",":")),encoding="utf-8")
 if __name__=="__main__":main()

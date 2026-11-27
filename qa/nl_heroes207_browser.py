@@ -23,8 +23,8 @@ def open_page(browser,width=1280,stored=None):
  page=browser.new_page(viewport={"width":width,"height":720 if width>600 else 844},device_scale_factor=1)
  page.on("pageerror",lambda err:errors.append(str(err)))
  store={} if stored is None else {SAVE_KEY:stored}
- markup=HTML.replace("<script>",STUB.replace("__NL_STORE__",json.dumps(store,ensure_ascii=False))+"<script>",1)
- page.set_content(markup,wait_until="domcontentloaded")
+ page.add_init_script(STUB.replace("__NL_STORE__",json.dumps(store,ensure_ascii=False)).removeprefix("<script>").removesuffix("</script>"))
+ page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
  return page
 def main():
  with sync_playwright() as p:

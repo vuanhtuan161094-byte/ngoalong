@@ -14,7 +14,9 @@ def open_audio_page(browser, local_store: dict[str, str], width: int):
     page = browser.new_page(viewport={"width": width, "height": 720 if width > 600 else 844})
     page.on("pageerror", lambda error: errors.append(str(error)))
     stub = STUB.replace("__NL_STORE__", json.dumps(local_store, ensure_ascii=False))
-    page.set_content(HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
+    from pathlib import Path
+    page.add_init_script(stub.removeprefix('<script>').removesuffix('</script>'))
+    page.goto((Path(__file__).resolve().parents[1]/'index.html').as_uri(),wait_until='domcontentloaded',timeout=180000)
     return page
 
 
@@ -63,10 +65,11 @@ def main() -> None:
           Ctor.prototype.createOscillator=function(){voices++;return original.call(this)};
           q.beginBattle(1,'campaign');const b=q.debugBattle();
           if(!b){Ctor.prototype.createOscillator=original;return {started:false};}
-          const beforeAction=voices;q.perform(b.e[0]);const actionVoices=voices-beforeAction;
+          const source=()=>window.__NL_AUDIO_QA__.sourcePlays?.()||0;
+          const beforeAction=voices+source();q.perform(b.e[0]);const actionVoices=voices+source()-beforeAction;
           for(const enemy of b.e)enemy.hp=0;
           if(!b.finished)q.finishBattle();
-          const finishVoices=voices-beforeAction-actionVoices;
+          const finishVoices=voices+source()-beforeAction-actionVoices;
           Ctor.prototype.createOscillator=original;
           return {started:true,actionVoices,finishVoices,won:b.won,finished:b.finished};
         }""")

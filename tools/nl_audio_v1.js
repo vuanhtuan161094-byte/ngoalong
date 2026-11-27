@@ -2,6 +2,12 @@
 (()=>{
 'use strict';
 const KEY='muu_dinh_tam_quoc_audio_v1';
+const sourceAudio=__NL_SOURCE_AUDIO__, activeAudio=new Set();
+let sourceMusic=null,sourceMusicId='',sourcePlays=0;
+function sourcePlay(kind){
+ if(!sourceAudio[kind]||settings.muted||settings.effects<=0)return false;
+ try{const a=new Audio(sourceAudio[kind]);a.volume=settings.effects;activeAudio.add(a);const cleanup=()=>activeAudio.delete(a);a.addEventListener('ended',cleanup,{once:true});a.addEventListener('error',cleanup,{once:true});sourcePlays++;a.play().catch(cleanup);return true;}catch{return false;}
+}
 const number=(v,fallback)=>Number.isFinite(v)?Math.min(1,Math.max(0,v)):fallback;
 function read(){
  try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object')return {
@@ -24,6 +30,8 @@ function sync(){
  if(master)master.gain.value=settings.muted?0:1;
  if(effectsBus)effectsBus.gain.value=settings.effects;
  if(musicBus)musicBus.gain.value=settings.musicVolume;
+ for(const a of activeAudio){a.volume=settings.muted?0:settings.effects;if(settings.muted)a.pause();}
+ if(sourceMusic)sourceMusic.volume=settings.musicVolume;
  if(settings.music&&!settings.muted)startMusic();else stopMusic();
 }
 function tone(freq,at,duration,amp,bus,wave='sine',endFreq=0){
@@ -46,6 +54,7 @@ const CUES={
 };
 function play(kind='click'){
  if(settings.muted||settings.effects<=0||!ensure())return false;
+ if(sourcePlay(kind))return true;
  try{const now=context.currentTime+.012,notes=CUES[kind]||CUES.click;
   for(const n of notes)tone(n.f,now+(n.delay||0),n.d,n.a,effectsBus,n.w,n.end||0);
   return true;
@@ -60,13 +69,23 @@ function musicStep(){
  if(index%5===0)tone(SCALE[(MELODY[index]+3)%SCALE.length]/2,now,.9,.11,musicBus,'sine');
  musicTimer=window.setTimeout(musicStep,1250);
 }
-function startMusic(){if(!musicTimer&&settings.music&&!settings.muted&&ensure())musicStep();}
-function stopMusic(){if(musicTimer){clearTimeout(musicTimer);musicTimer=0;}}
+function startMusic(){
+ if(!settings.music||settings.muted||!ensure())return;
+ const id=battle&&!battle.finished?'battleMusic':'cityMusic';
+ if(sourceAudio[id]){
+  if(sourceMusicId!==id){sourceMusic?.pause();sourceMusic=new Audio(sourceAudio[id]);sourceMusic.loop=true;sourceMusicId=id;}
+  sourceMusic.volume=settings.musicVolume;
+  if(sourceMusic.paused)sourceMusic.play().catch(()=>{});
+  return;
+ }
+ if(!musicTimer)musicStep();
+}
+function stopMusic(){if(musicTimer){clearTimeout(musicTimer);musicTimer=0;}sourceMusic?.pause();}
 function update(changes){settings={...settings,...changes,effects:number(changes.effects,settings.effects),musicVolume:number(changes.musicVolume,settings.musicVolume)};persist();sync();return snapshot();}
 function snapshot(){return {...settings};}
 function panel(){
  const s=settings;
- return `<section class="panel mini-box nl-audio-panel" data-nl-audio-settings><h3>🎼 Âm thanh</h3><p class="tiny">Cue giao diện và trận đấu dùng âm thanh tổng hợp gốc trong trình duyệt. Nhạc nền là một giai điệu thử nghiệm; không tải âm thanh từ mạng.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px;align-items:center"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" data-nlaudio-mute ${s.muted?'checked':''}> Tắt toàn bộ</label><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" data-nlaudio-music ${s.music?'checked':''}> Nhạc nền</label><label>Hiệu ứng <div style="display:flex;align-items:center;gap:10px"><input style="flex:1;min-width:0" type="range" min="0" max="100" value="${Math.round(s.effects*100)}" data-nlaudio-effects aria-label="Âm lượng hiệu ứng"><output data-nlaudio-effects-value>${Math.round(s.effects*100)}%</output></div></label><label>Nhạc <div style="display:flex;align-items:center;gap:10px"><input style="flex:1;min-width:0" type="range" min="0" max="100" value="${Math.round(s.musicVolume*100)}" data-nlaudio-music-volume aria-label="Âm lượng nhạc"><output data-nlaudio-music-value>${Math.round(s.musicVolume*100)}%</output></div></label><button class="dark-button" data-nlaudio-action="preview">▶ Nghe thử</button></div><p class="tiny">Tùy chọn được lưu trên thiết bị riêng, không thay đổi Save v5.</p></section>`;
+ return `<section class="panel mini-box nl-audio-panel" data-nl-audio-settings><h3>🎼 Âm thanh</h3><p class="tiny">${Object.keys(sourceAudio).length?'Âm thanh và nhạc nền MatrixHan tích hợp offline, cue chưa ánh xạ dùng âm thanh dự phòng.':'Cue và nhạc nền tổng hợp offline.'}</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px;align-items:center"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" data-nlaudio-mute ${s.muted?'checked':''}> Tắt toàn bộ</label><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" data-nlaudio-music ${s.music?'checked':''}> Nhạc nền</label><label>Hiệu ứng <div style="display:flex;align-items:center;gap:10px"><input style="flex:1;min-width:0" type="range" min="0" max="100" value="${Math.round(s.effects*100)}" data-nlaudio-effects aria-label="Âm lượng hiệu ứng"><output data-nlaudio-effects-value>${Math.round(s.effects*100)}%</output></div></label><label>Nhạc <div style="display:flex;align-items:center;gap:10px"><input style="flex:1;min-width:0" type="range" min="0" max="100" value="${Math.round(s.musicVolume*100)}" data-nlaudio-music-volume aria-label="Âm lượng nhạc"><output data-nlaudio-music-value>${Math.round(s.musicVolume*100)}%</output></div></label><button class="dark-button" data-nlaudio-action="preview">▶ Nghe thử</button></div><p class="tiny">Tùy chọn được lưu trên thiết bị riêng, không thay đổi Save v5.</p></section>`;
 }
 if(!NAV.some(item=>item[0]==='settings'))NAV.push(['settings','⚙️','Cài Đặt']);
 const oldRender=render;
@@ -91,18 +110,18 @@ document.addEventListener('click',ev=>{
 });
 const oldPerform=p2Perform;
 p2Perform=function(actor){
- const current=battle,count=current?.events?.length||0;oldPerform(actor);
+ const current=battle,count=current?.events?.length||0;oldPerform(actor);if(settings.music&&!settings.muted)startMusic();
  if(!current||current!==battle||current.replay)return;
  const event=current.events?.[count];if(event)play((event.hits||[]).some(hit=>hit.heal)?'heal':'strike');
 };
 const oldFinish=finishBattle;
 finishBattle=function(){
  const active=!!battle&&!battle.finished&&!battle.replay;oldFinish();
- if(active&&battle?.finished)play(battle.won?'victory':'defeat');
+ if(active&&battle?.finished){play(battle.won?'victory':'defeat');if(settings.music&&!settings.muted)startMusic();}
 };
 if(window.__P2_ENABLE_QA__){
  if(window.__P2_QA__){window.__P2_QA__.perform=p2Perform;window.__P2_QA__.finishBattle=finishBattle;}
- window.__NL_AUDIO_QA__=Object.freeze({settings:snapshot,update,play,available:()=>!!(window.AudioContext||window.webkitAudioContext),contextState:()=>context?.state||'not-created'});
+ window.__NL_AUDIO_QA__=Object.freeze({settings:snapshot,update,play,available:()=>!!(window.AudioContext||window.webkitAudioContext),contextState:()=>context?.state||'not-created',sourceCount:()=>Object.keys(sourceAudio).length,sourcePlays:()=>sourcePlays});
 }
 })();
 // === end NL-AUDIO-V1 ===
