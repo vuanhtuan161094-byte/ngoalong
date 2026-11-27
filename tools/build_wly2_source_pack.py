@@ -26,7 +26,7 @@ def pack_image(raw,meta,cell,normalize_soldier=False):
     # transparency while retaining animation alignment between adjacent cels.
     unions={}
     def action_of(key):
-        match=re.search(r"_(idle|stand|move|attack|skill|hit|death|retreat)\\d*\\.png$",key,re.I)
+        match=re.search(r"_(idle|stand|move|attack|skill|hit|death|retreat)\d*\.png$",key,re.I)
         return match.group(1).lower() if match else "other"
     for key in entries:
         if meta:
