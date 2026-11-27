@@ -906,13 +906,81 @@ function mobileEliteRuntimeAudit(){
  }
  return {forces:MOBILE_ELITE_FORCES.size,appearances:MOBILE_ELITE_APPEARANCES.size,levelRows:rows,coefficientAxes:axes,costRows,timeRows,skillTracks,sourceStatsFinite:allFinite};
 }
+// === WIKI-TROOP-DESCRIPTION-ADAPTER ===
+// Parse source normal-attack clauses separately from hero skills and selectable traits.
+// Unknown probabilities/coefficients use bounded, labeled offline defaults.
+function wikiTroopPlan(source){
+ const f=mobileTextKey(source?.desc||''),p={pattern:'single',kind:null,control:0,moraleLock:0,drain:0,selfMorale:0,teamMorale:0,allMorale:false,oneMorale:false,noMorale:false,burn:0,poison:0,defDown:0,defTurns:2,lowDamage:0,extraMagic:0,cleanse:0,moraleGuard:0,lifeSteal:0,classification:'SIMULATED_SOURCE_TROOP_SEMANTICS'};
+ if(!f||source?.npc||source?.type>5)return p;
+ if(/tan cong.{0,30}(?:hang ngang|duong ngang)/.test(f))p.pattern='row';
+ else if(/(?:tan cong|phap cong|muu cong|chien cong).{0,35}(?:duong thang|hang doc)/.test(f))p.pattern='column';
+ else if(/(?:tan cong|muu cong).{0,25}(?:toan dien|toan the dich)/.test(f))p.pattern='all';
+ else if(/tan cong.{0,30}(?:hau phuong|hang sau)/.test(f))p.pattern='back';
+ const control=f.match(/(\d+)\s*%[^.]{0,75}hon loan/);
+ if(control)p.control=Number(control[1])/100;
+ else if(/xac suat.{0,65}hon loan/.test(f))p.control=/xac suat cao/.test(f)?.25:.10;
+ const lock=f.match(/(\d+)\s*%[^.]{0,75}mat si khi/);if(lock)p.moraleLock=Number(lock[1])/100;
+ const self=f.match(/(?:tang|\+)\s*(\d+)\s*(?:diem\s*)?si khi (?:cho )?ban than/);
+ if(self)p.selfMorale=Number(self[1]);
+ else if(/moi lan tan cong tang 50 (?:diem )?si khi/.test(f))p.selfMorale=50;
+ const team=f.match(/moi (?:luot|dot) tang\s*(\d+)?\s*(?:diem )?si khi (?:cho )?(?:phe minh|quan ta|dong doi)/);
+ if(team)p.teamMorale=Number(team[1])||20;
+ const drain=f.match(/(?:giam|-\s*)\s*(\d+)\s*(?:diem\s*)?si khi/);
+ if(drain&&!/ban than khong giam|khong giam si khi/.test(f))p.drain=Number(drain[1]);
+ else if(/(?:tan cong giam|giam) si khi (?:quan dich|ke dich|cua tat ca ke dich|cua doi phuong)/.test(f))p.drain=15;
+ p.allMorale=/giam.{0,35}si khi.{0,35}(?:tat ca|toan the)|tat ca dich giam/.test(f);
+ p.oneMorale=/chi tang si khi (?:don le|don the|1 ke dich)|chi tang si khi cho dich don le/.test(f);
+ p.noMorale=/khong (?:lam )?tang si khi (?:cho )?(?:doi phuong|dich|muc tieu)|dich khong tang si khi/.test(f);
+ if(/thieu dot/.test(f))p.burn=Number(f.match(/thieu dot[^.]{0,40}(\d+)\s*luot/)?.[1])||2;
+ if(/trung doc/.test(f))p.poison=Number(f.match(/trung doc\s*(\d+)\s*luot/)?.[1])||2;
+ if(/giam (?:vat phong|muu phong|phong thu)/.test(f)){p.defDown=/muu phong/.test(f)?'mdef':/vat phong/.test(f)?'def':'all';p.defTurns=Number(f.match(/giam (?:vat phong|muu phong|phong thu)[^.]{0,40}(\d+)\s*luot/)?.[1])||2;}
+ if(/linh cang it sat thuong cang cao/.test(f))p.lowDamage=.30;
+ if(/kem theo sat thuong (?:ke sach|muu luoc)|kem 1 lan phap cong/.test(f))p.extraMagic=.45;
+ if(/xoa hieu qua bat loi cua ban than/.test(f))p.cleanse=1;
+ if(/ban than khong giam si khi|si khi ban than khong bi anh huong/.test(f))p.moraleGuard=Number(f.match(/(\d+) luot/)?.[1])||2;
+ if(/hap huyet|hut hp/.test(f))p.lifeSteal=.10;
+ return p;
+}
+function wikiTroopAction(actor,event,moraleStart){
+ if(!battle||battle.replay||battle.mode==='cltq'||actor?.hp<=0||!event||event.actor!==actor.name||event.mode!=='normal'||actor.nlMobileConfusionRedirect||actor.nlMobileElite?.plans?.some(p=>p.pos===0))return false;
+ const p=actor.nlMobileTroop?.plan;if(!p)return false;
+ const opposing=actor.team==='p'?battle.e:battle.p,allies=actor.team==='p'?battle.p:battle.e,first=(event.hits||[]).find(h=>h.team!==actor.team&&!h.heal&&!h.mobileSourceRedirect);
+ const primary=first&&opposing.find(u=>u.slot===first.slot),living=opposing.filter(u=>u.hp>0);
+ if(!primary)return false;
+ const targets=p.pattern==='all'?living:p.pattern==='row'?living.filter(u=>Math.floor(u.slot/3)===Math.floor(primary.slot/3)):p.pattern==='column'?living.filter(u=>u.slot%3===primary.slot%3):p.pattern==='back'?living.filter(u=>Math.floor(u.slot/3)===Math.max(...living.map(x=>Math.floor(x.slot/3)))):living.filter(u=>u===primary);
+ const affected=[...new Set([primary,...targets])],done=new Set((event.hits||[]).filter(h=>h.team!==actor.team&&!h.heal&&!h.mobileSourceRedirect).map(h=>h.slot));
+ let changed=false;
+ for(const u of targets)if(!done.has(u.slot)&&u.hp>0&&actor.hp>0){
+  const old=u.morale,h=mobileSingleHit(actor,u,p.kind||'physical',.75,{});
+  if(h){event.hits.push({...h,mobileTroopFollowup:true});changed=true;}
+  if(p.noMorale||p.oneMorale)u.morale=old;
+ }
+ if(p.extraMagic&&primary.hp>0&&actor.hp>0){const old=primary.morale,h=mobileSingleHit(actor,primary,'magic',p.extraMagic,{});if(h){event.hits.push({...h,mobileTroopFollowup:true});changed=true;}if(p.noMorale)primary.morale=old;}
+ const apply=(u,kind,turns,values,name)=>applyMobileSourceStatus(u,{kind,turns,values,sourceName:name,formulaClassification:'SIMULATED_SOURCE_TROOP_SEMANTICS'});
+ for(const u of affected.filter(x=>x.hp>0)){
+  if(p.control>0&&p2Random()<p.control)changed=apply(u,MOBILE_CONTROL_STATUS,1,{skipActionChance:1},'Hỗn Loạn binh chủng')||changed;
+  if(p.moraleLock>0&&p2Random()<p.moraleLock)changed=apply(u,MOBILE_MORALE_LOCK_STATUS,1,{moraleGainMultiplier:0},'Mất Sĩ Khí binh chủng')||changed;
+  if(p.burn)changed=apply(u,MOBILE_SOURCE_BURN,p.burn,{currentTroopLossRatio:.05},'Thiêu Đốt binh chủng')||changed;
+  if(p.poison)changed=apply(u,MOBILE_SOURCE_POISON,p.poison,{currentTroopLossRatio:.05},'Trúng Độc binh chủng')||changed;
+  if(p.defDown){const keys=p.defDown==='all'?['def','tdef','mdef']:[p.defDown];changed=wikiTimed(u,'troop-def-'+actor.id,p.defTurns,Object.fromEntries(keys.map(k=>['wiki-'+k,-.15])),'harmful')||changed;}
+ }
+ if(p.drain)for(const u of (p.allMorale?opposing:affected).filter(x=>x.hp>0)){p2Morale(u,-p.drain);changed=true;}
+ if(p.selfMorale&&actor.hp>0){p2Morale(actor,Math.max(0,p.selfMorale-Math.max(0,actor.morale-moraleStart)));changed=true;}
+ if(p.teamMorale)for(const u of allies.filter(x=>x.hp>0&&x!==actor)){p2Morale(u,p.teamMorale);changed=true;}
+ if(p.cleanse)changed=mobileBookCleanse(actor,p.cleanse)>0||changed;
+ if(p.moraleGuard)changed=apply(actor,MOBILE_SOURCE_MORALE_IMMUNITY,p.moraleGuard,{},'Nguyệt Hồn binh chủng')||changed;
+ if(p.lifeSteal){const n=(event.hits||[]).filter(h=>h.team!==actor.team&&!h.heal&&!h.mobileSourceRedirect).reduce((v,h)=>v+Math.max(0,Number(h.amount)||0),0);if(mobileSourceRestoreFlat(actor,n*p.lifeSteal)>0)changed=true;}
+ if(changed){event.description+=' · '+actor.nlMobileTroop.name;event.state=p2Snapshot();battle.log=event.description;}
+ return changed;
+}
+// === END WIKI-TROOP-DESCRIPTION-ADAPTER ===
 function mobileTroopCoefficients(u,sourceId,statsOverride=null){
  const source=MOBILE_TROOPS.units[String(sourceId)];if(!u||!source)return u;
  const stats=statsOverride?{...source.stats,...statsOverride}:source.stats;
  for(const [key,target] of Object.entries(MOBILE_TROOP_ATTACK))if(Number.isFinite(u[target]))u[target]=Math.max(1,Math.round(u[target]*stats[key]));
  for(const [key,target] of Object.entries(MOBILE_TROOP_DEFENSE))if(Number.isFinite(u[target]))u[target]=Math.max(1,Math.round(u[target]*stats[key]));
  const classCrit=u.type==='archer'?.10:.04;u.crit=Math.max(0,(Number(u.crit)||0)-classCrit+(Number(stats.critical)||0));
- u.nlMobileTroop={id:String(sourceId),name:source.name,typeName:source.typeName,tier:source.tier,critical:stats.critical,strikeBack:stats.strikeBack,sourceEdition:MOBILE_TROOPS.sourceEdition};return u;
+ u.nlMobileTroop={id:String(sourceId),name:source.name,typeName:source.typeName,tier:source.tier,critical:stats.critical,strikeBack:stats.strikeBack,sourceEdition:MOBILE_TROOPS.sourceEdition,plan:wikiTroopPlan(source)};return u;
 }
 function mobileTroopRuntimeProfileAudit(){
  let applied=0,attackDefenseExact=true,criticalExact=true,counterChanceExact=true;
@@ -1806,14 +1874,14 @@ function wikiHitLimits(hp,maxHp,damage,cap,threshold,revive){
 }
 function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
  const trait=mobileTraitFactors(attacker,target,kind,attacker?.nlMobileActionPattern||'single',battle?.round||1);
- const normalElite=attacker?.nlWikiEliteNormal,normalPlan=normalElite&&attacker.nlMobileElite?.plans?.find(p=>p.pos===0);
+ const normalElite=attacker?.nlWikiEliteNormal,normalPlan=normalElite&&attacker.nlMobileElite?.plans?.find(p=>p.pos===0),troopPlan=attacker?.nlWikiTroopNormal&&!normalPlan?attacker.nlMobileTroop?.plan:null;
  if(normalPlan?.kind)kind=normalPlan.kind;
  if(normalPlan?.mult)mult*=normalPlan.mult;
  const aHp=attacker?.hp/Math.max(1,attacker?.maxHp||1),tHp=target?.hp/Math.max(1,target?.maxHp||1),ak=({physical:'atk',tactic:'catk',magic:'matk'})[kind],dk=({physical:'def',tactic:'tdef',magic:'mdef'})[kind];
  const lowBonus=u=>wikiValue(u,'wikiLowBase')+(wikiValue(u,'wikiLowMax')-wikiValue(u,'wikiLowBase'))*(1-u.hp/Math.max(1,u.maxHp));
  const normal=!attacker?.nlMobileSourceSkillAction&&attacker?.morale<100,normalKey=({physical:'wikiNormalPhysical',magic:'wikiNormalMagic',tactic:'wikiNormalTactic'})[kind];
  const controlled=(target?.effects||[]).some(e=>e.turns>0&&NL_GAME_DATA.statusEffects.effects[e.kind]?.skipActionChance>0);
- const atkWiki=wikiValue(attacker,'wikiHealthyDamage')*aHp+(normal?wikiValue(attacker,normalKey):0)+(controlled?wikiValue(attacker,'wikiControlledBonus'):0)+wikiValue(attacker,'wikiDecayAttack')*Math.max(0,1-((attacker.nlWikiActionCount||1)-1)/4)+wikiValue(attacker,'wikiLateAttack')*Math.min(5,Math.max(0,(attacker.nlWikiActionCount||1)-4))+wikiValue(attacker,'wikiDamage')+wikiValue(attacker,'wiki-'+ak)+(aHp>.5?wikiValue(attacker,'wikiHealthSplit'):0)+lowBonus(attacker)+(aHp>tHp?wikiValue(attacker,'wikiLowerDamage'):wikiValue(attacker,'wikiHigherDamage'));
+ const atkWiki=(troopPlan?.lowDamage||0)*(1-aHp)+wikiValue(attacker,'wikiHealthyDamage')*aHp+(normal?wikiValue(attacker,normalKey):0)+(controlled?wikiValue(attacker,'wikiControlledBonus'):0)+wikiValue(attacker,'wikiDecayAttack')*Math.max(0,1-((attacker.nlWikiActionCount||1)-1)/4)+wikiValue(attacker,'wikiLateAttack')*Math.min(5,Math.max(0,(attacker.nlWikiActionCount||1)-4))+wikiValue(attacker,'wikiDamage')+wikiValue(attacker,'wiki-'+ak)+(aHp>.5?wikiValue(attacker,'wikiHealthSplit'):0)+lowBonus(attacker)+(aHp>tHp?wikiValue(attacker,'wikiLowerDamage'):wikiValue(attacker,'wikiHigherDamage'));
  const defWiki=wikiValue(target,'wiki-'+dk)+(tHp<=.5?wikiValue(target,'wikiHealthSplit'):0)+lowBonus(target);
  mult*=Math.max(.05,1+atkWiki)*Math.max(.05,1+wikiValue(target,'wikiTaken'));
  if((attacker?.effects||[]).some(e=>e.turns>0&&['undispellable','unremovable'].includes(e.mobileSource?.dispelPolicy)))mult*=Math.max(.05,1-wikiValue(target,'wikiUndispellableReduction'));
@@ -1905,7 +1973,7 @@ function mobileSingleHit(attacker,target,kind,mult=1,opts={}){
    const trample=wikiValue(target,'wikiOnHitTrample'),chance=wikiValue(target,'wikiOnHitChance');if(trample&&p2Random()<Math.min(1,chance))wikiEliteTrample(attacker,trample);
  }
  if(beforeHp>0&&target.hp<=0&&wikiValue(attacker,'wikiKillMorale')>0)p2Morale(attacker,wikiValue(attacker,'wikiKillMorale'));
- if(normalPlan?.noMorale&&Number.isFinite(beforeMorale)&&target.hp>0)target.morale=beforeMorale;
+ if((normalPlan?.noMorale||troopPlan?.noMorale)&&Number.isFinite(beforeMorale)&&target.hp>0)target.morale=beforeMorale;
  const lifeSteal=(attacker?.effects||[]).filter(effect=>effect.kind===MOBILE_LIFESTEAL_STATUS&&effect.turns>0)
    .reduce((sum,effect)=>sum+(Number(effect.mobileSourceValues?.lifestealDamageMultiplier)||0),0);
  if(hit.amount>0&&lifeSteal>0&&!mobileBookHas(attacker,MOBILE_SOURCE_NO_HEAL)&&Number.isFinite(attacker.hp)&&Number.isFinite(attacker.maxHp)){
@@ -2248,6 +2316,7 @@ p2Perform=function(actor){
      actor.nlMobileActionPattern=actor.morale>=100?(p2Skill(actor)?.pattern||'single'):'single';
    }
    if(actor?.nlMobileElite?.plans?.length&&battle?.mode!=='cltq')actor.nlWikiEliteNormal=actor.morale<100;
+   if(actor?.nlMobileTroop?.plan&&battle?.mode!=='cltq'&&!battle?.replay&&!confusionActive)actor.nlWikiTroopNormal=actor.morale<100;
    let result;try{result=nlContentCNativePerform(actor);}finally{if(actor)delete actor.nlWikiEliteNormal;}
    restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
@@ -2270,7 +2339,7 @@ p2Perform=function(actor){
    }
    if(moraleOnly||sourceSkillAction){applyMobileSourceApplications(actor,event,d);applyMobileSourceConditionalMorale(actor,event,d);}
    // Restore the native morale function before independent per-turn passives.
-   p2Morale=originalMorale;mobileApplyTurnPassives(actor,event);mobileBookAction(actor,event);wikiEliteApply(actor,event);
+   p2Morale=originalMorale;wikiTroopAction(actor,event,savedMorale);if(actor)delete actor.nlWikiTroopNormal;mobileApplyTurnPassives(actor,event);mobileBookAction(actor,event);wikiEliteApply(actor,event);
    if(actor?.nlMobileTrait&&event&&event.mode!=='stunned'&&actor.hp>0){
      actor.nlMobileTraitTurns=(actor.nlMobileTraitTurns||0)+1;
      let label='';
@@ -2294,7 +2363,7 @@ p2Perform=function(actor){
    mobileTickPeriodic(actor,event,priorPeriodic);
    mobileAdvanceProgressiveVulnerability(actor,event);
    return result;
- }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;if(hadFateMultiplier)actor.nlMobileFateDamageMultiplier=priorFateMultiplier;else delete actor.nlMobileFateDamageMultiplier;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
+ }finally{restoreLockedMorale();p2Morale=originalMorale;if(actor){delete actor.nlWikiTroopNormal;delete actor.nlMobileActionPattern;delete actor.nlMobilePierceActive;delete actor.nlMobileConfusionRedirect;if(hadFateMultiplier)actor.nlMobileFateDamageMultiplier=priorFateMultiplier;else delete actor.nlMobileFateDamageMultiplier;actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}}
 };
 const nlContentCBaseTarget=p2Target;
 p2Target=function(actor,mode){
@@ -2304,6 +2373,7 @@ p2Target=function(actor,mode){
    if(allies.length)return allies[Math.floor(p2Random()*allies.length)];
  }
  if(actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)&&mobileHeroSkill(actor.id)?.sourceTargetMode==='LEAST_TROOPS')return battle.e.filter(u=>u.hp>0).sort((a,b)=>a.hp-b.hp||a.slot-b.slot)[0]||null;
+ if(actor?.nlWikiTroopNormal&&actor.nlMobileTroop?.plan?.pattern==='back'&&!actor.nlMobileElite?.plans?.some(p=>p.pos===0)){const targets=(actor.team==='p'?battle.e:battle.p).filter(u=>u.hp>0).sort((a,b)=>Math.floor(b.slot/3)-Math.floor(a.slot/3)||a.hp-b.hp);if(targets.length)return targets[0];}
  if(actor?.team!=='e'||!plan)return nlContentCBaseTarget(actor,mode);
  if(actor.nlCDescriptor?.sourceTargetMode==='LEAST_TROOPS')
    return battle.p.filter(unit=>unit.hp>0).sort((a,b)=>(Number(a.troops)||Number(a.hp)||0)-(Number(b.troops)||Number(b.hp)||0)||a.slot-b.slot)[0]||null;

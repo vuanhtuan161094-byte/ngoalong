@@ -124,3 +124,16 @@ test('festival gold keeps literal random-one amounts and exact fixed reward',()=
  assert.equal(p.random,true);assert.deepEqual(p.outputs.map(x=>x.qty),[138,158,188,588,1888]);
  assert.equal(typed(source.items.find(x=>String(x.id)==='811'),source,3).outputs[0].qty,999);
 });
+
+test('Wiki troop descriptions compile normal attacks, literal control chances and morale behavior',()=>{
+ const code=between(read('tools/nl_content_c_runtime.js'),'// === WIKI-TROOP-DESCRIPTION-ADAPTER ===','// === END WIKI-TROOP-DESCRIPTION-ADAPTER ===');
+ const compile=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').toLowerCase();"+code+'\nreturn wikiTroopPlan')();
+ const {units}=JSON.parse(read('data/ngoalong/modules/troops/mobile_units_v1.json'));
+ const plans=Object.values(units).map(compile);assert.equal(plans.length,408);
+ assert.ok(plans.filter(p=>p.pattern!=='single'||p.control||p.moraleLock||p.drain||p.selfMorale||p.teamMorale||p.burn||p.poison||p.noMorale||p.extraMagic).length>80);
+ assert.equal(compile(units['59']).control,.15);assert.equal(compile(units['3']).moraleLock,.05);
+ assert.equal(compile(units['138']).selfMorale,50);assert.equal(compile(units['138']).noMorale,true);
+ assert.equal(compile(units['164']).pattern,'row');assert.equal(compile(units['164']).burn,2);
+ assert.equal(compile(units['172']).poison,2);assert.equal(compile(units['172']).control,.10);
+ assert.equal(compile(units['228']).teamMorale,30);
+});
