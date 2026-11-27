@@ -302,6 +302,13 @@ def main():
           checks.mobileTraitCatalog=c.mobileTraitSupported().length===21;
           const multiDesc=c.describeSkill({name:'Kiểm tra liên kích',desc:'[C.Pháp] Địch trên hàng dọc chịu 2 lần 12800% Pháp Công.'},'spear',false,[]);
           checks.mobileMultiHitDescriptor=multiDesc.sourceHitCount===2&&multiDesc.mult===128&&multiDesc.pattern==='column';
+          const perHitApps=c.mobileSourceApplications({name:'Liên kích thử nghiệm',desc:'[Kế Sách] Địch trên hàng ngang chịu 2 lần sát thương. Mỗi lần sát thương, 25% khiến mục tiêu bị [Hỗn Loạn], duy trì 1 lượt.'},
+            [{id:'2',name:'Hỗn Loạn',desc:'',detail:'1 lượt'}]);
+          const perHitEvent={hits:[{team:'e',slot:2,mobileSourceHits:[{team:'e',slot:2},{team:'e',slot:2}]},
+            {team:'e',slot:5,mobileSourceHitCount:3}]};
+          checks.mobilePerHitStatusTrigger=perHitApps.some(app=>app.sourceId==='2'&&app.trigger==='EACH_HIT_TO_TARGET'&&
+            app.triggerClassification==='SOURCE_EXACT_TEXT'&&app.chance===.25)&&
+            c.mobileSourceHitAttempts(perHitEvent,{team:'e',slot:2})===2&&c.mobileSourceHitAttempts(perHitEvent,{team:'e',slot:5})===3;
           const passive=c.mobilePassivePlan({name:'Lưu Thủy Vô Tình',desc:'5 lượt đầu trận, mỗi lượt khiến địch giảm 52 sĩ khí và giải trừ 2 trạng thái có lợi của mục tiêu.'});
           checks.mobileSealPassive=passive?.limit===5&&passive.enemyMorale===52&&passive.dispel===2;
           const wa=c.mobilePassivePlan({name:'Gian Tuyệt Lv2',desc:'Mỗi lượt tăng cho các tướng khác phe ta 15 sĩ khí, bản thân tăng 5 sĩ khí, giải trừ 3 hiệu quả có lợi của địch trên đường thẳng.'});
