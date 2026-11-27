@@ -1,0 +1,22 @@
+Art direction: NL_CHARACTER_ART_V6, user-locked style and costume prompt; style references are used for rendering only.
+Provider: OpenAI ImageGen. Output ID: exec-eec5d29b-9635-46c9-aa86-a8b52cb404a4.
+Generated source: /workspace/generated_images/exec-eec5d29b-9635-46c9-aa86-a8b52cb404a4.png
+Created: 2026-11-27 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 7c0d17d02bc0b9761e26f6aff35b164279e988e3078b67516fb4e8ca8fcdacd8. Cost: unknown; provider did not return an estimate.
+Wiki identity: wiki-mobile-hero-005 / Hạ Hầu Đôn; source raw hero ID 4077.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official biography fact.
+Visual motif: One-eye warrior presentation, tiger spear and scarlet tassel; owner-directed interpretation based on source skill Mãnh Hổ Liệt Sơn.
+
+Style references (rendering style only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+- assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png (SHA-256 e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f)
+
+VERBATIM GENERATION PROMPT
+Create one premium full-body vertical 2:3 illustration for an adult-oriented 18+ fantasy mobile game, target 1024x1536. Match the approved Cao Cao / Ma Chao / Diao Chan art direction for rendering style and quality only: premium semi-realistic anime CG, beautiful stylized adult facial features, smooth luminous skin, expressive eyes, detailed flowing hair, soft painterly shading, luxurious materials, cinematic light. Keep refined anime aesthetics and realistic anatomy; no photorealism, plastic skin or doll face. Clearly adult 18-year-old woman with mature adult facial and physical features, pronounced hourglass figure, full bust, slim exposed midriff, wide hips, long elegant legs. Sexy daring fantasy lingerie/cosplay with lace corset, deep neckline, high slits and cutouts; thigh-high stockings, decorative garters and body chains. Expose shoulders, waist, abdomen, back, cleavage, hips and upper thighs. Opaque fabric fully covers breasts and groin; no nudity or explicit sexual activity. One unique character, one specific alluring fashion-model pose, one distinct face, hair, makeup, outfit silhouette and color palette. Full body head to footwear, safe margins, simple cinematic background. No childlike features, exposed nipples/genitals, malformed anatomy, extra limbs/fingers, cropped limbs, text, watermark, logo, collage or border.
+Character: Hạ Hầu Đôn, faction Ngụy. Signature motif: famous one-eye warrior identity represented by a refined black-and-gold eyepatch, tiger-spear and scarlet tassel.
+Face: strong square jaw, warm bronze complexion, high cheekbones, one sharp visible dark-brown eye, one subtle brow scar, defined lips.
+Hairstyle: charcoal-black high braid with a silver streak and loose strands; ornate eyepatch over the right eye.
+Expression: proud, daring smirk.
+Pose: dramatic half-turn sword-draw: front knee bent, rear leg extended, torso twisted toward viewer, one hand pulling the sword free across her body, the other gripping the scabbard; cape and tassel sweep in the opposite direction. Dynamic but full head-to-shoes visible.
+Costume: crimson, charcoal and antique-silver battle lingerie cosplay; opaque lace corset, bare midriff and back, one sculpted shoulder plate, high-cut covered briefs, thigh-high black stockings with red garters, waist chain and one long side-slit sash. Storm-lit fortress walkway.

@@ -248,27 +248,31 @@ def payload() -> str:
 
     # V6 artwork is wired only for heroes already adapted in the explicit
     # runtime manifest. Reference-only Mobile Wiki entries remain catalogue art.
-    v6_path = ROOT / "assets/ngoalong/nl_v1/portraits/staging/art-v6/hero_art_v6_batch1.json"
+    v6_manifest_dir = ROOT / "assets/ngoalong/nl_v1/portraits/staging/art-v6"
     runtime_manifest_path = ROOT / "data/ngoalong/integration/heroes207_runtime_manifest_v1.json"
-    v6_manifest = json.loads(v6_path.read_text(encoding="utf-8"))
+    v6_paths = sorted(v6_manifest_dir.glob("hero_art_v6_batch*.json"))
+    if not v6_paths:
+        raise ValueError("No V6 hero art batch manifests found")
     runtime_manifest = json.loads(runtime_manifest_path.read_text(encoding="utf-8"))
     runtime_hero_ids = {
         row["heroId"]
         for row in runtime_manifest.get("heroes", [])
         if row.get("status") == "ADAPTED_EXPLICIT_SUBSET"
     }
-    for row in v6_manifest.get("heroes", []):
-        hero_id = row.get("wikiId")
-        if hero_id not in runtime_hero_ids:
-            continue
-        if hero_id in hero_art:
-            raise ValueError(f"V6 art cannot overwrite an existing hero art entry: {hero_id}")
-        # V6 WebPs ship beside index.html in the repo and are loaded by local
-        # relative path, keeping the generated HTML below GitHub's file limit.
-        compiled = compile_hero_art(hero_id, row, ("portrait", "character"), embed_data_urls=False)
-        if not compiled:
-            raise ValueError(f"Runtime-adapted V6 hero has no artwork: {hero_id}")
-        hero_art[hero_id] = compiled
+    for v6_path in v6_paths:
+        v6_manifest = json.loads(v6_path.read_text(encoding="utf-8"))
+        for row in v6_manifest.get("heroes", []):
+            hero_id = row.get("wikiId")
+            if hero_id not in runtime_hero_ids:
+                continue
+            if hero_id in hero_art:
+                raise ValueError(f"V6 art cannot overwrite an existing hero art entry: {hero_id}")
+            # V6 WebPs ship beside index.html in the repo and are loaded by local
+            # relative path, keeping the generated HTML below GitHub's file limit.
+            compiled = compile_hero_art(hero_id, row, ("portrait", "character"), embed_data_urls=False)
+            if not compiled:
+                raise ValueError(f"Runtime-adapted V6 hero has no artwork: {hero_id}")
+            hero_art[hero_id] = compiled
     for alias, target in art_manifest.get("aliases", {}).items():
         if target in hero_art:
             hero_art[alias] = hero_art[target]

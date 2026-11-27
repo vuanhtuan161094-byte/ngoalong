@@ -1,0 +1,22 @@
+Art direction: NL_CHARACTER_ART_V6, user-locked style and costume prompt; style references are used for rendering only.
+Provider: OpenAI ImageGen. Output ID: exec-dfd0fb47-23eb-4119-82f1-547e4204b31d.
+Generated source: /workspace/generated_images/exec-dfd0fb47-23eb-4119-82f1-547e4204b31d.png
+Created: 2026-11-27 (exact provider timestamp unavailable).
+Actual dimensions: 1024x1536 PNG. Master SHA-256: 8a8acea927e500c1040cdc9560fbef568b7b252f50f92031e8d1d789474972b1. Cost: unknown; provider did not return an estimate.
+Wiki identity: wiki-mobile-hero-006 / Tào Chương; source raw hero ID 3541.
+Representation: clearly adult woman age 18; owner-directed art redesign, not an official biography fact.
+Visual motif: Tiger-crest and twin short-spear motif; owner-directed interpretation based on source skill Tinh Vẫn Địa Liệp.
+
+Style references (rendering style only):
+- assets/ngoalong/nl_v1/portraits/female-cao-cao-v5-character.png (SHA-256 cddaa38c58ec6719b4915591e580578db2ecb6b199784c863bd9f3d8a5d86cec)
+- assets/ngoalong/nl_v1/portraits/female-ma-chao-v5-character-r3.png (SHA-256 126403b081c9de6f62a2494249cc7e71b175f2f2d3194b69a17b41a4240afde6)
+- assets/ngoalong/nl_v1/portraits/staging/art-v6/wiki-mobile-hero-124-diao-chan-sample.png (SHA-256 e2bc8b4b8f3c1193006d5778c2cde294910d48fce8b0a814a9f40ac20007969f)
+
+VERBATIM GENERATION PROMPT
+Create one premium full-body vertical 2:3 illustration for an adult-oriented 18+ fantasy mobile game, target 1024x1536. Match the approved Cao Cao / Ma Chao / Diao Chan art direction for rendering style and quality only: premium semi-realistic anime CG, beautiful stylized adult facial features, smooth luminous skin, expressive eyes, detailed flowing hair, soft painterly shading, luxurious materials, cinematic light. Keep refined anime aesthetics and realistic anatomy; no photorealism, plastic skin or doll face. Clearly adult 18-year-old woman with mature adult facial and physical features, pronounced hourglass figure, full bust, slim exposed midriff, wide hips, long elegant legs. Sexy daring fantasy lingerie/cosplay with lace corset, deep neckline, high slits and cutouts; thigh-high stockings, decorative garters and body chains. Expose shoulders, waist, abdomen, back, cleavage, hips and upper thighs. Opaque fabric fully covers breasts and groin; no nudity or explicit sexual activity. One unique character, one specific alluring fashion-model pose, one distinct face, hair, makeup, outfit silhouette and color palette. Full body head to footwear, safe margins, simple cinematic background. No childlike features, exposed nipples/genitals, malformed anatomy, extra limbs/fingers, cropped limbs, text, watermark, logo, collage or border.
+Character: Tào Chương, faction Ngụy. Signature motif: tiger-striped gold armor accents, twin short spears and amber beast crest.
+Face: broad heart-shaped face, sun-kissed golden skin, lively pale-amber eyes, visible freckles across nose, strong brows, wide confident grin.
+Hairstyle: thick copper-brown hair in a high braided ponytail with small gold rings and loose curls.
+Expression: fearless, playful challenge.
+Pose: acrobatic airborne spear flourish, body angled diagonally across the vertical frame, one knee folded toward the chest, the other long leg extended down and outward, two short spears swept in opposing arcs; flowing ribbons emphasize a completely different silhouette from a seated or upright pose.
+Costume: emerald, amber and black tiger-inspired lingerie armor with opaque cups, open midriff, high-cut opaque shorts, gold waist chains, thigh-high stockings with garters, light tiger shoulder guards and a short fluttering cape. Autumn leaves and warm palace rooftop light.
