@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,6 +182,11 @@ def payload(private_wly2=None) -> str:
                  "p41Units":p41_manifest["units"],"p5Rows":p5_manifest["atlas"]["rowOrder"]}
     if private_wly2 is not None:
         raster_d4["privateWly2"] = private_wly2
+    source_pack = os.environ.get("NL_WLY2_PACK")
+    if source_pack:
+        wly2 = json.loads(Path(source_pack).read_text(encoding="utf-8"))
+        assert wly2["schema"] == 1 and wly2["rawFiles"] == 614 and len(wly2["soldiers"]) == 26
+        raster_d4["wly2"] = {k:wly2[k] for k in ("soldiers","effects")}
     assert art_d2.count("__NL_D4_RASTER__") == 1
     art_d2 = art_d2.replace("__NL_D2_SHEETS__", js_json(art_sheets)).replace("__NL_D2_FX__", js_json(art_fx)).replace("__NL_D4_RASTER__", js_json(raster_d4))
     city_dir = ROOT / "assets/ngoalong/original"
