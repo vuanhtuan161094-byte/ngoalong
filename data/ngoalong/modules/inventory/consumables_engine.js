@@ -174,11 +174,12 @@
       });
     }
     function grantSourceBundle(next,m,rule,receipt,heroId){
-      requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=10,'INVALID_SOURCE_BUNDLE');
+      requireOk(Array.isArray(rule.outputs)&&rule.outputs.length>0&&rule.outputs.length<=64,'INVALID_SOURCE_BUNDLE');
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
       const c=next.nlContentC;
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
+      if(rule.requiredKey){requireOk(goodId(rule.requiredKey)&&get(rule.requiredKey).category==='material','INVALID_BUNDLE_KEY');debitStack(m,rule.requiredKey,1);}
       let outputs=rule.outputs;
       if(rule.randomOne){let hash=2166136261;for(const ch of receipt)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;outputs=[outputs[hash%outputs.length]];}
       for(const x of outputs){

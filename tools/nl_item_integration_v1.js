@@ -236,6 +236,41 @@ function nlTypedWikiFallback(row,source,tier){
  const resource={
   'bac':'silver','vang':'gold','lua':'grain','quan luong':'grain','chien cong':'merit','hon tuong':'hero-soul','chien tich':'seal-credit','quan lenh':'orders','linh':'reserve','ho phu':'tiger-token','diem khoa ky':'science','long phuong boi':'beauty-pendant','exp chua cong':'commander-xp','menh hon luyen ngoc':'destiny-jade','da toi luyen':'tempering-stone','manh binh thu ngau nhien':'book-fragment','manh phoi van nang ngau nhien':'blank'
  };
+
+ // Parse complete named loot tables, preserving actual stack identities and all options.
+ // Missing quantities and lottery probabilities are explicitly simulated, never source claims.
+ const id=String(row.id),keys={'1233':'res_125'};
+ if(['694','1089','res_125'].includes(id))return {route:'locked-chest-key',material:true,outputs:[]};
+ const horse=desc.match(/tang\s+(\d+)\s*(k)?\s*diem truong thanh/);
+ if(group==='Tài Nguyên'&&horse&&/chien ma/.test(desc)){
+  const qty=Number(horse[1])*(horse[2]?1000:1),gate=Number(desc.match(/thanh chinh lv(\d+)/)?.[1])||0;
+  return {route:'horse-growth-source-quantity',outputs:[output('horse-points',qty)],minCommander:gate};
+ }
+ const rawDesc=String(row.desc||''),colon=rawDesc.indexOf(':');
+ if(colon>=0&&/mo|nhan/.test(fold(rawDesc.slice(0,colon)))&&/x\s*\d/i.test(rawDesc.slice(colon+1))){
+  const text=rawDesc.slice(colon+1).trim().replace(/[.。]$/,'');
+  const rows=Array.isArray(source?.items)?source.items:[];
+  const parts=text.split(/,\s+(?=[^\d])/),loot=[];
+  for(const part of parts){
+   const m=part.trim().match(/^(.+?)\s*[x×]\s*(\d+(?:[.,]\d{3})*)\s*(Vạn|Triệu|Nghìn|Ngàn|K)?$/iu);
+   if(!m){loot.length=0;break;}
+   const k=fold(m[1].trim()),unit=fold(m[3]),qty=Number(m[2].replace(/[.,]/g,''))*({'van':10000,'trieu':1000000,'nghin':1000,'ngan':1000,'k':1000}[unit]||1);
+   if(!Number.isSafeInteger(qty)||qty<1||qty>100000000){loot.length=0;break;}
+   const wallet=resource[k];
+   if(wallet&&wallet!=='commander-xp'){loot.push({name:m[1].trim(),qty,wallet});continue;}
+   if(wallet==='commander-xp'&&qty<=1000000){loot.push({name:m[1].trim(),qty,wallet,maxQty:qty});continue;}
+   const matches=rows.filter(r=>fold(r.name)===k&&String(r.id)!==id);
+   const canonical=matches.filter(r=>String(r.id).startsWith('res_'));
+   const target=matches.length===1?matches[0]:canonical.length===1?canonical[0]:null;
+   if(!target){loot.length=0;break;}
+   loot.push({name:target.name,qty,wallet:'stack',itemId:'mobile-vng-item-'+target.id});
+  }
+  if(loot.length===parts.length&&loot.length>0&&loot.length<=64){
+   const random=/ngau nhien|co hoi|mot trong|xac suat|mot mon/.test(desc);
+   return {route:random?'named-loot-random':'named-loot-all',outputs:loot,random,requiredKey:keys[id]?'mobile-vng-item-'+keys[id]:null};
+  }
+ }
+
  if(group==='Ấn Thạch'){
   const m=name.match(/ngoc (bao|ne|phan)\s*lv\s*(\d+)/);
   if(m)return {route:'gem-'+m[1],outputs:[output('hero-gem',Number(m[2]),{gem:m[1]})]};
@@ -252,7 +287,7 @@ function nlTypedWikiFallback(row,source,tier){
  // For random loot, draw one known option using receipt-seeded RNG; unknown odds are simulated.
  const options=[];
  for(const [key,wallet] of Object.entries(resource)){
-  const pattern=new RegExp('(?:^|[^a-z0-9])'+key.replace(/[.*+?^$\x7b\x7d()|[\]\\]/g,'\\function nlExposeMobileWikiCatalogue(source){')+'\\s*(?:x|×|\\*)\\s*([\\d.,]+)\\s*(van|trieu|nghin|ngan)?','g');
+  const pattern=new RegExp('(?:^|[^a-z0-9])'+key+'\\s*(?:x|×|\\*)\\s*([\\d.,]+)\\s*(van|trieu|nghin|ngan)?','g');
   for(const m of desc.matchAll(pattern)){
    const base=Number(m[1].replace(/[.,]/g,'')),factor=m[2]==='van'?10000:m[2]==='trieu'?1000000:m[2]?1000:1,qty=base*factor;
    if(!Number.isSafeInteger(qty)||qty<=0||qty>100000000)continue;
@@ -260,7 +295,7 @@ function nlTypedWikiFallback(row,source,tier){
    options.push(output(wallet,qty,wallet==='commander-xp'?{maxQty:qty}:{}));
   }
  }
- if(options.length&&/mo|nhan|ruong|tui/.test(both)){
+ if(options.length&&options.length===([...(desc.matchAll(/(?:x|×)\s*\d+/g))].length)&&/mo|nhan|ruong|tui/.test(both)&&!keys[id]){
   const random=/ngau nhien|co hoi|mot trong|xac suat|mot mon/.test(desc);
   return {route:random?'known-loot-option':'known-loot-bundle',outputs:options.slice(0,10),random};
  }
@@ -305,15 +340,16 @@ function nlExposeMobileWikiCatalogue(source){
    fieldProvenance:{name:'SOURCE_EXACT',sourceDescription:'SOURCE_EXACT',sourceCategory:'SOURCE_EXACT',effectRule:'SIMULATED_GENERIC_FALLBACK',acquisitionRule:'SIMULATED_GENERIC_FALLBACK'},
    acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:0,shopCost:{silver:price}}};
   const typed=nlTypedWikiFallback(row,source,tier);
+  if(typed?.material)return {...common,category:'material',sourceTypedRoute:typed.route,sourceFallback:{...common.sourceFallback,classification:'SIMULATED_TYPED_WIKI_ADAPTER'},effectRule:null};
   if(typed){
    // Source identity and UI search remain unchanged; use existing bundle transaction.
    const silver=Math.max(0,...typed.outputs.filter(x=>x.wallet==='silver').map(x=>x.qty));
    const gold=Math.max(0,...typed.outputs.filter(x=>x.wallet==='gold').map(x=>x.qty));
    const cost=Math.max(price,silver+100,gold*200);
    return {...common,category:'consumable',sourceTypedRoute:typed.route,
-    acquisitionRule:{...common.acquisitionRule,shopCost:{silver:cost}},
+    acquisitionRule:{...common.acquisitionRule,minCommander:typed.minCommander||0,shopCost:{silver:cost}},
     sourceFallback:{...common.sourceFallback,route:typed.route,classification:'SIMULATED_TYPED_WIKI_ADAPTER'},
-    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:typed.outputs,randomOne:!!typed.random,minCommander:0,classification:'SIMULATED_TYPED_WIKI_ADAPTER'}};
+    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:typed.outputs,randomOne:!!typed.random,minCommander:typed.minCommander||0,requiredKey:typed.requiredKey||null,classification:'SIMULATED_TYPED_WIKI_ADAPTER'}};
   }
   if(materialGroups.has(row.typeName))return {...common,effectRule:{kind:'CRAFT_REAGENT',needPieces:3+(tier>=4?1:0),silverCost:150+tier*75,
    output:'mdt-tinh-khoang',outputQuantity:1,classification:'SIMULATED_GENERIC_RECYCLING'}};
@@ -323,7 +359,7 @@ function nlExposeMobileWikiCatalogue(source){
    outputs=[{name:'Bạc',qty:100+tier*60,wallet:'silver'}];
    if(['Rương','Túi Phúc','Túi Tầm Bảo'].includes(row.typeName))outputs.push({name:'Lương',qty:120+tier*70,wallet:'grain'});
   }
-  return {...common,effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs,minCommander:0,classification:'SIMULATED_GENERIC_BUNDLE'}};
+  return {...common,effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs,minCommander:0,requiredKey:sourceId==='1233'?'mobile-vng-item-res_125':null,classification:'SIMULATED_GENERIC_BUNDLE'}};
  }
  for(const row of source.items){
   const sourceId=String(row.id),existing=bySourceId.get(sourceId),record=nlMobileWikiRecord(row);
@@ -332,7 +368,7 @@ function nlExposeMobileWikiCatalogue(source){
   NL_ITEM_CATALOGUE.items.push(fallback);bySourceId.set(sourceId,fallback);added.push(fallback);genericFallbacks.push(fallback);
  }
  if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
- if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER'))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
+ if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||(x.sourceTypedRoute!=='locked-chest-key'&&x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER')))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
  return {added,genericFallbacks};
 }
 const NL_MOBILE_WIKI_CATALOGUE=nlExposeMobileWikiCatalogue(NL_MOBILE_INVENTORY);
