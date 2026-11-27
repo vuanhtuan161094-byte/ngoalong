@@ -241,6 +241,14 @@ function nlTypedWikiFallback(row,source,tier){
  // Missing quantities and lottery probabilities are explicitly simulated, never source claims.
  const id=String(row.id),keys={'1233':'res_125'};
  if(['694','1089','res_125'].includes(id))return {route:'locked-chest-key',material:true,outputs:[]};
+ if(id==='1233'){
+  const stack=(id,qty)=>({name:id,qty,wallet:'stack',itemId:'mobile-vng-item-'+id});
+  return {route:'named-loot-random',random:true,requiredKey:'mobile-vng-item-res_125',outputs:[
+   stack('res_126',1),stack('res_16',100),{name:'Đá Tôi Luyện',qty:10,wallet:'tempering-stone'},
+   stack('fam_5',3),stack('fam_10',10),stack('fam_6',3),stack('fam_9',3),
+   {name:'Lính',qty:1000,wallet:'reserve'},{name:'Chiến Tích',qty:10000,wallet:'seal-credit'},stack('res_36',150)
+  ]};
+ }
  const horse=desc.match(/tang\s+(\d+)\s*(k)?\s*diem truong thanh/);
  if(group==='Tài Nguyên'&&horse&&/chien ma/.test(desc)){
   const qty=Number(horse[1])*(horse[2]?1000:1),gate=Number(desc.match(/thanh chinh lv(\d+)/)?.[1])||0;
