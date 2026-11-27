@@ -64,7 +64,7 @@ jobs:
               result=page.evaluate("""()=>{const d=__NL_ART_D2_QA__,q=__P2_QA__;return {troops:d.sourceAtlasCount(),effects:d.sourceEffectCount(),metrics:d.metrics(),save:q.getGame().version}}""")
               print(json.dumps(result))
               Path('qa/wly2-smoke.json').write_text(json.dumps(result,indent=2))
-              assert result['troops']==26 and result['effects']>0 and result['metrics']['sourceTroops']>0 and result['metrics']['sourceFx']>0 and result['save']==5 and not errors,(result,errors)
+              assert result['troops']==28 and result['effects']>0 and result['metrics']['sourceTroops']>0 and result['metrics']['sourceFx']>0 and result['save']==5 and not errors,(result,errors)
               browser.close()
           PY
       - uses: actions/upload-artifact@v4

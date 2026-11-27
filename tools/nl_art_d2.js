@@ -81,7 +81,7 @@ function privateCel(ctx,f,team,v,x,y,w,h,offset){
 }
 function sourceTroopId(u,f){
  const t=String(u?.branch||u?.troop||u?.type||'').toLowerCase();
- const specific={bulwark:'BZ1100',crusher:'BZ1200',spearwall:'BZ2100',shock:'BZ3100',raider:'BZ3200',marksman:'BZ4100',volley:'BZ4100',ember:'BZ5100',disrupt:'BZ5100',medic:'BZ5000',rally:'BZ5230'};
+ const specific={bulwark:'BZ1100',crusher:'BZ1200',spearwall:'BZ2100',halberd:'BZ2200',shock:'BZ3100',raider:'BZ3200',marksman:'BZ4100',volley:'BZ4100',ember:'BZ5100',disrupt:'BZ5100',medic:'BZ5000',rally:'BZ5230'};
  const base={infantry:'BZ1000',spear:'BZ2000',cavalry:'BZ3000',archer:'BZ4000',strategist:'BZ5100',support:'BZ5000',drum:'BZ5230'};
  return (specific[t]||base[f]||'BZ1000')+'_'+(u?.team==='e'?2:1);
 }

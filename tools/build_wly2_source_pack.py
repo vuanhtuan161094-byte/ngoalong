@@ -84,7 +84,7 @@ def main():
                 output["effects"][name]=atlas
         except Exception as e:
             output["gaps"].append({"id":name,"error":str(e)})
-    if len(output["soldiers"])!=26: raise ValueError("Expected 26 directional troop atlases; got "+str(len(output["soldiers"])))
+    if len(output["soldiers"])!=28: raise ValueError("Expected 28 directional troop atlases; got "+str(len(output["soldiers"])))
     if not output["effects"]: raise ValueError("No effects packed")
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(output,separators=(",",":")),encoding="utf-8")
