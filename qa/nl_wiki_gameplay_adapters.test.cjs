@@ -5,9 +5,32 @@ const between=(s,a,b)=>s.slice(s.indexOf(a),s.indexOf(b));
 const itemCode=between(read('tools/nl_item_integration_v1.js'),'// === WIKI-TYPED-ITEMS ===','// === END WIKI-TYPED-ITEMS ===');
 const eliteCode=between(read('tools/nl_content_c_runtime.js'),'// === WIKI-ELITE-SKILLS ===','// === END WIKI-ELITE-SKILLS ===');
 const typed=new Function(itemCode+'\nreturn nlTypedWikiFallback')();
-const plan=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').toLowerCase();"+eliteCode+'\nreturn mobileElitePlan')();
+const eliteRuntime=new Function("const mobileTextKey=x=>String(x).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').toLowerCase();"+eliteCode+'\nreturn {plan:mobileElitePlan,conditionalBonuses:mobileEliteConditionalBonuses}')();
+const plan=eliteRuntime.plan;
 const source=JSON.parse(read('data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw/data/item-detail.json')),elite=JSON.parse(read('data/ngoalong/modules/troops/mobile_elite_v1.json'));
 test('20 appearances × 3 skill tracks, every source level compiles',()=>{let tracks=0,ranks=0;for(const f of elite.forces)for(const a of f.appearances)for(const [pos,skill] of a.skills.entries()){tracks++;for(const desc of skill.levels){const p=plan(a.id,pos,desc);assert.ok(p);assert.ok(Object.values(p).every(v=>typeof v!=='number'||Number.isFinite(v)));ranks++;}}assert.equal(tracks,60);assert.equal(ranks,256);});
+test('Giải Phiền Nhuệ switches Thiện Chiến from attack to defense at half troops',()=>{
+ const appearance=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='5');
+ const levels=appearance.skills[2].levels;
+ for(const [i,description] of levels.entries()){
+  const sourcePlan=plan('5',2,description),ratio=[.2,.3,.4,.5][i];
+  assert.equal(sourcePlan.conditionalAttack,ratio);assert.equal(sourcePlan.conditionalDefense,ratio);
+  const unit={hp:51,maxHp:100,nlMobileElite:{plans:[sourcePlan]}};
+  assert.deepEqual(eliteRuntime.conditionalBonuses(unit),{attack:ratio,defense:0});
+  unit.hp=50;assert.deepEqual(eliteRuntime.conditionalBonuses(unit),{attack:0,defense:ratio});
+  unit.hp=49;assert.deepEqual(eliteRuntime.conditionalBonuses(unit),{attack:0,defense:ratio});
+ }
+ assert.deepEqual(eliteRuntime.conditionalBonuses({hp:50,maxHp:0,nlMobileElite:{plans:[{conditionalAttack:.2,conditionalDefense:.2}]}}),{attack:0,defense:0});
+});
+test('elite Hư Nhược descriptors reject buffs instead of reducing damage',()=>{
+ const camPham=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='8');
+ const hitLine=plan('8',1,camPham.skills[1].levels[0]);
+ assert.equal(hitLine.noBuffsLine,true);assert.equal(hitLine.pattern,'column');assert.equal(hitLine.turns,2);
+ assert.equal(hitLine.weakLine,undefined);
+ const tuongTuong=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='26');
+ const normal=plan('26',0,tuongTuong.skills[0].levels[0]);
+ assert.equal(normal.pattern,'row');assert.equal(normal.trample,3);assert.equal(normal.extraDebuff,.05);
+});
 test('27 gems and 9 child manuals resolve to specific wallets',()=>{for(const [g,n,w] of [['Ấn Thạch',27,'hero-gem'],['Bí Tịch',9,'child-manual']]){const rows=source.items.filter(x=>x.typeName===g);assert.equal(rows.length,n);for(const x of rows)assert.equal(typed(x,source,3)?.outputs[0].wallet,w);}});
 
 test('horse growth uses source quantity and commander gate, keys remain materials',()=>{

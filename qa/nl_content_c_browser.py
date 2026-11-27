@@ -110,6 +110,25 @@ def main():
             checks.mobileTroopLiveP2=liveMobile?.nlMobileTroop?.id==='10'&&liveMobile.atk>0&&liveMobile.def>0;
           }else checks.mobileTroopLiveP2=false;
           q.setGame(mobileBefore);
+          const eliteBefore=q.getGame(),eliteFixture=structuredClone(eliteBefore),eliteOwner=eliteFixture.roster[0];
+          eliteFixture.nlContentC={...(eliteFixture.nlContentC||{}),mobileEliteUnlocked:{'5':true},mobileEliteLevels:{'5':1},mobileElitePending:{},mobileEliteSkills:{'5':[1,0,1]},mobileEliteAssigned:{[eliteOwner]:'5'}};
+          q.setGame(eliteFixture);
+          const eliteProbe={id:eliteOwner,team:'p',troop:'cavalry',type:'cavalry',hp:51,maxHp:100,atk:100,catk:100,matk:100,def:100,tdef:100,mdef:100};
+          c.applyMobileTroopProfile(eliteProbe,'p');
+          const eliteHigh=c.mobileEliteConditionalBonuses(eliteProbe);eliteProbe.hp=50;const eliteLow=c.mobileEliteConditionalBonuses(eliteProbe);
+          checks.mobileEliteConditionalCombat=eliteProbe.nlMobileElite?.plans?.some(p=>p.pos===2&&p.conditionalAttack===.2&&p.conditionalDefense===.2)&&eliteHigh.attack===.2&&eliteHigh.defense===0&&eliteLow.attack===0&&eliteLow.defense===.2;
+          q.setGame(eliteBefore);
+          const noBuffFixture=structuredClone(eliteBefore),noBuffOwner=noBuffFixture.roster[0];
+          noBuffFixture.slots=[noBuffOwner,...noBuffFixture.slots.slice(1)];noBuffFixture.troopModes={...(noBuffFixture.troopModes||{}),[noBuffOwner]:'archer'};
+          if(noBuffFixture.hero[noBuffOwner]){noBuffFixture.hero[noBuffOwner].troops=3000;noBuffFixture.hero[noBuffOwner].level=60;}
+          noBuffFixture.nlContentC={...(noBuffFixture.nlContentC||{}),mobileTroopAssigned:{...(noBuffFixture.nlContentC?.mobileTroopAssigned||{}),[noBuffOwner]:'12'},mobileEliteUnlocked:{'8':true},mobileEliteLevels:{'8':1},mobileElitePending:{},mobileEliteSkills:{'8':[1,1,0]},mobileEliteAssigned:{[noBuffOwner]:'8'}};
+          q.setGame(noBuffFixture);q.beginBattle(1,'campaign');
+          const noBuffBattle=q.debugBattle(),noBuffActor=noBuffBattle?.p.find(u=>u.id===noBuffOwner),noBuffTarget=noBuffBattle?.e.find(u=>u.hp>0&&u.slot%3===noBuffActor?.slot%3);
+          const noBuffEvent={actor:noBuffActor?.name,mode:'skill',hits:noBuffTarget?[{team:'e',slot:noBuffTarget.slot}]:[],description:'QA'};
+          const noBuffApplied=noBuffActor&&noBuffTarget&&c.wikiEliteApply(noBuffActor,noBuffEvent);
+          const noBuffStatus=noBuffTarget?.effects?.find(e=>e.kind==='mobile-source-no-buffs'&&e.turns===2);
+          checks.mobileEliteHuuNhuocInP2=!!noBuffApplied&&noBuffActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.noBuffsLine)&&noBuffStatus?.mobileSource?.sourceEffectId==='77'&&noBuffStatus.mobileSource.dispelPolicy==='unremovable';
+          q.closeBattle('city');q.setGame(eliteBefore);
           const troopBefore=q.getGame(),troopFixture=q.getGame();
           troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
           troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);
