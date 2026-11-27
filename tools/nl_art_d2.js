@@ -17,6 +17,10 @@ const wly2=raster.wly2||{},sourceTroops=wly2.soldiers||{},sourceEffects=wly2.eff
 const atlasImages=new Map();
 function atlasImage(id,atlas){if(!atlasImages.has(id)){const im=new Image();im.src='data:image/webp;base64,'+atlas.webp;atlasImages.set(id,im);}return atlasImages.get(id);}
 for(const [id,a] of Object.entries(sourceTroops))atlasImage(id,a);
+// Only preload effects used by the current event adapter; the other source
+// effects stay encoded and are decoded on demand, not during startup.
+const mappedFxIds=['TX_juqi_BUFF','TX_sf_0104','TX_shiqi_BUFF','TX_sf_0106','TX_hit_0104','TX_hit_0106'];
+for(const id of mappedFxIds)if(sourceEffects[id])atlasImage(id,sourceEffects[id]);
 function atlasCel(ctx,id,a,i,x,y,w,h){if(!a||!Number.isInteger(i)||i<0||i>=a.frames)return false;const im=atlasImage(id,a);if(!ready(im))return false;ctx.drawImage(im,(i%a.cols)*a.cell,Math.floor(i/a.cols)*a.cell,a.cell,a.cell,x-w/2,y-h,w,h);return true;}
 const p41=new Image(),p5=new Image();
 p41.src='data:image/webp;base64,'+raster.p41;p5.src='data:image/webp;base64,'+raster.p5;
@@ -89,7 +93,7 @@ function sourceTroopCel(ctx,u,f,v,x,y,w,h,offset){
  const id=sourceTroopId(u,f),a=sourceTroops[id];if(!a)return false;
  const action=v.moving?'move':v.action==='disappear'?'death':v.action;
  const clip=a.clips[action]||(action==='skill'?a.clips.attack:null)||a.clips.idle;
- const t=action==='idle'?Math.floor(performance.now()/100)+offset:Math.floor(clamp(v.frame/3,0,1)*(clip.length-1));
+ const t=action==='idle'?Math.floor(performance.now()/100)+offset:action==='move'?Math.floor(clamp((v.elapsed-220)/210,0,1)*(clip.length-1)):action==='hit'||action==='death'?Math.floor(clamp((v.elapsed-430)/570,0,1)*(clip.length-1)):Math.floor(clamp(v.elapsed/650,0,1)*(clip.length-1));
  if(atlasCel(ctx,id,a,clip[t%clip.length],x,y,w,h)){metrics.sourceTroops++;return true;}return false;
 }
 function rasterCel(ctx,f,team,v,x,y,w,h,offset){
@@ -201,7 +205,7 @@ if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
  ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5)&&[...privateAtlases.values()].every(a=>ready(a.im)),count:()=>sheets.size,
  sourceAtlasCount:()=>Object.keys(sourceTroops).length||privateAtlases.size,
  sourceEffectCount:()=>Object.keys(sourceEffects).length,
- sourceReady:()=>Object.keys(sourceTroops).every(id=>ready(atlasImages.get(id))),
+ sourceReady:()=>Object.keys(sourceTroops).every(id=>ready(atlasImages.get(id)))&&mappedFxIds.filter(id=>sourceEffects[id]).every(id=>ready(atlasImages.get(id))),
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),
  layout:(f,team)=>squadLayout(f,team),advance:(elapsed,f,team)=>advance({actor:true,elapsed},f,team),
  visual:(u,now)=>{const v=visual(u,now);return {action:v.action,phase:v.phase,actor:v.actor,hit:v.hit,sheet:sheet(u)}},
