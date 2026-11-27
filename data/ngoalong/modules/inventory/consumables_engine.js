@@ -101,6 +101,7 @@
         const row=get(id),q=row.acquisitionRule;
         requireOk(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&q?.classification==='SIMULATED_FALLBACK'&&safe(q.shopCost?.silver)&&q.shopCost.silver>0,'NOT_SOURCE_BUNDLE_SHOP');
         requireOk((next.nlContentC?.mobileCommanderLevel||0)>=(q.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
+        if(row.effectRule.levelGift){requireOk(row.effectRule.levelGift===1&&!next.nlContentC?.levelGiftClaims?.['1']&&!(m.stacks[id]>0),'LEVEL_GIFT_CHAIN_ONLY');}
         requireOk(safe(next.silver)&&next.silver>=q.shopCost.silver,'INSUFFICIENT_RESOURCES');
         next.silver-=q.shopCost.silver;addStack(m,id,1);return {id,quantity:1,silver:q.shopCost.silver};
       });
@@ -178,6 +179,7 @@
       if(!next.nlContentC||typeof next.nlContentC!=='object')next.nlContentC={};
       const c=next.nlContentC;
       requireOk((c.mobileCommanderLevel||0)>=(rule.minCommander||0),'COMMANDER_LEVEL_REQUIRED');
+      if(rule.levelGift){requireOk(safe(rule.levelGift)&&rule.levelGift>=1&&rule.levelGift<=39,'INVALID_LEVEL_GIFT');c.levelGiftClaims=c.levelGiftClaims||{};requireOk(!c.levelGiftClaims[rule.levelGift]&&(rule.levelGift===1||c.levelGiftClaims[rule.levelGift-1]),'LEVEL_GIFT_ALREADY_CLAIMED_OR_OUT_OF_ORDER');c.levelGiftClaims[rule.levelGift]=true;}
       if(!c.mobileHeroMaterials||typeof c.mobileHeroMaterials!=='object')c.mobileHeroMaterials={};
       if(rule.requiredKey){requireOk(goodId(rule.requiredKey)&&get(rule.requiredKey).category==='material','INVALID_BUNDLE_KEY');debitStack(m,rule.requiredKey,1);}
       let outputs=rule.outputs;

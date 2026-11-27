@@ -34,7 +34,7 @@
    const stacks=state?.nlItemsV1?.stacks||{};
    const mode=['wiki','shop'].includes(options.mode)?options.mode:'bag';
    const rows=pack.items.filter(row=>mode==='wiki'?row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI':
-     row.integration==='PLAYABLE'&&(mode==='shop'?(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'||row.category==='material'&&row.acquisitionRule?.kind==='SHOP'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'):(stacks[row.id]||0)>0));
+     row.integration==='PLAYABLE'&&(mode==='shop'?(row.effectRule?.kind==='OPEN_SOURCE_BUNDLE'&&(!row.effectRule.levelGift||row.effectRule.levelGift===1&&!state.nlContentC?.levelGiftClaims?.['1']&&!(stacks[row.id]>0))||row.category==='material'&&row.acquisitionRule?.kind==='SHOP'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'):(stacks[row.id]||0)>0));
    const filtered=rows.filter(row=>(category==='all'||row.sourceCategory===category)&&
      (!search||[row.name,row.sourceId,row.sourceDesc,row.sourceReference?.typeName].some(value=>String(value||'').toLocaleLowerCase('vi-VN').includes(search))));
    const pages=Math.max(1,Math.ceil(filtered.length/perPage)),current=Math.min(page,pages-1);

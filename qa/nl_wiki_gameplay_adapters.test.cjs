@@ -90,3 +90,37 @@ test('new Wiki statuses map to functional combat fields and keep undispellable v
  assert.equal(data.statusEffects.effects[find('76').kind].skipActionChance,1);
  assert.equal(find('98').mechanic,'instant-dispel-limited');
 });
+
+test('39 level gifts retain the source sequence, commander gates and explicit substitutions',()=>{
+ const rows=source.items.filter(x=>/^Quà Cấp \d+$/.test(x.name));
+ assert.equal(rows.length,39);
+ for(const row of rows){
+  const p=typed(row,source,3),rank=Number(row.name.match(/\d+/)[0]);
+  assert.equal(p.route,'level-gift-chain');assert.equal(p.levelGift,rank);
+  assert.ok(p.minCommander>=10);
+  assert.ok(p.outputs.some(x=>x.wallet==='silver'));
+  if(rank<39)assert.equal(p.outputs[0].name,'Quà Cấp '+(rank+1));
+  else assert.ok(p.substitutions.some(x=>x.includes('Quà Cấp 40')));
+ }
+ assert.equal(typed(rows.find(x=>x.name==='Quà Cấp 17'),source,3).minCommander,210);
+ const p=typed(rows.find(x=>x.name==='Quà Cấp 38'),source,3);
+ assert.ok(p.outputs.some(x=>x.wallet==='stack'&&x.itemId==='mobile-vng-item-res_16'&&x.qty===11000));
+});
+test('level gift sequence is one-time, gated and cannot be purchased out of order',()=>{
+ const engine=require('../data/ngoalong/modules/inventory/consumables_engine.js');
+ const gift=(id,rank,gate,outputs)=>({id,name:id,category:'consumable',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',minCommander:gate,shopCost:{silver:10}},effectRule:{kind:'OPEN_SOURCE_BUNDLE',minCommander:gate,levelGift:rank,outputs}});
+ const g1=gift('g1',1,10,[{name:'g2',qty:1,wallet:'stack',itemId:'g2'},{name:'Bạc',qty:100,wallet:'silver'}]),g2=gift('g2',2,20,[{name:'Bạc',qty:200,wallet:'silver'}]);
+ const api=engine.createModule({items:[g1,g2]},{limits:{stacksKinds:10,quantityEach:999,receipts:100}});
+ let s={silver:100,nlContentC:{mobileCommanderLevel:10},nlItemsV1:{serial:0,receipts:{},stacks:{g1:2}}};
+ assert.equal(api.buySourceBundle(s,'g2','shop').ok,false);
+ let r=api.use(s,'g1','one');assert.ok(r.ok);s=r.state;
+ assert.equal(s.silver,200);assert.equal(s.nlItemsV1.stacks.g2,1);
+ assert.equal(api.use(s,'g1','again').ok,false);assert.equal(api.use(s,'g2','low').ok,false);
+ s.nlContentC.mobileCommanderLevel=20;r=api.use(s,'g2','two');assert.ok(r.ok);
+ assert.equal(r.state.silver,400);assert.equal(r.state.nlContentC.levelGiftClaims[2],true);
+});
+test('festival gold keeps literal random-one amounts and exact fixed reward',()=>{
+ const p=typed(source.items.find(x=>String(x.id)==='713'),source,3);
+ assert.equal(p.random,true);assert.deepEqual(p.outputs.map(x=>x.qty),[138,158,188,588,1888]);
+ assert.equal(typed(source.items.find(x=>String(x.id)==='811'),source,3).outputs[0].qty,999);
+});

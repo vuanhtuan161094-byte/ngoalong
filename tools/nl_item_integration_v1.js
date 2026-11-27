@@ -240,6 +240,48 @@ function nlTypedWikiFallback(row,source,tier){
  // Parse complete named loot tables, preserving actual stack identities and all options.
  // Missing quantities and lottery probabilities are explicitly simulated, never source claims.
  const id=String(row.id),keys={'1233':'res_125'};
+ const all=Array.isArray(source?.items)?source.items:[];
+ const levelGift=name.match(/^qua cap (\d+)$/);
+ if(levelGift){
+  const rank=Number(levelGift[1]),chain=all.filter(x=>/^qua cap \d+$/.test(fold(x.name)));
+  const prev=chain.find(x=>fold(x.name)==='qua cap '+(rank-1)),next=chain.find(x=>fold(x.name)==='qua cap '+(rank+1));
+  const gate=rank===1?10:Number(fold(prev?.desc).match(/thanh chinh lv(\d+) mo/)?.[1]);
+  const prefix=String(row.desc||'').match(/^Gồm:\s*Quà Cấp\s+\d+\s*\([^)]*\)\s*,?\s*/i);
+  if(!prefix||!Number.isSafeInteger(gate)||gate<10)return null;
+  const rewards=[],substitutions=[];
+  if(next)rewards.push({name:next.name,qty:1,wallet:'stack',itemId:'mobile-vng-item-'+next.id});
+  else substitutions.push('Không có hồ sơ Quà Cấp '+(rank+1)+'; kết thúc chuỗi ở cấp '+rank);
+  const aliases={'tranh long ngoc':'res_16'};
+  const awakening=new Set(['banh bao','thit','ruou','tran chau','ngoc boi','kim lo']);
+  const gear=new Set(['vuong kiem','no yen khai','bao nguyet','tu dan lenh','bach ly','bat nha khai','giac ky lan','don giap thu']);
+  for(const part of String(row.desc).slice(prefix[0].length).replace(/[.]$/,'').split(/,\s*/)){
+   const m=part.match(/^(.+?)\s+x(\d+)$/i);if(!m)return null;
+   const label=m[1].trim(),key=fold(label),qty=Number(m[2]);
+   if(!Number.isSafeInteger(qty)||qty<1)return null;
+   if(resource[key]){rewards.push({name:label,qty,wallet:resource[key]});continue;}
+   if(awakening.has(key)){rewards.push({name:label,qty,wallet:'awakening'});continue;}
+   const targets=all.filter(x=>fold(x.name)===key),target=aliases[key]?all.find(x=>String(x.id)===aliases[key]):targets.length===1?targets[0]:targets.find(x=>String(x.id).startsWith('res_'));
+   if(target){rewards.push({name:label,qty,wallet:'stack',itemId:'mobile-vng-item-'+target.id});if(aliases[key])substitutions.push(label+' → '+target.name);continue;}
+   if(/^(cong|phong|binh) van lv\d+$/.test(key)){rewards.push({name:label,qty,wallet:'tempering-stone',factor:Number(key.match(/\d+$/)[0])});substitutions.push(label+' → đá tôi luyện (SIMULATED)');continue;}
+   if(gear.has(key)){rewards.push({name:label,qty,wallet:'blank'});substitutions.push(label+' → phôi (SIMULATED)');continue;}
+   return null;
+  }
+  return {route:'level-gift-chain',outputs:rewards,minCommander:gate,levelGift:rank,substitutions};
+ }
+ // Fixed-value and random-one gold festival rewards: explicit source amounts,
+ // seeded equal odds only where Wiki does not disclose the distribution.
+ const goldIds=new Set(['713','740','769','850','808','1142','1202','811','1141','1103','853','1044','1201','1241','1237','1243','1239']);
+ if(goldIds.has(id)){
+  const amounts=[...desc.matchAll(/(\d+)\s+vang\b/g)].map(m=>Number(m[1]));
+  if(!amounts.length&&['1241','1237','1243','1239'].includes(id))amounts.push(888);
+  if(amounts.length&&amounts.every(n=>Number.isSafeInteger(n)&&n>0))return {route:'festival-gold',outputs:amounts.map(qty=>({name:'Vàng',qty,wallet:'gold'})),random:amounts.length>1};
+ }
+ const direct={'1070':'562','1069':null,'1194':null};
+ if(direct[id]){
+  const target=all.find(x=>String(x.id)===direct[id]);
+  if(target)return {route:'named-loot-all',outputs:[{name:target.name,qty:1,wallet:'stack',itemId:'mobile-vng-item-'+target.id}]};
+ }
+ if(id==='1060')return {route:'resource-reserve',outputs:[{name:'Lính',qty:600,wallet:'reserve'}]};
  if(['694','1089','res_125','856','560','561','562'].includes(id))return {route:id==='856'?'elite-reset-token':['560','561','562'].includes(id)?'hero-reset-token':'locked-chest-key',material:true,outputs:[]};
  if(id==='1233'){
   const stack=(id,qty)=>({name:id,qty,wallet:'stack',itemId:'mobile-vng-item-'+id});
@@ -357,7 +399,7 @@ function nlExposeMobileWikiCatalogue(source){
    return {...common,category:'consumable',sourceTypedRoute:typed.route,
     acquisitionRule:{...common.acquisitionRule,minCommander:typed.minCommander||0,shopCost:{silver:cost}},
     sourceFallback:{...common.sourceFallback,route:typed.route,classification:'SIMULATED_TYPED_WIKI_ADAPTER'},
-    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:typed.outputs,randomOne:!!typed.random,minCommander:typed.minCommander||0,requiredKey:typed.requiredKey||null,classification:'SIMULATED_TYPED_WIKI_ADAPTER'}};
+    effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:typed.outputs,randomOne:!!typed.random,minCommander:typed.minCommander||0,requiredKey:typed.requiredKey||null,levelGift:typed.levelGift||null,substitutions:typed.substitutions||[],classification:'SIMULATED_TYPED_WIKI_ADAPTER'}};
   }
   if(materialGroups.has(row.typeName))return {...common,effectRule:{kind:'CRAFT_REAGENT',needPieces:3+(tier>=4?1:0),silverCost:150+tier*75,
    output:'mdt-tinh-khoang',outputQuantity:1,classification:'SIMULATED_GENERIC_RECYCLING'}};
@@ -374,6 +416,13 @@ function nlExposeMobileWikiCatalogue(source){
   if(existing){existing.sourceReference=record;continue;}
   const fallback=genericFallback(row,record);
   NL_ITEM_CATALOGUE.items.push(fallback);bySourceId.set(sourceId,fallback);added.push(fallback);genericFallbacks.push(fallback);
+ }
+ // Resolve references after all 746 source rows exist. Preserve canonical IDs of
+ // preexisting specialized rows; give bulk stacks the capacity required by source rewards.
+ for(const row of genericFallbacks)for(const out of row.effectRule?.outputs||[]){
+  if(out.wallet!=='stack')continue;
+  const target=bySourceId.get(String(out.itemId).replace(/^mobile-vng-item-/,''));
+  if(target){out.itemId=target.id;if(out.qty>999)target.stackLimit=Math.max(target.stackLimit||0,1000000);}
  }
  if(bySourceId.size!==746||source.items.length!==746)throw Error('MOBILE_WIKI_ITEM_RUNTIME_CATALOGUE_DRIFT');
  if(genericFallbacks.length!==585||genericFallbacks.some(x=>x.integration!=='PLAYABLE'||(!['locked-chest-key','elite-reset-token','hero-reset-token'].includes(x.sourceTypedRoute)&&x.effectRule?.classification!=='SIMULATED_GENERIC_FALLBACK'&&x.effectRule?.classification!=='SIMULATED_GENERIC_BUNDLE'&&x.effectRule?.classification!=='SIMULATED_GENERIC_RECYCLING'&&x.effectRule?.classification!=='SIMULATED_TYPED_WIKI_ADAPTER')))throw Error('MOBILE_WIKI_GENERIC_FALLBACK_DRIFT');
