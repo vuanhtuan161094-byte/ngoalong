@@ -44773,7 +44773,7 @@ function mobileElitePlan(id,pos,text){
   case '24:1':p.vulnerabilityLayers=Number(f.match(/(\d+)\s+tang am hon/)?.[1])||1;p.first=first||5;break;
   case '24:2':p.selfMorale=m;break;
   case '16:1':p.lowHealthScaling=q;p.maxScaling=second;break;
-  case '16:2':p.cleanse=1;p.first=duration;break;
+  case '16:2':p.cleanseBeforeAction=1;p.first=duration;break;
   case '32:1':p.from=2;p.healSelf=.12;p.teamMorale=m;p.healReceived=.25;break;
   case '32:2':p.teamReduction=q;p.first=first||7;break;
   case '20:1':p.attack=q;p.attackFields=['atk'];p.first=duration;break;
@@ -44796,6 +44796,16 @@ function mobileEliteConditionalBonuses(unit){
   else bonus.defense+=Number(p.conditionalDefense)||0;
   return bonus;
  },{attack:0,defense:0});
+}
+function wikiEliteBeforeAction(actor){
+ if(!battle||battle.replay||battle.mode==='cltq'||actor?.team!=='p'||actor.hp<=0)return 0;
+ const turn=nat(actor.nlWikiEliteTurns)+1;
+ let removed=0;
+ for(const p of actor.nlMobileElite?.plans||[]){
+  if(p.phase!=='turn'||!p.cleanseBeforeAction||(p.first&&turn>p.first))continue;
+  removed+=mobileBookCleanseRandom(actor,p.cleanseBeforeAction);
+ }
+ return removed;
 }
 // === END WIKI-ELITE-SKILLS ===
 function mobileElitePlans(id){
@@ -46126,6 +46136,14 @@ function mobilePassivePlan(passive){
 function mobileBookCleanse(u,max){
  let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind],policy=e.mobileSource?.dispelPolicy||spec?.dispelPolicy;if(n<max&&spec?.polarity==='harmful'&&policy==='removable'){n++;return false;}return true;});return n;
 }
+function mobileBookCleanseRandom(u,max){
+ if(!u||!Array.isArray(u.effects)||max<=0)return 0;
+ const eligible=u.effects.filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind],policy=e.mobileSource?.dispelPolicy||spec?.dispelPolicy;return e.turns>0&&spec?.polarity==='harmful'&&policy==='removable';});
+ const count=Math.min(eligible.length,Math.max(0,Math.floor(max))),removed=new Set();
+ for(let i=0;i<count;i++)removed.add(eligible.splice(Math.floor(p2Random()*eligible.length),1)[0]);
+ if(removed.size)u.effects=u.effects.filter(e=>!removed.has(e));
+ return removed.size;
+}
 function mobileBookRestore(u,ratio){if(mobileBookHas(u,MOBILE_SOURCE_NO_HEAL))return 0;const old=u.hp,received=(u.effects||[]).filter(effect=>effect.turns>0).reduce((factor,effect)=>{const value=effect.mobileSourceValues?.incomingHealingMultiplier;return Number.isFinite(value)?factor*Math.max(0,value):factor;},1),amount=Math.max(0,Math.round(u.maxHp*ratio*received));u.hp=Math.min(u.maxHp,u.hp+(mobileBookBroken(u)?Math.min(1,amount):amount));return u.hp-old;}
 function mobileBookDispel(u,max){let n=0;u.effects=(u.effects||[]).filter(e=>{const spec=NL_GAME_DATA.statusEffects.effects[e.kind],policy=e.mobileSource?.dispelPolicy||spec?.dispelPolicy;if(n<max&&spec?.polarity==='beneficial'&&policy==='removable'){n++;return false;}return true;});return n;}
 function mobileBookAction(actor,event){
@@ -46324,10 +46342,12 @@ p2Perform=function(actor){
    }
    if(actor?.nlMobileElite?.plans?.length&&battle?.mode!=='cltq')actor.nlWikiEliteNormal=actor.morale<100;
    if(actor?.nlMobileTroop?.plan&&battle?.mode!=='cltq'&&!battle?.replay&&!confusionActive)actor.nlWikiTroopNormal=actor.morale<100;
+   const elitePreActionCleanse=wikiEliteBeforeAction(actor);
    let result;try{result=nlContentCNativePerform(actor);}finally{if(actor)delete actor.nlWikiEliteNormal;}
    restoreLockedMorale();
    if(actor){actor.troop=originalTroop;if(hadSkillAction)actor.nlMobileSourceSkillAction=previousSkillAction;else delete actor.nlMobileSourceSkillAction;}
    const event=battle?.events?.[eventIndex];
+   if(elitePreActionCleanse&&event?.actor===actor.name){event.description+=' · Tỏ Chí: giải '+elitePreActionCleanse+' hiệu ứng bất lợi trước hành động';event.state=p2Snapshot();battle.log=event.description;}
    mobileAppendSourceRedirectHits(event);
    mobileAppendSourceRevivalHits(event);
    if(confusionActive&&event?.actor===actor.name){event.mobileSourceConfusionRedirected=true;event.description+=' · Mê Hoặc: đánh nhầm đồng minh';event.state=p2Snapshot();battle.log=event.description;}

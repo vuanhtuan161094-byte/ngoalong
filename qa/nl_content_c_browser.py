@@ -151,6 +151,18 @@ def main():
           const soulTwice=soulTarget?.effects?.find(e=>e.kind==='mobile-source-progressive-vulnerability');
           checks.mobileEliteSoulStacks=soulFirst&&soulSecond&&soulActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.vulnerabilityLayers===1&&p.first===5)&&soulSourceId==='29'&&soulOnceStack===1&&soulMagnitude===.03&&soulTwice?.stacks===2&&soulTwice.mobileSource?.formulaClassification==='SOURCE_QUALITATIVE_WITH_SIMULATED_MAGNITUDE_AND_DURATION';
           q.closeBattle('city');q.setGame(eliteBefore);
+          const cleanseFixture=structuredClone(eliteBefore),cleanseOwner=cleanseFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,2));
+          cleanseFixture.slots=[cleanseOwner,...cleanseFixture.slots.slice(1)];cleanseFixture.troopModes={...(cleanseFixture.troopModes||{}),[cleanseOwner]:'spear'};
+          cleanseFixture.nlContentC={...(cleanseFixture.nlContentC||{}),mobileEliteUnlocked:{'16':true},mobileEliteLevels:{'16':1},mobileElitePending:{},mobileEliteSkills:{'16':[0,0,1]},mobileEliteAssigned:{[cleanseOwner]:'16'}};
+          q.setGame(cleanseFixture);q.beginBattle(1,'campaign');
+          const cleanseBattle=q.debugBattle(),cleanseActor=cleanseBattle?.p.find(u=>u.id===cleanseOwner);
+          if(cleanseActor)cleanseActor.nlMobileElite={...(cleanseActor.nlMobileElite||{}),plans:[c.mobileElitePlan('16',2,'Trước khi hành động, giải trừ 1 hiệu quả bất lợi ngẫu nhiên, duy trì 15 lượt.')]};
+          cleanseActor?.effects?.push({kind:'mobile-source-control',turns:1,mobileSource:{dispelPolicy:'removable'},mobileSourceValues:{skipActionChance:1}});
+          if(cleanseActor)cleanseActor.morale=0;
+          const cleanseBeforeEvents=cleanseBattle?.events?.length||0;if(cleanseActor)q.perform(cleanseActor);
+          const cleanseEvent=cleanseBattle?.events?.[cleanseBeforeEvents];
+          checks.mobileEliteToshiPreAction=!!cleanseActor&&cleanseActor.nlMobileElite?.plans?.some(p=>p.pos===2&&p.cleanseBeforeAction===1&&p.first===15)&&!cleanseActor.effects?.some(e=>e.kind==='mobile-source-control')&&!!cleanseEvent&&cleanseEvent.mode!=='stunned'&&String(cleanseEvent.description||'').includes('trước hành động');
+          q.closeBattle('city');q.setGame(eliteBefore);
           const troopBefore=q.getGame(),troopFixture=q.getGame();
           troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
           troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);

@@ -38,6 +38,14 @@ test('Hoàng Cân Lực Sĩ preserves each source rank of Tụ Nghĩa layers and
   assert.equal(sourcePlan.vulnerabilityLayers,i+1);assert.equal(sourcePlan.first,5);
  }
 });
+test('Hãm Trận Doanh Tỏ Chí is a timed pre-action removable-debuff cleanse',()=>{
+ const hamTran=elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)==='16');
+ for(const description of hamTran.skills[2].levels){
+  const sourcePlan=plan('16',2,description);
+  assert.equal(sourcePlan.cleanseBeforeAction,1);assert.equal(sourcePlan.cleanse,undefined);
+  assert.equal(sourcePlan.first,Number(description.match(/duy trì (\d+) lượt/i)?.[1]));
+ }
+});
 test('27 gems and 9 child manuals resolve to specific wallets',()=>{for(const [g,n,w] of [['Ấn Thạch',27,'hero-gem'],['Bí Tịch',9,'child-manual']]){const rows=source.items.filter(x=>x.typeName===g);assert.equal(rows.length,n);for(const x of rows)assert.equal(typed(x,source,3)?.outputs[0].wallet,w);}});
 
 test('horse growth uses source quantity and commander gate, keys remain materials',()=>{
