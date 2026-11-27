@@ -211,22 +211,31 @@ def payload(private_wly2=None) -> str:
     # V4 heroine art is bound to stable gameplay IDs. Masters remain as source
     # PNGs; only optimized local WebP data URLs enter the offline game bundle.
     hero_data = json.loads((ROOT / "data/ngoalong/modules/heroes/hero_systems_v1.json").read_text(encoding="utf-8"))
-    art_manifest = json.loads((ROOT / "assets/ngoalong/nl_v1/portraits/hero_art_v5.json").read_text(encoding="utf-8"))
+    art_dir = ROOT / "assets/ngoalong/nl_v1/portraits"
+    art_manifest = json.loads((art_dir / "hero_art_v5.json").read_text(encoding="utf-8"))
+    art_v6_path = art_dir / "hero_art_v6.json"
+    art_v6 = json.loads(art_v6_path.read_text(encoding="utf-8")) if art_v6_path.exists() else {"schemaVersion": 1, "offlineEmbedded": True, "heroes": {}}
     if hero_data.get("schemaVersion") != 1 or len(hero_data.get("systems", [])) != 12:
         raise ValueError("Hero development database must contain all twelve systems")
     if art_manifest.get("schemaVersion") != 1 or not art_manifest.get("offlineEmbedded"):
         raise ValueError("Hero art catalogue must be versioned and offline embedded")
-    portrait_dir = ROOT / "assets/ngoalong/nl_v1/portraits"
+    if art_v6.get("schemaVersion") != 1 or not art_v6.get("offlineEmbedded"):
+        raise ValueError("V6 hero art catalogue must be versioned and offline embedded")
+    art_heroes = dict(art_manifest.get("heroes", {}))
+    for hero_id, record in art_v6.get("heroes", {}).items():
+        if hero_id in art_heroes:
+            raise ValueError(f"V6 art must not overwrite existing V5 hero art: {hero_id}")
+        art_heroes[hero_id] = record
     hero_art = {}
     art_kinds = ("portrait", "splash", "character")
-    for hero_id, character in art_manifest.get("heroes", {}).items():
+    for hero_id, character in art_heroes.items():
         compiled = {}
         for kind in art_kinds:
             asset = character.get(kind)
             if not asset:
                 continue
-            source = portrait_dir / asset["sourcePng"]
-            runtime = portrait_dir / asset["runtimeWebp"]
+            source = art_dir / asset["sourcePng"]
+            runtime = art_dir / asset["runtimeWebp"]
             source_bytes, runtime_bytes = source.read_bytes(), runtime.read_bytes()
             if not source_bytes.startswith(b"\x89PNG\r\n\x1a\n") or runtime_bytes[:4] != b"RIFF" or runtime_bytes[8:12] != b"WEBP":
                 raise ValueError(f"Invalid hero artwork file: {hero_id}/{kind}")
