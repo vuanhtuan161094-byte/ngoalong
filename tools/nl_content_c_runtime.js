@@ -1844,6 +1844,9 @@ const oldSkill=p2Skill;
 p2Skill=function(actor){
  if(actor?.team==='e'&&battle?.nlContentC&&actor.nlCDescriptor)return actor.nlCDescriptor;
  if(actor?.team!=='p'||battle?.mode==='cltq'||battle?.replay)return oldSkill(actor);
+ // A paid R03 lineage selects the project's live combat skill. Preserve the
+ // adapted Mobile skill for other heroes, but do not shadow an explicit build.
+ if(actor.r03Branch)return oldSkill(actor);
  if(mobileUsesLegacySupport(actor))return oldSkill(actor);
  if(actor.id===MOBILE_CHILD_ID){const d=childSkillDescriptor(childState());if(d)return d;}
  const exact=mobileHeroSkill(actor.id);if(exact)return exact;
@@ -2292,8 +2295,9 @@ p2Perform=function(actor){
  if(locked)actor.morale=99;
  let moraleRestored=false;
  const restoreLockedMorale=()=>{if(locked&&!moraleRestored){actor.morale=clamp(savedMorale+(actor.morale-99),0,130);moraleRestored=true;}};
+ const evolvedProjectHero=actor?.team==='p'&&!!actor.r03Branch;
  const d=actor?.team==='e'&&battle?.nlContentC?actor.nlCDescriptor:
-   actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)?mobileHeroSkill(actor.id):null;
+   actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)&&!evolvedProjectHero?mobileHeroSkill(actor.id):null;
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
  const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
@@ -2511,7 +2515,8 @@ p2Unit=function(id,team,slot,stage){
  if(child)u.nlMobileChildGrowth=child;
  if(exact)u.nlMobileHero={sourceId:exact.sourceId,quality:exact.growth.q,leadership:exact.growth.lead,war:exact.growth.war,intellect:exact.growth.int,traitAttributeBonus:allRound,skill:exact.stage?.skill?.name||null,faction:exact.faction};
  applyMobileTroopProfile(u,team);
- const sourceSkill=mobileHeroSkill(id),awake=awakeningDescriptor(id);if(sourceSkill)u.skill=sourceSkill.tag;else if(awake?.descriptor)u.skill=awake.descriptor.tag;
+ const sourceSkill=mobileHeroSkill(id),awake=awakeningDescriptor(id);
+ if(!u.r03Branch){if(sourceSkill)u.skill=sourceSkill.tag;else if(awake?.descriptor)u.skill=awake.descriptor.tag;}
  const s=state(),flat={},pct={};let troopCapacity=0,healing=0;
  for(const r of SEALS){if(!sealActive(r))continue;const values=sealStatsForRuntime(r.id,sealLevel(s,r.id),sealActivation(s,r.id));
   for(const a of values){const targets=SEAL_ADAPTER.statTargets[a.label];if(!targets)continue;const keys=Array.isArray(targets)?targets:[targets];

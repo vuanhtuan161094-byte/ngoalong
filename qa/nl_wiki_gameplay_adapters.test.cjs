@@ -66,6 +66,46 @@ test('three demotion tokens refund recorded rank costs at 60/80/100 percent only
  }
 });
 
+test('demotion refunds complete illusion and ancient receipts and clears dependent modes',()=>{
+ const engine=require('../data/ngoalong/modules/inventory/consumables_engine.js');
+ const token='mobile-vng-item-562';
+ const api=engine.createModule({items:[{id:token,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK'},effectRule:null,sourceTypedRoute:'hero-reset-token'}]},{limits:{stacksKinds:10,quantityEach:100,receipts:100}});
+ const records=[
+  {id:'commander-1',system:'commander',heroId:'cao',level:1,currency:{silver:100,merit:10},materials:{commandManual:2}},
+  {id:'ancient-1',system:'ancient',heroId:'cao',level:1,currency:{silver:5000,merit:150},materials:{quynhTuong:1,xichQua:1,hoangTrungLy:1}},
+  {id:'illusion-assault',system:'illusion:assault',heroId:'cao',level:1,currency:{silver:8000,merit:250},materials:{destinyJade:2,blank:2}}
+ ];
+ const s={silver:0,nlClassicA:{merit:0},roster:['cao'],hero:{cao:{level:40}},heroDevelopment:{heroes:{cao:{commanderLevel:1,ancientLevel:1,illusionUnlocked:['assault'],illusionMode:'assault'}},materials:{commandManual:0,quynhTuong:0,xichQua:0,hoangTrungLy:0,destinyJade:0,blank:0},receipts:records,refundLedger:{cao:records}},nlItemsV1:{serial:0,receipts:{},stacks:{[token]:1}}};
+ const q=api.heroDevelopmentRefundQuote(s,'cao','562');
+ assert.deepEqual(q.blocked,[]);assert.equal(q.currency.silver,13100);assert.equal(q.currency.merit,410);
+ assert.equal(q.materials.commandManual,2);assert.equal(q.materials.destinyJade,2);assert.equal(q.plan.length,3);
+ const r=api.resetHeroDevelopment(s,'cao','562','illusion-reset');assert.equal(r.ok,true);
+ const h=r.state.heroDevelopment.heroes.cao;
+ assert.equal(h.commanderLevel,0);assert.equal(h.ancientLevel,0);assert.deepEqual(h.illusionUnlocked,[]);assert.equal(h.illusionMode,null);
+ assert.equal(r.state.silver,13100);assert.equal(r.state.nlClassicA.merit,410);assert.equal(r.state.heroDevelopment.materials.blank,2);
+ assert.equal(r.state.heroDevelopment.receipts.length,0);
+});
+
+test('missing illusion proof keeps that mode and blocks ancient reset without blocking verified groups',()=>{
+ const engine=require('../data/ngoalong/modules/inventory/consumables_engine.js');
+ const token='mobile-vng-item-562';
+ const api=engine.createModule({items:[{id:token,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK'},effectRule:null,sourceTypedRoute:'hero-reset-token'}]},{limits:{stacksKinds:10,quantityEach:100,receipts:100}});
+ const records=[
+  {id:'commander-1',system:'commander',heroId:'cao',level:1,currency:{silver:100,merit:10},materials:{commandManual:2}},
+  {id:'illusion-assault',system:'illusion:assault',heroId:'cao',level:1,currency:{silver:8000,merit:250},materials:{destinyJade:2,blank:2}}
+ ];
+ const s={silver:0,nlClassicA:{merit:0},roster:['cao'],hero:{cao:{level:40}},heroDevelopment:{heroes:{cao:{commanderLevel:1,ancientLevel:1,illusionUnlocked:['assault','guardian'],illusionMode:'guardian'}},materials:{commandManual:0,destinyJade:0,blank:0},receipts:records,refundLedger:{cao:records}},nlItemsV1:{serial:0,receipts:{},stacks:{[token]:1}}};
+ const q=api.heroDevelopmentRefundQuote(s,'cao','562');
+ assert.ok(q.blocked.includes('illusion:guardian'));assert.ok(q.blocked.includes('ancientLevel'));
+ assert.ok(!q.plan.some(p=>p.field==='ancientLevel'));assert.equal(q.currency.silver,8100);assert.equal(q.currency.merit,260);
+ const r=api.resetHeroDevelopment(s,'cao','562','partial-illusion-reset');assert.equal(r.ok,true);
+ const h=r.state.heroDevelopment.heroes.cao;
+ assert.equal(h.commanderLevel,0);assert.equal(h.ancientLevel,1);assert.deepEqual(h.illusionUnlocked,['guardian']);assert.equal(h.illusionMode,'guardian');
+ assert.equal(r.state.silver,8100);assert.equal(r.state.nlClassicA.merit,260);
+ assert.equal(r.state.heroDevelopment.materials.destinyJade,2);assert.equal(r.state.heroDevelopment.materials.blank,2);
+ assert.equal(r.state.heroDevelopment.receipts.length,0);
+});
+
 test('wiki lethal settlement caps hits, executes below threshold and consumes one life without negative HP',()=>{
  const code=between(read('tools/nl_content_c_runtime.js'),'function wikiHitLimits(','function mobileSingleHit(');
  const limit=new Function(code+'\nreturn wikiHitLimits')();

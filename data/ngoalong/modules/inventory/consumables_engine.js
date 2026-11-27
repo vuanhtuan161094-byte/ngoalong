@@ -334,6 +334,7 @@
     // The base hero level includes earned battle XP and old saves cannot distinguish it
     // from purchased training. Leave it intact. Refund only complete paid rank lanes.
     const DEMOTION_RATES={'560':60,'561':80,'562':100};
+    const HERO_ILLUSION_MODES=new Set(['assault','guardian','strategist']);
     function heroDevelopmentRefundQuote(state,heroId,tokenId){
       const id=String(heroId),rate=DEMOTION_RATES[String(tokenId)],d=state?.heroDevelopment,h=d?.heroes?.[id];
       if(!rate||!goodId(id)||id==='mobile-quy-tu'||!state?.roster?.includes(id)||!h)return null;
@@ -375,13 +376,18 @@
       // is represented, reset all options together (no invented historical payment).
       const allRanks=rankEntries.flatMap(([,rank])=>range(1,rank));
       lane('mobile-destiny',allRanks,'mobileDestinyAll');
-      lane('ancient',range(1,h.ancientLevel),'ancientLevel');
-      // Illusion depends on ancient level. Refuse ancient reset if any illusion is unlocked
-      // without its own complete paid receipt; do not destroy earned unlocks.
-      if((h.illusionUnlocked||[]).length&&plan.some(p=>p.field==='ancientLevel')){
-        // quote is recomputed in a later supported transaction; preserve this dependency now.
-        return null;
+      // Refund each purchased illusion independently. An unlock with missing proof
+      // stays in place and blocks only the ancient ranks it depends on.
+      const illusionModes=Array.isArray(h.illusionUnlocked)?[...new Set(h.illusionUnlocked)]:[];
+      let blockedIllusion=false;
+      for(const mode of illusionModes){
+        if(!HERO_ILLUSION_MODES.has(mode)){blocked.push('illusion:unknown');blockedIllusion=true;continue;}
+        const before=blocked.length;
+        lane('illusion:'+mode,[1],'illusion:'+mode);
+        if(blocked.length>before)blockedIllusion=true;
       }
+      if(blockedIllusion&&h.ancientLevel>0)blocked.push('ancientLevel');
+      else lane('ancient',range(1,h.ancientLevel),'ancientLevel');
       if(!plan.length)return null;
       for(const wallet of [currency,materials])for(const name of Object.keys(wallet)){
         if(!safe(wallet[name]))return null;
@@ -409,6 +415,11 @@
         for(const p of q.plan){
           if(p.field==='mobileWeapon')h.mobileBuild.weapon=p.base;
           else if(p.field==='mobileDestinyAll'){h.mobileBuild.ranks={};h.mobileBuild.destiny=null;}
+          else if(p.field.startsWith('illusion:')){
+            const mode=p.field.slice('illusion:'.length);
+            h.illusionUnlocked=(h.illusionUnlocked||[]).filter(x=>x!==mode);
+            if(h.illusionMode===mode)h.illusionMode=null;
+          }
           else {h[p.field]=p.base;if(p.field==='destinyLevel')h.destinyId=null;}
         }
         d.receipts=(d.receipts||[]).filter(r=>!refundIds.has(r.id));

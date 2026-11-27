@@ -47,7 +47,7 @@ jobs:
     needs: changed_sources
     if: needs.changed_sources.outputs.core == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -93,6 +93,7 @@ jobs:
           python qa/ngoa_long_mode.py
           python qa/nl_heroes207_browser.py
           python qa/nl_premerge_hero207_items.py
+          python qa/nl_hero_demotion_browser.py
           python qa/nl_save_transfer.py
           python qa/nl_city_integration.py
           python qa/nl_native_pve_a1_browser.py
@@ -202,6 +203,8 @@ jobs:
         run: python qa/nl_r03.py
       - name: NL-R03 hero training, equipment and research progression gate
         run: python qa/nl_progression.py
+      - name: G02 receipt-backed hero demotion and Save v5 browser gate
+        run: python qa/nl_hero_demotion_browser.py
       - name: NL-V2 Item inventory, seven slots, Save v5, real battle bonus and unique rewards
         run: |
           node --test qa/nl_item_inventory_group08.test.cjs qa/nl_item_equipment_ui_group08.test.cjs qa/nl_item_balance_v3.test.cjs qa/nl_item_economy_b2.test.cjs

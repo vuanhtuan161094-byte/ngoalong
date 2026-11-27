@@ -8742,7 +8742,7 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11175384,
-            "lowerLossPreset": "arc-van",
+            "lowerLossPreset": "spear-kich",
             "higherLossPreset": "shield-thu",
             "minimumCasualtyGap": 100,
             "provenance": {
@@ -8788,8 +8788,8 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11275387,
-            "lowerLossPreset": "spear-kich",
-            "higherLossPreset": "fish-van",
+            "lowerLossPreset": "goose-kich",
+            "higherLossPreset": "goose-thu",
             "minimumCasualtyGap": 100,
             "provenance": {
               "classification": "SIMULATED",
@@ -8840,8 +8840,8 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11375390,
-            "lowerLossPreset": "fish-van",
-            "higherLossPreset": "shield-thu",
+            "lowerLossPreset": "arc-van",
+            "higherLossPreset": "spear-dieu",
             "minimumCasualtyGap": 125,
             "provenance": {
               "classification": "SIMULATED",
@@ -8886,9 +8886,9 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11475393,
-            "lowerLossPreset": "arc-thu",
-            "higherLossPreset": "shield-van",
-            "minimumCasualtyGap": 140,
+            "lowerLossPreset": "spear-kich",
+            "higherLossPreset": "fish-dieu",
+            "minimumCasualtyGap": 80,
             "provenance": {
               "classification": "SIMULATED",
               "sourceId": "project-alpha"

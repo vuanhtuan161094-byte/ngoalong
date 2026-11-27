@@ -90,14 +90,14 @@ body{background:#0a1417!important}
  #view>.head h1{font-size:20px!important}
 }
 @media(max-width:650px){
- #app>.topbar{height:86px!important;min-height:86px!important;max-height:86px!important;flex:0 0 86px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 70px!important;grid-template-rows:32px 42px!important;padding:4px 7px!important;gap:2px!important}
+ #app>.topbar{height:108px!important;min-height:108px!important;max-height:108px!important;flex:0 0 108px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 70px!important;grid-template-rows:32px 64px!important;padding:4px 7px!important;gap:2px!important}
  #app>.topbar .logo{grid-area:1/1/2/2;min-width:0;overflow:hidden}
  #app>.topbar .logo strong{font-size:13px;white-space:nowrap}
  #app>.topbar .logo small{font-size:7px;letter-spacing:.6px}
  #app>.topbar .logo .emblem{height:31px;width:31px;font-size:19px}
- #app>.topbar .resources{grid-area:2/1/3/3;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;justify-content:stretch!important}
+ #app>.topbar .resources{grid-area:2/1/3/3;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(2,minmax(0,1fr))!important;gap:2px!important;justify-content:stretch!important;min-height:0}
  #app>.topbar .resources .res:last-of-type{display:block!important}
- #app>.topbar .res{padding:2px 5px;max-width:none!important}
+ #app>.topbar .res{padding:2px 5px;max-width:none!important;min-height:0}
  #app>.topbar .res span{font-size:8px!important}
  #app>.topbar .res b{font-size:10px!important}
  #app>.topbar .save-btn{grid-area:1/2/2/3;padding:6px 2px!important;font-size:9px!important}

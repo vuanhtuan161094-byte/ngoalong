@@ -125,7 +125,7 @@ def main() -> int:
                                 results["errors"].append(
                                     f"{width}x{height}/{tab['id']}: navigation buttons are clipped or unreadable: "
                                     f"{metrics['navCoverage']}")
-                            if (metrics["resourceCoverage"]["total"] != 5
+                            if (metrics["resourceCoverage"]["total"] != 8
                                     or metrics["resourceCoverage"]["hidden"]
                                     or metrics["resourceCoverage"]["clipped"]
                                     or metrics["resourceCoverage"]["textOverflow"]):
