@@ -104,11 +104,14 @@ p2Hit=function(actor,target,kind,mult=1,opts={}){
 // Original 2D courtyard art: project-generated, NOT a source-game image.
 const NLW_B4_BACKGROUND=new Image();
 NLW_B4_BACKGROUND.src='data:image/webp;base64,__NL_B4_IMAGE_BASE64__';
+const NLW_B4_ALTERNATES=__NL_WLY2_BATTLE_ALTERNATES__.map(src=>{const im=new Image();im.src=src;return im;});
 const nlwB4PriorBackground=drawBackground;
 drawBackground=function(ctx,now){
  if(!NLW_B4_BACKGROUND.complete||NLW_B4_BACKGROUND.naturalWidth<1)
    return nlwB4PriorBackground(ctx,now);
- ctx.save();ctx.drawImage(NLW_B4_BACKGROUND,0,0,1056,480);
+ const backgrounds=[NLW_B4_BACKGROUND,...NLW_B4_ALTERNATES],stage=Number(battle?.stage?.id||battle?.stageId||battle?.stage||1)||1;
+ const bg=backgrounds[(Math.max(1,stage)-1)%backgrounds.length];const selected=bg.complete&&bg.naturalWidth?bg:NLW_B4_BACKGROUND;
+ ctx.save();ctx.drawImage(selected,0,0,1056,480);
  ctx.fillStyle='rgba(3,21,23,.17)';ctx.fillRect(0,0,1056,480);
  let shade=ctx.createLinearGradient(0,0,0,125);shade.addColorStop(0,'rgba(4,17,19,.75)');shade.addColorStop(1,'rgba(4,17,19,0)');
  ctx.fillStyle=shade;ctx.fillRect(0,0,1056,125);

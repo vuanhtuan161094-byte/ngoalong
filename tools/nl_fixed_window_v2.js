@@ -40,6 +40,15 @@
    }
    if((root.classList.contains('grid-2')||root.classList.contains('formation-wrap'))&&children(root).length>=2){
      const sides=children(root);
+     if(tab==='city'&&root.querySelector('.city-visual')){
+       const mapSide=sides.find(s=>s.matches('.city-visual')||s.querySelector('.city-visual'));
+       if(mapSide){
+         root.classList.add('nl-city-map-root');
+         pushPage(root,'Bản đồ thành trì',[{holder:root,items:sides,allowed:[mapSide]}]);
+         for(const side of sides.filter(s=>s!==mapSide))pushPage(root,semanticLabel(side,'Quản lý thành trì'),[{holder:root,items:sides,allowed:[side]}]);
+         return;
+       }
+     }
      const scene=tab==='campaign'?root.querySelector('.stage-grid'):null;
      const cards=scene&&children(scene);
      if(cards&&cards.length>=10){
@@ -89,7 +98,7 @@
      restore();
      const tab=currentTab();activeTab=tab;document.getElementById('app')?.setAttribute('data-nl-screen',tab);
      title.textContent=(nav()?.getAttribute('title')||nav()?.textContent||'Thành Trì').replace(/\s+/g,' ').trim();
-     bar.querySelector('#nl-screen-caption').textContent=tab==='formation'&&viewportNarrow()?'Trang chọn tướng → chọn võ tướng → quay về trận đồ để đặt ô':'Một màn hình · một cửa sổ · bấm để chuyển mục';
+     bar.querySelector('#nl-screen-caption').textContent=tab==='formation'&&viewportNarrow()?'Chọn võ tướng → đặt ô trận đồ':tab==='city'?'Chọn công trình để quản lý':'Chọn mục chức năng';
      let roots=children(view);const head=roots.find(el=>el.classList.contains('head'));
      // Make the city scene the actual first screen, not an isolated text fragment.
      if(tab==='city'){
@@ -155,7 +164,8 @@
      let idx=Math.min(Math.max(0,pageIndex[tab]||0),pages.length-1);
      const stable=pageKey[tab]?pages.findIndex(p=>p.key===pageKey[tab]):-1;if(stable>=0)idx=stable;
      if(requestedCityDetail&&tab==='city'){
-       const hit=pages.findIndex(p=>p.root?.contains(document.querySelector('#detail-building')));
+       const detail=document.querySelector('#detail-building');
+       const hit=pages.findIndex(p=>detail&&p.root?.contains(detail)&&!(p.choices||[]).some(c=>c.items.some(x=>!c.allowed.includes(x)&&(x===detail||x.contains(detail)))));
        if(hit>=0)idx=hit;
      }
      requestedCityDetail=false;

@@ -69,10 +69,26 @@ if(sourceCity){
    #app #view .gold-button{background-image:url("${ui.buttonGold}")!important;background-size:100% 100%!important;color:#17271f!important;border-color:#cba960!important}
    #app #view .dark-button,#app .nl-screen-ctrl button:not(:disabled){background-image:url("${ui.buttonGreen}")!important;background-size:100% 100%!important;color:#f4e9c9!important}
    #app>.shell>.sidebar .nav.active{background-image:url("${ui.navActive}")!important;background-size:100% 100%!important;border-color:#78aaa7!important}
-   #app #view .panel{background-image:url("${ui.panel}")!important;background-size:100% 100%!important}
+   #app #view .panel{background-image:linear-gradient(#0c232a50,#091e2480),url("${ui.panel}")!important;background-size:100% 100%!important}
+   #app>.shell>.sidebar .nav:not(.active){background-image:url("${ui.navIdle}")!important;background-size:100% 100%!important}
+   #app>.topbar .res{background-image:url("${ui.panelSoft}")!important;background-size:100% 100%!important}
+   #app #nl-screen-toolbar{background-image:url("${ui.header}")!important;background-size:100% 100%!important}
+   #app #view .slot.occupied,#app #view .nl-slot.occupied,#app #view .portrait,#app #view .slot-item{border-image:url("${ui.frame}") 10 stretch}
+   #app #view .slot.chosen,#app #view .stage.chosen,#app #view .nl-slot.selected{outline:2px solid #e8c974;box-shadow:0 0 10px #d5ae5b66!important}
+   #app #view .hero-card,#app #view .feature-card,#app #view .quest,#app #view .nli-gear,#app #view .nli-items-card,#app #view .nlcity-tile{background-image:linear-gradient(#102831b0,#102831b0),url("${ui.panelSoft}")!important;background-size:100% 100%!important}
+   #app #view .panel h3,#app #view .section-break{border-bottom:1px solid #7b967e;padding-bottom:5px}
+   #app #view .campaign-scene{background-image:linear-gradient(#10252355,#0b171c99),url("${env.world}")!important;background-size:cover!important;background-position:center}
+   #app #view .nl-city-map-root{grid-template-columns:minmax(0,1fr)!important}
+   #app #view .nl-city-map-root:has(.city-visual:not(.nl-pane-hidden)) .city-visual{width:100%!important}
+   #app #view .city-visual .building b,#app #view .city-visual .building small{font-size:clamp(9px,1.15vw,13px)!important}
+   #app #view .city-visual .building{width:clamp(42px,calc(min(100cqw,150.6cqh)*.17),148px)!important}
+   #app #view .city-visual .building .symbol{height:clamp(35px,calc(min(100cqw,150.6cqh)*.12),105px)!important}
+   #app>.topbar .res span:before{content:"";display:inline-block;width:16px;height:16px;vertical-align:middle;margin-right:4px;background-repeat:no-repeat;background-size:contain;background-position:center}
+   ${['resourceSilver','resourceGrain','resourcePrestige','resourceMerit','resourceOrder','resourceGold','resourceScore','resourceToken'].map((key,i)=>`#app>.topbar .res:nth-child(${i+1}) span:before{background-image:url("${ui[key]}")}`).join('')}
+   
    @media(min-width:1000px){
-    #app #view>.grid-2:has(.city-visual){grid-template-columns:minmax(0,1.75fr) minmax(260px,1fr)!important;align-items:start}
-    #app #view .city-visual{height:clamp(390px,63vh,520px)!important}
+    #app #view>.grid-2:has(.city-visual){grid-template-columns:minmax(0,1fr)!important;align-items:start}
+    #app #view .city-visual{height:clamp(360px,calc(100dvh - 255px),570px)!important}
    }
    @media(max-width:600px){#app #view .city-visual{height:320px!important}}
   `;
@@ -85,6 +101,7 @@ if(window.__P2_ENABLE_QA__)window.__NL_CITY_ART_QA__=Object.freeze({
  source:sourceCity?'MatrixHan/WLY2':'image_gen.imagegen',version:1,width:sourceCity?2000:1400,height:sourceCity?1328:788,
  sourceBuildings:()=>Object.keys(env.buildings||{}),
  sourceUI:()=>Object.keys(env.ui||{}),
+ sourceUILibrary:()=>Object.keys(env.uiLibrary||{}).length,
  cssReady:()=>document.querySelectorAll('style[data-nl-city-art="v1"]').length===1,
  background:()=>getComputedStyle(document.querySelector('.city-visual')).backgroundImage
 });

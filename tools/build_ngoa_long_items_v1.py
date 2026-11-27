@@ -98,7 +98,7 @@ def payload(private_wly2=None) -> str:
         raise ValueError("Unsafe B4 embedded source")
     b4 = b4.replace("__NL_B4_DATA__", js_json(web_b4)).replace(
          "__NL_B4_IMAGE_BASE64__", environment["battle"].split(",",1)[1] if environment else b64encode(b4_art).decode("ascii")).replace(
-         "__NL_B4_CSS__", js_json(b4_css))
+         "__NL_B4_CSS__", js_json(b4_css)).replace("__NL_WLY2_BATTLE_ALTERNATES__", js_json(environment.get("battleAlternates",[])))
     if classic_b3.count("// === NL-CLASSIC-B3-V1:") != 1 or "</script" in classic_b3.lower():
         raise ValueError("Invalid B3 gameplay integration")
     project_troops = json.loads((ROOT / "data/ngoalong/modules/troops/project_playable_v1.json").read_text(encoding="utf-8"))
@@ -214,7 +214,7 @@ def payload(private_wly2=None) -> str:
         city_art.count("__NL_CITY_ART_DATA_URL__") != 1 or "</script" in city_art.lower()):
         raise ValueError("Invalid city art runtime module")
     city_url = "data:image/webp;base64," + b64encode(city_runtime_bytes).decode("ascii")
-    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url)).replace("__NL_WLY2_ENV_DATA__", js_json({k:v for k,v in environment.items() if k not in ("audio","audioSource")}))
+    city_art = city_art.replace("__NL_CITY_ART_DATA_URL__", js_json(city_url)).replace("__NL_WLY2_ENV_DATA__", js_json({k:v for k,v in environment.items() if k not in ("audio","audioSource","battleAlternates")}))
     audio = (TOOLS / "nl_audio_v1.js").read_text(encoding="utf-8")
     if audio.count("// === NL-AUDIO-V1:") != 1 or audio.count("// === end NL-AUDIO-V1 ===") != 1 or "</script" in audio.lower():
         raise ValueError("Invalid original audio module")

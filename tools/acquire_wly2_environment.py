@@ -81,11 +81,19 @@ def main():
           "buildings":{k:image_url(root/"building/maincity"/v,(384,384)) for k,v in buildings.items()},
           "buildingSource":buildings}
     ui_names={"panel":"g01_00001.png","buttonGold":"g02_000001.png","buttonGreen":"g02_000002.png","navActive":"g02_000081.png"}
+    ui_names.update({"resourceSilver":"03_0002.png","resourceGrain":"03_0007.png","resourcePrestige":"03_0004.png","resourceMerit":"03_0001.png","resourceOrder":"03_0005.png","resourceGold":"03_0003.png","resourceScore":"03_0014.png","resourceToken":"03_0013.png","navIdle":"g02_000080.png","selected":"g01_0025.png","frame":"g01_0039_1.png","header":"g01_000023.png","divider":"g01_000043.png","panelSoft":"g01_0036.png"})
     pack["ui"]={k:image_url(root/"common/ui"/v,(640,320)) for k,v in ui_names.items()}
+    pack["battleAlternates"]=[image_url(root/"bg/battle"/v,(1400,800)) for v in ("BF_007.png","ZDGC0001.jpg")]
+    pack["buildingAlternates"]={v:image_url(root/"building/maincity"/v,(384,384)) for v in ("nt2.png","xby2.png","mj2.png","dzs2.png","phb.png","sr.png")}
+    # Complete source UI catalogue is available offline for subsequent semantic bindings.
+    pack["uiLibrary"]={p.name:image_url(p,(512,512)) for p in sorted((root/"common/ui").glob("*.png"))}
+    pack["uiCoverage"]={"selected":len(ui_names),"available":len(pack["uiLibrary"])}
     soundroot=out/"source"/"project_wly2_lua_client/res/sound"
     sound_names={"click":"UItongyongdianji.ogg","preview":"UIdianjijianzhu.ogg","strike":"Attack_hit_1.ogg",
                  "victory":"UIzhandoushengli.ogg","defeat":"UIzhandoushibai.ogg",
                  "cityMusic":"zhucheng.ogg","battleMusic":"zhandou.ogg"}
+    sound_names.update({"building":"UIdianjijianzhu.ogg","resource":"UIshouhuoyinliang.ogg","recruit":"UIhuodewujiang.ogg","upgrade":"UIshengjichenggong.ogg","research":"UIyanjiu.ogg","equip":"UIzhuangbeichenggong.ogg","switch":"UItongyongqieye.ogg","back":"UItongyongfanhui.ogg","start":"UIkaizhan.ogg","formation":"UIchuzhan.ogg","reward":"UItyhuoqujiangli.ogg","error":"UItywufajinxing.ogg","skill":"Special_Attack_1.ogg","ranged":"Normal_Attack2.ogg","melee":"Normal_Attack1.ogg","magic":"Special_Attack_2.ogg","worldMusic":"guozhan.ogg","campaignMusic":"fuben.ogg","towerMusic":"shilianta.ogg","arenaMusic":"jingjichang.ogg"})
+    sound_names.update({f"hit{i}":f"Attack_hit_{i}.ogg" for i in range(1,14)})
     pack["audio"]={k:"data:audio/ogg;base64,"+base64.b64encode((soundroot/v).read_bytes()).decode("ascii") for k,v in sound_names.items()}
     pack["audioSource"]=sound_names
     pack["uiSource"]=ui_names

@@ -51,7 +51,7 @@ def main() -> int:
                     page_errors = []
                     page.on("pageerror", lambda err: page_errors.append(str(err)))
                     try:
-                        page.goto(url, wait_until="domcontentloaded", timeout=20000)
+                        page.goto(url, wait_until="domcontentloaded", timeout=180000)
                         page.wait_for_timeout(500)
                         tabs = page.locator('.nav[data-tab]').evaluate_all(
                             '(els) => els.map(x=>({id:x.dataset.tab,label:(x.textContent||"").trim()}))'

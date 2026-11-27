@@ -71,7 +71,7 @@ function musicStep(){
 }
 function startMusic(){
  if(!settings.music||settings.muted||!ensure())return;
- const id=battle&&!battle.finished?'battleMusic':'cityMusic';
+ const id=battle&&!battle.finished?'battleMusic':({world:'worldMusic',campaign:'campaignMusic',tower:'towerMusic',arena:'arenaMusic'}[tab]||'cityMusic');
  if(sourceAudio[id]){
   if(sourceMusicId!==id){sourceMusic?.pause();sourceMusic=new Audio(sourceAudio[id]);sourceMusic.loop=true;sourceMusicId=id;}
   sourceMusic.volume=settings.musicVolume;
@@ -106,13 +106,26 @@ document.addEventListener('input',ev=>{
 document.addEventListener('click',ev=>{
  const audioAction=ev.target.closest?.('[data-nlaudio-action]');
  if(audioAction){if(audioAction.dataset.nlaudioAction==='preview')play('preview');return;}
- if(ev.target.closest?.('button,[data-tab],[data-focus-building],[data-stage],[data-battle],[data-recruit],[data-formation]'))play('click');
+ const target=ev.target.closest?.('button,[data-tab],[data-focus-building],[data-stage],[data-battle],[data-recruit],[data-formation]');
+ if(!target)return;
+ const tag=String([target.dataset?.action,target.dataset?.nliAction,target.dataset?.nlaAction,target.textContent].join(' ')).toLowerCase();
+ const cue=target.matches('[data-focus-building]')?'building':target.matches('[data-tab]')?'switch':target.matches('[data-battle]')?'start':/chiêu mộ|recruit/.test(tag)?'recruit':/nâng cấp|upgrade/.test(tag)?'upgrade':/nghiên cứu|research/.test(tag)?'research':/trang bị|equip/.test(tag)?'equip':/nhận thưởng|reward/.test(tag)?'reward':'click';
+ play(cue);if(settings.music&&!settings.muted&&target.matches('[data-tab]'))setTimeout(startMusic,0);
 });
 const oldPerform=p2Perform;
 p2Perform=function(actor){
  const current=battle,count=current?.events?.length||0;oldPerform(actor);if(settings.music&&!settings.muted)startMusic();
  if(!current||current!==battle||current.replay)return;
- const event=current.events?.[count];if(event)play((event.hits||[]).some(hit=>hit.heal)?'heal':'strike');
+ const event=current.events?.[count];if(event){
+ const t=String(actor?.troop||actor?.type||'');
+ const k=String(event.kind||'');
+ if((event.hits||[]).some(hit=>hit.heal))play('heal');
+ else if(/magic|spell/i.test(k)||t==='strategist')play('magic');
+ else if(/skill|tactic/i.test(k)||event.skill)play('skill');
+ else if(t==='archer')play('ranged');else play('melee');
+ const hitId=1+((count+Math.max(0,Number(actor?.slot)||0))%13);
+ if((event.hits||[]).some(h=>Number(h.amount)>0))play('hit'+hitId);
+ }
 };
 const oldFinish=finishBattle;
 finishBattle=function(){
