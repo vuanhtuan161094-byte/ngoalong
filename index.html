@@ -44870,7 +44870,7 @@ function wikiEliteApply(actor,event){
    if(p.allHit)for(const u of enemies)addHit(u,'physical',p.allHit);
    if(p.attribute)timed(actor,key+'-attr-'+Math.min(turn,5),p,stats(null,p.attribute*.01));
    if(p.teamCritDamage)for(const u of allies)timed(u,key+'-teamcrit',p,{wikiCritDamage:p.teamCritDamage});
-   if(p.trample)for(const u of targets){wikiEliteTrample(u,p.trample);if(p.extraDebuff&&chance(p.extraDebuff)){wikiEliteNoBuffs(u,p.turns,'Hư Nhược Tinh Nhuệ');applyMobileSourceStatus(u,{kind:MOBILE_SOURCE_NO_HEAL,turns:p.turns,values:{},sourceName:'Tỏa Binh Tinh Nhuệ',dispelPolicy:'unremovable'});}}
+   if(p.trample)for(const u of targets){wikiEliteTrample(u,p.trample);if(p.extraDebuff&&chance(p.extraDebuff)){wikiEliteNoBuffs(u,p.turns,'Hư Nhược Tinh Nhuệ');applyMobileSourceStatus(u,{sourceId:'17',kind:MOBILE_SOURCE_NO_HEAL,turns:p.turns,values:{},sourceName:'Tỏa Binh Tinh Nhuệ',dispelPolicy:'unremovable',formulaClassification:'SOURCE_EXACT_BEHAVIOR_WITH_P2_ADAPTER'});}}
    if(p.perAllyAttack||p.perAllyDefense)timed(actor,key+'-formation',p,{...stats(null,Math.max(0,allies.length-1)*p.perAllyAttack),...stats(null,Math.max(0,allies.length-1)*p.perAllyDefense,true)});
    labels.push(p.pos===0?'Đánh Thường':('Kỹ năng '+(p.pos+1)));
  }

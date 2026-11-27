@@ -129,6 +129,17 @@ def main():
           const noBuffStatus=noBuffTarget?.effects?.find(e=>e.kind==='mobile-source-no-buffs'&&e.turns===2);
           checks.mobileEliteHuuNhuocInP2=!!noBuffApplied&&noBuffActor?.nlMobileElite?.plans?.some(p=>p.pos===1&&p.noBuffsLine)&&noBuffStatus?.mobileSource?.sourceEffectId==='77'&&noBuffStatus.mobileSource.dispelPolicy==='unremovable';
           q.closeBattle('city');q.setGame(eliteBefore);
+          const procFixture=structuredClone(eliteBefore),procOwner=procFixture.roster.find(h=>c.mobileEliteForceRole(h)==='cavalry');
+          procFixture.slots=[procOwner,...procFixture.slots.slice(1)];
+          procFixture.nlContentC={...(procFixture.nlContentC||{}),mobileTroopAssigned:{...(procFixture.nlContentC?.mobileTroopAssigned||{}),[procOwner]:'11'},mobileEliteUnlocked:{'26':true},mobileEliteLevels:{'26':1},mobileElitePending:{},mobileEliteSkills:{'26':[1,0,0]},mobileEliteAssigned:{[procOwner]:'26'}};
+          q.setGame(procFixture);q.beginBattle(1,'campaign');
+          const procBattle=q.debugBattle(),procActor=procBattle?.p.find(u=>u.id===procOwner),procTarget=procBattle?.e.find(u=>u.hp>0&&Math.floor(u.slot/3)===Math.floor(procActor?.slot/3));
+          const procPlan=procActor?.nlMobileElite?.plans?.find(p=>p.pos===0);if(procPlan)procPlan.extraDebuff=1;
+          const procEvent={actor:procActor?.name,mode:'normal',hits:procTarget?[{team:'e',slot:procTarget.slot}]:[],description:'QA'};
+          const procApplied=procActor&&procTarget&&c.wikiEliteApply(procActor,procEvent);
+          const procStatuses=procTarget?.effects?.filter(e=>['mobile-source-no-buffs','mobile-source-no-heal'].includes(e.kind)&&e.turns===2)||[];
+          checks.mobileEliteDualProcInP2=!!procApplied&&procPlan?.extraDebuff===1&&procStatuses.some(e=>e.mobileSource?.sourceEffectId==='77'&&e.mobileSource.dispelPolicy==='unremovable')&&procStatuses.some(e=>e.mobileSource?.sourceEffectId==='17'&&e.mobileSource.dispelPolicy==='unremovable');
+          q.closeBattle('city');q.setGame(eliteBefore);
           const troopBefore=q.getGame(),troopFixture=q.getGame();
           troopFixture.buildings.barracks=4;troopFixture.silver=1000000;troopFixture.nlClassicA.merit=10000;
           troopFixture.nlContentC.mobileCommanderLevel=440;q.setGame(troopFixture);
