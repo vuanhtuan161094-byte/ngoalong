@@ -149,7 +149,7 @@
      }
      // On mobile the native board and hero picker are the first two windows.
      // B4 presets and C seals remain selectable, but must not displace slot editing.
-     if(tab==='formation'&&viewportNarrow()){
+     if(tab==='formation'){
        const includesVisible=(p,selector)=>{
          const target=p.root?.matches?.(selector)?p.root:p.root?.querySelector?.(selector);
          return !!target&&!(p.choices||[]).some(pick=>pick.items.some(item=>
@@ -158,6 +158,7 @@
        const board=pages.find(p=>includesVisible(p,'.formation-board')&&!includesVisible(p,'.roster-list'));
        const picker=pages.find(p=>includesVisible(p,'.roster-list')&&!includesVisible(p,'.formation-board'));
        if(board&&picker){pages=[board,picker,...pages.filter(p=>p!==board&&p!==picker)];}
+       else {const main=pages.find(p=>includesVisible(p,'.formation-board'));if(main)pages=[main,...pages.filter(p=>p!==main)];}
      }
      if(pages.length===0)pages=[{root:null,label:'Tổng quan',choices:[]}];
      chooser.replaceChildren(...pages.map((p,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=`${i+1} · ${p.label}`;opt.title=p.label;return opt}));
