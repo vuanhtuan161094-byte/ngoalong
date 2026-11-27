@@ -137,6 +137,16 @@ def main():
           const canDamEvent=canDamBattle?.events?.[canDamEventStart],canDamDefense=canDamActor?.effects?.find(e=>Number(e.mobileSourceValues?.['wiki-def'])===.6),canDamImmune=canDamBattle?.p.flatMap(u=>u.effects||[]).find(e=>e.kind==='mobile-source-debuff-immune'&&e.mobileSource?.sourceName==='Can Đảm Tinh Nhuệ');
           checks.mobileEliteCanDamEffectSpecificDispel=!!canDamEvent&&canDamEvent.mode!=='stunned'&&canDamPlan?.undispellable===false&&canDamPlan?.highImmunityUndispellable===true&&canDamDefense?.mobileSource?.dispelPolicy==='removable'&&canDamImmune?.mobileSource?.dispelPolicy==='undispellable';
           q.closeBattle('city');q.setGame(eliteBefore);
+          const turnStartFixture=structuredClone(eliteBefore),turnStartOwner=turnStartFixture.roster.find(h=>c.mobileEliteForceRole(h)==='cavalry')||turnStartFixture.roster[0];
+          turnStartFixture.slots=[turnStartOwner,...turnStartFixture.slots.filter(h=>h!==turnStartOwner)];turnStartFixture.troopModes={...(turnStartFixture.troopModes||{}),[turnStartOwner]:'cavalry'};
+          turnStartFixture.nlContentC={...(turnStartFixture.nlContentC||{}),mobileTroopAssigned:{...(turnStartFixture.nlContentC?.mobileTroopAssigned||{}),[turnStartOwner]:'11'},mobileEliteUnlocked:{'32':true},mobileEliteLevels:{'32':1},mobileElitePending:{},mobileEliteSkills:{'32':[0,0,1]},mobileEliteAssigned:{[turnStartOwner]:'32'}};
+          q.setGame(turnStartFixture);q.beginBattle(1,'campaign');
+          const turnStartBattle=q.debugBattle(),turnStartActor=turnStartBattle?.p.find(u=>u.id===turnStartOwner),turnStartKind=turnStartActor&&'mobile-wiki-elite-'+turnStartActor.id+'-2-protect';
+          const openingWithoutProtection=!(turnStartBattle?.opening?.p||[]).some(u=>u.effects?.some(e=>e.kind===turnStartKind));
+          const turnStartEventStart=turnStartBattle?.events?.length||0;if(turnStartActor)q.perform(turnStartActor);
+          const turnStartEvents=turnStartBattle?.events||[],turnStartEvent=turnStartEvents.find(e=>e.mobileSourceEliteOwnerTurnStart===true),turnStartAction=turnStartEvents.find(e=>e.actor===turnStartActor?.name&&e.mode!=='elite-turn-start'&&e.mode!=='elite-battle-start'),turnStartProtection=turnStartBattle?.p.every(u=>u.effects?.some(e=>e.kind===turnStartKind&&Number(e.mobileSourceValues?.wikiTaken)===-.15&&e.turns===2));
+          checks.mobileElitePhiHungOwnerTurnStart=turnStartActor?.nlMobileElite?.plans?.some(p=>p.pos===2&&p.ownerTurnStart===true&&p.first===7)&&openingWithoutProtection&&!!turnStartEvent&&turnStartEvent.turn===1&&turnStartEvents.indexOf(turnStartEvent)<turnStartEvents.indexOf(turnStartAction)&&turnStartEvents.indexOf(turnStartEvent)>=turnStartEventStart&&!!turnStartAction&&turnStartProtection;
+          q.closeBattle('city');q.setGame(eliteBefore);
           const procFixture=structuredClone(eliteBefore),procOwner=procFixture.roster.find(h=>c.mobileEliteForceRole(h)==='cavalry');
           procFixture.slots=[procOwner,...procFixture.slots.slice(1)];
           procFixture.nlContentC={...(procFixture.nlContentC||{}),mobileTroopAssigned:{...(procFixture.nlContentC?.mobileTroopAssigned||{}),[procOwner]:'11'},mobileEliteUnlocked:{'26':true},mobileEliteLevels:{'26':1},mobileElitePending:{},mobileEliteSkills:{'26':[1,0,0]},mobileEliteAssigned:{[procOwner]:'26'}};

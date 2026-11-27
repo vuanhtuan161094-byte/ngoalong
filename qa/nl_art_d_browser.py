@@ -1,21 +1,32 @@
 """Focused visual layer contract, no simulated gameplay assertions."""
 import argparse
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import shutil
+from threading import Thread
+from urllib.parse import quote
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description="Offline visual layer coverage for a canonical or review HTML build.")
 parser.add_argument("--html",type=Path,default=root/"index.html")
 html_path=parser.parse_args().html.resolve()
-html=html_path.read_text(encoding="utf-8")
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self,*_args):
+        pass
+
+server=ThreadingHTTPServer(("127.0.0.1",0),partial(QuietHandler,directory=str(html_path.parent)))
+Thread(target=server.serve_forever,daemon=True).start()
 with sync_playwright() as p:
     chromium=shutil.which("chromium")
     browser=p.chromium.launch(headless=True,executable_path=chromium,args=["--no-sandbox","--disable-dev-shm-usage"] if chromium else [])
-    for width,height in [(1280,720),(390,844)]:
+    try:
+      for width,height in [(1280,720),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height})
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
-        page.set_content(html.replace("<script>","<script>window.__P2_ENABLE_QA__=true;",1),wait_until="domcontentloaded",timeout=120000)
+        page.add_init_script("window.__P2_ENABLE_QA__=true;")
+        page.goto(f"http://127.0.0.1:{server.server_port}/{quote(html_path.name)}",wait_until="domcontentloaded",timeout=120000)
         page.wait_for_function("Boolean(window.__NL_ART_D_QA__)")
         result=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
@@ -76,4 +87,6 @@ with sync_playwright() as p:
         assert not errors,errors
         print("NL_ART_D/D3 PASS",width,result,result3,zhao_portrait,wiki_portrait)
         page.close()
-    browser.close()
+    finally:
+      browser.close()
+      server.shutdown()

@@ -72,6 +72,13 @@ test('Tinh Nhuệ distinguishes battle-start effects from repeated first-turn ef
  assert.equal(plan('12',2,voVe.skills[2].levels[3]).battleStart,true);
  assert.equal(plan('23',1,nguyVu.skills[1].levels[0]).battleStart,false);
 });
+test('Tinh Nhuệ marks only the explicit “khi bắt đầu mỗi lượt” clause as an owner-turn start',()=>{
+ const appearance=id=>elite.forces.flatMap(f=>f.appearances).find(a=>String(a.id)===String(id));
+ const phiHung=appearance('32'),voVe=appearance('12'),nguyVu=appearance('23');
+ assert.equal(plan('32',2,phiHung.skills[2].levels[0]).ownerTurnStart,true);
+ assert.equal(plan('12',2,voVe.skills[2].levels[0]).ownerTurnStart,false);
+ assert.equal(plan('23',1,nguyVu.skills[1].levels[0]).ownerTurnStart,false);
+});
 test('27 gems and 9 child manuals resolve to specific wallets',()=>{for(const [g,n,w] of [['Ấn Thạch',27,'hero-gem'],['Bí Tịch',9,'child-manual']]){const rows=source.items.filter(x=>x.typeName===g);assert.equal(rows.length,n);for(const x of rows)assert.equal(typed(x,source,3)?.outputs[0].wallet,w);}});
 
 test('horse growth uses source quantity and commander gate, keys remain materials',()=>{

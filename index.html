@@ -44731,6 +44731,7 @@ function mobileElitePlan(id,pos,text){
  const p={id:root,pos,text,turns:duration,first,
   undispellable:/hii?eu qua khong the (?:bi )?giai tru/.test(f)||/nguyet hon khong the giai tru|bao thuong khong the giai tru/.test(f)||root==='23'&&pos===1||root==='16'&&pos===1,
   battleStart:(/khai chien|dau tran|bat dau tran/.test(f)&&!/\d+ luot dau tran|moi luot/.test(f)),
+  ownerTurnStart:/khi bat dau moi luot/.test(f),
   classification:'SOURCE_TEXT_WITH_SIMULATED_P2_TIMING'};
  const q=ps[0]??.15,second=ps[1]??q,m=ms[0]||0;
  if(pos===0){
@@ -44863,7 +44864,7 @@ function wikiEliteTrample(u,n){
 }
 function wikiEliteApply(actor,event,options={}){
  if(!battle||battle.replay||battle.mode==='cltq'||!actor?.nlMobileElite?.plans?.length||event?.actor!==actor.name||event.mode==='stunned'||actor.hp<=0)return false;
- const plans=actor.nlMobileElite.plans,turn=options.battleStart?1:actor.nlWikiEliteTurns=(actor.nlWikiEliteTurns||0)+1,allies=wikiLiving(actor),enemies=wikiLiving(actor,false);
+ const plans=actor.nlMobileElite.plans,turn=options.battleStart?1:options.ownerTurnStart?(actor.nlWikiEliteTurns||0)+1:actor.nlWikiEliteTurns=(actor.nlWikiEliteTurns||0)+1,allies=wikiLiving(actor),enemies=wikiLiving(actor,false);
  const firstHit=(event.hits||[]).find(h=>h.team!==actor.team),primary=firstHit?(actor.team==='p'?battle.e:battle.p).find(u=>u.slot===firstHit.slot):enemies[0],low=wikiLowest(allies),normal=event.mode==='normal';
  const chance=n=>n>=1||n>0&&p2Random()<n,labels=[];
  const addHit=(u,kind,mult)=>{if(u&&u.hp>0&&actor.hp>0){const h=mobileSingleHit(actor,u,kind,mult);if(h)(event.hits||(event.hits=[])).push(h);}};
@@ -44871,7 +44872,7 @@ function wikiEliteApply(actor,event,options={}){
  const stats=(fields,n,def=false)=>Object.fromEntries((fields|| (def?['def','tdef','mdef']:['atk','catk','matk'])).map(k=>['wiki-'+k,n]));
  const shield=(u,n)=>{if(chance(n))wikiEliteShield(u);};
  for(const p of plans){
-   if(options.battleStart?(!p.battleStart||p.phase!=='turn'):p.battleStart)continue;
+   if(options.battleStart?(!p.battleStart||p.phase!=='turn'):options.ownerTurnStart?(!p.ownerTurnStart||p.phase!=='turn'):(p.battleStart||p.ownerTurnStart))continue;
    if(p.phase==='normal'&&!normal||p.phase==='turn'&&(p.first&&turn>p.first||p.from&&turn<p.from||p.only&&turn!==p.only))continue;
    const key='elite-'+actor.id+'-'+p.pos,targets=primary?(p.pattern==='all'?enemies:p.pattern==='row'?enemies.filter(u=>Math.floor(u.slot/3)===Math.floor(primary.slot/3)):p.pattern==='column'?enemies.filter(u=>u.slot%3===primary.slot%3):[primary]):[];
    if(normal&&p.phase==='normal'){
@@ -44933,6 +44934,16 @@ function wikiEliteBattleStart(){
  }
  if(applied&&battle.opening)battle.opening=p2Snapshot();
  return applied;
+}
+function wikiEliteOwnerTurnStart(actor){
+ if(!battle||battle.replay||battle.mode==='cltq'||actor?.team!=='p'||actor.hp<=0)return false;
+ const turn=nat(actor.nlWikiEliteTurns)+1,plans=(actor.nlMobileElite?.plans||[]).filter(p=>p.phase==='turn'&&p.ownerTurnStart&&(!p.first||turn<=p.first));
+ if(!plans.length)return false;
+ const event={round:battle.round,turn,actorTeam:actor.team,actorSlot:actor.slot,actor:actor.name,mode:'elite-turn-start',kind:'normal',skill:'Tinh Nhuệ',description:'Bắt đầu lượt',hits:[],cleansed:[]};
+ if(!wikiEliteApply(actor,event,{ownerTurnStart:true}))return false;
+ event.mobileSourceEliteOwnerTurnStart=true;event.state=p2Snapshot();battle.events.push(event);battle.log=event.description;
+ if(typeof p2ApplyFrame==='function')p2ApplyFrame(event);
+ return true;
 }
 const nlContentCNativeBeginBattle=beginBattle;
 beginBattle=function(stage,mode='campaign'){
@@ -46358,7 +46369,7 @@ p2Perform=function(actor){
    actor?.team==='p'&&battle&&!battle.replay&&battle.mode!=='cltq'&&actor.morale>=100&&!mobileUsesLegacySupport(actor)&&!evolvedProjectHero?mobileHeroSkill(actor.id):null;
  const sourceSkillAction=!!actor&&actor.morale>=100&&!!d;
  const moraleOnly=!!actor&&actor.morale>=100&&d?.sourceMoraleOnly&&Number.isFinite(d.bonusMorale);
- const originalTroop=actor?.troop,originalMorale=p2Morale,eventIndex=battle?.events?.length||0;
+ const originalTroop=actor?.troop,originalMorale=p2Morale;let eventIndex=battle?.events?.length||0;
  const priorFateMultiplier=actor?.nlMobileFateDamageMultiplier,hadFateMultiplier=!!actor&&Object.hasOwn(actor,'nlMobileFateDamageMultiplier');
  let appliedFateMultiplier=0;
  const fortuneStatus=(actor?.effects||[]).find(effect=>effect.kind===MOBILE_SOURCE_FORTUNE&&effect.turns>0);
@@ -46390,6 +46401,8 @@ p2Perform=function(actor){
    }
    if(actor?.nlMobileElite?.plans?.length&&battle?.mode!=='cltq')actor.nlWikiEliteNormal=actor.morale<100;
    if(actor?.nlMobileTroop?.plan&&battle?.mode!=='cltq'&&!battle?.replay&&!confusionActive)actor.nlWikiTroopNormal=actor.morale<100;
+   wikiEliteOwnerTurnStart(actor);
+   eventIndex=battle?.events?.length||0;
    const elitePreActionCleanse=wikiEliteBeforeAction(actor);
    const elitePreActionHits=actor?.nlWikiElitePreActionHits||[];
    if(actor)delete actor.nlWikiElitePreActionHits;
