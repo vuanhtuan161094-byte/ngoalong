@@ -152,6 +152,39 @@ def main() -> int:
                     "Cancelling overwrite keeps the current Save byte-for-byte intact",
                     before_bad_import == after_cancel,
                 )
+
+                preserved = json.loads(after_cancel)
+                damaged_replay = copy.deepcopy(preserved)
+                damaged_replay["battleReportsEncoding"] = "keys-v1"
+                damaged_replay["battleReportKeyTable"] = []
+                damaged_replay["battleReports"] = [{"~0": "invalid key reference"}]
+                page.evaluate(
+                    "(key,record)=>localStorage.setItem(key,JSON.stringify(record))",
+                    [SAVE_KEY, damaged_replay],
+                )
+                page.reload(wait_until="domcontentloaded")
+                page.wait_for_function(
+                    """([key,silver])=>{
+                        const raw=localStorage.getItem(key);
+                        if(!raw)return false;
+                        const game=JSON.parse(raw);
+                        return game.version===5&&game.silver===silver&&
+                          JSON.stringify(game.cleared)==='[1,2]'&&
+                          game.battleReportsEncoding==='keys-v1'&&
+                          Array.isArray(game.battleReports)&&game.battleReports.length===0;
+                    }""",
+                    arg=[SAVE_KEY, legacy["silver"]],
+                )
+                recovered = page.evaluate(
+                    "key=>JSON.parse(localStorage.getItem(key))", SAVE_KEY
+                )
+                check(
+                    "Damaged replay archive preserves Save v5 campaign state",
+                    recovered["version"] == 5
+                    and recovered["silver"] == legacy["silver"]
+                    and recovered["cleared"] == legacy["cleared"]
+                    and recovered["battleReports"] == [],
+                )
                 check("No uncaught browser errors", not errors)
             finally:
                 browser.close()

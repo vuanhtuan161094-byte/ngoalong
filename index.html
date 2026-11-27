@@ -35910,10 +35910,49 @@ function renderNation(){const n=NATIONS[game.nation];return head('Tam phân thi�
 function changeNation(id){if(!NATIONS[id]||game.nationLocked||game.cleared.length||id===game.nation)return;const previous=NATIONS[game.nation].starters;for(const h of previous){if(!game.roster.includes(h))continue;game.roster=game.roster.filter(x=>x!==h);delete game.hero[h];delete game.gear[h];}game.roster=[...new Set([...NATIONS[id].starters,...game.roster])];for(const h of NATIONS[id].starters)game.hero[h]||={level:1,xp:0,troops:320};game.slots=[null,NATIONS[id].starters[1],null,null,NATIONS[id].starters[2],null,null,NATIONS[id].starters[0],null];game.nation=id;game.nationLocked=true;gearHero=game.roster[0];log(`Tuyên thệ quốc gia ${NATIONS[id].name}.`);save();toast('Đã chọn phe '+NATIONS[id].name);render();}
 
 function fresh(){return {version:3,silver:14000,grain:6500,iron:3200,prestige:0,gems:140,reserve:600,buildings:{palace:1,farm:1,market:1,mine:1,barracks:1,academy:1,tavern:1},roster:['liu','guan','zhang'],hero:{liu:{level:1,xp:0,troops:300},guan:{level:1,xp:0,troops:320},zhang:{level:1,xp:0,troops:320}},slots:[null,'guan',null,null,'zhang',null,null,'liu',null],formation:'spear',cleared:[],lastTick:Date.now(),logs:[{time:Date.now(),msg:'Thiên hạ loạn lạc. Ngươi lên ngôi chủ thành và chiêu mộ ba anh hùng đầu tiên.'}],freeRecruit:true,...extDefaults()};}
-function load(){try{const v=JSON.parse(localStorage.getItem(STORAGE));if(v&&(v.version===1||v.version===2||v.version===3||v.version===4||v.version===5)&&v.buildings&&v.hero&&Array.isArray(v.slots)&&Array.isArray(v.roster)&&v.slots.length===9)return v;}catch(e){}return fresh();}
+function nlDecodeSavedReports(record){
+ if(!record||record.battleReportsEncoding!=='keys-v1')return record;
+ const keys=record.battleReportKeyTable;
+ if(!Array.isArray(keys)||!Array.isArray(record.battleReports))throw Error('Save v5 replay index is corrupt.');
+ const decode=value=>{
+  if(Array.isArray(value))return value.map(decode);
+  if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>{
+   const match=/^~([0-9a-z]+)$/.exec(key),index=match?parseInt(match[1],36):-1;
+   if(match&&(!Number.isSafeInteger(index)||index<0||index>=keys.length||typeof keys[index]!=='string'))throw Error('Save v5 replay key is invalid.');
+   return [match?keys[index]:key,decode(item)];
+  }));
+  return value;
+ };
+ record.battleReports=decode(record.battleReports);
+ delete record.battleReportsEncoding;delete record.battleReportKeyTable;
+ return record;
+}
+function nlEncodeSavedReports(record){
+ const reports=Array.isArray(record.battleReports)?record.battleReports:[];
+ const keySet=new Set(),collect=value=>{
+  if(Array.isArray(value)){for(const item of value)collect(item);return;}
+  if(value&&typeof value==='object')for(const [key,item] of Object.entries(value)){keySet.add(key);collect(item);}
+ };
+ collect(reports);
+ const keys=[...keySet],codes=new Map(keys.map((key,index)=>[key,'~'+index.toString(36)]));
+ const encode=value=>{
+  if(Array.isArray(value))return value.map(encode);
+  if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>[codes.get(key),encode(item)]));
+  return value;
+ };
+ return {...record,battleReports:encode(reports),battleReportsEncoding:'keys-v1',battleReportKeyTable:keys};
+}
+function load(){
+ let value;try{value=JSON.parse(localStorage.getItem(STORAGE));}catch(e){return fresh();}
+ if(!(value&&(value.version===1||value.version===2||value.version===3||value.version===4||value.version===5)&&value.buildings&&value.hero&&Array.isArray(value.slots)&&Array.isArray(value.roster)&&value.slots.length===9))return fresh();
+ try{return nlDecodeSavedReports(value);}catch(e){
+  // Preserve campaign progress if a compact replay archive is damaged.
+  value.battleReports=[];delete value.battleReportsEncoding;delete value.battleReportKeyTable;return value;
+ }
+}
 let battleAnimationActive=false;function p2ScheduleAnimation(){if(battleAnimationActive)return;battleAnimationActive=true;requestAnimationFrame(drawBattle);}
 let battleLastTab='campaign';let game=load(),tab='city',selectedHero=null,selectedStage=Math.min(STAGES.length,game.cleared.length+1),battle=null,toastTimer=null;hydrateExtension();
-function save(){try{localStorage.setItem(STORAGE,JSON.stringify(game));return true;}catch(e){return false;}}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(nlEncodeSavedReports(game)));return true;}catch(e){return false;}}
 function log(msg){game.logs.unshift({time:Date.now(),msg});game.logs=game.logs.slice(0,40);}
 function toast(msg){$('toast-mount').innerHTML=`<div class="toast">${esc(msg)}</div>`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast-mount').innerHTML='',3200)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -35970,6 +36009,7 @@ function validateSaveImport(data){
  if(data.cleared?.some(stage=>!Number.isSafeInteger(stage)||stage<1))throw Error('Tiến trình phó bản trong Save không hợp lệ.');
  if(data.logs!==undefined&&!Array.isArray(data.logs))throw Error('Nhật ký trong Save không hợp lệ.');
  if(data.nation!==undefined&&!NATIONS[data.nation])throw Error('Quốc gia trong Save không hợp lệ.');
+ data=nlDecodeSavedReports(data);
  data.cleared=data.cleared||[];
  data.logs=data.logs||[];
  return data;
@@ -36911,7 +36951,7 @@ if(window.__P2_ENABLE_QA__){window.__P3_QA__={presets:P3_PRESETS.map(x=>({...x})
 
 if(window.__P2_ENABLE_QA__){window.__P2_QA__={getGame:()=>structuredClone(game),getBattle:()=>battle?structuredClone({...battle,current:null,fx:[],order:null}):null,
  beginBattle,stepBattle,skipBattle,makeUnit,p2Hit,p2Target,p2OpenReplay,p2LoadReplayFrame,finishBattle,closeBattle,debugBattle:()=>battle,
- useTroop:changeTroopMode,enlist,giveTroops,setEncounterPower:(stage,value)=>{const encounter=NL_GAME_DATA.campaign.encounters.find(row=>row.stage===stage);if(encounter)encounter.enemyPower=value;},setGame:(g)=>{game=g;hydrateExtension();render();},render,selectTab:(t)=>{tab=t;render();}};}
+ useTroop:changeTroopMode,enlist,giveTroops,setEncounterPower:(stage,value)=>{const encounter=NL_GAME_DATA.campaign.encounters.find(row=>row.stage===stage);if(encounter)encounter.enemyPower=value;},setGame:(g)=>{game=nlDecodeSavedReports(g);hydrateExtension();render();},render,selectTab:(t)=>{tab=t;render();},persist:()=>save(),decodeSavedReports:value=>nlDecodeSavedReports(value)};}
 
 // === CL-P6 optional NPC grand-strategy systems ===
 const clP6BaseHydrate=hydrateExtension;

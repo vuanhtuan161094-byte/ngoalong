@@ -251,10 +251,43 @@ def run(duration_minutes: int = 30) -> int:
             reported_battles = sum(row["event"] in ("win", "loss") for row in history)
             check(f"{profile}: every simulated battle has valid deterministic settlement receipts", all_reports_valid and wins + losses == reported_battles)
             check(f"{profile}: no resource underflow or negative troop counts", min(final["silver"], final["grain"], final["iron"], final["reserve"], *(final["hero"][hero]["troops"] for hero in heroes)) >= 0)
+            save_succeeded = page.evaluate("window.__P2_QA__.persist()")
             serialized = page.evaluate(f"localStorage.getItem('{SAVE_KEY}')")
+            serialized_state = json.loads(serialized) if serialized else {}
+            saved_match = page.evaluate("""key=>{
+              const saved=window.__P2_QA__.decodeSavedReports(JSON.parse(localStorage.getItem(key)));
+              const runtime=window.__P2_QA__.getGame();
+              const equal=(a,b)=>{
+                if(a===b)return true;
+                if(!a||!b||typeof a!=='object'||typeof b!=='object')return false;
+                if(Array.isArray(a)!==Array.isArray(b))return false;
+                const ak=Object.keys(a).sort(),bk=Object.keys(b).sort();
+                return ak.length===bk.length&&ak.every((k,i)=>k===bk[i]&&equal(a[k],b[k]));
+              };
+              return {cleared:equal(saved.cleared,runtime.cleared),reports:equal(saved.battleReports,runtime.battleReports),heroes:equal(saved.hero,runtime.hero)};
+            }""", SAVE_KEY) if serialized else {}
             page.reload(wait_until="domcontentloaded")
             restored = page.evaluate("window.__P2_QA__.getGame()")
-            check(f"{profile}: reload preserves unlocks, troop casualties, reports and v5 Save", restored["version"] == 5 and restored["cleared"] == final["cleared"] and restored["battleReports"] == final["battleReports"] and restored["hero"] == final["hero"] and serialized is not None)
+            reload_diagnostics = {
+                "saveChars": len(serialized or ""),
+                "saveVersion": serialized_state.get("version"),
+                "savedReportCount": len(serialized_state.get("battleReports", [])),
+                "runtimeReportCount": len(final.get("battleReports", [])),
+                "restoredReportCount": len(restored.get("battleReports", [])),
+                "savePresent": serialized is not None,
+                "saveSucceeded": bool(save_succeeded),
+                "savedSameCleared": saved_match.get("cleared") is True,
+                "savedSameReports": saved_match.get("reports") is True,
+                "savedSameHeroes": saved_match.get("heroes") is True,
+                "sameVersion": restored.get("version") == 5,
+                "sameCleared": restored.get("cleared") == final.get("cleared"),
+                "sameReports": restored.get("battleReports") == final.get("battleReports"),
+                "sameHeroes": restored.get("hero") == final.get("hero"),
+            }
+            summaries[profile]["reloadDiagnostics"] = reload_diagnostics
+            check(f"{profile}: reload preserves unlocks, troop casualties, reports and v5 Save", all(
+                reload_diagnostics[key] for key in ("savePresent", "saveSucceeded", "savedSameCleared", "savedSameReports", "savedSameHeroes", "sameVersion", "sameCleared", "sameReports", "sameHeroes")
+            ))
             page.locator('.nav[data-tab="campaign"]').click()
             stage_five = visible_window(page, '[data-stage="5"]')
             if not stage_five.is_disabled():
