@@ -7,24 +7,37 @@ legacy regression, real device QA or publisher-source provenance.
 from __future__ import annotations
 
 import json
+import mmap
 import os
 from pathlib import Path
 import shutil
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from threading import Thread
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML_PATH = ROOT / "index.html"
 SAVE_KEY = "muu_dinh_tam_quoc_v1"
-STUB = """<script>window.__P2_ENABLE_QA__=true;
+STUB = """window.__P2_ENABLE_QA__=true;
 const __nlStore=__NL_STORE__;
 Object.defineProperty(window,'localStorage',{configurable:true,value:{
 getItem:k=>Object.prototype.hasOwnProperty.call(__nlStore,k)?__nlStore[k]:null,
 setItem:(k,v)=>__nlStore[k]=String(v),
 removeItem:k=>delete __nlStore[k],
 clear:()=>Object.keys(__nlStore).forEach(k=>delete __nlStore[k])
-}});</script>"""
+}});"""
 checks: list[tuple[str,bool]] = []
 errors: list[str] = []
+
+
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self, *_args):
+        pass
+
+
+server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=str(ROOT)))
+Thread(target=server.serve_forever, daemon=True).start()
 
 
 def check(name: str, result: bool) -> None:
@@ -38,8 +51,9 @@ def open_page(browser, stored: str | None = None, width: int = 1280):
     page.on("pageerror", lambda error: errors.append(str(error)))
     script = STUB.replace("__NL_STORE__", json.dumps(
         {} if stored is None else {SAVE_KEY: stored}, ensure_ascii=False))
-    page.set_content(HTML.replace("<script>", script + "<script>", 1),
-                     wait_until="domcontentloaded")
+    page.add_init_script(script)
+    page.goto(f"http://127.0.0.1:{server.server_port}/index.html",
+              wait_until="domcontentloaded", timeout=120000)
     return page
 
 
@@ -63,8 +77,10 @@ def visible_window(page, selector):
 
 
 def main() -> None:
-    if "NL-ITEMS-INJECTED-BY-BUILDER" not in HTML:
-        raise RuntimeError("NL item integration block missing from built canonical HTML")
+    with HTML_PATH.open("rb") as html_file:
+        with mmap.mmap(html_file.fileno(), 0, access=mmap.ACCESS_READ) as content:
+            if content.find(b"NL-ITEMS-INJECTED-BY-BUILDER") < 0:
+                raise RuntimeError("NL item integration block missing from built canonical HTML")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
             headless=True,

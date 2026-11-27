@@ -248,9 +248,42 @@ def main():
           const eliteAfterResetSave=structuredClone(q.getGame());q.setGame(eliteAfterResetSave);
           checks.mobileEliteResetReloadAndNoDuplicate=q.getGame().version===5&&c.mobileEliteLevel(eliteFlowId)===0&&Number(q.getGame().nlItemsV1.stacks['mobile-vng-item-856']||0)===0&&Object.entries(eliteSpent).every(([id,count])=>q.getGame().nlItemsV1.stacks[id]===count)&&Object.keys(q.getGame().nlContentC.mobileEliteRefundedReceipts||{}).length===6&&!document.querySelector('[data-nlc-action="mobile-elite-reset"][data-nlc-id="9"]');
           q.setGame(eliteBefore);
-          const gemBefore=q.getGame(),gemOwner=gemBefore.roster[0],gemItem='mobile-vng-item-stone_1',gemBaselineCrit=c.p2Unit(gemOwner,'p',0,1)?.crit,gemFixture=structuredClone(gemBefore);
-          gemFixture.slots=[gemOwner,...gemFixture.slots.slice(1)];gemFixture.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{[gemItem]:1}};
+          const gemBefore=q.getGame(),gemFamilies=[
+            {key:'bao',ids:['stone_1','stone_2','stone_3','stone_4','stone_5','stone_6','stone_7','stone_22','stone_25'],field:'crit',per:.015},
+            {key:'ne',ids:['stone_15','stone_16','stone_17','stone_18','stone_19','stone_20','stone_21','stone_24','stone_27'],field:'dodge',per:.012},
+            {key:'phan',ids:['stone_8','stone_9','stone_10','stone_11','stone_12','stone_13','stone_14','stone_23','stone_26'],field:'strikeBack',per:.015}
+          ];
+          const gemFamilyResults=[];
+          for(const family of gemFamilies){
+            const gemFixture=structuredClone(gemBefore),gemOwner=family.key==='phan'?(gemFixture.roster.find(h=>c.mobileHeroTroopAllowed(h,12))||gemFixture.roster[0]):gemFixture.roster[0];
+            gemFixture.slots=[gemOwner,...gemFixture.slots.filter(h=>h!==gemOwner)];
+            if(family.key==='phan')gemFixture.troopModes={...(gemFixture.troopModes||{}),[gemOwner]:'archer'};
+            gemFixture.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{}};
+            gemFixture.nlContentC={...(gemFixture.nlContentC||{}),mobileGemSlots:{}};
+            if(family.key==='phan')gemFixture.nlContentC.mobileTroopAssigned={...(gemFixture.nlContentC.mobileTroopAssigned||{}),[gemOwner]:'12'};
+            q.setGame(gemFixture);
+            const baselineUnit=c.p2Unit(gemOwner,'p',0,1),baseline=family.key==='phan'?baselineUnit?.nlMobileTroop?.strikeBack:baselineUnit?.[family.field];
+            let ranksOK=true,lastUse=null;
+            for(let rank=1;rank<=9;rank++){
+              const itemId='mobile-vng-item-'+family.ids[rank-1],stock=structuredClone(q.getGame());stock.nlItemsV1.stacks[itemId]=1;q.setGame(stock);
+              lastUse=itemQa.useItem(itemId,gemOwner);
+              const saved=structuredClone(q.getGame());q.setGame(saved);
+              const slot=c.state()?.mobileGemSlots?.[gemOwner];
+              ranksOK=ranksOK&&lastUse?.ok===true&&Number(q.getGame().nlItemsV1.stacks[itemId]||0)===0&&slot?.[family.key]===rank&&q.getGame().version===5;
+            }
+            const gemSaved=structuredClone(q.getGame());q.setGame(gemSaved);
+            q.beginBattle(1,'campaign');const gemBattle=q.debugBattle(),gemActor=gemBattle?.p.find(u=>u.id===gemOwner),gemSlot=c.state()?.mobileGemSlots?.[gemOwner];
+            const actual=family.key==='phan'?gemActor?.nlMobileTroop?.strikeBack:gemActor?.[family.field];
+            gemFamilyResults.push({key:family.key,ranksOK,slot:gemSlot?.[family.key],saveVersion:q.getGame().version,p2Value:actual,baseline,expected:baseline+family.per*9,
+              p2OK:gemActor?.nlWikiGems?.[family.key]===9&&Number.isFinite(baseline)&&Math.abs(actual-(baseline+family.per*9))<1e-9});
+            q.closeBattle('city');
+          }
+          checks.mobileGemAllRanksP2SaveRestore=gemFamilyResults.length===3&&gemFamilyResults.every(x=>x.ranksOK&&x.slot===9&&x.saveVersion===5&&x.p2OK);
+          checks.mobileGemFamilyDiagnostics=gemFamilyResults;
+          const gemFixture=structuredClone(gemBefore),gemOwner=gemFixture.roster[0],gemItem='mobile-vng-item-stone_1';
+          gemFixture.slots=[gemOwner,...gemFixture.slots.filter(h=>h!==gemOwner)];gemFixture.nlItemsV1={serial:0,actionNonce:0,receipts:{},stacks:{[gemItem]:1}};
           gemFixture.nlContentC={...(gemFixture.nlContentC||{}),mobileGemSlots:{}};q.setGame(gemFixture);
+          const gemBaselineCrit=c.p2Unit(gemOwner,'p',0,1)?.crit;
           const gemUsed=itemQa.useItem(gemItem,gemOwner),gemSaved=structuredClone(q.getGame());q.setGame(gemSaved);
           q.beginBattle(1,'campaign');const gemBattle=q.debugBattle(),gemActor=gemBattle?.p.find(u=>u.id===gemOwner),gemSlot=c.state().mobileGemSlots?.[gemOwner];
           checks.mobileGemItemToP2=gemUsed?.ok===true&&Number(q.getGame().nlItemsV1.stacks[gemItem]||0)===0&&gemSlot?.bao===1&&q.getGame().version===5&&gemActor?.nlWikiGems?.bao===1&&Math.abs(gemActor.crit-(gemBaselineCrit+.015))<1e-9;
