@@ -1,0 +1,17 @@
+RECONSTRUCTED PROMPT RECORD — this describes the preceding ImageGen call from its execution context; it is not claimed to be a verbatim transcript.
+
+Create one premium 2x2 contact sheet, 1024x1536 total, for four separate full-body vertical 2:3 character illustrations. Each cell is 512x768, with one adult woman, head to footwear, clear margins, no text, no frame, and no content crossing cell boundaries.
+
+STYLE: Match the approved Cao Cao / Ma Chao / Zhang He fantasy mobile-game CG direction: polished semi-realistic anime CG, refined Asian facial beauty, natural adult facial proportions, luminous warm rosy skin with subtle satin highlights, expressive almond eyes with visible catchlights, graceful nose and lips, individual flowing hair, detailed embroidered silk and cinematic soft light. Painterly high-detail finish, rich jewel colors and gold accents. Avoid photorealism, doll faces, plastic skin, flat manga rendering, pale washed-out skin, and a repeated facial template.
+
+All four are clearly adult 18-year-old women with visibly mature adult features, glamorous and confident. Bold fantasy cosplay with lingerie-inspired opaque coverage, lace, stockings, high slits, exposed shoulders, backs, waist and thighs; no nudity or exposed nipples. Every face, hair, expression, pose and outfit must be distinct. Enlarge each head and face enough to read its features in its own panel while retaining full body.
+
+TOP LEFT — Chu Thương: narrow diamond-shaped face, defined cheekbones, straight brows, slim slightly upturned warm-brown eyes, long straight nose bridge, knowing sideways smirk; sleek black high ponytail with a practical gold hair clasp. Deep crimson and black martial glamour costume with an ornate polearm, confident angled standing pose.
+
+TOP RIGHT — Mã Đại: heart-shaped face, high arched brows, bright green almond eyes, softly rounded nose tip, full smiling lips and spirited grin; copper-red loose waves tied with teal ribbons. Teal and ivory cavalry-inspired fantasy lingerie armor with embroidered silk panels, thigh-high stockings and a light spear, energetic seated-on-saddle pose.
+
+BOTTOM LEFT — Tưởng Uyển: mature oval face, straighter brows, deep-set amber eyes, fine straight nose and composed closed-mouth thoughtful gaze; dark hair in a refined low knot with jade pins. Plum and champagne scholar-court glamour outfit, high slit and sheer sleeves over opaque bodice, elegant standing pose holding a scroll.
+
+BOTTOM RIGHT — Bào Tam Nương: angular heart-shaped face with defined jaw, strong arched brows, long cat-shaped dark eyes, tiny beauty mark, daring smile; long black hair with red ribbons and a white flower. Black, scarlet and gold fitted warrior-cosplay bodice, lace stockings, body chain, curved twin blades, over-the-shoulder fashion pose.
+
+Keep all four silhouettes complete, with coherent anatomy and hands. Do not repeat faces, poses or outfit structures. No collage overlap, no extra characters, no cropped limbs, no watermark, logo, text, or explicit sexual content.

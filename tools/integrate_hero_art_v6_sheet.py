@@ -145,7 +145,7 @@ def main() -> int:
             "nativeCellResolution": [cell_w, cell_h],
             "upscaled": False,
             "promptVersion": batch.get("promptVersion", "NL_CHARACTER_ART_V6_FOUR_UP_GRID"),
-            "promptRecordStatus": "VERBATIM",
+            "promptRecordStatus": batch.get("promptRecordStatus", "VERBATIM"),
             "promptFile": prompt_path.relative_to(ROOT).as_posix(),
             "createdOn": batch.get("createdOn", date.today().isoformat()),
             "providerTimestamp": "unknown",
