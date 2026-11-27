@@ -64,8 +64,15 @@ def pack_image(raw,meta,cell,normalize_soldier=False):
                 bounds=(max(0,bounds[0]-pad),max(0,bounds[1]-pad),
                         min(canvas.width,bounds[2]+pad),min(canvas.height,bounds[3]+pad))
                 canvas=canvas.crop(bounds)
-        canvas.thumbnail(((cell-8) if normalize_soldier else cell,
-                          (cell-8) if normalize_soldier else cell),Image.Resampling.LANCZOS)
+        if normalize_soldier:
+            # PIL.thumbnail never enlarges small sprites. Explicit resizing is
+            # essential here; several WLY2 infantry frames are only ~60 source
+            # pixels high after trimming their oversized logical canvas.
+            scale=min((cell-12)/max(canvas.width,1),(cell-12)/max(canvas.height,1))
+            canvas=canvas.resize((max(1,round(canvas.width*scale)),
+                                  max(1,round(canvas.height*scale))),Image.Resampling.LANCZOS)
+        else:
+            canvas.thumbnail((cell,cell),Image.Resampling.LANCZOS)
         sheet.paste(canvas,((i%cols)*cell+(cell-canvas.width)//2,(i//cols)*cell+cell-canvas.height))
         index[key]=i
         if normalize_soldier:
