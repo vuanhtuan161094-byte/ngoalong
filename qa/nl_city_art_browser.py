@@ -15,8 +15,8 @@ errors: list[str] = []
 def open_city_page(browser, width: int):
     page = browser.new_page(viewport={"width": width, "height": 720 if width > 600 else 844})
     page.on("pageerror", lambda error: errors.append(str(error)))
-    page.set_content(HTML.replace("<script>", STUB.replace("__NL_STORE__", "{}") + "<script>", 1),
-                     wait_until="domcontentloaded")
+    page.add_init_script(STUB.replace("__NL_STORE__", "{}").removeprefix("<script>").removesuffix("</script>"))
+    page.goto((ROOT / "index.html").as_uri(), wait_until="domcontentloaded", timeout=180000)
     return page
 
 

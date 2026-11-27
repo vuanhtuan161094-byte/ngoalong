@@ -1,0 +1,30 @@
+name: WLY2 environment asset acquisition
+on:
+  push:
+    branches: [feature/ngoalong-v1-complete]
+    paths: ['.github/workflows/nl-wly2-environment.yml','tools/acquire_wly2_environment.py','data/ngoalong_wly2_environment_inventory.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install pillow==11.3.0
+          python tools/acquire_wly2_environment.py --out "$RUNNER_TEMP/wly2-environment"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wly2-environment-originals
+          path: ${{ runner.temp }}/wly2-environment/source/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wly2-environment-visual-selection
+          path: ${{ runner.temp }}/wly2-environment/review/
+          if-no-files-found: error

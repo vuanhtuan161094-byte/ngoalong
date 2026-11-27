@@ -19,7 +19,7 @@ function atlasImage(id,atlas){if(!atlasImages.has(id)){const im=new Image();im.s
 for(const [id,a] of Object.entries(sourceTroops))atlasImage(id,a);
 // Only preload effects used by the current event adapter; the other source
 // effects stay encoded and are decoded on demand, not during startup.
-const mappedFxIds=['TX_juqi_BUFF','TX_sf_0104','TX_shiqi_BUFF','TX_sf_0106','TX_hit_0104','TX_hit_0106'];
+const mappedFxIds=['TX_juqi_BUFF','TX_sf_0104','TX_shiqi_BUFF','TX_sf_0106','TX_hit_0104','TX_hit_0106','TX_zhongdu_BUFF','TX_zhuoshao_BUFF','TX_hunluan_BUFF','TX_tiebi_BUFF','TX_xixue_BUFF','TX_yinyun_BUFF'];
 for(const id of mappedFxIds)if(sourceEffects[id])atlasImage(id,sourceEffects[id]);
 function atlasCel(ctx,id,a,i,x,y,w,h){if(!a||!Number.isInteger(i)||i<0||i>=a.frames)return false;const im=atlasImage(id,a);if(!ready(im))return false;ctx.drawImage(im,(i%a.cols)*a.cell,Math.floor(i/a.cols)*a.cell,a.cell,a.cell,x-w/2,y-h,w,h);return true;}
 const p41=new Image(),p5=new Image();
@@ -120,8 +120,8 @@ function companions(ctx,u,now,pos,v){
  const im=sheets.get(sheet(u));if(!ready(im)||(!v.hit&&u.hp<=0))return;
  const f=family(u),dir=u.team==='e'?-1:1;
  const lift=advance(v,f,u.team);
- const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?39:29;
- const offsets=squadLayout(f,u.team);
+ const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?45:36;
+ const offsets=squadLayout(f,u.team).map(([dx,dy])=>[dx*1.12,dy]);
  ctx.save();
  if(v.action==='disappear')ctx.globalAlpha=1-frame*.24;
  for(let i=0;i<offsets.length;i++){
@@ -171,8 +171,13 @@ function effects(ctx,u,now,pos,v){
  polishedFx(ctx,u,pos,v,f);
  // Explicit presentation mappings; do not equate WLY2 IDs with Mobile skill IDs.
  const k=effectKind(v,f),sourceId=v.actor&&phase===0?'TX_juqi_BUFF':v.actor&&phase===1?(k==='magic'?'TX_sf_0104':k==='support'||k==='heal'?'TX_shiqi_BUFF':'TX_sf_0106'):v.hit&&phase>=2?(k==='magic'?'TX_hit_0104':'TX_hit_0106'):null;
- const a=sourceEffects[sourceId];
- if(a){const t=phase===0?v.elapsed/220:phase===1?(v.elapsed-220)/210:phase===2?(v.elapsed-430)/220:(v.elapsed-650)/350;ctx.save();ctx.globalAlpha=phase===3?.55:.9;if(atlasCel(ctx,sourceId,a,Math.floor(clamp(t,0,1)*(a.frames-1)),pos.x,pos.y+22,92,92))metrics.sourceFx++;ctx.restore();}
+ // Optional status cues only from recorded event tags. Source names map
+ // semantically, not by assuming identical skill IDs between editions.
+ const tags=String([v.ev?.kind,v.ev?.tag,v.ev?.skill?.tag,...(v.ev?.hits||[]).filter(h=>same(h.target,u)).map(h=>[h.kind,h.tag,h.status].join(' '))].join(' ')).toLowerCase();
+ const statusId=/poison|trúng độc|nhiễm độc/.test(tags)?'TX_zhongdu_BUFF':/burn|thiêu đốt/.test(tags)?'TX_zhuoshao_BUFF':/confus|hỗn loạn/.test(tags)?'TX_hunluan_BUFF':/shield|khiên/.test(tags)?'TX_tiebi_BUFF':/lifesteal|hút máu/.test(tags)?'TX_xixue_BUFF':/stun|choáng/.test(tags)?'TX_yinyun_BUFF':null;
+ const actualId=v.hit&&phase>=2&&statusId&&sourceEffects[statusId]?statusId:sourceId;
+ const a=sourceEffects[actualId];
+ if(a){const t=phase===0?v.elapsed/220:phase===1?(v.elapsed-220)/210:phase===2?(v.elapsed-430)/220:(v.elapsed-650)/350;ctx.save();ctx.globalAlpha=phase===3?.55:.9;if(atlasCel(ctx,actualId,a,Math.floor(clamp(t,0,1)*(a.frames-1)),pos.x,pos.y+22,92,92))metrics.sourceFx++;ctx.restore();}
  const show=v.actor&&phase<2||v.hit&&phase>=2;
  if(show&&ready(fx)){
    ctx.save();ctx.globalAlpha=phase===3?.55:.88;ctx.globalCompositeOperation='screen';
