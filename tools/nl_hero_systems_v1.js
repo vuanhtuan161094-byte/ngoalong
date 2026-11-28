@@ -61,6 +61,17 @@ nlhsState();save();
 function hsEsc(x){return typeof esc==='function'?esc(String(x??'')):String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function nlhHero(id){return HEROES[id]||NL_HERO207_BY_ID?.get(id)||{name:id,role:'Võ tướng',type:'unknown',faction:'Unknown',skill:'Chưa có mô tả kỹ năng'};}
 function nlhArt(id){return NL_HS_ART[id]||NL_HS_ART.default||{};}
+// Exact ID only. Never use another general's portrait as an identity fallback.
+window.__NL_HERO_PORTRAIT__=id=>NL_HS_ART[id]?.portrait||NL_HS_ART[id]?.character||null;
+function bindNativeHeroPortraits(){
+ const root=document.getElementById('view');if(!root)return;
+ function mount(el,id){if(!el||!id)return;const src=window.__NL_HERO_PORTRAIT__(id);let im=el.querySelector(':scope > .nl-native-hero-portrait');if(!src){im?.remove();return;}if(!im){im=document.createElement('img');im.className='nl-native-hero-portrait';im.alt='';im.decoding='async';el.prepend(im);}if(im.dataset.heroId!==id){im.src=src;im.dataset.heroId=id;}}
+ root.querySelectorAll('[data-nla-hero],[data-nla2-hero]').forEach(el=>mount(el,el.dataset.nlaHero||el.dataset.nla2Hero));
+ root.querySelectorAll('.nlc-row').forEach(el=>{const b=el.querySelector('[data-nlc-action="recruit"]');if(b)mount(el,b.dataset.nlcId);});
+ root.querySelectorAll('[data-nl207-select]').forEach(sel=>mount(sel.parentElement,sel.value));
+}
+let heroPortraitPending=false;function scheduleNativeHeroPortraits(){if(heroPortraitPending)return;heroPortraitPending=true;requestAnimationFrame(()=>{heroPortraitPending=false;bindNativeHeroPortraits();});}
+const heroPortraitView=document.getElementById('view');if(heroPortraitView&&typeof MutationObserver==='function'&&typeof requestAnimationFrame==='function'){new MutationObserver(scheduleNativeHeroPortraits).observe(heroPortraitView,{childList:true});document.addEventListener('change',scheduleNativeHeroPortraits,true);document.addEventListener('click',scheduleNativeHeroPortraits,true);scheduleNativeHeroPortraits();}
 function nlhSetArtMode(heroId,mode){const art=nlhArt(heroId);if(!['portrait','splash','character'].includes(mode)||!art[mode])return false;const state=nlhsState();state.artModes[heroId]=mode;save();render();return true;}
 function nlhStage(){return Array.isArray(game.cleared)?game.cleared.length:0;}
 function nlhIsOpen(id){return nlhStage()>=(SYS[id]?.unlock?.campaignClears||0);}

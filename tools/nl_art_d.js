@@ -110,9 +110,10 @@
  function icon(kind,id=''){return svg(defs+frame+(shapes[kind]||shapes.quests));}
  const heroMap=()=>window.__NL_ART_CATALOG__||{};
  function heroForName(name){const n=norm(name).trim();return Object.entries(heroMap()).find(([id,h])=>norm(h.name).trim()===n);}
- function art(kind,id,h){const suppliedPortrait=kind==='hero'&&supplied.heroPortraits?.[id];if(suppliedPortrait)return suppliedPortrait;const key=kind+':'+id;if(!cache.has(key))cache.set(key,uri(kind==='hero'?portrait(id,h):kind==='architecture'?architecture(id,h?.name):kind==='landscape'?landscape(id):kind==='loot'?lootArt(id,h):families.includes(kind)?troop(kind,id):icon(kind,id)));return cache.get(key)}
+ function art(kind,id,h){const suppliedPortrait=kind==='hero'&&(window.__NL_HERO_PORTRAIT__?.(id)||supplied.heroPortraits?.[id]);if(suppliedPortrait)return suppliedPortrait;const key=kind+':'+id;if(!cache.has(key))cache.set(key,uri(kind==='hero'?portrait(id,h):kind==='architecture'?architecture(id,h?.name):kind==='landscape'?landscape(id):kind==='loot'?lootArt(id,h):families.includes(kind)?troop(kind,id):icon(kind,id)));return cache.get(key)}
  function decorate(el,kind,id,h,replace=false){
    if(!el||el.dataset.nlArtD===kind+':'+id)return;
+   if(kind==='hero'&&el.querySelector(':scope > .nl-native-hero-portrait'))return;
    el.dataset.nlArtD=kind+':'+id;
    let im=el.querySelector(':scope > .nl-art-d-img');
    if(!im){im=document.createElement('img');im.className='nl-art-d-img';im.alt='';im.setAttribute('aria-hidden','true');im.decoding='async';el.prepend(im);}
@@ -127,7 +128,7 @@
      im.style.filter='saturate('+(0.87+(n%4)*.07)+') brightness('+(0.87+(n%3)*.06)+')';
      im.title='Minh họa địa hình đại diện; không phải bản đồ địa lý gốc';
    }
-   if(kind==='hero'){if(supplied.heroPortraits?.[id])im.title=supplied.heroPortraitTitles?.[id]||'Chân dung nguyên bản tạo riêng cho dự án';else{im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}}
+   if(kind==='hero'){if(window.__NL_HERO_PORTRAIT__?.(id)||supplied.heroPortraits?.[id])im.title=supplied.heroPortraitTitles?.[id]||'Chân dung nguyên bản tạo riêng cho dự án';else{im.classList.add('nl-art-d4-fallback-portrait');im.title='Chân dung minh họa theo vai trò và phe';}}
    if(replace)el.classList.add('nl-art-d-replace');
  }
  function buildingKind(s){s=norm(s);return /thap|tower/.test(s)?'tower':/quan|binh|barrack|stable|drill/.test(s)?'barracks':/kho|granary|luong|mill|farm/.test(s)?'grain':/thu[eế]|tax|bac|treasury|ngan|mine/.test(s)?'silver':/hoc|tech|nghien|academy/.test(s)?'tech':'city'}
