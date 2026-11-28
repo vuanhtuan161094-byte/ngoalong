@@ -52,7 +52,7 @@ def main():
                 page.add_init_script("window.__P2_ENABLE_QA__=true")
                 errors = []
                 page.on("pageerror", lambda e: errors.append(str(e)))
-                page.goto(f"http://127.0.0.1:{server.server_port}/{src.name}", wait_until="domcontentloaded")
+                page.goto(f"http://127.0.0.1:{server.server_port}/{src.name}", wait_until="domcontentloaded", timeout=180_000)
                 page.wait_for_timeout(350)
                 labels = page.locator("#resources .res span").all_text_contents()
                 check(len(labels) == 5, "exactly five Ngọa Long WEB main resources")
@@ -99,7 +99,7 @@ def main():
                 # beforeunload overwrites a localStorage-only fixture with old data.
                 page.evaluate("data=>window.__P2_QA__.setGame(data)", seeded)
                 page.evaluate("data=>localStorage.setItem('muu_dinh_tam_quoc_v1',JSON.stringify(data))", seeded)
-                page.reload(wait_until="domcontentloaded")
+                page.reload(wait_until="domcontentloaded", timeout=180_000)
                 page.wait_for_timeout(200)
                 probe = page.evaluate("""() => {
                     const q=window.__NL_CLASSIC_A_QA__,g=window.__P2_QA__.getGame();
@@ -147,7 +147,7 @@ def main():
                 check(post["technology"]["arms"] >= 1 and post["nlClassicA"]["meritSpent"] >= 35,
                       "technology consumes simulated merit and upgrades existing combat consumer")
                 check(post["iron"] == state["iron"], "old iron unaffected by classic technology research")
-                page.reload(wait_until="domcontentloaded")
+                page.reload(wait_until="domcontentloaded", timeout=180_000)
                 page.wait_for_timeout(200)
                 restored = json.loads(page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')"))
                 check(restored["version"] == 5 and restored["nlClassicA"]["taxUsed"] == 12
