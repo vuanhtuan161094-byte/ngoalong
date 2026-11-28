@@ -229,7 +229,8 @@ def main() -> int:
                                     if game.get("version") != 5 or game.get("slots", [None])[0] != hero_id:
                                         results["errors"].append("Mobile formation: hero slot was not saved under v5")
                                     else:
-                                        page.reload(wait_until="domcontentloaded")
+                                        page.reload(wait_until="domcontentloaded", timeout=180000)
+                                        page.wait_for_function("() => typeof window.__P2_QA__?.getGame === 'function' && !!document.querySelector('.nav[data-tab=formation]')", timeout=60000)
                                         page.locator('.nav[data-tab="formation"]').click()
                                         page.wait_for_timeout(150)
                                         # Visible game cards show a localized hero NAME, not the internal
