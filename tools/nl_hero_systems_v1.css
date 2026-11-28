@@ -349,3 +349,38 @@
 #app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]>.nl-native-hero-portrait{margin:0 8px 0 0!important;width:52px!important;height:52px!important;flex:0 0 52px!important}
 #app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]:hover,#app[data-nl-screen="formation"] #view .formation-board [data-slot]:hover{border-color:#f4d18b!important;filter:brightness(1.1)}
 @media(max-width:650px){#app[data-nl-screen="formation"] #view .formation-board [data-slot]>.nl-native-hero-portrait{width:36px!important;height:36px!important}#app[data-nl-screen="formation"] #view .formation-board [data-slot] :is(b,strong){font-size:10px!important}#app[data-nl-screen="formation"] #view .formation-board [data-slot] small{font-size:8px!important}#app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]>.nl-native-hero-portrait{width:42px!important;height:42px!important;flex-basis:42px!important}}
+
+/* Reconstructed deployment: native tactical buttons over an illustrated field,
+   troop canvases, identity cards, and an immediately accessible formation menu. */
+#app #view .nl-command-deployment{display:grid!important;grid-template-columns:minmax(0,1.9fr) minmax(220px,1fr);gap:14px;min-height:0;height:calc(100% - 38px);max-height:calc(100% - 38px);align-items:stretch}
+.nl-deployment-field,.nl-deploy-command{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;border-radius:9px;background:#1b2025;color:#f4e4c2;border:1px solid #a08a61}
+.nl-deploy-head{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(90deg,#4d3828,#272623);border-bottom:1px solid #b99b67;flex:0 0 auto}
+.nl-deploy-head small,.nl-deploy-command header small{font:700 10px system-ui;letter-spacing:2px;color:#d8b57b}
+.nl-deploy-head h2,.nl-deploy-command h3{margin:3px 0 0;font:700 20px Georgia;color:#fff1d1}
+.nl-deploy-head label{display:flex;gap:6px;align-items:center;font-size:11px;white-space:nowrap}.nl-deploy-head select{min-width:0;max-width:150px;border:1px solid #d0ac75;background:#26251f;color:#f8e6c3;padding:7px;border-radius:4px}
+.nl-deploy-count{font:600 12px system-ui;color:#e5c98e;white-space:nowrap}
+#app[data-nl-screen="formation"] #view .nl-deploy-board{position:relative;display:flex!important;flex-direction:column;justify-content:stretch;flex:1;min-height:0!important;overflow:hidden;padding:7px 12px!important;border:0!important;border-radius:0!important;gap:0!important}
+.nl-deploy-lanes{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:4px;flex:0 0 auto;font:600 11px system-ui;color:#fff2d2;text-shadow:0 2px 4px #111}
+.nl-deploy-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:5px;flex:1;min-height:0;padding:5px}
+#app[data-nl-screen="formation"] #view .nl-deploy-grid .nl-deploy-position{position:relative;display:flex!important;justify-content:flex-end!important;min-height:0!important;height:100%!important;border:1px dashed #dfc89765!important;box-shadow:none!important;border-radius:50% 50% 18% 18%!important;background:radial-gradient(ellipse at 50% 66%,#e7c78932 0 32%,transparent 65%)!important;isolation:isolate}
+#app[data-nl-screen="formation"] #view .nl-deploy-grid .nl-deploy-position.occupied{background:radial-gradient(ellipse at 50% 68%,#dcb15c50,transparent 70%)!important;border-color:#f1d28c99!important}
+.nl-deploy-index{position:absolute;top:3px;right:6px;font-size:9px;color:#f5e8bf;z-index:3}
+.nl-deploy-army{position:absolute;inset:0;width:100%;height:88%;object-fit:contain;pointer-events:none;z-index:1}
+#app[data-nl-screen="formation"] #view .nl-deploy-position>.nl-native-hero-portrait{position:absolute;top:4px;left:4px;width:clamp(24px,3vw,40px)!important;height:clamp(24px,3vw,40px)!important;z-index:3;box-shadow:0 2px 6px #0008}
+.nl-deploy-name{position:relative;z-index:2;width:100%;padding:3px 2px 4px;background:linear-gradient(transparent,#141a1ae8 35%);display:grid;gap:2px;pointer-events:none}
+.nl-deploy-empty{position:absolute;inset:0;display:grid;place-items:center;color:#f3dca7aa;font-size:24px}
+.nl-deploy-foot{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:7px 12px;background:#292822;font:11px system-ui;color:#dbcaac}
+.nl-deploy-launch{border:1px solid #edc481;background:linear-gradient(#aa773d,#6a462b);color:#fff4d8;padding:7px 16px;border-radius:4px;font-weight:700;cursor:pointer}
+.nl-deploy-command>header{position:relative;padding:12px 14px;border-bottom:1px solid #ad9164;background:linear-gradient(110deg,#3f3124,#282824)}
+.nl-deploy-command>header span{position:absolute;right:10px;bottom:12px;font-size:11px;color:#d6c7ab}
+#app #view .nl-deploy-roster{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;align-content:start;overflow:auto!important;min-height:0!important;flex:1}
+#app[data-nl-screen="formation"] #view .nl-deploy-roster .nl-deploy-card{height:clamp(96px,17vh,145px);min-height:0!important;display:block!important;position:relative;isolation:isolate;overflow:hidden;border-radius:6px!important;padding:0!important;background:#332c25!important;text-align:left}
+#app[data-nl-screen="formation"] #view .nl-deploy-card>.nl-native-hero-portrait{position:absolute;inset:0;margin:0!important;width:100%!important;height:100%!important;object-fit:cover;object-position:center 22%;border:0;border-radius:0;z-index:-1}
+.nl-deploy-card-copy{position:absolute;inset:auto 0 0;padding:16px 7px 6px;display:grid;gap:2px;background:linear-gradient(transparent,#161b1de8 35%);color:#fff1d5}
+.nl-deploy-card-copy b{font:700 13px Georgia}.nl-deploy-card-copy small{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nl-deploy-card-state{position:absolute;right:4px;top:4px;font-size:9px;background:#1b2227d9;padding:3px 4px;border:1px solid #d6b775;border-radius:3px;color:#f9e9c6}
+.nlh-equipment-dressing{position:absolute;inset:0 0 12%;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.nlh-dressing-hero{height:100%;min-height:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.nlh-dressing-hero img{height:100%;max-width:100%;object-fit:contain}
+.nlh-equipment-dressing .nlh-gear-art-grid{position:relative!important;inset:auto!important;max-height:100%;width:100%;padding:4px}
+@media(max-width:650px){#app #view .nl-command-deployment{grid-template-columns:1fr!important;gap:0;max-height:calc(100% - 26px);height:calc(100% - 26px)}.nl-deploy-head{padding:6px;gap:4px}.nl-deploy-head h2{font-size:15px}.nl-deploy-head select{max-width:85px;font-size:10px;padding:4px}.nl-deploy-head label,.nl-deploy-count{font-size:9px}.nl-deploy-foot{padding:5px;font-size:9px}.nl-deploy-launch{padding:5px 8px}.nl-deploy-lanes{font-size:9px}.nl-deploy-name{padding:2px 1px}.nl-deploy-name small{font-size:8px!important}.nl-deploy-command>header{padding:6px 10px}#app #view .nl-deploy-roster{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px}#app[data-nl-screen="formation"] #view .nl-deploy-roster .nl-deploy-card{height:100px}}

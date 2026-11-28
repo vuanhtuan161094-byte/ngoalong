@@ -71,7 +71,7 @@
        for(let i=0;i<sides.length;i++)pushPage(root,i===0?(tab==='city'?'Bản đồ thành trì':'Phần chính'):semanticLabel(sides[i],'Quản lý'),[{holder:root,items:sides,allowed:[sides[i]]}]);
        return;
      }
-     pushPage(root,tab==='city'?'Bản đồ thành trì':semanticLabel(root,'Chiến thuật'));
+     pushPage(root,tab==='city'?'Bản đồ thành trì':root.classList.contains('nl-command-deployment')?'Bày binh bố trận':semanticLabel(root,'Chiến thuật'));
      return;
    }
    const listRoot=['hero-grid','feature-grid','shop-grid','world-regions','nlcity-grid','nl-chapter-steps','replay-list','quest-list','log-list','stage-grid'].find(cls=>root.classList.contains(cls));

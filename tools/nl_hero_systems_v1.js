@@ -412,10 +412,10 @@ function nlhFastArt(system,id,name){
  }
  if(system==='equipment'){
   const gear=game.gear?.[id]||{},slots=Object.entries(SLOT_NAME||{});
-  return {background:scenes.towerBackground||scenes.city,picture:'<div class="nlh-gear-art-grid">'+slots.map(([slot,label])=>{
+  return {background:scenes.towerBackground||scenes.city,picture:'<div class="nlh-equipment-dressing"><div class="nlh-dressing-hero">'+(nlhArt(id).character?'<img src="'+nlhArt(id).character+'" alt="'+hsEsc(nlhHero(id).name)+'">':'')+'</div><div class="nlh-gear-art-grid">'+slots.map(([slot,label])=>{
    const item=game.items?.find(x=>x.uid===gear[slot]),base=item&&EQUIPMENT[item.base],art=base&&nlhFastGear(base.name,'equipment');
    return '<div class="nlh-gear-art-slot">'+(art&&art.binding==='exact'?'<img src="'+art.src+'" alt="'+hsEsc(base.name)+'" data-art-binding="exact">':'')+'<b>'+hsEsc(label)+'</b><small>'+hsEsc(base?.name||'Trống')+'</small></div>';
-  }).join('')+'</div>'};
+  }).join('')+'</div></div>'};
  }
  return null;
 }
@@ -634,6 +634,49 @@ if(typeof renderSidebar==='function'){
  renderSidebar=function(){nlhRenderSidebar.apply(this,arguments);document.querySelectorAll('.nav[data-tab] .ico').forEach(icon=>{const tab=icon.parentElement?.dataset.tab||'default',path=NLH_NAV_ICON_PATH[tab]||NLH_NAV_ICON_PATH.default;icon.innerHTML='<svg class="nl-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><g>'+path+'</g></svg>';icon.setAttribute('aria-hidden','true');});};
  if(document.querySelector('#sidebar'))renderSidebar();
 }
+
+// Rebuild native deployment presentation, preserving the original data-slot and
+// data-choose-hero controls, their classes, and the native placement handlers.
+const nlhPreviousFormation=renderFormation;
+renderFormation=function(){
+ const html=nlhPreviousFormation.apply(this,arguments);
+ const t=document.createElement('template');t.innerHTML=html;
+ const old=t.content.querySelector('.formation-wrap'),board=old?.querySelector('.formation-board'),roster=old?.querySelector('.roster-list');
+ if(!old||!board||!roster)return html;
+ const slots=[...board.querySelectorAll('[data-slot]')],buttons=[...roster.querySelectorAll('[data-choose-hero]')];
+ if(slots.length!==9||!buttons.length)return html;
+ const shell=document.createElement('section');shell.className='formation-wrap nl-command-deployment';
+ shell.innerHTML='<section class="nl-deployment-field"><header class="nl-deploy-head"><div><small>QUÂN CƠ PHỦ</small><h2>Bày binh bố trận</h2></div><label>Trận pháp<select data-nl-command-formation aria-label="Chọn trận pháp"></select></label><strong class="nl-deploy-count">'+game.slots.filter(Boolean).length+'/5 xuất trận</strong></header><div class="formation-board nl-deploy-board" aria-label="Trận đồ 3 nhân 3"><div class="nl-deploy-lanes"><span>Hậu quân</span><span>Trung quân</span><span>Tiền quân →</span></div><div class="nl-deploy-grid"></div></div><footer class="nl-deploy-foot"><span>Chọn tướng rồi chọn vị trí · tiền quân ở bên phải</span><button class="nl-deploy-launch" data-nl-deploy-route="campaign">Chinh phạt ›</button></footer></section><aside class="nl-deploy-command"><header><small>ĐẠO QUÂN</small><h3>Võ tướng</h3><span>'+buttons.length+' tướng sở hữu</span></header><div class="roster-list nl-deploy-roster"></div></aside>';
+ const choice=shell.querySelector('[data-nl-command-formation]');
+ const forms=typeof NLW_B4!=='undefined'?NLW_B4.formations||[]:[];
+ const active=document.createElement('option');active.value='';active.textContent=FORMATIONS[game.formation]?.name||forms.find(f=>f.id===game.formation)?.name||'Trận hiện tại';choice.append(active);
+ for(const f of forms){if(f.id===game.formation)continue;const o=document.createElement('option');o.value=f.id;o.textContent=f.name;choice.append(o);}
+ choice.disabled=!!battle||!forms.length;
+ const field=shell.querySelector('.nl-deploy-board'),grid=shell.querySelector('.nl-deploy-grid'),pick=shell.querySelector('.nl-deploy-roster');
+ for(const button of slots){
+  const i=Number(button.dataset.slot),id=game.slots[i];button.classList.add('nl-deploy-position');button.replaceChildren();
+  const n=document.createElement('span');n.className='nl-deploy-index';n.textContent=String(i+1);button.append(n);
+  if(id&&HEROES[id]){
+   const h=nlhHero(id),unit=p2Unit(id,'p',i,Math.max(1,Math.min(28,nlhStage()+1))),canvas=document.createElement('canvas');
+   canvas.className='nl-deploy-army';canvas.width=480;canvas.height=370;canvas.dataset.premiumTroop=unit?.troop||h.type||'infantry';canvas.dataset.premiumBranch=unit?.branch||'';canvas.setAttribute('aria-hidden','true');button.append(canvas);
+   const name=document.createElement('span');name.className='nl-deploy-name';name.innerHTML='<b>'+hsEsc(h.name)+'</b><small>'+hsEsc(nlhCurrentTroop(id).name)+' · '+nlhFmt(game.hero[id]?.troops||0)+'</small>';button.append(name);
+  }else{const mark=document.createElement('span');mark.className='nl-deploy-empty';mark.textContent='＋';button.append(mark);}
+  grid.append(button);
+ }
+ for(const button of buttons){
+  const id=button.dataset.chooseHero,h=nlhHero(id),d=game.hero[id]||{};button.classList.add('nl-deploy-card');button.replaceChildren();
+  const text=document.createElement('span');text.className='nl-deploy-card-copy';text.innerHTML='<b>'+hsEsc(h.name)+'</b><small>Cấp '+nlhFmt(d.level||1)+' · '+hsEsc(nlhCurrentTroop(id).name)+'</small><small>'+nlhFmt(d.troops||0)+' quân</small>';button.append(text);
+  const badge=document.createElement('span');badge.className='nl-deploy-card-state';badge.textContent=game.slots.includes(id)?'Xuất trận':'Dự bị';button.append(badge);pick.append(button);
+ }
+ old.replaceWith(shell);return t.innerHTML;
+};
+document.addEventListener('change',e=>{
+ const sel=e.target.closest?.('[data-nl-command-formation]');if(!sel||!sel.value||battle)return;
+ const f=typeof NLW_B4_FORM_BY_ID!=='undefined'&&NLW_B4_FORM_BY_ID.get(sel.value);
+ if(f&&p3AssignPreset(f.id+'-van'))toast('Đã dùng '+f.name);
+});
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nl-deploy-route]');if(!b)return;document.querySelector('.nav[data-tab="campaign"]')?.click();});
+
 const nlhPriorHeroes=renderHeroes;renderHeroes=function(){return renderNlhHeroScreen();};
 if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,sourceModifiers:nlhSourceModifiers,sourceUpgrade:nlhSourceUpgrade,sourceEquip:nlhSourceEquip,sourceQuote:nlhSourceQuote,trainBatch:nlhTrainBatch,trainQuote:nlhTrainQuote,skillUpgrade:nlhSkillUpgrade,skillDescriptor:nlhSkillDescriptor,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),artCoverage:()=>{const ids=Object.keys(HEROES).sort();return {total:ids.length,missingPortrait:ids.filter(id=>!NL_HS_ART[id]?.portrait).map(id=>({id,name:HEROES[id].name})),missingCharacter:ids.filter(id=>!NL_HS_ART[id]?.character).map(id=>({id,name:HEROES[id].name}))};},render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
 })();
