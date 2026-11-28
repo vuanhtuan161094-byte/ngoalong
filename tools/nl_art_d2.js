@@ -249,12 +249,13 @@ if(barracksRoot){
 
 let premiumPreviewTimer=0;
 function premiumPaintHeroTroops(){
- const c=document.querySelector('.nlh-stage-troop');if(!c||!c.isConnected||!c.offsetWidth)return;
+ for(const c of document.querySelectorAll('.nlh-stage-troop,.nl-deploy-army')){if(!c.isConnected||!c.offsetWidth)continue;
  const u={team:'p',troop:c.dataset.premiumTroop,branch:c.dataset.premiumBranch},f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id],im=a&&atlasImages.get(id);
- const ctx=c.getContext('2d');if(!ctx)return;
+ const ctx=c.getContext('2d');if(!ctx)continue;
  ctx.clearRect(0,0,c.width,c.height);const clip=a&&(a.clips.idle||a.clips.attack);const frame=Math.floor(performance.now()/130);
  const points=Array.from({length:9},(_,i)=>[145+(i%3)*86+Math.floor(i/3)*12,174+Math.floor(i/3)*67]);
  for(const [i,[x,y]] of points.entries()){ctx.fillStyle='#060b1460';ctx.beginPath();ctx.ellipse(x,y+5,24,6,0,0,Math.PI*2);ctx.fill();if(a&&ready(im)&&clip?.length)atlasCel(ctx,id,a,clip[(frame+i)%clip.length],x,y,88,88);else rasterCel(ctx,f,'p',{action:'idle',frame:frame%4,moving:false,elapsed:0},x,y,88,88,i);}
+ }
 }
 premiumPreviewTimer=setInterval(premiumPaintHeroTroops,120);
 const oldDraw=drawUnit;

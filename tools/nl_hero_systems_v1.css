@@ -384,3 +384,7 @@
 .nlh-dressing-hero img{height:100%;max-width:100%;object-fit:contain}
 .nlh-equipment-dressing .nlh-gear-art-grid{position:relative!important;inset:auto!important;max-height:100%;width:100%;padding:4px}
 @media(max-width:650px){#app #view .nl-command-deployment{grid-template-columns:1fr!important;gap:0;max-height:calc(100% - 26px);height:calc(100% - 26px)}.nl-deploy-head{padding:6px;gap:4px}.nl-deploy-head h2{font-size:15px}.nl-deploy-head select{max-width:85px;font-size:10px;padding:4px}.nl-deploy-head label,.nl-deploy-count{font-size:9px}.nl-deploy-foot{padding:5px;font-size:9px}.nl-deploy-launch{padding:5px 8px}.nl-deploy-lanes{font-size:9px}.nl-deploy-name{padding:2px 1px}.nl-deploy-name small{font-size:8px!important}.nl-deploy-command>header{padding:6px 10px}#app #view .nl-deploy-roster{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:5px}#app[data-nl-screen="formation"] #view .nl-deploy-roster .nl-deploy-card{height:100px}}
+
+/* Native fixed-window hiding must win over reconstructed layout rules. */
+#app #view .nl-command-deployment.nl-pane-hidden,#app #view .nl-command-deployment .nl-pane-hidden{display:none!important}
+@media(max-width:650px){#app #view .nl-command-deployment:not(.nl-pane-hidden){grid-template-rows:minmax(0,1fr)}}
