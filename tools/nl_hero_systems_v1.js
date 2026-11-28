@@ -512,8 +512,8 @@ function bindPremiumDetail(){
  if(!body.dataset.premiumPagerBound){body.dataset.premiumPagerBound='1';body.addEventListener('scroll',()=>{detailScroll=body.scrollTop;refresh()},{passive:true});}
  refresh();
 }
-function schedulePremiumDetail(){if(detailPending)return;detailPending=true;requestAnimationFrame(bindPremiumDetail);}
-const premiumView=document.getElementById('view');if(premiumView){new MutationObserver(schedulePremiumDetail).observe(premiumView,{childList:true});window.addEventListener('resize',schedulePremiumDetail);schedulePremiumDetail();}
+function schedulePremiumDetail(){if(detailPending||typeof requestAnimationFrame!=='function')return;detailPending=true;requestAnimationFrame(bindPremiumDetail);}
+const premiumView=document.getElementById('view');if(premiumView&&typeof MutationObserver==='function'){new MutationObserver(schedulePremiumDetail).observe(premiumView,{childList:true});if(typeof window.addEventListener==='function')window.addEventListener('resize',schedulePremiumDetail);schedulePremiumDetail();}
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlh-page]');if(!b||b.disabled)return;const body=b.closest('.nlh-detail')?.querySelector('.nlh-main-body');if(body){body.scrollTop+=(b.dataset.nlhPage==='next'?1:-1)*Math.max(1,body.clientHeight-24);detailScroll=body.scrollTop;schedulePremiumDetail();}});
 const premiumPriorBattleShell=renderBattleShell;
 renderBattleShell=function(){
@@ -523,7 +523,7 @@ renderBattleShell=function(){
  root.classList.add('nl-premium-battle');
  const left=NATIONS[game.nation]?.name||'Đồng minh',right=battle.mode==='arena'?'Đối thủ':'Quân địch';
  const header=root.querySelector('.battle-head');
- if(header){const banner=document.createElement('div');banner.className='nl-premium-versus';banner.innerHTML='<span>'+hsEsc(left)+'</span><b>VS</b><span>'+hsEsc(right)+'</span>';header.prepend(banner);}
+ if(header&&!header.querySelector('.nl-premium-versus')){const banner=document.createElement('div');banner.className='nl-premium-versus';banner.innerHTML='<span>'+hsEsc(left)+'</span><b>VS</b><span>'+hsEsc(right)+'</span>';header.prepend(banner);}
  return out;
 };
 const NLH_NAV_ICON_PATH={

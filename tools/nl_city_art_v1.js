@@ -36,7 +36,7 @@ style.textContent=`
 }
 `;
 if(sourceCity){
- const placements={palace:[53,30],farm:[23,68],market:[36,46],mine:[78,66],barracks:[51,76],academy:[75,37],tavern:[67,55]};
+ const placements={palace:[50,18],farm:[12,68],market:[27,39],mine:[88,68],barracks:[50,75],academy:[74,39],tavern:[73,76],lumberyard:[12,40],warehouse:[28,76],wall:[88,40],walls:[88,40]};
  let extra=`
   #view .city-visual{container-type:size;background-size:cover!important;background-repeat:no-repeat;background-color:#17282d!important;background-position:center!important;isolation:isolate}
  #view .city-visual:before,#view .city-visual:after{display:none!important}
@@ -61,8 +61,18 @@ if(sourceCity){
  #view .world-scene{background-image:url("${env.world}")!important;background-size:cover!important;background-position:center!important}
  `;
  for(const [id,[x,y]] of Object.entries(placements)){
-  extra+=`#view .city-visual .building[data-focus-building="${id}"]{left:${x}%!important;top:${y}%!important;right:auto!important;bottom:auto!important}#view .city-visual .building[data-focus-building="${id}"] .symbol{background-image:url("${env.buildings[id]}")!important}`;
+  const selector='#app #view .city-visual .building[data-focus-building="'+id+'"]';
+  const art=env.buildings[id];
+  extra+=`${selector}{left:${x}%!important;top:${y}%!important;right:auto!important;bottom:auto!important}`;
+  if(art)extra+=`${selector} .symbol{background-image:url("${art}")!important}`;
+  else extra+=`${selector} .symbol{color:#f6e2b0!important;line-height:1!important;display:grid!important;place-items:center;font-size:clamp(19px,3vw,30px)!important;height:clamp(26px,4vw,42px)!important}`;
  }
+ extra+=`#app #view .city-visual .building[data-focus-building="palace"]{z-index:6}
+ #app #view .city-visual .building .symbol,#app #view .city-visual .building b,#app #view .city-visual .building small{pointer-events:none}
+ #app #view .city-visual .building{width:clamp(34px,12cqw,118px)!important}
+ @media(max-width:600px){#app #view .city-visual .building{width:clamp(30px,12cqw,65px)!important}
+ #app #view .city-visual .building .symbol{height:clamp(24px,10cqw,49px)!important}
+ #app #view .city-visual .building b,#app #view .city-visual .building small{max-width:100%;overflow:hidden;text-overflow:ellipsis}}`;
  style.textContent+=extra;
  if(env.ui){
   const ui=env.ui;
@@ -82,8 +92,8 @@ if(sourceCity){
    #app #view .nl-city-map-root{grid-template-columns:minmax(0,1fr)!important}
    #app #view .nl-city-map-root:has(.city-visual:not(.nl-pane-hidden)) .city-visual{width:100%!important}
    #app #view .city-visual .building b,#app #view .city-visual .building small{font-size:clamp(9px,1.15vw,13px)!important}
-   #app #view .city-visual .building{width:clamp(42px,calc(min(100cqw,150.6cqh)*.17),148px)!important}
-   #app #view .city-visual .building .symbol{height:clamp(35px,calc(min(100cqw,150.6cqh)*.12),105px)!important}
+   #app #view .city-visual .building{width:clamp(34px,12cqw,118px)!important}
+   #app #view .city-visual .building .symbol{height:clamp(25px,calc(min(100cqw,150.6cqh)*.10),80px)!important}
    #app>.topbar .res span:before{content:"";display:inline-block;width:16px;height:16px;vertical-align:middle;margin-right:4px;background-repeat:no-repeat;background-size:contain;background-position:center}
    ${['resourceSilver','resourceGrain','resourcePrestige','resourceMerit','resourceOrder','resourceGold','resourceScore','resourceToken'].map((key,i)=>`#app>.topbar .res:nth-child(${i+1}) span:before{background-image:url("${ui[key]}")}`).join('')}
    

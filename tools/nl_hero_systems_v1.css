@@ -178,7 +178,7 @@
 .nl-premium-battle .battle-footer{border:0!important;background:linear-gradient(0deg,#0b121ee8,transparent)!important;position:absolute;inset:auto 0 0;min-height:66px;max-height:100px;padding:11px 320px 10px 18px;z-index:5;pointer-events:none}
 .nl-premium-battle .battle-footer .replay-seek{pointer-events:auto}
 .nl-premium-battle .battle-footer .combat-text{min-height:0;max-height:45px;overflow:hidden;color:#f4eee4}
-.nl-premium-battle .battle-mobile-roster{display:none}
+.nl-premium-battle .battle-mobile-roster{display:flex!important;flex:0 0 auto;max-height:120px;overflow:auto;z-index:3;background:#111b29e8;border:0!important}
 @media(max-width:950px) and (min-width:651px){#app #view .nlh-root{grid-template-columns:minmax(110px,16%) minmax(0,1fr) minmax(112px,15%);gap:6px}#app #view .nlh-main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#app #view .nlh-system-button{font-size:10px}}
 @media(max-width:650px){
 #app #view .nlh-root{grid-template-columns:73px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 104px;gap:4px}
@@ -205,7 +205,7 @@
 .nl-premium-battle .battle-tools{bottom:12px;right:8px;left:8px;justify-content:center;flex-wrap:wrap}
 .nl-premium-battle .battle-tools button{padding:7px 9px!important;font-size:10px!important}
 .nl-premium-battle .battle-footer{bottom:52px;padding:8px!important;max-height:84px}
-.nl-premium-battle .battle-mobile-roster{display:block;max-height:29dvh;overflow:auto;z-index:2}
+.nl-premium-battle .battle-mobile-roster{display:block!important;max-height:29dvh;overflow:auto;z-index:2}
 .nl-premium-battle .battle-canvas-wrap{min-height:190px}
 }
 @media(prefers-reduced-motion:reduce){#app *{transition:none!important;animation:none!important}}
