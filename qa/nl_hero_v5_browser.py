@@ -45,6 +45,8 @@ def main():
     check('equipment selected owner uses same portrait',page.locator('[data-nli-hero]').evaluate_all("xs=>xs.length>0&&xs.every(x=>{const im=x.parentElement.querySelector('.nl-native-hero-portrait');const src=window.__NL_HERO_PORTRAIT__(x.value);return !src||!!im&&im.getAttribute('src')===src})"))
     page.locator('.nav[data-tab="formation"]').click();page.wait_for_timeout(250)
     check('formation picker uses exact hero portrait',page.locator('.roster-list [data-choose-hero]').evaluate_all("xs=>xs.length>0&&xs.every(x=>{const src=window.__NL_HERO_PORTRAIT__(x.dataset.chooseHero);return !src||x.querySelector('.nl-native-hero-portrait')?.getAttribute('src')===src})"))
+    check('formation shows one visible portrait per occupied slot and roster entry',page.locator('.formation-board [data-slot].nl-native-hero-bound,.roster-list [data-choose-hero].nl-native-hero-bound').evaluate_all("xs=>xs.length>=3&&xs.every(x=>{const imgs=[...x.querySelectorAll('.nl-native-hero-portrait,.p4-face,.cl-p4-face,[data-p4-hero],.nl-art-d-img')].filter(i=>i.getClientRects().length);return imgs.length===1&&imgs[0].matches('.nl-native-hero-portrait')})"))
+    page.screenshot(path=str(ROOT/'qa'/'nl-hero-art-formation.png'),full_page=False)
     page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')");page.wait_for_timeout(250)
     check('live battle HUD uses same portraits without synthetic identity',page.locator('.nl-battle-hero-tile').evaluate_all("xs=>xs.length>0&&xs.every(x=>{const src=window.__NL_HERO_PORTRAIT__(x.dataset.heroId);return src?x.querySelector('img')?.getAttribute('src')===src:!x.querySelector('img')})"))
     page.screenshot(path=str(ROOT/'qa'/'nl-hero-art-battle.png'),full_page=False)

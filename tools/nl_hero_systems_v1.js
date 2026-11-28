@@ -65,12 +65,16 @@ function nlhArt(id){return NL_HS_ART[id]||NL_HS_ART.default||{};}
 window.__NL_HERO_PORTRAIT__=id=>NL_HS_ART[id]?.portrait||NL_HS_ART[id]?.character||null;
 function bindNativeHeroPortraits(){
  const root=document.getElementById('view');if(!root)return;
- function mount(el,id){if(!el)return;const src=id?window.__NL_HERO_PORTRAIT__(id):null;let im=el.querySelector(':scope > .nl-native-hero-portrait');if(!src){im?.remove();return;}if(!im){im=document.createElement('img');im.className='nl-native-hero-portrait';im.alt='';im.decoding='async';el.prepend(im);}if(im.dataset.heroId!==id){im.src=src;im.dataset.heroId=id;}}
+ function mount(el,id){if(!el)return;const src=id?window.__NL_HERO_PORTRAIT__(id):null;let im=el.querySelector(':scope > .nl-native-hero-portrait');if(!src){im?.remove();el.classList.remove('nl-native-hero-bound');return;}el.classList.add('nl-native-hero-bound');if(!im){im=document.createElement('img');im.className='nl-native-hero-portrait';im.alt='';im.decoding='async';el.prepend(im);}if(im.dataset.heroId!==id){im.src=src;im.dataset.heroId=id;}}
  root.querySelectorAll('[data-nla-hero],[data-nla2-hero]').forEach(el=>mount(el,el.dataset.nlaHero||el.dataset.nla2Hero));
  root.querySelectorAll('.nlc-row').forEach(el=>{const b=el.querySelector('[data-nlc-action="recruit"]');if(b)mount(el,b.dataset.nlcId);});
  root.querySelectorAll('[data-nl207-select],[data-nli-hero]').forEach(sel=>mount(sel.parentElement,sel.value));
  root.querySelectorAll('.roster-list [data-choose-hero]').forEach(el=>mount(el,el.dataset.chooseHero));
- root.querySelectorAll('.formation-board [data-slot]').forEach(el=>{const index=Number(el.dataset.slot);if(Number.isInteger(index)&&index>=0&&index<9)mount(el,game.slots[index]||null);});
+ root.querySelectorAll('.formation-board').forEach(board=>{
+ const scene=window.__NL_PREMIUM_SCENES__?.battle||window.__NL_ART_D4_UI__?.region;
+ if(typeof scene==='string'&&scene.startsWith('data:image/')){board.style.setProperty('--nl-formation-terrain','url("'+scene+'")');}
+ board.querySelectorAll('[data-slot]').forEach(el=>{const index=Number(el.dataset.slot);if(Number.isInteger(index)&&index>=0&&index<9)mount(el,game.slots[index]||null);});
+ });
 }
 let heroPortraitPending=false;function scheduleNativeHeroPortraits(){if(heroPortraitPending)return;heroPortraitPending=true;requestAnimationFrame(()=>{heroPortraitPending=false;bindNativeHeroPortraits();});}
 const heroPortraitView=document.getElementById('view');if(heroPortraitView&&typeof MutationObserver==='function'&&typeof requestAnimationFrame==='function'){new MutationObserver(scheduleNativeHeroPortraits).observe(heroPortraitView,{childList:true});document.addEventListener('change',scheduleNativeHeroPortraits,true);document.addEventListener('click',scheduleNativeHeroPortraits,true);scheduleNativeHeroPortraits();}

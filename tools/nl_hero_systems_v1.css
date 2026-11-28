@@ -326,3 +326,26 @@
 .nl-battle-hero-fallback{display:grid;place-items:center;background:#253141;color:#eed9b1;font-size:16px}
 .nl-battle-hero-tile small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:9px system-ui;color:#fff6e2;text-shadow:0 1px 2px #000}
 @media(max-width:650px){.nl-premium-battle .battle-head>.nl-battle-hero-strip{gap:10px;margin-top:2px}.nl-battle-hero-side{gap:2px}.nl-battle-hero-tile{width:clamp(24px,7vw,32px)}.nl-battle-hero-tile small{font-size:7px}}
+
+/* FA4B: one portrait, actual terrain-backed tactical deployment; no second rules engine. */
+#app #view .nl-native-hero-bound :is(.p4-face,.cl-p4-face,[data-p4-hero],.nl-art-d-img):not(.nl-native-hero-portrait){display:none!important}
+#app #view .nl-native-hero-bound>.nl-native-hero-portrait{display:block!important}
+#app[data-nl-screen="formation"] #view .formation-board{
+ background-image:linear-gradient(90deg,rgba(11,19,18,.12),rgba(15,21,19,.35)),var(--nl-formation-terrain,linear-gradient(145deg,#7c8260,#354b3a))!important;
+ background-size:cover!important;background-position:center!important;border:1px solid #a88d5c!important;isolation:isolate;box-shadow:inset 0 0 50px #151a19aa!important;
+ padding:clamp(8px,1.5vw,20px)!important;gap:clamp(4px,1vw,12px)!important
+}
+#app[data-nl-screen="formation"] #view .formation-board [data-slot]{
+ min-width:0!important;min-height:0!important;box-sizing:border-box;overflow:hidden!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ background:rgba(19,25,24,.18)!important;border:1px dashed #e8dcb17a!important;border-radius:8px!important;color:#f5e7c8;text-shadow:0 1px 3px #161914;
+}
+#app[data-nl-screen="formation"] #view .formation-board [data-slot].occupied{background:linear-gradient(0deg,#151b19de,#222a2350)!important;border:1px solid #dbbb7d!important;box-shadow:0 3px 10px #0f191c90!important}
+#app[data-nl-screen="formation"] #view .formation-board [data-slot]>.nl-native-hero-portrait{
+ margin:0!important;width:clamp(38px,5.6vw,68px)!important;height:clamp(38px,5.6vw,68px)!important;flex:0 0 auto;border:1px solid #e2c18b;object-fit:cover;object-position:50% 22%;border-radius:5px;
+}
+#app[data-nl-screen="formation"] #view .formation-board [data-slot] :is(b,strong){font-size:12px!important;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff2d5}
+#app[data-nl-screen="formation"] #view .formation-board [data-slot] small{font-size:10px!important;line-height:1.1}
+#app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]{min-height:64px!important;padding:6px 10px!important;background:linear-gradient(90deg,#302b25,#182827)!important;border:1px solid #9b8456!important;color:#fff0ca}
+#app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]>.nl-native-hero-portrait{margin:0 8px 0 0!important;width:52px!important;height:52px!important;flex:0 0 52px!important}
+#app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]:hover,#app[data-nl-screen="formation"] #view .formation-board [data-slot]:hover{border-color:#f4d18b!important;filter:brightness(1.1)}
+@media(max-width:650px){#app[data-nl-screen="formation"] #view .formation-board [data-slot]>.nl-native-hero-portrait{width:36px!important;height:36px!important}#app[data-nl-screen="formation"] #view .formation-board [data-slot] :is(b,strong){font-size:10px!important}#app[data-nl-screen="formation"] #view .formation-board [data-slot] small{font-size:8px!important}#app[data-nl-screen="formation"] #view .roster-list [data-choose-hero]>.nl-native-hero-portrait{width:42px!important;height:42px!important;flex-basis:42px!important}}

@@ -50,24 +50,24 @@ with sync_playwright() as p:
         page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click()
         page.locator('.nlh-art-tab[data-nlh-mode="portrait"]').click()
         page.wait_for_function("document.querySelector('.nlh-character-portrait')?.complete&&document.querySelector('.nlh-character-portrait')?.naturalWidth>0")
-        zhao_portrait = page.evaluate("""() => {
+        zhao_portrait = page.evaluate("""id => {
           const q=window.__NL_ART_D_QA__;
           const image=document.querySelector('.nlh-character-portrait');
-          const source=q.portrait('zhao');
+          const source=q.portrait(id);
           const imageSource=image?.src||'';
-          return {registered:q.heroPortraitIds.includes('zhao'),
-            sourceIsPng:source.startsWith('data:image/png;base64,'),
-            imageSourceIsV5:Boolean(imageSource.startsWith('data:image/webp;base64,')||imageSource.startsWith('data:image/png;base64,')),
+          return {registered:Boolean(window.__NL_HERO_PORTRAIT__(id)),
+            sourceIsWebp:source.startsWith('data:image/webp;base64,'),
+            imageSourceIsV5:source===window.__NL_HERO_PORTRAIT__(id)&&imageSource===source,
             title:image?.alt||'',loaded:Boolean(image?.complete&&image?.naturalWidth>0)};
-        }""")
-        assert zhao_portrait["registered"] and zhao_portrait["sourceIsPng"] \
+        }""",hero_id)
+        assert zhao_portrait["registered"] and zhao_portrait["sourceIsWebp"] \
             and zhao_portrait["imageSourceIsV5"] and zhao_portrait["loaded"],zhao_portrait
         wiki_portrait=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
           const source=q.portrait('wiki-mobile-hero-083');
-          return {registered:q.heroPortraitIds.includes('wiki-mobile-hero-083'),sourceIsPng:source.startsWith('data:image/png;base64,'),sourceLength:source.length};
+          return {registered:source===window.__NL_HERO_PORTRAIT__('wiki-mobile-hero-083'),sourceIsWebp:source.startsWith('data:image/webp;base64,'),sourceLength:source.length};
         }""")
-        assert wiki_portrait["registered"] and wiki_portrait["sourceIsPng"] and wiki_portrait["sourceLength"]>1000,wiki_portrait
+        assert wiki_portrait["registered"] and wiki_portrait["sourceIsWebp"] and wiki_portrait["sourceLength"]>1000,wiki_portrait
         result3=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
           return {maps:q.mapCount(),architecture:q.architecture('hall','Thành Chính')!==q.architecture('tower','Tháp'),
