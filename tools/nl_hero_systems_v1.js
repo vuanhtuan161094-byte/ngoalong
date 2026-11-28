@@ -353,7 +353,23 @@ function nlhProfile(heroId){
  const level=d.level;
  return '<div class="nlh-profile" '+bg+'><div class="nlh-hero-art">'+img+'<div class="nlh-art-tabs" role="group" aria-label="Chọn tranh nhân vật">'+artTabs+'</div><span class="nlh-grade-badge">Bậc '+hsEsc(dev.ancientLevel?'Thượng Cổ '+dev.ancientLevel:dev.awakening.gold?'Vàng':dev.awakening.orange?'Cam':h.rarity||h.grade||'Tướng')+'</span></div><div class="nlh-profile-info"><div class="nlh-name-plate"><span class="nlh-kicker">'+hsEsc(h.faction||game.nation||'Tam Quốc')+' · '+hsEsc(h.role||h.type||'Võ tướng')+'</span><h2>'+hsEsc(h.name)+'</h2><span class="nlh-rank-ribbon">Cấp '+level+' · Lực chiến '+nlhFmt(d.power)+'</span></div><div class="nlh-profile-stats"><div class="nlh-stat"><small>Võ</small><b>'+nlhFmt(d.atk)+'</b></div><div class="nlh-stat"><small>Trí</small><b>'+nlhFmt(d.int)+'</b></div><div class="nlh-stat"><small>Thủ</small><b>'+nlhFmt(d.def)+'</b></div><div class="nlh-stat"><small>Tốc</small><b>'+nlhFmt(d.speed)+'</b></div><div class="nlh-stat"><small>Binh</small><b>'+nlhFmt(d.troops)+'</b></div><div class="nlh-stat"><small>Binh chủng</small><b>'+hsEsc(troop.name)+'</b></div></div><div class="nlh-skill-strip"><span class="nlh-kicker">CHIẾN PHÁP</span><b>'+hsEsc(skill)+'</b></div><div class="nlh-profile-actions"><button class="nlh-button" data-nlh-action="trainBatch" data-nlh-count="1" '+(level>=nlhHeroCap(heroId)||battle||!nlhCanPay(nlhTrainQuote(heroId).cost,{})?'disabled':'')+'>Huấn luyện</button><button class="nlh-button secondary" data-nlh-action="system" data-nlh-target="commander">Chỉ Huy Cá Nhân · mô phỏng</button><button class="nlh-button secondary" data-tab="formation">Bày Trận</button></div></div></div>';
 }
-function nlhSystemMenu(system,heroId){return '<aside class="nlh-toolbar"><div class="nlh-toolbar-title">PHÁT TRIỂN TƯỚNG</div>'+NL_HS.systems.map((s,i)=>'<button class="nlh-system-button '+(system===s.id?'selected':'')+'" data-nlh-action="system" data-nlh-target="'+s.id+'"><span class="nlh-system-no">'+String(i+1).padStart(2,'0')+'</span><span>'+hsEsc(s.label)+'</span>'+(!nlhIsOpen(s.id)?'<i class="nlh-lock">'+(s.unlock.campaignClears||0)+'</i>':'')+'</button>').join('')+'</aside>';}
+
+function nlhPremiumStage(system,id){
+ const h=nlhHero(id),a=nlhArt(id),d=nlhHeroStats(id),dev=nlhsHero(id),troop=nlhCurrentTroop(id);
+ if(system==='hero'||system==='training'||system==='awakening')return nlhProfile(id);
+ const names={troops:troop.name,commander:'Chỉ huy cá nhân',specialWeapon:nlhSourceWeapon(id)?.name||'Bảo binh bản mệnh',inheritance:nlhSourceSeal(id)?.name||'Dấu ấn truyền thừa',destiny:nlhSourceProgress(id).destiny||'Thiên mệnh',equipment:'Bộ trang bị',formation:'Trận đồ',rewards:'Chiến công',recruit:'Tửu quán'};
+ const subtitles={troops:'Đội hình và chủng quân',commander:'Chỉ huy · mô phỏng',specialWeapon:'Vũ khí đặc biệt',inheritance:'Ấn Kế Thừa',destiny:'Mệnh Cách',equipment:'Trang bị võ tướng',formation:'Bày trận',rewards:'Thưởng phát triển',recruit:'Chiêu mộ võ tướng'};
+ const name=names[system]||SYS[system]?.label||h.name;
+ const level=system==='specialWeapon'&&nlhSourceWeapon(id)?nlhSourceProgress(id).weapon:system==='destiny'&&nlhSourceProgress(id).destiny?nlhSourceRank(id,nlhSourceProgress(id).destiny):nlhLevel(system,id);
+ const background=a.splash?' style="--nlh-stage-bg:url(\''+a.splash+'\')"':'';
+ const isArmy=system==='troops'||system==='commander'||system==='formation';
+ const unit=p2Unit(id,'p',0,Math.max(1,Math.min(28,nlhStage()+1)));
+ const image=a.character||a.portrait||a.splash;
+ const picture=isArmy?'<canvas class="nlh-stage-troop" width="480" height="370" data-premium-troop="'+hsEsc(unit?.troop||h.type||'infantry')+'" data-premium-branch="'+hsEsc(unit?.branch||'')+'" role="img" aria-label="Đội quân của '+hsEsc(h.name)+'"></canvas>':image?'<img class="nlh-stage-character" src="'+image+'" alt="'+hsEsc(h.name)+'">':'';
+ const detail=system==='formation'?game.slots.filter(Boolean).length+'/5 võ tướng':system==='troops'?'Bậc '+troop.tier:system==='recruit'?game.roster.length+' võ tướng':system==='equipment'?Object.values(game.gear?.[id]||{}).filter(Boolean).length+'/7 vị trí':'Cấp '+level;
+ return '<div class="nlh-showcase" data-premium-stage="'+system+'"'+background+'><div class="nlh-stage-glow"></div>'+picture+'<div class="nlh-stage-heading"><small>'+hsEsc(subtitles[system]||SYS[system]?.label||'Phát triển')+'</small><h2>'+hsEsc(name)+'</h2><span>'+hsEsc(h.name)+' · '+hsEsc(detail)+'</span></div><span class="nlh-stage-mark">'+nlhGlyph(system)+'</span></div>';
+}
+function nlhSystemMenu(system,heroId){return '<aside class="nlh-toolbar"><div class="nlh-toolbar-title">PHÁT TRIỂN TƯỚNG</div>'+NL_HS.systems.map((s,i)=>'<button class="nlh-system-button '+(system===s.id?'selected':'')+'" data-nlh-action="system" data-nlh-target="'+s.id+'"><span class="nlh-system-no">'+nlhGlyph(s.id)+'</span><span>'+hsEsc(s.label)+'</span>'+(!nlhIsOpen(s.id)?'<i class="nlh-lock">'+(s.unlock.campaignClears||0)+'</i>':'')+'</button>').join('')+'</aside>';}
 function nlhRoster(heroId){const list=(game.roster||[]).filter(nlhOwned);return '<aside class="nlh-roster"><div class="nlh-roster-head"><strong>VÕ TƯỚNG</strong><small>'+list.length+' nữ tướng · chọn chân dung</small></div><div class="nlh-roster-grid">'+list.map(id=>{const h=nlhHero(id),a=nlhArt(id),src=a.portrait;return '<button class="nlh-portrait-card '+(heroId===id?'selected':'')+'" data-nlh-action="hero" data-nlh-hero="'+hsEsc(id)+'" aria-label="Chọn '+hsEsc(h.name)+'">'+(src?'<img src="'+src+'" alt="">':'<span class="nlh-portrait-fallback">'+hsEsc(String(h.name||'?').slice(0,1))+'</span>')+'<b>'+hsEsc(h.name)+'</b></button>';}).join('')+'</div></aside>';}
 function nlhProgress(level,max,label,percent){return '<div class="nlh-growth"><div class="nlh-growth-head"><span>'+hsEsc(label)+'</span><b>'+hsEsc(String(level))+' / '+hsEsc(String(max))+'</b></div><div class="nlh-bar"><i style="width:'+Math.max(0,Math.min(100,percent))+'%"></i></div></div>';}
 function nlhEndgamePanel(id){
@@ -458,7 +474,7 @@ function nlhSystemBody(system,id){
 }
 function renderNlhHeroScreen(){
  const s=nlhsState(),heroId=nlhOwned(s.selectedHero)?s.selectedHero:(game.roster.find(nlhOwned)||'liu'),system=PICKABLE.includes(s.selectedSystem)?s.selectedSystem:'hero';
- return '<div class="nlh-root" data-nlh-screen="1">'+nlhRoster(heroId)+'<main class="nlh-main">'+nlhProfile(heroId)+'<section class="nlh-main-body" data-nlh-system-body="'+system+'">'+nlhSystemBody(system,heroId)+nlhMaterialsBar()+'</section></main>'+nlhSystemMenu(system,heroId)+'</div>';
+ return '<div class="nlh-root" data-nlh-screen="1" data-premium-system="'+system+'">'+nlhRoster(heroId)+'<main class="nlh-main">'+nlhPremiumStage(system,heroId)+'<section class="nlh-main-body" data-nlh-system-body="'+system+'">'+nlhSystemBody(system,heroId)+nlhMaterialsBar()+'</section></main>'+nlhSystemMenu(system,heroId)+'</div>';
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest?.('[data-nlh-action]');if(!b||b.disabled)return;const action=b.dataset.nlhAction;
@@ -480,6 +496,19 @@ document.addEventListener('click',e=>{
  else if(action==='mobileReset'){const id=nlhsState().selectedHero,kind=b.dataset.nlhMode,q=nlMobileHeroApi.resetQuote(id,kind);if(q&&window.confirm('Hạ phẩm chất '+q.from+' về '+q.to+' và dùng một lệnh?'))nlMobileHeroApi.reset(id,kind);}
  else if(action==='artMode')nlhSetArtMode(nlhsState().selectedHero,b.dataset.nlhMode);
 });
+
+/* One battlefield, full viewport; reuse native buttons and replay state. */
+const premiumPriorBattleShell=renderBattleShell;
+renderBattleShell=function(){
+ const out=premiumPriorBattleShell.apply(this,arguments);
+ const root=document.querySelector('#battle-mount .battle-window');
+ if(!root||!battle||battle.mode==='cltq')return out;
+ root.classList.add('nl-premium-battle');
+ const left=NATIONS[game.nation]?.name||'Đồng minh',right=battle.mode==='arena'?'Đối thủ':'Quân địch';
+ const header=root.querySelector('.battle-head');
+ if(header){const banner=document.createElement('div');banner.className='nl-premium-versus';banner.innerHTML='<span>'+hsEsc(left)+'</span><b>VS</b><span>'+hsEsc(right)+'</span>';header.prepend(banner);}
+ return out;
+};
 const NLH_NAV_ICON_PATH={
  city:'<path d="M3 10h18v10H3zM2 10l10-7 10 7M7 13v3m5-3v3m5-3v3M8 20v-4h8v4"/>',
  formation:'<path d="M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"/>',

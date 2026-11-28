@@ -82,7 +82,11 @@ with sync_playwright() as p:
         page.locator('.nav[data-tab="equipment"]').click()
         page.wait_for_function("document.querySelectorAll('.nli-slot .nl-art-d-img').length>0")
         page.locator('.nav[data-tab="barracks"]').click()
-        page.wait_for_function("document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0")
+        page.wait_for_function("""() => {
+          const source=window.__NL_ART_D2_QA__?.sourceAtlasCount()>0;
+          if(source)return Array.from(document.querySelectorAll('.nlw-unit .nlw-source-preview')).some(c=>c.width===100&&c.height===100&&c.dataset.sourceAtlas&&c.getContext('2d').getImageData(0,0,100,100).data.some((v,i)=>i%4===3&&v>30));
+          return document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0;
+        }""",timeout=120000)
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
         assert not errors,errors
         print("NL_ART_D/D3 PASS",width,result,result3,zhao_portrait,wiki_portrait)

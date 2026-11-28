@@ -179,7 +179,7 @@ function effects(ctx,u,now,pos,v){
  const alternate=v.actor&&phase===1?familyPair?.[0]:v.hit&&phase>=2?familyPair?.[1]:null;
  const actualId=v.hit&&phase>=2&&statusId&&sourceEffects[statusId]?statusId:alternate&&sourceEffects[alternate]?alternate:sourceId;
  const a=sourceEffects[actualId];
- if(a){const t=phase===0?v.elapsed/220:phase===1?(v.elapsed-220)/210:phase===2?(v.elapsed-430)/220:(v.elapsed-650)/350;ctx.save();ctx.globalAlpha=phase===3?.55:.9;if(atlasCel(ctx,actualId,a,Math.floor(clamp(t,0,1)*(a.frames-1)),pos.x,pos.y+22,92,92))metrics.sourceFx++;ctx.restore();}
+ if(a){const t=phase===0?v.elapsed/220:phase===1?(v.elapsed-220)/210:phase===2?(v.elapsed-430)/220:(v.elapsed-650)/350;ctx.save();ctx.globalAlpha=phase===3?.55:.9;if(atlasCel(ctx,actualId,a,Math.floor(clamp(t,0,1)*(a.frames-1)),pos.x,pos.y+22,v.action==='skill'?135:90,v.action==='skill'?135:90))metrics.sourceFx++;ctx.restore();}
  const show=v.actor&&phase<2||v.hit&&phase>=2;
  if(show&&ready(fx)){
    ctx.save();ctx.globalAlpha=phase===3?.55:.88;ctx.globalCompositeOperation='screen';
@@ -201,15 +201,15 @@ function effects(ctx,u,now,pos,v){
 }
 // Source-native squads replace legacy drawing; fallback only if assets are unavailable.
 const legacyCoords=coords;
-coords=function(u){if(!Object.keys(sourceTroops).length||battle?.mode==='cltq')return legacyCoords(u);const row=Math.floor(u.slot/3),col=u.slot%3;return {x:u.team==='p'?272+col*76:784-col*76,y:128+row*116};};
+coords=function(u){if(!Object.keys(sourceTroops).length||battle?.mode==='cltq')return legacyCoords(u);const row=Math.floor(u.slot/3),col=u.slot%3;return {x:u.team==='p'?176+col*112:880-col*112,y:148+row*110};};
 function sourceSquad(ctx,u,now,pos,v){
  const f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id];if(!a||!ready(atlasImages.get(id)))return false;if(u.hp<=0&&!v.hit)return true;
- const sz=f==='cavalry'?64:53,target=v.ev?.hits?.[0]?.target;let mx=0,my=0;
+ const row=Math.floor(u.slot/3),sz=(f==='cavalry'?53:42)*(0.86+row*.07),target=v.ev?.hits?.[0]?.target;let mx=0,my=0;
  const moving=v.actor&&['infantry','spear','cavalry'].includes(f)&&target&&v.elapsed>=170&&v.elapsed<940;
- if(moving){const end=coords(target),dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;const distance=Math.max(0,dist-105);const t=v.elapsed<430?clamp((v.elapsed-170)/260,0,1):v.elapsed<650?1:clamp((940-v.elapsed)/290,0,1);mx=dx/dist*distance*t;my=dy/dist*distance*t;}
- const offsets=[[0,-3],...squadLayout(f,u.team)].sort((a,b)=>a[1]-b[1]||a[0]-b[0]);ctx.save();if(v.action==='disappear')ctx.globalAlpha=1-v.frame*.23;const x=pos.x+mx,y=pos.y+my;
- for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.25,3.4,0,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
- ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(Number(u.hp||0)/Math.max(1,Number(u.maxHp||u.maxHP||u.hpMax||u.max||u.hp||1)),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#15241a';ctx.strokeText(name,x,y-42);ctx.fillStyle='#f8e5b6';ctx.fillText(name,x,y-42);ctx.fillStyle='#16231d';ctx.fillRect(bx-1,by-1,80,11);ctx.fillStyle=u.team==='e'?'#c87b60':'#87bf8a';ctx.fillRect(bx,by,78*hp,5);ctx.fillStyle='#d7b56b';ctx.fillRect(bx,by+7,78*morale,3);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
+ if(moving){const end=coords(target),dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;const distance=Math.max(0,dist-94);const t=v.elapsed<430?clamp((v.elapsed-170)/260,0,1):v.elapsed<650?1:clamp((940-v.elapsed)/290,0,1);mx=dx/dist*distance*t;my=dy/dist*distance*t;}
+ const dense=['infantry','spear','archer'].includes(f),dir=u.team==='e'?-1:1;const offsets=(dense?[-1,0,1].flatMap(r=>[-1,0,1].map(c=>[(c*27+r*8)*dir,r*18])):[[0,-13],[-26,2],[26,2],[-17,20],[17,20]]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);ctx.save();if(v.action==='disappear')ctx.globalAlpha=1-v.frame*.23;const x=pos.x+mx,y=pos.y+my;
+ for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.19,2.7,0,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
+ ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(Number(u.hp||0)/Math.max(1,Number(u.maxHp||u.maxHP||u.hpMax||u.max||u.hp||1)),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='600 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#14201b';ctx.strokeText(name,x,y-38);ctx.fillStyle='#f7ead3';ctx.fillText(name,x,y-38);ctx.fillStyle='rgba(15,22,20,.84)';ctx.fillRect(x-30,y-31,60,5);ctx.fillStyle=u.team==='e'?'#d87b69':'#7ccce1';ctx.fillRect(x-30,y-31,60*hp,5);ctx.fillStyle='#efce87';ctx.fillRect(x-30,y-24,60*morale,2);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
 }
 // Barracks: use the same genuine troop atlas as the battlefield, not a
 // placeholder badge. No troop selection, Save or battle-rule changes.
@@ -246,6 +246,18 @@ if(barracksRoot){
  document.addEventListener('click',scheduleBarracks,true);scheduleBarracks();
 }
 
+
+let premiumPreviewTimer=0;
+function premiumPaintHeroTroops(){
+ const c=document.querySelector('.nlh-stage-troop');if(!c||!c.isConnected||!c.offsetWidth)return;
+ const u={team:'p',troop:c.dataset.premiumTroop,branch:c.dataset.premiumBranch},f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id],im=a&&atlasImages.get(id);
+ if(!a||!ready(im))return;
+ const ctx=c.getContext('2d');if(!ctx)return;
+ ctx.clearRect(0,0,c.width,c.height);const clip=a.clips.idle||a.clips.attack;const frame=Math.floor(performance.now()/130);
+ const points=Array.from({length:9},(_,i)=>[145+(i%3)*86+Math.floor(i/3)*12,174+Math.floor(i/3)*67]);
+ for(const [i,[x,y]] of points.entries()){ctx.fillStyle='#060b1460';ctx.beginPath();ctx.ellipse(x,y+5,24,6,0,0,Math.PI*2);ctx.fill();atlasCel(ctx,id,a,clip[(frame+i)%clip.length],x,y,88,88);}
+}
+premiumPreviewTimer=setInterval(premiumPaintHeroTroops,120);
 const oldDraw=drawUnit;
 drawUnit=function(ctx,u,now){
  if(!u||!battle||battle.mode==='cltq'||!Number.isFinite(now))return oldDraw.apply(this,arguments);

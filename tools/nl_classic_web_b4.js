@@ -112,13 +112,12 @@ drawBackground=function(ctx,now){
  const backgrounds=[NLW_B4_BACKGROUND,...NLW_B4_ALTERNATES],stage=Number(battle?.stage?.id||battle?.stageId||battle?.stage||1)||1;
  const bg=backgrounds[(Math.max(1,stage)-1)%backgrounds.length];const selected=bg.complete&&bg.naturalWidth?bg:NLW_B4_BACKGROUND;
  ctx.save();ctx.drawImage(selected,0,0,1056,480);
- ctx.fillStyle='rgba(3,21,23,.17)';ctx.fillRect(0,0,1056,480);
+ ctx.fillStyle='rgba(8,17,24,.05)';ctx.fillRect(0,0,1056,480);
  let shade=ctx.createLinearGradient(0,0,0,125);shade.addColorStop(0,'rgba(4,17,19,.75)');shade.addColorStop(1,'rgba(4,17,19,0)');
  ctx.fillStyle=shade;ctx.fillRect(0,0,1056,125);
  ctx.textAlign='center';ctx.font='bold 17px Georgia';ctx.fillStyle='#f7e3ba';
  ctx.shadowColor='#132126';ctx.shadowBlur=5;
- ctx.fillText((NATIONS[game.nation]?.name||'ĐỒNG MINH').toUpperCase()+' QUÂN',190,43);
- ctx.fillText('QUÂN ĐỊCH',858,43);ctx.font='bold 27px Georgia';ctx.fillText('VS',526,51);
+ if(!document.querySelector('.nl-premium-versus')){ctx.fillText((NATIONS[game.nation]?.name||'ĐỒNG MINH').toUpperCase()+' QUÂN',190,43);ctx.fillText('QUÂN ĐỊCH',858,43);ctx.font='bold 27px Georgia';ctx.fillText('VS',526,51);}
  ctx.restore();
 };
 const nlwB4PriorDrawUnit=drawUnit;

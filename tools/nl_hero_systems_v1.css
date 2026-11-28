@@ -95,3 +95,117 @@
  .nlh-choice-grid{gap:3px}.nlh-choice{min-height:58px;padding:4px}.nlh-choice b{font-size:10px}.nlh-choice small{font-size:8px}
  .nlh-action-row{align-items:flex-start;flex-direction:column}.nlh-button{width:100%;min-height:32px}
 }
+
+/* PREMIUM GAME OVERHAUL — owner references: scene, left roster, right contextual tabs.
+   Charcoal/indigo/ivory, warm amber accent, no ornamental panel borders.
+   All economic/hero/battle controls remain native. */
+#app{--pr-bg:#10151f;--pr-surface:#1b2330;--pr-ink:#f0ede6;--pr-muted:#b0bac9;--pr-accent:#e6b377;color:var(--pr-ink)!important;background:radial-gradient(ellipse at 46% -12%,#384456 0,#1a2331 35%,#10151f 75%)!important;font-family:system-ui,"Segoe UI",sans-serif!important}
+#app>.topbar,#app>.shell>.sidebar,#app #nl-screen-toolbar{border:0!important;box-shadow:none!important;background-image:none!important;background:rgba(13,19,29,.91)!important;color:var(--pr-ink)!important}
+#app>.topbar .res,#app>.shell>.sidebar .nav,#app #nl-screen-toolbar button,#app #nl-screen-toolbar select{border:0!important;box-shadow:none!important;background-image:none!important;background:transparent!important;color:var(--pr-muted)!important;border-radius:8px!important}
+#app>.topbar .res b{color:#fff0d2!important;font-variant-numeric:tabular-nums}
+#app>.shell>.sidebar .nav.active{background:linear-gradient(180deg,#ad75482e,#d7aa7220)!important;color:#ffdab2!important;box-shadow:inset 0 -3px #e6b377!important}
+#app #view>.head h1,#app #view h3{color:#f1e5d2!important;text-shadow:none!important}
+#app #view .panel,#app #view .hero-card,#app #view .feature-card,#app #view .quest,#app #view .nli-gear,#app #view .nli-items-card,#app #view .nlcity-tile,#app #view .nlw-unit,#app #view .nlw-form,#app #view .box,#app #view .world-region,#app #view .stage{border:0!important;border-image:none!important;box-shadow:none!important;background-image:none!important;background:rgba(38,47,63,.69)!important;border-radius:10px!important;color:#ebe8df!important}
+#app #view .panel h3,#app #view .section-break{border:0!important}
+#app #view .gold-button,#app #view .dark-button{border:0!important;box-shadow:none!important;background-image:none!important;background:#d6a66e!important;color:#211b19!important;border-radius:7px!important;font-weight:700!important}
+#app #view .dark-button{background:#394657!important;color:#f0eee8!important}
+#app #view button:disabled{opacity:.48}
+#app #view .nlw-source-preview{border:0!important;background:radial-gradient(ellipse,#71839a50,transparent 70%)!important;filter:drop-shadow(0 6px 5px #04091270)}
+#app #view .city-visual,#app #view .world-scene{border:0!important;box-shadow:none!important;border-radius:12px!important}
+#app #view .city-visual .building b,#app #view .city-visual .building small{background:rgba(14,19,26,.83)!important;color:#f8ebd3!important;padding:2px 7px!important}
+#app #view .city-visual .building{filter:drop-shadow(0 4px 4px #1118)}
+#app #view .city-visual{background-size:100% 100%!important}
+#app #view .formation-board{background:radial-gradient(ellipse at 50% 40%,#666779,#272d3d 66%)!important;border:0!important;box-shadow:none!important}
+#app #view .formation-board .slot,#app #view .nl-slot{border:0!important;border-image:none!important;background:#ffffff0c!important;box-shadow:none!important}
+#app #view .formation-board .slot.occupied,#app #view .nl-slot.occupied{background:#d2a16c20!important}
+#app #view .nlh-root{font-family:system-ui,"Segoe UI",sans-serif;gap:12px;grid-template-columns:minmax(142px,17%) minmax(0,1fr) minmax(128px,15%);min-height:0;background:radial-gradient(ellipse at 38% 50%,#66758a20,transparent 70%)}
+#app #view .nlh-root :is(.nlh-roster,.nlh-main,.nlh-toolbar,.nlh-profile,.nlh-profile-info,.nlh-section-head,.nlh-roster-head,.nlh-toolbar-title,.nlh-stat,.nlh-fact,.nlh-feature-panel,.nlh-growth,.nlh-skill-strip,.nlh-action-row,.nlh-material,.nlh-materials,.nlh-choice,.nlh-status,.nlh-art-tabs,.nlh-name-plate,.nlh-grade-badge,.nlh-rank-ribbon,.nlh-inline-row){border:0!important;border-image:none!important;box-shadow:none!important;background-image:none!important;background-color:transparent!important}
+#app #view .nlh-main{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);grid-template-rows:minmax(0,1fr);background:transparent!important;overflow:hidden}
+#app #view .nlh-profile{display:flex;flex-direction:column;position:relative;justify-content:flex-end;min-height:0;background:radial-gradient(ellipse at 50% 46%,#8e8f9638,transparent 72%)!important}
+#app #view .nlh-hero-art{position:absolute;inset:0;align-items:center;background:none!important}
+#app #view .nlh-hero-art:before{opacity:.52;background-image:linear-gradient(0deg,#131b29 0%,transparent 75%),var(--nlh-splash)}
+#app #view .nlh-character{height:98%;width:100%;max-width:100%;object-fit:contain;object-position:center top;align-self:flex-start;filter:drop-shadow(0 7px 18px #03060b88)}
+#app #view .nlh-character-portrait{height:100%;object-fit:cover;object-position:50% 16%}
+#app #view .nlh-character-splash{height:100%;width:100%;object-fit:cover}
+#app #view .nlh-profile-info{background:linear-gradient(0deg,#101722 65%,#101722da 80%,transparent)!important;padding:38px 13px 8px;gap:7px;z-index:4}
+#app #view .nlh-name-plate h2{font-family:Georgia,serif;font-size:29px;color:#fff1d9;margin:2px 0 6px}
+#app #view .nlh-kicker,#app #view .nlh-source-note,#app #view .nlh-copy{color:#b5c0d0!important}
+#app #view .nlh-stat{background:#a9b4c10d!important;border-radius:6px}
+#app #view .nlh-stat b,#app #view .nlh-fact b{color:#fff1d9!important}
+#app #view .nlh-art-tabs{background:#161c29b8!important;z-index:6;border-radius:7px}
+#app #view .nlh-art-tab{border:0;background:transparent;color:#c4cbd5;font-size:10px}
+#app #view .nlh-art-tab.selected{background:#e6b3772c;color:#ffe0b8;box-shadow:none}
+#app #view .nlh-grade-badge{top:8px;bottom:auto;background:#151a26cc!important;color:#ffdc9d;z-index:5}
+#app #view .nlh-main-body{padding:14px 13px!important;background:linear-gradient(160deg,#2c364670,#111923d9)!important;border-radius:13px;overflow:auto}
+#app #view .nlh-section-head{margin:0 0 15px!important;padding:0!important;color:#faf2e7;font-weight:700;font-size:15px;background:none!important}
+#app #view .nlh-section-title{color:#f6e8d3;font-size:18px;line-height:1.25}
+#app #view .nlh-feature-panel,#app #view .nlh-fact,#app #view .nlh-choice{background:#b6c6df0c!important;border-radius:8px!important;padding:9px}
+#app #view .nlh-button{border:0!important;box-shadow:none!important;background:#d6a66e!important;color:#211b19!important;border-radius:6px!important;font:700 11px system-ui}
+#app #view .nlh-button.secondary{background:#3d4959!important;color:#f0ece4!important}
+#app #view .nlh-toolbar,#app #view .nlh-roster{background:rgba(13,20,30,.66)!important;border-radius:12px}
+#app #view .nlh-system-button{grid-template-columns:24px minmax(0,1fr);background:transparent!important;border:0!important;box-shadow:none!important;color:#bac5d2;font:600 12px system-ui;min-height:35px}
+#app #view .nlh-system-button.selected{color:#ffddb7;background:linear-gradient(90deg,#d6a66e2c,#d6a66e06)!important;box-shadow:inset 3px 0 #e6b377!important}
+#app #view .nlh-system-no{border:0!important;width:23px;height:23px;color:inherit}
+#app #view .nlh-system-no svg,#app #view .nlh-stage-mark svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#app #view .nlh-portrait-card{height:clamp(69px,12.5vh,108px);border:0!important;background:#243144!important;box-shadow:none!important;border-radius:8px}
+#app #view .nlh-portrait-card.selected{outline:2px solid #e6b377;outline-offset:-2px}
+#app #view .nlh-portrait-card img{filter:none}
+#app #view .nlh-showcase{position:relative;overflow:hidden;isolation:isolate;min-width:0;min-height:0;background:radial-gradient(ellipse at 50% 45%,#596a8544,#192231 73%);border-radius:10px}
+#app #view .nlh-showcase:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#131b29 0%,#131b2977 35%,#131b2920 70%),var(--nlh-stage-bg);background-size:cover;background-position:center;opacity:.78;z-index:-1}
+#app #view .nlh-stage-character{position:absolute;height:100%;width:100%;object-fit:contain;object-position:50% 25%;filter:drop-shadow(0 8px 20px #070b1488)}
+#app #view .nlh-stage-glow{position:absolute;inset:5% 0 18%;background:radial-gradient(ellipse,#9b83ce44 0,transparent 68%);mix-blend-mode:screen;pointer-events:none}
+#app #view .nlh-showcase[data-premium-stage="inheritance"] .nlh-stage-glow{background:radial-gradient(ellipse,#ed9c6c55,transparent 69%)}
+#app #view .nlh-showcase[data-premium-stage="destiny"] .nlh-stage-glow{background:radial-gradient(ellipse,#85c2ee55,transparent 69%)}
+#app #view .nlh-stage-heading{position:absolute;left:0;right:0;bottom:0;padding:44px 16px 18px;background:linear-gradient(transparent,#101722f5 75%);z-index:2}
+#app #view .nlh-stage-heading small{color:#e6b377;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+#app #view .nlh-stage-heading h2{font:700 clamp(22px,2.5vw,32px)/1.12 Georgia,serif;margin:5px 0;color:#fff3e0}
+#app #view .nlh-stage-heading span{font-size:12px;color:#c3cddd}
+#app #view .nlh-stage-mark{position:absolute;right:14px;top:14px;width:28px;height:28px;color:#e6b377;opacity:.85}
+#app #view .nlh-stage-troop{position:absolute;inset:5% 0 15%;width:100%;height:80%;object-fit:contain}
+.nl-premium-battle{width:100vw!important;height:100dvh!important;max-height:none!important;max-width:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#0b121c!important;position:relative!important;display:flex!important;flex-direction:column!important}
+.battle-overlay:has(.nl-premium-battle){padding:0!important;background:#0b121c!important}
+.nl-premium-battle .battle-head{z-index:4;position:absolute;inset:0 0 auto;display:block;background:linear-gradient(#0d1623de,transparent)!important;border:0!important;padding:9px 22px 14px!important;pointer-events:none}
+.nl-premium-battle .battle-head>div:not(.nl-premium-versus):not(.battle-tools){display:none}
+.nl-premium-versus{display:grid;grid-template-columns:1fr 48px 1fr;align-items:center;max-width:900px;margin:0 auto;color:#fff7e9;text-align:center;font:600 15px system-ui}
+.nl-premium-versus span{padding:8px 16px;background:linear-gradient(90deg,#407b9c,#294e76);border-radius:4px}
+.nl-premium-versus span:last-child{background:linear-gradient(90deg,#7e354b,#b1655c)}
+.nl-premium-versus b{font:700 25px Georgia;color:#f7cf85}
+.nl-premium-battle .battle-canvas-wrap{flex:1 1 auto;min-height:0;display:grid;place-items:center;background:#101821}
+.nl-premium-battle .battle-canvas-wrap canvas{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important;display:block}
+.nl-premium-battle .battle-tools{position:fixed;right:16px;bottom:19px;gap:6px;pointer-events:auto;z-index:7}
+.nl-premium-battle .battle-tools button{border:0!important;border-radius:24px!important;background:#16283cde!important;color:#f7eee0!important;padding:9px 13px!important;box-shadow:0 3px 8px #0005;font-size:12px!important}
+.nl-premium-battle .battle-tools button.active{background:#d6a66e!important;color:#211b19!important}
+.nl-premium-battle .battle-footer{border:0!important;background:linear-gradient(0deg,#0b121ee8,transparent)!important;position:absolute;inset:auto 0 0;min-height:66px;max-height:100px;padding:11px 320px 10px 18px;z-index:5;pointer-events:none}
+.nl-premium-battle .battle-footer .replay-seek{pointer-events:auto}
+.nl-premium-battle .battle-footer .combat-text{min-height:0;max-height:45px;overflow:hidden;color:#f4eee4}
+.nl-premium-battle .battle-mobile-roster{display:none}
+@media(max-width:950px) and (min-width:651px){#app #view .nlh-root{grid-template-columns:minmax(110px,16%) minmax(0,1fr) minmax(112px,15%);gap:6px}#app #view .nlh-main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#app #view .nlh-system-button{font-size:10px}}
+@media(max-width:650px){
+#app #view .nlh-root{grid-template-columns:73px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 104px;gap:4px}
+#app #view .nlh-main{display:flex;flex-direction:column;overflow:hidden}
+#app #view .nlh-profile,#app #view .nlh-showcase{flex:0 0 48%;min-height:145px}
+#app #view .nlh-profile-info{padding:20px 5px 3px;gap:2px;background:linear-gradient(0deg,#101722 64%,transparent)!important}
+#app #view .nlh-profile .nlh-profile-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:1px}
+#app #view .nlh-name-plate h2{font-size:16px;margin:0}
+#app #view .nlh-profile-actions .nlh-button{font-size:7px;min-height:23px}
+#app #view .nlh-main-body{flex:1 1 auto;min-height:0;padding:6px!important}
+#app #view .nlh-section-head{font-size:11px;margin-bottom:6px!important}
+#app #view .nlh-section-title{font-size:13px}
+#app #view .nlh-system-button{font-size:8px;grid-template-columns:12px minmax(0,1fr);min-height:0;padding:2px}
+#app #view .nlh-system-no{width:12px;height:12px}
+#app #view .nlh-portrait-card{height:57px;border-radius:4px}
+#app #view .nlh-art-tab{font-size:0}
+#app #view .nlh-stage-heading{padding:22px 6px 5px}
+#app #view .nlh-stage-heading h2{font-size:17px}
+#app #view .nlh-stage-heading small,#app #view .nlh-stage-heading span{font-size:8px}
+#app #view .nlh-stage-mark{width:19px;height:19px;right:6px;top:6px}
+.nl-premium-battle .battle-head{padding:8px!important}
+.nl-premium-versus{font-size:11px;grid-template-columns:1fr 32px 1fr}
+.nl-premium-versus b{font-size:20px}
+.nl-premium-battle .battle-tools{bottom:12px;right:8px;left:8px;justify-content:center;flex-wrap:wrap}
+.nl-premium-battle .battle-tools button{padding:7px 9px!important;font-size:10px!important}
+.nl-premium-battle .battle-footer{bottom:52px;padding:8px!important;max-height:84px}
+.nl-premium-battle .battle-mobile-roster{display:block;max-height:29dvh;overflow:auto;z-index:2}
+.nl-premium-battle .battle-canvas-wrap{min-height:190px}
+}
+@media(prefers-reduced-motion:reduce){#app *{transition:none!important;animation:none!important}}

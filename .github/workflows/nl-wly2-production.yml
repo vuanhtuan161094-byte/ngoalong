@@ -2,7 +2,7 @@ name: WLY2 production source asset build
 on:
   push:
     branches: [feature/ngoalong-v1-complete]
-    paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py']
+    paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py', 'tools/nl_hero_systems_v1.js', 'tools/nl_hero_systems_v1.css', 'tools/nl_city_art_v1.js', 'tools/nl_classic_web_b4.js']
   workflow_dispatch:
 concurrency:
   group: wly2-production-${{ github.ref }}
