@@ -2,7 +2,7 @@ name: WLY2 production source asset build
 on:
   push:
     branches: [feature/ngoalong-v1-complete]
-    paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py', 'tools/nl_hero_systems_v1.js', 'tools/nl_hero_systems_v1.css', 'tools/nl_city_art_v1.js', 'tools/nl_classic_web_b4.js']
+    paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py', 'tools/nl_hero_systems_v1.js', 'tools/nl_hero_systems_v1.css', 'tools/nl_city_art_v1.js', 'tools/nl_classic_web_b4.js','tools/nl_content_c_runtime.js','tools/acquire_wly2_environment.py','tools/acquire_nl_premium_icons.py','qa/nl_premium_browser.py']
   workflow_dispatch:
 concurrency:
   group: wly2-production-${{ github.ref }}
@@ -101,6 +101,8 @@ jobs:
               occupancy[sid]=round(statistics.median(areas),1)
           print('WLY2 source soldier idle visible span:',json.dumps(occupancy))
           PY
+      - name: Premium hero stage and battle shell actual runtime
+        run: python qa/nl_premium_browser.py
       - name: Actual city source map and live building interaction
         run: python qa/nl_city_art_browser.py
       - name: Actual audio settings and P2 cue smoke
@@ -120,4 +122,6 @@ jobs:
             qa/nl-city-art-*.png
             qa/wly2-barracks-*.png
             qa/wly2-all-screens/**
+            qa/nl-premium-evidence/**
+            ${{ runner.temp }}/wly2-environment/mobile-icons/report.json
           if-no-files-found: warn

@@ -262,13 +262,27 @@ def payload(private_wly2=None) -> str:
     for alias, target in art_manifest.get("aliases", {}).items():
         if target in hero_art:
             hero_art[alias] = hero_art[target]
+    # Deduplicate aliases and identical WebP bytes without changing any hero IDs.
+    art_pool = []
+    art_index = {}
+    art_refs = {}
+    for hid, record in hero_art.items():
+        refs = {}
+        for kind, uri in record.items():
+            if uri not in art_index:
+                art_index[uri] = len(art_pool)
+                art_pool.append(uri)
+            refs[kind] = art_index[uri]
+        art_refs[hid] = refs
+    hero_art_packed = {"pool": art_pool, "refs": art_refs}
+    print(f"NL premium hero art: {len(hero_art)} IDs, {len(art_pool)} unique assets")
     hero_systems = (TOOLS / "nl_hero_systems_v1.js").read_text(encoding="utf-8")
     hero_style = (TOOLS / "nl_hero_systems_v1.css").read_text(encoding="utf-8")
     placeholders = ("__NL_HERO_SYSTEM_CONFIG__", "__NL_HERO_ART__", "__NL_HERO_SYSTEM_STYLE__")
     if any(hero_systems.count(marker) != 1 for marker in placeholders) or "</script" in hero_systems.lower() or "</style" in hero_style.lower():
         raise ValueError("Invalid hero systems source or art/style placeholder")
     hero_systems = (hero_systems.replace(placeholders[0], js_json(hero_data))
-                    .replace(placeholders[1], js_json(hero_art))
+                    .replace(placeholders[1], js_json(hero_art_packed))
                     .replace(placeholders[2], js_json(hero_style)))
     return "\n".join([BEGIN, engine.rstrip(), ui.rstrip(), balance_engine.rstrip(), item_engine.rstrip(), item_ui.rstrip(), bridge.rstrip(), classic_a2.rstrip(), classic_a3.rstrip(), classic_b1.rstrip(), classic_b3.rstrip(), b4.rstrip(), world_a4.rstrip(), advanced.rstrip(), c_runtime.rstrip(), art_d2.rstrip(), city_art.rstrip(), audio.rstrip(), hero_systems.rstrip(), END])
 

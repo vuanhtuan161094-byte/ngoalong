@@ -2,6 +2,7 @@
 (()=>{
 'use strict';
 const env=__NL_WLY2_ENV_DATA__;
+window.__NL_PREMIUM_ICONS__=Object.freeze(env.mobileIcons||{});
 const sourceCity=Boolean(env.castle);
 const image=env.castle||__NL_CITY_ART_DATA_URL__;
 if(typeof image!=='string'||!image.startsWith('data:image/webp;base64,'))
@@ -37,7 +38,7 @@ style.textContent=`
 if(sourceCity){
  const placements={palace:[53,30],farm:[23,68],market:[36,46],mine:[78,66],barracks:[51,76],academy:[75,37],tavern:[67,55]};
  let extra=`
-  #view .city-visual{container-type:size;background-size:100% 100%!important;background-repeat:no-repeat;background-color:#17282d!important;background-position:center!important;isolation:isolate}
+  #view .city-visual{container-type:size;background-size:cover!important;background-repeat:no-repeat;background-color:#17282d!important;background-position:center!important;isolation:isolate}
  #view .city-visual:before,#view .city-visual:after{display:none!important}
  #view .city-visual .building{
   position:absolute!important;transform:translate(-50%,-50%)!important;
@@ -88,7 +89,7 @@ if(sourceCity){
    
    @media(min-width:1000px){
     #app #view>.grid-2:has(.city-visual){grid-template-columns:minmax(0,1fr)!important;align-items:start}
-    #app #view .city-visual{height:clamp(360px,calc(100dvh - 187px),570px)!important;background-size:100% 100%!important}
+    #app #view .city-visual{height:clamp(360px,calc(100dvh - 187px),570px)!important;background-size:cover!important}
    }
    @media(max-width:600px){#app #view .city-visual{height:320px!important}}
   `;

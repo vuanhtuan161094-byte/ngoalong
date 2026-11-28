@@ -97,5 +97,7 @@ def main():
     pack["audio"]={k:"data:audio/ogg;base64,"+base64.b64encode((soundroot/v).read_bytes()).decode("ascii") for k,v in sound_names.items()}
     pack["audioSource"]=sound_names
     pack["uiSource"]=ui_names
+    from acquire_nl_premium_icons import pack_mobile_icons
+    pack["mobileIcons"]=pack_mobile_icons(out/"mobile-icons")
     (out/"runtime-pack.json").write_text(json.dumps(pack,separators=(",",":")),encoding="utf-8")
 if __name__=="__main__":main()

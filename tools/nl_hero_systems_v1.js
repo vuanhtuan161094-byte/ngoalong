@@ -2,7 +2,8 @@
 // Additive hero development for the Mobile-first offline runtime. Keep Save v5 additive.
 let nlCampaignTrainBatch;
 (()=>{'use strict';
-const NL_HS=__NL_HERO_SYSTEM_CONFIG__, NL_HS_ART=__NL_HERO_ART__;
+const NL_HS=__NL_HERO_SYSTEM_CONFIG__, NL_HS_ART_PACK=__NL_HERO_ART__;
+const NL_HS_ART=NL_HS_ART_PACK.pool?Object.fromEntries(Object.entries(NL_HS_ART_PACK.refs).map(([id,m])=>[id,Object.fromEntries(Object.entries(m).map(([kind,i])=>[kind,NL_HS_ART_PACK.pool[i]]))])):NL_HS_ART_PACK;
 if(NL_HS.schemaVersion!==1||NL_HS.systems?.length!==12||Object.keys(NL_HS.materialCatalog||{}).length!==10)
   throw new Error('NL-HERO-SYSTEMS: source database drift');
 if(!document.getElementById('nlh-system-style')){
@@ -362,10 +363,12 @@ function nlhPremiumStage(system,id){
  const name=names[system]||SYS[system]?.label||h.name;
  const level=system==='specialWeapon'&&nlhSourceWeapon(id)?nlhSourceProgress(id).weapon:system==='destiny'&&nlhSourceProgress(id).destiny?nlhSourceRank(id,nlhSourceProgress(id).destiny):nlhLevel(system,id);
  const background=a.splash?' style="--nlh-stage-bg:url(\''+a.splash+'\')"':'';
- const isArmy=system==='troops'||system==='commander'||system==='formation';
+ const isArmy=system==='troops'||system==='commander';
  const unit=p2Unit(id,'p',0,Math.max(1,Math.min(28,nlhStage()+1)));
  const image=a.character||a.portrait||a.splash;
- const picture=isArmy?'<canvas class="nlh-stage-troop" width="480" height="370" data-premium-troop="'+hsEsc(unit?.troop||h.type||'infantry')+'" data-premium-branch="'+hsEsc(unit?.branch||'')+'" role="img" aria-label="Đội quân của '+hsEsc(h.name)+'"></canvas>':image?'<img class="nlh-stage-character" src="'+image+'" alt="'+hsEsc(h.name)+'">':'';
+ const icons=window.__NL_PREMIUM_ICONS__||{},sealIcon=system==='inheritance'?icons.seal?.[name]:null;
+ const formation=system==='formation'?'<div class="nlh-preview-formation">'+game.slots.map((heroId,i)=>{const p=heroId&&nlhArt(heroId)?.portrait;return '<div class="nlh-preview-slot '+(heroId?'filled':'')+'">'+(p?'<img src="'+p+'" alt="'+hsEsc(nlhHero(heroId).name)+'">':heroId?hsEsc(nlhHero(heroId).name):'')+'</div>';}).join('')+'</div>':'';
+ const picture=formation||(sealIcon?'<img class="nlh-stage-relic" src="'+sealIcon+'" alt="'+hsEsc(name)+'">':isArmy?'<canvas class="nlh-stage-troop" width="480" height="370" data-premium-troop="'+hsEsc(unit?.troop||h.type||'infantry')+'" data-premium-branch="'+hsEsc(unit?.branch||'')+'" role="img" aria-label="Đội quân của '+hsEsc(h.name)+'"></canvas>':image?'<img class="nlh-stage-character" src="'+image+'" alt="'+hsEsc(h.name)+'">':'');
  const detail=system==='formation'?game.slots.filter(Boolean).length+'/5 võ tướng':system==='troops'?'Bậc '+troop.tier:system==='recruit'?game.roster.length+' võ tướng':system==='equipment'?Object.values(game.gear?.[id]||{}).filter(Boolean).length+'/7 vị trí':'Cấp '+level;
  return '<div class="nlh-showcase" data-premium-stage="'+system+'"'+background+'><div class="nlh-stage-glow"></div>'+picture+'<div class="nlh-stage-heading"><small>'+hsEsc(subtitles[system]||SYS[system]?.label||'Phát triển')+'</small><h2>'+hsEsc(name)+'</h2><span>'+hsEsc(h.name)+' · '+hsEsc(detail)+'</span></div><span class="nlh-stage-mark">'+nlhGlyph(system)+'</span></div>';
 }
@@ -441,7 +444,7 @@ function nlhSystemBody(system,id){
  return '<div class="nlh-section-head"><span>Huấn Luyện · '+hsEsc(h.name)+'</span><span class="nlh-status">Cấp '+d.level+'/'+q.cap+'</span></div><h3 class="nlh-section-title">Tu luyện kinh nghiệm</h3>'+nlhProgress(xp,need,d.level>=q.cap?'Đã đạt giới hạn':'Kinh nghiệm tới cấp '+(d.level+1),d.level>=q.cap?100:xp/need*100)+'<p class="nlh-copy">Mỗi lượt +'+q.xp+' XP · '+hsEsc(nlhCostText(q.cost,{}))+' · tự dừng khi đủ cấp hoặc thiếu tài nguyên.</p><div class="nlh-action-row">'+controls+'</div><p class="nlh-source-note">Đột phá và chuyển sinh tại Dưỡng tướng trong Thành trì để nâng giới hạn. Sử dụng chung hàm addExp và Save v5; thông số SIMULATED.</p><button class="nlh-button secondary" data-tab="city">Mở Thành trì</button>';
  }
  if(system==='troops'){const troop=nlhCurrentTroop(id);return '<div class="nlh-section-head"><span>Binh Chủng · '+hsEsc(h.name)+'</span><span class="nlh-status">Bậc '+troop.tier+'</span></div><h3 class="nlh-section-title">'+hsEsc(troop.name)+'</h3><p class="nlh-copy">'+hsEsc(troop.description||'')+' · '+hsEsc(troop.kind)+'. Một võ tướng vẫn là một đơn vị logic; lính đi theo chỉ là sprite trình diễn.</p><div class="nlh-facts"><div class="nlh-fact"><small>CẤP DOANH TRẠI</small><b>'+nlhFmt(game.buildings?.barracks||1)+'</b></div><div class="nlh-fact"><small>QUÂN SỐ TƯỚNG</small><b>'+nlhFmt(d.troops)+'</b></div></div><p class="nlh-copy">Kho tham chiếu: 55 quân chủng Ngọa Long WEB; 25 ID và 18 nhánh tiến hóa của dự án. Hệ số chiến đấu chưa xác minh đều gắn SIMULATED.</p><button class="nlh-button" data-tab="barracks">Mở Doanh Trại · chọn quân chủng</button>';}
- if(system==='commander')return '<div class="nlh-section-head"><span>Chỉ huy cá nhân · mô phỏng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div>'+nlhQuotePanel(system,id,dev.commanderLevel,skill.maxLevel,'Mỗi cấp: +1,2% Công/Thủ và +1 Tốc. SIMULATED.')+'<p class="nlh-source-note">Cần vượt 6 ải, Binh Thư Thống Soái và tài nguyên. Hệ này là thiết kế mới của dự án, không gán cho nguồn chính thức.</p>';
+ if(system==='commander')return (typeof window.__NL_PREMIUM_ELITE_VIEW__==='function'?window.__NL_PREMIUM_ELITE_VIEW__():'')+'<div class="nlh-section-head"><span>Chỉ huy cá nhân · mô phỏng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div>'+nlhQuotePanel(system,id,dev.commanderLevel,skill.maxLevel,'Mỗi cấp: +1,2% Công/Thủ và +1 Tốc. SIMULATED.')+'<p class="nlh-source-note">Cần vượt 6 ải, Binh Thư Thống Soái và tài nguyên. Hệ này là thiết kế mới của dự án, không gán cho nguồn chính thức.</p>';
  if(system==='specialWeapon'&&nlhSourceWeapon(id))return nlhSourcePanel(id,'weapon');
  if(system==='specialWeapon')return '<div class="nlh-section-head"><span>Vũ Khí Đặc Biệt · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div><h3 class="nlh-section-title">'+hsEsc(({guan:'Thanh Long Yển Nguyệt Đao',zhao:'Long Đảm Lượng Ngân Thương',zhang:'Trượng Bát Xà Mâu',cao:'Ỷ Thiên Kiếm',liu:'Song Cổ Kiếm',lu:'Phương Thiên Họa Kích','wiki-mobile-hero-083':'Bạch Vũ Phiến'})[id]||'Bảo Binh Bản Mệnh')+'</h3><p class="nlh-copy">Vũ khí riêng gắn theo ID tướng, tăng Vật Công/Chiến Công/Mưu Công đồng thời. SIMULATED; không chiếm ô trang bị thường.</p>'+nlhQuotePanel(system,id,dev.weaponLevel,skill.maxLevel,'Mỗi cấp: +2,5% Công và hiệu lực Chiến/Mưu Công.')+'<p class="nlh-source-note">Mở sau ải 8; Tinh Thiết Đặc Vũ và phí nâng cấp đều là dữ liệu dự án.</p>';
  if(system==='inheritance'&&nlhSourceSeal(id)){
@@ -474,7 +477,7 @@ function nlhSystemBody(system,id){
 }
 function renderNlhHeroScreen(){
  const s=nlhsState(),heroId=nlhOwned(s.selectedHero)?s.selectedHero:(game.roster.find(nlhOwned)||'liu'),system=PICKABLE.includes(s.selectedSystem)?s.selectedSystem:'hero';
- return '<div class="nlh-root" data-nlh-screen="1" data-premium-system="'+system+'">'+nlhRoster(heroId)+'<main class="nlh-main">'+nlhPremiumStage(system,heroId)+'<section class="nlh-main-body" data-nlh-system-body="'+system+'">'+nlhSystemBody(system,heroId)+nlhMaterialsBar()+'</section></main>'+nlhSystemMenu(system,heroId)+'</div>';
+ return '<div class="nlh-root" data-nlh-screen="1" data-premium-system="'+system+'">'+nlhRoster(heroId)+'<main class="nlh-main">'+nlhPremiumStage(system,heroId)+'<div class="nlh-detail"><section class="nlh-main-body" data-nlh-system-body="'+system+'">'+nlhSystemBody(system,heroId)+nlhMaterialsBar()+'</section><div class="nlh-detail-pager" aria-label="Trang chi tiết"><button data-nlh-page="prev" aria-label="Trang trước">‹</button><span></span><button data-nlh-page="next" aria-label="Trang sau">›</button></div></div></main>'+nlhSystemMenu(system,heroId)+'</div>';
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest?.('[data-nlh-action]');if(!b||b.disabled)return;const action=b.dataset.nlhAction;
@@ -498,6 +501,20 @@ document.addEventListener('click',e=>{
 });
 
 /* One battlefield, full viewport; reuse native buttons and replay state. */
+let detailKey='',detailScroll=0,detailPending=false;
+function bindPremiumDetail(){
+ detailPending=false;
+ const body=document.querySelector('.nlh-main-body'),pager=document.querySelector('.nlh-detail-pager');if(!body||!pager)return;
+ const key=(game.heroDevelopment?.selectedHero||'')+':'+body.dataset.nlhSystemBody;
+ if(key!==detailKey){detailKey=key;detailScroll=0;}
+ body.scrollTop=detailScroll;
+ const refresh=()=>{const total=Math.max(1,Math.ceil(body.scrollHeight/Math.max(1,body.clientHeight))),page=Math.min(total,1+Math.floor((body.scrollTop+2)/Math.max(1,body.clientHeight)));pager.hidden=total<=1;pager.querySelector('span').textContent='Trang '+page+'/'+total;pager.querySelector('[data-nlh-page="prev"]').disabled=body.scrollTop<=2;pager.querySelector('[data-nlh-page="next"]').disabled=body.scrollTop+body.clientHeight>=body.scrollHeight-3;};
+ if(!body.dataset.premiumPagerBound){body.dataset.premiumPagerBound='1';body.addEventListener('scroll',()=>{detailScroll=body.scrollTop;refresh()},{passive:true});}
+ refresh();
+}
+function schedulePremiumDetail(){if(detailPending)return;detailPending=true;requestAnimationFrame(bindPremiumDetail);}
+const premiumView=document.getElementById('view');if(premiumView){new MutationObserver(schedulePremiumDetail).observe(premiumView,{childList:true});window.addEventListener('resize',schedulePremiumDetail);schedulePremiumDetail();}
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlh-page]');if(!b||b.disabled)return;const body=b.closest('.nlh-detail')?.querySelector('.nlh-main-body');if(body){body.scrollTop+=(b.dataset.nlhPage==='next'?1:-1)*Math.max(1,body.clientHeight-24);detailScroll=body.scrollTop;schedulePremiumDetail();}});
 const premiumPriorBattleShell=renderBattleShell;
 renderBattleShell=function(){
  const out=premiumPriorBattleShell.apply(this,arguments);
