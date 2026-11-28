@@ -1,6 +1,6 @@
 """Project runtime projection from the pinned Mobile source shards. Never edits source."""
 from pathlib import Path
-import json, hashlib
+import json, hashlib, re, unicodedata
 
 def read(path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -51,8 +51,108 @@ def project_map(m,index):
     return {"id":m["id"],"name":m.get("name") or m["id"],"sourceLevel":m.get("mapLevel"),
             "gate":min(28,1+index*28//249),"npcs":rows}
 
+def project_mobile_map(m,index,legacy_map):
+    """Use current Vietnamese records; mark source-empty formations as projected."""
+    legacy_by_id={n["id"]:n for n in legacy_map["npcs"]}
+    source_rows=m["npcs"]
+    donor_candidates=[(i,n) for i,n in enumerate(source_rows) if n["units"]]
+    def legacy_units(n):
+        old=legacy_by_id.get(n["id"])
+        if not old:return []
+        roles=(("bộ","infantry"),("thương","spear"),("kỵ","cavalry"),("cung","archer"),("văn","strategist"),("mưu","strategist"))
+        result=[]
+        for x in old["units"]:
+            label=str(x[2]).casefold();role=next((r for word,r in roles if word in label),"support")
+            result.append({"slot":x[0],"name":x[1],"role":role,"skill":{"name":x[3]},
+                           "sourceHp":x[4],"level":x[5],"sourceTroopId":None,"sourceTroopType":x[2],
+                           "effects":[],"provenance":"SIMULATED_LEGACY_FORMATION"})
+        return result
+    def units_for(n,index):
+        if n["units"]:return n["units"],None,False
+        old_units=legacy_units(n)
+        if old_units:return old_units,n["id"],True
+        if not donor_candidates:return [],None,True
+        _,donor=min(donor_candidates,key=lambda pair:(abs(pair[0]-index),pair[0]))
+        return [{**u,"provenance":"SIMULATED_NEAREST_WIKI_FORMATION"} for u in donor["units"]],donor["id"],True
+    def source_summary(n):
+        src=n["source"]
+        return {k:src.get(k) for k in ("ident","type","level","troops","merit","power","fastAttack","qtyLimit","drops","souls","effects")}
+    rows=[]
+    for npc_index,n in enumerate(source_rows):
+        source_units,donor,incomplete=units_for(n,npc_index)
+        units=[]
+        for u in source_units:
+            source_hp=u.get("sourceHp")
+            default_troops=positive(n["source"].get("troops"),1)/max(1,len(source_units))
+            units.append({"slot":u["slot"],"name":u["name"],"role":u["role"],
+                          "skill":u.get("skill") or {"name":"Chiến pháp"},
+                          "troops":positive(source_hp,default_troops),
+                          "level":round(positive(u.get("level"),positive(n["source"].get("level"),1))),
+                          "sourceTroopId":u.get("sourceTroopId"),"sourceTroopType":u.get("sourceTroopType"),
+                          "sourceHp":source_hp,"sourceSkillName":(u.get("skill") or {}).get("name"),
+                          "effects":u.get("effects") or [],
+                          "sourceEffectsOwnerNpcId":n["id"] if not incomplete else donor,
+                          "provenance":u.get("provenance") or
+                            ("SIMULATED_DONOR_FORMATION" if incomplete else "SOURCE_EXACT_WITH_P2_ADAPTER")})
+        rows.append({"id":n["id"],"name":n["name"],"level":round(positive(n["source"].get("level"),1)),
+                     "boss":n["boss"],"kind":n["source"].get("type"),"units":units,
+                     "source":source_summary(n),"sourceUrl":n["sourceUrl"],"donor":donor,
+                     "sourceFormationIncomplete":incomplete,"sourceSkillLabels":True,
+                     "provenance":"CURRENT_VNG_MOBILE_SOURCE_P2_ADAPTER" if not incomplete else "SOURCE_RECORD_WITH_SIMULATED_FORMATION"})
+    return {"id":"wiki-map-"+m["sourceId"],"sourceId":m["sourceId"],"name":m["name"],"sourceLevel":m.get("mapLevel"),
+            "sourceUnlockLevel":m.get("unlockLevel"),"sourceSub":m.get("sub"),
+            "sourceHard":m.get("hard"),"sourceMain":m.get("isMain"),"sourceHidden":m.get("isHidden"),
+            "sourceRewards":m.get("battleRewards",[]),"sourceAchievementRewards":m.get("achievementRewards",[]),
+            "sourceBuffs":m.get("buffs",[]),"sourceUrl":m["sourceUrl"],
+            "gate":min(28,1+index*28//249),"gateProvenance":"SIMULATED_COMPRESSED_TO_NATIVE_28_STAGE_CAMPAIGN",
+            "npcs":rows}
+
+# Translate source targeting and effect intent to the existing P2 descriptor only.
+# Raw Mobile coefficients use a different scale; never apply them directly.
+def project_stage_skill(f):
+    label=f["skillName"]
+    operations=f.get("events") or f.get("operations") or []
+    damage=[e for e in operations if e.get("op")=="DAMAGE"]
+    heals=[e for e in operations if str(e.get("op","")).startswith("HEAL")]
+    primary=damage[0] if damage else {}
+    lane=(primary.get("lane") or f.get("lane") or "").upper()
+    kind="magic" if lane in ("STRATEGY","MAGIC","SUPPORT") else "tactic" if lane=="TACTIC" else "physical"
+    pattern={"ENEMY_COLUMN":"column","ENEMY_ROW":"row","ONE_ENEMY_BACK_ROW":"back","ALL_ENEMIES":"all"}.get(primary.get("target"),"single")
+    if heals and not damage:
+        pattern="heal";kind="magic"
+    elif pattern=="single" and positive(primary.get("hits"),1)>=2:
+        pattern="double"
+    base={"single":1.65,"double":.94,"row":1.04,"column":1.04,"back":1.48,"all":.78,"heal":1.15}[pattern]
+    d={"tag":label,"pattern":pattern,"kind":kind,"mult":base}
+    if pattern=="heal": d["healCount"]=3 if any(e.get("target")=="ALL_ALLIES" for e in heals) else 2
+    # Preserve representable intents, not unsupported conditional rates/secondary hits.
+    for e in operations:
+        op=e.get("op"); target=str(e.get("target",""));effect=str(e.get("effect","")).casefold()
+        if op=="MORALE" and isinstance(e.get("base"),(int,float)):
+            if e["base"]<0 and "ENEMY" in target:d["drainMorale"]=min(25,max(8,round(-e["base"]/4)))
+            elif e["base"]>0 and ("ALLY" in target or "ALLIES" in target):d["bonusMorale"]=min(18,max(5,round(e["base"]/5)))
+        if op=="DEFENSE_REDUCTION" and "ENEMY" in target:
+            d.setdefault("apply","break");d.setdefault("applyChance",.65)
+        if op=="STATUS":
+            if "ENEMY" in target:
+                status=next((v for k,v in [("thiêu","burn"),("hỏa","burn"),("ngủ","sleep"),("choáng","daze"),("hỗn loạn","daze"),("khóa vây","morale-seal"),("sợ hãi","fear")] if k in effect),None)
+                if status:
+                    d.setdefault("apply",status);d.setdefault("applyChance",min(.8,max(.15,(e.get("probabilityPct") or 50)/100)))
+            elif target=="SELF":
+                status=next((v for k,v in [("thiết bích","ironwall"),("hộ thuẫn","ward"),("thủ hộ","guard")] if k in effect),None)
+                if status:d.setdefault("applyAlly",status)
+    if pattern=="heal" and "bonusMorale" not in d:d["bonusMorale"]=6
+    return d
+
 def build(root):
     base=root/"data/ngoalong/modules"
+    from nl_mobile_seal_v2 import normalize as normalize_seal_v2
+    from nl_mobile_troops_v1 import normalize as normalize_mobile_troops
+    from nl_mobile_elite_v1 import normalize as normalize_mobile_elite
+    from nl_mobile_campaign_v1 import normalize as normalize_mobile_campaign
+    mobile_seals,_=normalize_seal_v2(root)
+    mobile_troops,_=normalize_mobile_troops()
+    mobile_elite,_=normalize_mobile_elite(root)
     folder=base/"campaign/source_shards"
     manifest=read(folder/"manifest.json")
     maps=[]; seen=set(); npc_ids=set()
@@ -64,9 +164,82 @@ def build(root):
             for n in m["npcs"]:
                 if n["id"] in npc_ids: raise ValueError("C duplicate NPC")
                 npc_ids.add(n["id"])
-    if len(maps)!=249 or len(npc_ids)!=4903 or seen!=set(manifest["mapLocator"]): raise ValueError("C source coverage drift")
+    if len(maps)!=249 or len(npc_ids)!=4903 or seen!=set(manifest["mapLocator"]): raise ValueError("C legacy Save crosswalk drift")
     maps.sort(key=lambda m:m["wikiMapId"])
-    projected=[project_map(m,i) for i,m in enumerate(maps)]
+    legacy_projected=[project_map(m,i) for i,m in enumerate(maps)]
+    mobile_campaign,_=normalize_mobile_campaign(root)
+    mobile_raw=root/"data/ngoalong/research/mobile_wiki_2026-11-26/full_public_raw"
+    mobile_manifest=read(mobile_raw/"capture_manifest.json")
+    mobile_file_hashes={row["file"]:row["sha256"] for row in mobile_manifest.get("files",[])}
+    buff_path=mobile_raw/"data/buff-page.json"
+    buff_hash=hashlib.sha256(buff_path.read_bytes()).hexdigest()
+    if mobile_file_hashes.get("data/buff-page.json")!=buff_hash:
+        raise ValueError("C mobile buff catalogue source hash mismatch")
+    def pinned_mobile(rel):
+        p=mobile_raw/rel
+        if not p.is_file() or mobile_file_hashes.get(rel)!=hashlib.sha256(p.read_bytes()).hexdigest():
+            raise ValueError("Mobile source hash mismatch: "+rel)
+        return read(p)
+    hero_mini=pinned_mobile("data/hero-mini.json")
+    mobile_tech=pinned_mobile("data/advtech-detail.json")
+    mobile_beauties=pinned_mobile("data/women-detail.json")
+    mobile_children=pinned_mobile("data/children-detail.json")
+    mobile_books=pinned_mobile("data/books-detail.json")
+    mobile_horses=pinned_mobile("data/horse-detail.json")
+    mobile_etch=pinned_mobile("data/khac-van-detail.json")
+    if len(mobile_books["books"])!=11 or len(mobile_horses["horses"])!=19 or len(mobile_etch["items"])!=129:
+        raise ValueError("Mobile book/horse/etch source coverage drift")
+    for book in mobile_books["books"]:
+        if len(book["grades"])!=5 or sum(g["frag"] for g in book["grades"])!=book["fragment"] or sum(g["exp"] for g in book["grades"])!=book["exp"]:
+            raise ValueError("Mobile book source totals mismatch")
+
+    if mobile_children.get("order")!=["xuatSu","thucTinh","renLuyen","chuChinh","giamQuoc"]:
+        raise ValueError("Mobile children stage order drift")
+    if len(mobile_beauties["beauties"])!=47 or any(len(b["growth"])!=221 for b in mobile_beauties["beauties"].values()):
+        raise ValueError("Mobile beauty growth coverage drift")
+    if any(len(t["exp"])!=221 or len(t["material"])!=221 for t in mobile_beauties["exp"].values()):
+        raise ValueError("Mobile beauty experience coverage drift")
+    if len(hero_mini)!=373 or len(mobile_tech["tech"])!=14 or any(
+        any(len(t[k])!=20 for k in ("effect","pointCost","tripodCost")) for t in mobile_tech["tech"]):
+        raise ValueError("Mobile hero index or technology coverage drift")
+    hero_details={}
+    hero_missing=[]
+    for ident,mini in hero_mini.items():
+        rel="data/hero/"+ident+".json"
+        if not (mobile_raw/rel).is_file():
+            hero_missing.append(ident)
+            continue
+        raw=pinned_mobile(rel)
+        if str(raw.get("id"))!=ident or raw.get("name")!=mini.get("n"):
+            hero_missing.append(ident)
+            continue
+        stages=[]
+        for stage in raw.get("viTiers") or []:
+            if not isinstance(stage,dict) or not isinstance(stage.get("q"),int):
+                continue
+            stages.append({k:stage.get(k) for k in ("q","qName","name","skill","access","cost","seals","weapons","kismets")})
+        hero_details[ident]={"id":ident,"name":mini["n"],"faction":mini.get("p"),
+                            "growth":raw.get("growth") or [],"units":raw.get("units") or [],
+                            "quality":raw.get("quality"),"stages":stages,
+                            "leadership":raw.get("leadership"),"war":raw.get("war"),"intellect":raw.get("intellect"),
+                            "skill":(raw.get("vi") or {}).get("skill") or {},"access":(raw.get("vi") or {}).get("access"),
+                            "qualityName":raw.get("qualityName"),
+                            "bonds":raw.get("bonds") or [],"seal":raw.get("seal"),"weapon":raw.get("weapon"),
+                            "sourceClassification":"SOURCE_EXACT"}
+    raw_buffs=read(buff_path)
+    if len(raw_buffs)!=320:
+        raise ValueError("C mobile buff catalogue coverage drift")
+    mobile_buffs={str(key):{k:v for k,v in row.items() if k!="icon"}
+                  for key,row in raw_buffs.items()}
+    if len(mobile_campaign["maps"])!=len(legacy_projected): raise ValueError("C Mobile map coverage drift")
+    legacy_ids={m["id"]:{n["id"] for n in m["npcs"]} for m in legacy_projected}
+    legacy_by_map={m["id"]:m for m in legacy_projected}
+    projected=[project_mobile_map(m,i,legacy_by_map.get("wiki-map-"+m["sourceId"],{"npcs":[]}))
+               for i,m in enumerate(mobile_campaign["maps"])]
+    source_ids={m["id"]:{n["id"] for n in m["npcs"]} for m in projected}
+    if any(not ids.issubset(source_ids.get(mid,set())) for mid,ids in legacy_ids.items()):
+        raise ValueError("C Mobile campaign would drop existing Save NPC IDs")
+    if sum(len(m["npcs"]) for m in projected)!=5063: raise ValueError("C Mobile campaign NPC count drift")
     wiki=read(base/"heroes/wiki_catalogue_v1.json")["heroes"]
     alpha=read(root/"data/ngoalong/alpha_content.json")
     old=alpha["heroes"]["projectRoster"]; existing={h["id"] for h in alpha["heroes"]["hero207Roster"]}
@@ -83,10 +256,14 @@ def build(root):
         facts=handoff.get(h["id"],{}).get("stageSkills") or []
         dated=sorted([f for f in facts if f.get("skillName")],key=lambda f:str(f.get("sourceDate") or ""),reverse=True)
         if dated:
-            f=dated[0]; operations=f.get("events") or f.get("operations") or []
-            damage=next((e for e in operations if e.get("op")=="DAMAGE"),{})
-            awakenings[h["id"]]={"descriptor":authored_skill(f["skillName"],f.get("lane"),damage.get("target")),
-                                  "sourceDate":f.get("sourceDate"),"sourceUrl":f.get("sourceUrl"),"status":"DATED_MOBILE_LABEL_PROJECT_EFFECT"}
+            f=dated[0]
+            stages={}
+            for fact in dated:
+                stage=str(fact.get("stage") or "").upper()
+                if stage in ("ORANGE","GOLD","PURPLE") and stage not in stages:
+                    stages[stage]={"descriptor":project_stage_skill(fact),"sourceDate":fact.get("sourceDate"),"sourceUrl":fact.get("sourceUrl")}
+            awakenings[h["id"]]={"descriptor":project_stage_skill(f),"stages":stages,
+                                  "sourceDate":f.get("sourceDate"),"sourceUrl":f.get("sourceUrl"),"status":"DATED_MOBILE_INTENT_PROJECT_EFFECT"}
 
     if len(wiki)!=364 or len(existing)!=207: raise ValueError("C hero source drift")
     for index,h in enumerate(wiki):
@@ -111,14 +288,140 @@ def build(root):
         if source_skill:
             label=source_skill
             desc["tag"]=label
+        # Distinct tactical variants within the five archetypes, deterministic by ID.
+        variant=(digest>>16)%4
+        if kind=="infantry":
+            if variant==0:desc.update(apply="break",applyChance=.5)
+            elif variant==1:desc.update(applyAlly="guard")
+            elif variant==2:desc.update(pierce=.12)
+            else:desc.update(crit=.10)
+        elif kind=="cavalry":
+            if variant==0:desc.update(drainMorale=15)
+            elif variant==1:desc.update(pattern="single",mult=1.65,crit=.12)
+            elif variant==2:desc.update(apply="daze",applyChance=.25)
+            else:desc.update(pattern="double",mult=.88)
+        elif kind=="archer":
+            if variant==0:desc.update(crit=.15)
+            elif variant==1:desc.update(pierce=.15)
+            elif variant==2:desc.update(pattern="row",mult=.95)
+            else:desc.update(apply="break",applyChance=.35)
+        elif kind=="strategist":
+            if variant==0:desc.update(apply="burn",applyChance=.55)
+            elif variant==1:desc.update(pattern="single",mult=1.55,apply="sleep",applyChance=.35)
+            elif variant==2:desc.update(pattern="all",mult=.75)
+            else:desc.update(apply="morale-seal",applyChance=.45)
+        else:
+            if variant==0:desc.update(cleanseNegative=1)
+            elif variant==1:desc.update(applyAlly="ward")
+            elif variant==2:desc.update(healCount=3,mult=.98)
+            else:desc.update(bonusMorale=15)
         tower_gate=acquisition.get("minFloor") if acquisition.get("type")=="TRIAL_TOWER" else None
         if not isinstance(tower_gate,int) or not 1<=tower_gate<=100: tower_gate=None
         additions.append({"id":hid,"name":h["name"],"faction":h.get("faction"),"sourceGrade":h.get("indexGrade"),
                           "type":kind,"role":role,"rarity":"Danh tướng","icon":["🛡️","🐎","🏹","🪶","📜"][digest%5],
                           "lead":round(positive(attrs.get("leadership"),65+digest%25)),"atk":round(positive(attrs.get("martial"),48+digest%40)),"def":45+(digest>>4)%40,"int":round(positive(attrs.get("intelligence"),48+(digest>>8)%40)),"agi":45+(digest>>12)%35,
-                          "skill":label,"skillDesc":"Chiến pháp thiết kế mô phỏng: "+pattern,"descriptor":desc,
+                          "skill":label,"skillDesc":"Chiến pháp thiết kế mô phỏng: "+desc["pattern"],"descriptor":desc,
                           "gate":1+index%28,"silver":650+50*(index%28),"towerGate":tower_gate,"soulCost":max(100,round(positive(acquisition.get("soulCost"),1000)/10)) if tower_gate else 0,"classicReference":record.get("sourceUrl"),"provenance":"PROJECT_SIMULATED"})
         aliases[hid]=hid
     if len(aliases)!=364 or len(set(aliases.values()))!=364: raise ValueError("C hero alias collision")
-    return {"source":"MOBILE_INDEX_PROJECT_SIMULATED","maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},
-            "counts":{"maps":249,"npcs":4903,"wikiHeroes":364,"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}
+    # Strict identity bridge: exact name + faction, unique in both source and legacy Wiki.
+    # Do not auto-map by ordinal: source index now has 373 identities vs legacy 364.
+    source_names={}
+    for ident,row in hero_details.items():
+        key=(norm(row["name"]),norm(str(row.get("faction") or "")))
+        source_names.setdefault(key,[]).append(ident)
+    wiki_names={}
+    for h in wiki:
+        key=(norm(h["name"]),norm(str(h.get("faction") or "")))
+        wiki_names.setdefault(key,[]).append(h["id"])
+    source_hero_aliases={}
+    for key,ids in wiki_names.items():
+        matches=source_names.get(key,[])
+        if len(ids)==1 and len(matches)==1:
+            source_hero_aliases[aliases[ids[0]]]=matches[0]
+    for runtime_id,source_id,expected_name in (("liu","3834","Lưu Bị"),("sunquan","3835","Tôn Quyền"),("cao","3836","Tào Tháo")):
+        if source_id in hero_details and hero_details[source_id]["name"]==expected_name and any(
+            h["id"]==runtime_id and h["name"]==expected_name for h in old):
+            source_hero_aliases[runtime_id]=source_id
+    # The public hero-mini feed contains six additional identities beyond the
+    # 364-entry Wiki index. Keep their exact source facts and add playable rows;
+    # recruitment gates and P2 skill scaling are explicitly project adapters.
+    source_alias_ids=set(source_hero_aliases.values())
+    extras=sorted(set(hero_details)-source_alias_ids)
+    expected_extras={"3488","3531","3972","3973","3974","3975"}
+    if set(extras)!=expected_extras:
+        raise ValueError("Mobile extra hero identity drift: "+str(extras))
+    role_labels={"infantry":"Bộ binh","cavalry":"Kỵ binh","archer":"Cung binh",
+                 "strategist":"Mưu sĩ","support":"Hỗ trợ"}
+    for idx,source_id in enumerate(extras):
+        raw=hero_details[source_id];skill=raw.get("skill") or {};skill_name=skill.get("name") or raw["name"]
+        skill_desc=str(skill.get("desc") or "")
+        folded=unicodedata.normalize("NFD",skill_desc).casefold()
+        folded="".join(ch for ch in folded if unicodedata.category(ch)!="Mn").replace("đ","d")
+        units=" ".join(str(x) for x in raw.get("units") or [])
+        if "ho tro" in folded or "toan phe ta" in folded and ("tri lieu" in folded or "hoi" in folded):
+            kind="support"
+        elif "ke sach" in folded or "c.phap" in folded or "muu cong" in folded:
+            kind="strategist"
+        elif "骑兵" in units or "kỵ" in units.casefold():
+            kind="cavalry"
+        elif "弓兵" in units or "cung" in units.casefold():
+            kind="archer"
+        else:
+            kind="infantry"
+        if "tri lieu" in folded or "hoi phuc" in folded and "phe ta" in folded:
+            pattern,combat_kind,mult="heal","magic",0.25
+        elif "hang doc" in folded:
+            pattern,combat_kind="column","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.4,max(.75,float(pct.group(1).replace(",","."))/100)) if pct else 1.25
+        elif "hang ngang" in folded:
+            pattern,combat_kind="row","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.4,max(.75,float(pct.group(1).replace(",","."))/100)) if pct else 1.25
+        elif "toan phe dich" in folded or "toan bo phe dich" in folded:
+            pattern,combat_kind="all","magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(1.5,max(.55,float(pct.group(1).replace(",","."))/100)) if pct else .85
+        else:
+            pattern="single"
+            combat_kind="magic" if "muu cong" in folded else "tactic" if "phap cong" in folded or "c.phap" in folded else "physical"
+            pct=re.search(r"(\d+(?:[.,]\d+)?)%",skill_desc)
+            mult=min(2.0,max(.8,float(pct.group(1).replace(",","."))/100)) if pct else 1.3
+        hid="mobile-vng-hero-"+source_id
+        stats={"lead":raw.get("leadership"),"war":raw.get("war"),"intellect":raw.get("intellect")}
+        if not all(isinstance(stats[k],(int,float)) for k in stats):
+            raise ValueError("Mobile extra hero source stats missing: "+source_id)
+        rarity=raw.get("qualityName") or "Danh tướng"
+        icon={"infantry":"🛡️","cavalry":"🐎","archer":"🏹","strategist":"📜","support":"✚"}[kind]
+        descriptor={"tag":skill_name,"pattern":pattern,"kind":combat_kind,"mult":mult}
+        if pattern=="heal":descriptor.update(healCount=5)
+        # Conditions/statuses in these long Mobile texts are kept verbatim in
+        # skillDesc; only this bounded P2 combat shape is simulated.
+        additions.append({"id":hid,"sourceHeroId":source_id,"name":raw["name"],"faction":raw.get("faction"),
+            "sourceGrade":rarity,"type":kind,"role":role_labels[kind],"rarity":rarity,"icon":icon,
+            "lead":round(stats["lead"]),"atk":round(stats["war"]),"int":round(stats["intellect"]),
+            "def":max(30,round(stats["lead"]*.45+stats["war"]*.12)),
+            "agi":max(30,round((stats["lead"]+stats["war"]+stats["intellect"])/7)),
+            "sourceStats":stats,"sourceSkillName":skill_name,"skill":skill_name,"skillDesc":skill_desc,
+            "descriptor":descriptor,"skillAdapterClassification":"SIMULATED_P2_SHAPE_SOURCE_TEXT_PRESERVED",
+            "mobileSourceTopQuality":raw.get("quality"),"gate":14+idx*2,"silver":2200+idx*300,
+            "towerGate":None,"soulCost":0,"provenance":"SOURCE_IDENTITY_WITH_SIMULATED_RECRUIT_AND_P2_ADAPTER",
+            "fieldProvenance":{"name":"SOURCE_EXACT","faction":"SOURCE_EXACT","skill":"SOURCE_EXACT",
+                "skillDesc":"SOURCE_EXACT","lead":"SOURCE_EXACT","atk":"SOURCE_EXACT","int":"SOURCE_EXACT",
+                "def":"SIMULATED_ADAPTER","agi":"SIMULATED_ADAPTER","gate":"SIMULATED_ADAPTER",
+                "silver":"SIMULATED_ADAPTER","descriptor":"SIMULATED_ADAPTER",
+                "sourceTopQuality":"SOURCE_EXACT","startingQuality":"SIMULATED_ACCESS_ADAPTER"}})
+        source_hero_aliases[hid]=source_id
+    if len(set(source_hero_aliases.values()))!=len(source_hero_aliases):
+        raise ValueError("Mobile hero alias collision")
+    return {"source":"CURRENT_VNG_MOBILE_WIKI_VIETNAMESE_WITH_PROJECT_P2_ADAPTER",
+            "mobileHeroSource":{"index":{k:{"name":v["n"],"faction":v.get("p")} for k,v in hero_mini.items()},
+                                "details":hero_details,"runtimeAliases":source_hero_aliases,"missing":hero_missing},
+            "mobileAdvancedTech":mobile_tech,
+            "mobileBeauties":mobile_beauties,
+            "mobileChildren":mobile_children,
+            "mobileBooks":mobile_books,"mobileHorses":mobile_horses,"mobileEtch":mobile_etch,
+            "sourceEdition":mobile_campaign["sourceEdition"],"maps":projected,"heroes":additions,"heroAliases":aliases,"awakeningSkills":{aliases[k]:v for k,v in awakenings.items()},"mobileSeals":mobile_seals,"mobileTroops":mobile_troops,"mobileElite":mobile_elite,
+            "mobileBuffCatalog":{"sourceEdition":mobile_campaign["sourceEdition"],"captureEdition":mobile_manifest["sourceEdition"],"sourcePath":"data/buff-page.json","sourceSha256":buff_hash,"records":mobile_buffs},
+            "counts":{"maps":249,"npcs":5063,"legacyNpcCount":4903,"wikiHeroes":364,"mobileHeroDetails":len(hero_mini),"mobileExtraRosterHeroes":len(extras),"mobileTroops":408,"mobileEliteForces":mobile_elite["forceCount"],"mobileEliteAppearances":mobile_elite["appearanceCount"],"mobileBuffs":len(mobile_buffs),"newHeroes":len(additions),"datedAwakenings":len(awakenings),"runtimeHeroes":14+207+len(additions)}}

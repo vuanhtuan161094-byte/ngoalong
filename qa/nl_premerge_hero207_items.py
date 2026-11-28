@@ -1,6 +1,7 @@
 """Pre-merge cross-module Chromium gate: newly recruited hero equips Group04 gear and survives Save v5."""
 from __future__ import annotations
 import json
+import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -18,15 +19,24 @@ def open_page(browser,stored=None,width=1280):
  page=browser.new_page(viewport={"width":width,"height":720 if width>600 else 844},device_scale_factor=1)
  page.on("pageerror",lambda error:errors.append(str(error)))
  payload={SAVE_KEY:stored} if stored else {}
- page.set_content(HTML.replace("<script>",STUB.replace("__NL_STORE__",json.dumps(payload,ensure_ascii=False))+"<script>",1),wait_until="domcontentloaded")
+ page.add_init_script(STUB.replace("__NL_STORE__",json.dumps(payload,ensure_ascii=False)).removeprefix("<script>").removesuffix("</script>"))
+ page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
  return page
 def state(page): return page.evaluate("window.__P2_QA__.getGame()")
+def visible_window(page,selector):
+ locator=page.locator(selector).first
+ chooser=page.locator("#nl-screen-select")
+ if chooser.count():
+  for index in range(chooser.locator("option").count()):
+   chooser.select_option(str(index));page.wait_for_timeout(60)
+   if locator.is_visible():return locator
+ return locator
 def run():
  with sync_playwright() as pw:
-  browser=pw.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+  browser=pw.chromium.launch(headless=True,executable_path=shutil.which("chromium"),args=["--no-sandbox","--disable-dev-shm-usage"])
   page=open_page(browser)
   checks_runtime=page.evaluate("()=>({hero:window.__NL_HERO207_QA__?.count,gear:window.__NL_ITEM_QA__?.getCounts(),v:window.__P2_QA__.getGame()?.version})")
-  check("both Heroes207 and Items modules coexist in same canonical HTML",checks_runtime.get("hero")==207 and checks_runtime.get("gear")=={"playable":411,"references":392} and checks_runtime.get("v")==5)
+  check("both Heroes207 and Items modules coexist in same canonical HTML",checks_runtime.get("hero")==207 and checks_runtime.get("gear",{}).get("playable")==810 and checks_runtime.get("gear",{}).get("mobilePlayable")==399 and checks_runtime.get("gear",{}).get("references")==392 and checks_runtime.get("v")==5)
   first=next((h for h in PACK["heroes"]["hero207Roster"] if PACK["heroes"]["hero207Unlocks"][h["id"]]["stage"]==1),None)
   check("first-stage recruit candidate is present",first is not None)
   if first is None:return 1
@@ -34,7 +44,8 @@ def run():
   game=state(page);game["silver"]=100000;game["iron"]=20000;game["cleared"]=[1]
   page.evaluate("g=>window.__P2_QA__.setGame(g)",game)
   page.locator('.nav[data-tab="heroes"]').click()
-  select=page.locator("[data-nl207-select]")
+  page.locator('.nlh-system-button[data-nlh-target="recruit"]').click()
+  select=visible_window(page,"[data-nl207-select]")
   check("candidate appears in real Heroes UI",select.count()==1 and key in select.locator("option").evaluate_all("(opts)=>opts.map(o=>o.value)"))
   select.select_option(key)
   before=state(page)
@@ -42,19 +53,19 @@ def run():
   hired=state(page)
   check("real Heroes UI recruits exactly one new hero and charges once",key in hired["roster"] and key not in before["roster"] and before["silver"]-hired["silver"]==PACK["heroes"]["hero207Unlocks"][key]["silverCost"])
   page.locator('.nav[data-tab="equipment"]').click()
-  owner=page.locator("[data-nli-hero]")
+  owner=visible_window(page,"[data-nli-hero]")
   check("new Hero207 is available in Group04 equipment owner selector",owner.count()==1 and key in owner.locator("option").evaluate_all("(opts)=>opts.map(o=>o.value)"))
   owner.select_option(key)
-  page.locator('[data-nli-shop="1"]').click()
-  buy=page.locator('[data-nli-action="buy"][data-item="mdt-equip02-1"]')
+  visible_window(page,'[data-nli-shop="1"]').click()
+  buy=visible_window(page,'[data-nli-action="buy"][data-item="mdt-equip02-1"]')
   check("new gear is listed and buyable for Hero207",buy.count()==1 and buy.is_enabled())
   buy.click()
   postbuy=state(page)
   bought=next((x for x in postbuy["items"] if x["base"]=="mdt-equip02-1"),None)
   check("new item purchased into the actual shared Save",bought is not None)
-  page.locator('[data-nli-shop="0"]').click()
+  visible_window(page,'[data-nli-shop="0"]').click()
   if bought:
-   eq=page.locator('[data-nli-action="equip"][data-uid="'+bought["uid"]+'"]')
+   eq=visible_window(page,'[data-nli-action="equip"][data-uid="'+bought["uid"]+'"]')
    check("new gear is selectable from shared warehouse",eq.count()==1)
    if eq.count()==1:eq.click()
   equipped=state(page)
@@ -64,7 +75,10 @@ def run():
   check("new hero equipment contributes positive live combat stats",bonus.get("weaponAtk",0)>0 and isinstance(unit,dict) and unit.get("id")==key)
   ledger=equipped["nlItemsV1"]
   check("item receipt ledger and recruited hero share Save-v5 state",ledger.get("actionNonce",0)>=2 and key in equipped["hero"] and equipped["version"]==5)
-  page.evaluate("window.__P2_QA__.getGame().cleared.includes(1)")
+  # The game passively produces resources while the browser gate is open.
+  # Freeze the clock in the persisted state so reload compares the same
+  # resource snapshot rather than racing the next production tick.
+  page.evaluate("""() => {const q=window.__P2_QA__,g=q.getGame();g.lastTick=Date.now()+86400000;q.setGame(g)}""")
   saved=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   reload=open_page(browser,saved)
   restored=state(reload)
@@ -72,9 +86,9 @@ def run():
   check("after reload, both modules can create combat unit and read bonuses",reload.evaluate("(id)=>window.__NL_HERO207_QA__.owned()===1 && window.__NL_ITEM_QA__.bonus(id).weaponAtk>0 && !!window.__NL_R03_QA__.unit(id,'p',2,1)",key))
   mobile=open_page(browser,saved,width=390)
   mobile.locator('.nav[data-tab="heroes"]').click()
-  hero_ui=mobile.locator("[data-nl-hero207]").count()==1
+  hero_ui=visible_window(mobile,"[data-nl-hero207]").count()==1
   mobile.locator('.nav[data-tab="equipment"]').click()
-  item_ui=mobile.locator("[data-nl-item-bridge]").count()==1
+  item_ui=visible_window(mobile,"[data-nl-item-bridge]").count()==1
   check("390px mobile can navigate both Heroes207 and Item shop",hero_ui and item_ui)
   check("390px shared UI has no horizontal overflow",mobile.evaluate("document.documentElement.scrollWidth <= innerWidth+2"))
   check("no Chromium JS exception while combining modules",not errors)

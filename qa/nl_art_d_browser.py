@@ -1,15 +1,32 @@
 """Focused visual layer contract, no simulated gameplay assertions."""
+import argparse
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import shutil
+from threading import Thread
+from urllib.parse import quote
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser(description="Offline visual layer coverage for a canonical or review HTML build.")
+parser.add_argument("--html",type=Path,default=root/"index.html")
+html_path=parser.parse_args().html.resolve()
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self,*_args):
+        pass
+
+server=ThreadingHTTPServer(("127.0.0.1",0),partial(QuietHandler,directory=str(html_path.parent)))
+Thread(target=server.serve_forever,daemon=True).start()
 with sync_playwright() as p:
-    browser=p.chromium.launch()
-    for width,height in [(1280,720),(390,844)]:
+    chromium=shutil.which("chromium")
+    browser=p.chromium.launch(headless=True,executable_path=chromium,args=["--no-sandbox","--disable-dev-shm-usage"] if chromium else [])
+    try:
+      for width,height in [(1280,720),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height})
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
-        page.add_init_script("window.__P2_ENABLE_QA__=true")
-        page.goto((root/"index.html").as_uri(),wait_until="domcontentloaded")
+        page.add_init_script("window.__P2_ENABLE_QA__=true;")
+        page.goto(f"http://127.0.0.1:{server.server_port}/{quote(html_path.name)}",wait_until="domcontentloaded",timeout=120000)
         page.wait_for_function("Boolean(window.__NL_ART_D_QA__)")
         result=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
@@ -22,7 +39,35 @@ with sync_playwright() as p:
         assert result["heroes"]>=368 and result["icons"]>=14 and result["distinct"] and result["offline"],result
         assert result["nav"]>=14 and result["city"]>0 and result["save"]==5,result
         page.locator('.nav[data-tab="heroes"]').click()
-        page.wait_for_function("document.querySelectorAll('[data-nla-hero] .nl-art-d-img').length>0")
+        page.wait_for_function("document.querySelector('.nlh-profile h2') && document.querySelector('.nlh-character-character')?.complete")
+        live_profile=page.evaluate("""() => ({
+          name:document.querySelector('.nlh-profile h2')?.textContent.trim()||'',
+          loaded:Boolean(document.querySelector('.nlh-character-character')?.naturalWidth>0),
+          stableIdControl:Boolean(document.querySelector('[data-nlh-action="hero"][data-nlh-hero="zhao"]')||document.querySelector('[data-nlh-action="hero"][data-nlh-hero="liu"]'))
+        })""")
+        assert live_profile["name"] and live_profile["loaded"] and live_profile["stableIdControl"],live_profile
+        hero_id="zhao" if page.locator('[data-nlh-action="hero"][data-nlh-hero="zhao"]').count() else "liu"
+        page.locator('[data-nlh-action="hero"][data-nlh-hero="'+hero_id+'"]').click()
+        page.locator('.nlh-art-tab[data-nlh-mode="portrait"]').click()
+        page.wait_for_function("document.querySelector('.nlh-character-portrait')?.complete&&document.querySelector('.nlh-character-portrait')?.naturalWidth>0")
+        zhao_portrait = page.evaluate("""id => {
+          const q=window.__NL_ART_D_QA__;
+          const image=document.querySelector('.nlh-character-portrait');
+          const source=q.portrait(id);
+          const imageSource=image?.src||'';
+          return {registered:Boolean(window.__NL_HERO_PORTRAIT__(id)),
+            sourceIsWebp:source.startsWith('data:image/webp;base64,'),
+            imageSourceIsV5:source===window.__NL_HERO_PORTRAIT__(id)&&imageSource===source,
+            title:image?.alt||'',loaded:Boolean(image?.complete&&image?.naturalWidth>0)};
+        }""",hero_id)
+        assert zhao_portrait["registered"] and zhao_portrait["sourceIsWebp"] \
+            and zhao_portrait["imageSourceIsV5"] and zhao_portrait["loaded"],zhao_portrait
+        wiki_portrait=page.evaluate("""() => {
+          const q=window.__NL_ART_D_QA__;
+          const source=q.portrait('wiki-mobile-hero-083');
+          return {registered:source===window.__NL_HERO_PORTRAIT__('wiki-mobile-hero-083'),sourceIsWebp:source.startsWith('data:image/webp;base64,'),sourceLength:source.length};
+        }""")
+        assert wiki_portrait["registered"] and wiki_portrait["sourceIsWebp"] and wiki_portrait["sourceLength"]>1000,wiki_portrait
         result3=page.evaluate("""() => {
           const q=window.__NL_ART_D_QA__;
           return {maps:q.mapCount(),architecture:q.architecture('hall','Thành Chính')!==q.architecture('tower','Tháp'),
@@ -37,9 +82,15 @@ with sync_playwright() as p:
         page.locator('.nav[data-tab="equipment"]').click()
         page.wait_for_function("document.querySelectorAll('.nli-slot .nl-art-d-img').length>0")
         page.locator('.nav[data-tab="barracks"]').click()
-        page.wait_for_function("document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0")
+        page.wait_for_function("""() => {
+          const source=window.__NL_ART_D2_QA__?.sourceAtlasCount()>0;
+          if(source)return Array.from(document.querySelectorAll('.nlw-unit .nlw-source-preview')).some(c=>c.width===100&&c.height===100&&c.dataset.sourceAtlas&&c.getContext('2d').getImageData(0,0,100,100).data.some((v,i)=>i%4===3&&v>30));
+          return document.querySelectorAll('.nlw-unit .nl-art-d-img').length>0;
+        }""",timeout=120000)
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
         assert not errors,errors
-        print("NL_ART_D/D3 PASS",width,result,result3)
+        print("NL_ART_D/D3 PASS",width,result,result3,zhao_portrait,wiki_portrait)
         page.close()
-    browser.close()
+    finally:
+      browser.close()
+      server.shutdown()

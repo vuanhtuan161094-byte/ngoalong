@@ -106,4 +106,25 @@ check('unknown facility, missing local materials, wrong item operation safely fa
  assert.equal(e.act(g,{kind:'operate',id:'nl_city_shop',operationId:'sell_parts',actionId:'bad3',now}).code,'INSUFFICIENT_RESOURCES_OR_OVERFLOW');
  assert.equal(g.nlCity.warehouse.parts,0);
 });
+check('operation preview equals actual settled reward even with revenue modifiers',()=>{
+ const all=[...c.buildings,...c.legacy.filter(b=>b.actions?.length)];
+ for(const b of all)for(const a of b.actions||[]){
+   const g=game(); for(const f of c.buildings)g.nlCity.levels[f.id]=Math.min(3,f.levelCap);
+   const now=1000000;
+   const v=e.view(g,now),row=[...v.buildings,...v.legacy].find(x=>x.id===b.id);
+   const preview=row.operations.find(x=>x.id===a.id);
+   const r=e.act(g,{kind:'operate',id:b.id,operationId:a.id,actionId:'v9-preview-'+b.id+'-'+a.id,now});
+   assert.equal(r.ok,true,b.id+' '+a.id);
+   assert.deepEqual(r.credit||r.job.reward,preview.reward);
+   if(r.job)assert.equal(r.job.finishAt-now,preview.durationSeconds*1000);
+ }
+});
+check('clock rollback cannot change the displayed tax quota',()=>{
+ const g=game(),now=86400000+1000000;g.nlCity.levels.nl_city_tax_office=1;
+ const r=e.act(g,{kind:'operate',id:'nl_city_tax_office',operationId:'tax',actionId:'v9-tax',now});
+ assert.equal(r.ok,true);
+ const a=e.view(g,now).buildings.find(b=>b.id==='nl_city_tax_office').operations.find(x=>x.id==='tax');
+ const b=e.view(g,now-86400000).buildings.find(b=>b.id==='nl_city_tax_office').operations.find(x=>x.id==='tax');
+ assert.equal(a.dailyUsed,1);assert.equal(b.dailyUsed,1);
+});
 console.log('NL CITY OPERATIONS '+tests+'/'+tests+' PASS; exercised '+levels+' paid level upgrades and '+operations+' operation variants');

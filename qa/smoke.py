@@ -1,6 +1,7 @@
 """Muu Dinh Tam Quoc P2 minimal real-browser gate for CI."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json, sys, os
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +15,7 @@ def main():
         page = browser.new_page(viewport={'width': 1280, 'height': 720})
         errors = []
         page.on('pageerror', lambda e: errors.append(str(e)))
-        page.set_content(HTML.replace('<script>', STUB + '<script>', 1), wait_until='domcontentloaded')
+        navigate_markup(page, HTML.replace('<script>', STUB + '<script>', 1), wait_until='domcontentloaded')
         def check(label, condition):
             checks.append({'name': label, 'pass': bool(condition)})
             print(('PASS' if condition else 'FAIL') + ' ' + label)

@@ -1,6 +1,7 @@
 """Focused real-Chromium Hero207 UI, campaign recruitment, combat registry, Save-v5 reload."""
 from __future__ import annotations
 import json
+import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -22,16 +23,17 @@ def open_page(browser,width=1280,stored=None):
  page=browser.new_page(viewport={"width":width,"height":720 if width>600 else 844},device_scale_factor=1)
  page.on("pageerror",lambda err:errors.append(str(err)))
  store={} if stored is None else {SAVE_KEY:stored}
- markup=HTML.replace("<script>",STUB.replace("__NL_STORE__",json.dumps(store,ensure_ascii=False))+"<script>",1)
- page.set_content(markup,wait_until="domcontentloaded")
+ page.add_init_script(STUB.replace("__NL_STORE__",json.dumps(store,ensure_ascii=False)).removeprefix("<script>").removesuffix("</script>"))
+ page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
  return page
 def main():
  with sync_playwright() as p:
-  browser=p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+  browser=p.chromium.launch(headless=True,executable_path=shutil.which("chromium"),args=["--no-sandbox","--disable-dev-shm-usage"])
   page=open_page(browser)
   check("Hero207 module loaded from the generated single-file index",page.evaluate("Boolean(window.__NL_HERO207_QA__) && window.__NL_HERO207_QA__.count===207"))
   check("preserved 14 old roster identities",page.evaluate("window.__NL_HERO207_QA__.originalHeroesRemainUntouched && window.__NL_R03_QA__.catalog.heroes.length===14"))
   page.locator('.nav[data-tab="heroes"]').click()
+  page.locator('.nlh-system-button[data-nlh-target="recruit"]').click()
   check("Heroes view contains an actual 207 candidate selection panel",page.locator('[data-nl-hero207]').count()==1)
   original=page.evaluate("window.__P2_QA__.getGame()")
   check("new heroes not auto-recruited on new save",page.evaluate("window.__NL_HERO207_QA__.owned()") == 0)
@@ -46,6 +48,7 @@ def main():
   original["silver"]=50000
   page.evaluate("(g)=>window.__P2_QA__.setGame(g)",original)
   page.locator('.nav[data-tab="heroes"]').click()
+  page.locator('.nlh-system-button[data-nlh-target="recruit"]').click()
   check("after clearing stage 1, live UI lists recruit candidates",page.locator('[data-nl207-select]').count()==1)
   gate=PACK["heroes"]["hero207Unlocks"][key]
   before=page.evaluate("window.__P2_QA__.getGame()")
@@ -60,6 +63,12 @@ def main():
   check("recruited general builds into actual PvE combat unit",isinstance(binding.get("unit"),dict) and binding["unit"].get("id")==key)
   stored=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   check("Save v5 writes a persisted post-recruit state",isinstance(stored,str) and len(stored)>100 and '"version":5' in stored)
+  # Freeze passive production so this assertion checks Save persistence, not
+  # silver accrued while the large offline bundle is reloaded in Chromium.
+  frozen=page.evaluate("window.__P2_QA__.getGame()")
+  frozen["lastTick"]=page.evaluate("Date.now()+86400000")
+  page.evaluate("(g)=>{window.__P2_QA__.setGame(g);localStorage.setItem('muu_dinh_tam_quoc_v1',JSON.stringify(window.__P2_QA__.getGame()));}",frozen)
+  stored=page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
   reloaded=open_page(browser,1280,stored)
   fresh=reloaded.evaluate("window.__P2_QA__.getGame()")
   check("browser reload preserves recruited hero + silver",key in fresh["roster"] and fresh["silver"]==after["silver"])
@@ -67,6 +76,7 @@ def main():
   page.screenshot(path=str(ROOT/"qa/nl-heroes207-desktop.png"),full_page=False)
   mobile=open_page(browser,390,stored)
   mobile.locator('.nav[data-tab="heroes"]').click()
+  mobile.locator('.nlh-system-button[data-nlh-target="recruit"]').click()
   check("mobile 390px Heroes panel renders without horizontal overflow",mobile.locator('[data-nl-hero207]').count()==1 and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 4"))
   mobile.screenshot(path=str(ROOT/"qa/nl-heroes207-mobile.png"),full_page=False)
   check("no browser JavaScript exceptions on desktop/mobile/Save reload",not errors)

@@ -1,0 +1,73 @@
+# Mưu Định Tam Quốc — Product Authority
+
+**Effective:** 2026-11-25
+**Release state:** NOT COMPLETE. This file is the single current authority for product direction and implementation. Historical plans and research snapshots remain available, but do not override it.
+
+## Official project and review boundary
+
+- Repository: [`vuanhtuan161094-byte/ngoalong`](https://github.com/vuanhtuan161094-byte/ngoalong), remote `https://github.com/vuanhtuan161094-byte/ngoalong.git`.
+- Base: `main` at `58a11806dd5eb0267244407b7808fe7848406808`.
+- Delivery branch: `feature/ngoalong-v1-complete`; HEAD at the start of the Mobile-authority recovery batch: `4b3909ea6eb164f7ab4064844ba841f850a73186`. The current implementation checkpoint and exact-SHA Actions status are recorded in [`CURRENT_CHECKPOINT.md`](CURRENT_CHECKPOINT.md).
+- Delivery: existing Draft PR #1. Continue on this branch; do not merge, force-push, or create a parallel game or delivery PR.
+- Work only in this repository. Preserve existing uncommitted evidence and generated artwork unless it is explicitly part of the current change.
+
+## Product direction
+
+**Ngọa Long Mobile VNG is the primary product benchmark.** Use the current Mobile/H5 game for screen flow, information density, touch interactions, progression-system discovery, and battlefield composition. Use official Mobile Wiki pages as the primary research source.
+
+Classic Ngọa Long WEB and Chinese builds are supplemental sources. Keep their versions distinct. A WEB or China rule only informs a Mobile-inspired feature when the evidence identifies the version and the adaptation is recorded. Unknown rates and closed formulas remain `UNKNOWN`; original implementation choices are `DERIVED` or `SIMULATED`.
+
+Mưu Định Tam Quốc remains an original, offline-first, single-player strategy game. It is not affiliated with VNG and must not copy proprietary art, code, interface assets, descriptions, audio, or undisclosed formulas. Networked activities are represented with clearly labelled local AI/simulation; the game must not pretend that offline agents are live players.
+
+## Runtime and data authority
+
+- One canonical, reproducible, offline `index.html`; no second game runtime.
+- One combat resolver, one reward/receipt authority, one Save implementation, and one replay path. Battlefield art, UI, and replay cannot create hits, damage, rewards, or receipts.
+- Preserve the 3×3 formation, maximum five generals per side, storage key `muu_dinh_tam_quoc_v1`, Save schema v5, stable hero/item/formation IDs, and existing migrations. New state is additive and migration-tested.
+- Runtime sources are structured data under `data/ngoalong/`, source modules under `tools/`, and original assets under `assets/ngoalong/`. Generator-owned HTML is never edited by hand.
+- Distinguish playable runtime records from research catalogues. The current Content C projection has 374 runtime hero identities, including all 373 pinned Mobile detail IDs (Wiki-index identities, three base-hero aliases, and six detail-only recruits); the separate visible roster catalogue has a different coverage count. Troop/campaign reference counts do not imply playable coverage.
+- Every imported or authored fact uses `VERIFIED`, `DERIVED`, `SIMULATED`, or `UNKNOWN` with source/version scope. Do not promote an estimate or project formula to an official Mobile rule.
+
+## Art direction
+
+**2026-11-27 owner decision: resume character art with V6, using one generated master per hero.** Gameplay remains the main production priority. Keep all approved V5 art unchanged. Generate one full-body 2:3 master for each new hero; derive a 1:1 portrait crop locally when the composition supports it; create a separate splash only when specifically useful. No individual approval loop.
+
+- Inherit Character Art V5: premium semi-realistic Asian fantasy game illustration with individualized identity, expression, hair, costume, and composition. Do not replace it with SVG portraits, emoji, chibi, or rough placeholder art.
+- Current production specification: clearly adult women age 18+ with mature adult features, varied faces, bold sensual fantasy/cosplay outfits, and relaxed editorial poses. Lingerie-inspired details, lace stockings, body chains, cutouts, and exposed shoulders, waist, abdomen, back, hips, cleavage, and upper thighs are allowed; opaque fabric must cover intimate areas. No nudity, exposed nipples/genitals, or explicit sexual activity. Preserve each hero's name, faction, signature motif, weapon, role, skills, and stable ID while feminizing the established V5 identity.
+- V6 rendering keeps the approved semi-realistic anime CG direction, healthy rosy skin with a subtle sheen, vivid expressive eyes, distinct facial structures, and varied poses and costume palettes. One 2:3 master is the only required generation per character. A portrait crop is a local derivative, not a second generation request; splash is optional.
+- Keep PNG masters, runtime WebP, exact prompt/provenance, dimensions, and hashes in the existing manifests. The current 36 integrated V5 IDs are `cao`, `liu`, `guan`, `zhang`, `zhao`, `zhuge`, `lu`, `sun`, `ma`, `wiki-mobile-hero-083`, `wiki-mobile-hero-026`, `huang`, `sunquan`, `zhou`, `dian`, `xun`, `wiki-mobile-hero-025`, `wiki-mobile-hero-027`, `wiki-mobile-hero-033`, `wiki-mobile-hero-164`, `wiki-mobile-hero-168`, `wiki-mobile-hero-292`, ART-B2's Thục IDs `wiki-mobile-hero-041`, `wiki-mobile-hero-042`, `wiki-mobile-hero-043`, `wiki-mobile-hero-045`, `wiki-mobile-hero-046`, `wiki-mobile-hero-047`, `wiki-mobile-hero-051`, `wiki-mobile-hero-053`, `wiki-mobile-hero-056`, `wiki-mobile-hero-057`, `wiki-mobile-hero-058`, and `wiki-mobile-hero-060`, plus ART-B3A's Ngụy IDs `wiki-mobile-hero-001` and `wiki-mobile-hero-002`.
+- Mã Siêu (`ma`) has an integrated V5 r3 portrait/character/splash trio with clearly visible sheer chiffon over opaque satin lining, a relaxed editorial pose, and consistent face/identity cues. Prompt and checksum provenance are complete; internal visual/file QC passed; owner art acceptance remains pending.
+- The original `female-huang-zhong-v5-portrait.png` preview remains preserved; ART-B1 uses separately named `female-huang-zhong-b1-v5-*` files for the integrated trio under stable ID `huang`.
+- ART-B2 adds complete, stable-ID portrait/character/splash art for 12 adult Thục identities. Keep the trio face-consistent, with varied court/fashion poses and opaque coverage under sheer fabric; owner review is tracked separately from internal QC.
+- ART-B3A adds complete trios for adult Bàng Đức (35) and Chân Cơ (31). Ten additional Ngụy full-body masters and two secondary images remain staged after ImageGen returned HTTP 429; the batch report distinguishes those partial assets from the integrated trios.
+- Static character art is not troop animation. Sprite frames, VFX, audio, buildings, maps, and item icons each need their own source and runtime evidence.
+
+## Canonical build and review
+
+Run from the repository root, in order:
+
+```bash
+python tools/validate_ngoalong_data.py
+python tools/build_ngoa_long_mode.py
+python tools/build_ngoa_long_r03.py
+python tools/build_ngoa_long_r04.py
+python tools/build_ngoa_long_items_v1.py
+python tools/build_ngoa_long_items_v1.py --check
+python tools/build_ngoa_long_mode.py --check
+python tools/build_ngoa_long_r03.py --check
+python tools/build_ngoa_long_r04.py --check
+```
+
+Focused browser QA must use the actual generated HTML and visible semantic screen. Preserve existing regression assertions. Hosted Actions count only for their exact SHA. Automated checks do not substitute for device play or owner acceptance. GitHub Pages is not enabled; use the workflow artifact for a playable build until repository settings change.
+
+## Completion criteria
+
+V1.0 remains **NOT COMPLETE** until the user-defined Mobile feature inventory has no unimplemented release-critical path; the opening-to-endgame loop, Save/migration, combat, city, heroes, troops, formations, gear, campaign, and intended offline advanced systems work together; main screens use integrated production art; core troops have event-synchronized sprite animation/VFX; the game builds and plays offline; exact-SHA checks pass; and device/owner acceptance is recorded separately. Research records, mock screens, static posters, asset counts, and green partial test suites do not satisfy these gates.
+
+## Approved decisions
+
+1. Mobile VNG is the primary benchmark; classic WEB and China are supplementary, version-scoped references.
+2. Keep one original offline-first game and one canonical HTML build; preserve the single combat/reward/Save authorities.
+3. Keep Save key/schema and stable IDs compatible unless a reviewed additive migration is required.
+4. Continue PR #1 on `feature/ngoalong-v1-complete`; never merge without the owner's separate instruction.
+5. Keep generated/reference assets traceable and do not claim completion from a prompt, data row, test count, or screenshot alone.

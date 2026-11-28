@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture 14 Muu Dinh Tam Quoc UI V2 views in an authorized Playwright Chromium.
+"""Capture 15 Muu Dinh Tam Quoc UI V2 views in an authorized Playwright Chromium.
 
 Does not modify the HTML, game state, credentials, or browser policies.
 Run where local URLs are permitted (for example, a standard GitHub Actions runner).
@@ -51,13 +51,13 @@ def main() -> int:
                     page_errors = []
                     page.on("pageerror", lambda err: page_errors.append(str(err)))
                     try:
-                        page.goto(url, wait_until="domcontentloaded", timeout=20000)
+                        page.goto(url, wait_until="domcontentloaded", timeout=180000)
                         page.wait_for_timeout(500)
                         tabs = page.locator('.nav[data-tab]').evaluate_all(
                             '(els) => els.map(x=>({id:x.dataset.tab,label:(x.textContent||"").trim()}))'
                         )
-                        if not tabs:
-                            results["errors"].append(f"{width}x{height}: no tabs found")
+                        if len(tabs) != 15:
+                            results["errors"].append(f"{width}x{height}: expected 15 navigation tabs, found {len(tabs)}")
                         for tab in tabs:
                             button = page.locator(f'.nav[data-tab="{tab["id"]}"]')
                             button.click(timeout=5000)
@@ -68,6 +68,32 @@ def main() -> int:
                                 docW: document.documentElement.scrollWidth,
                                 innerW: window.innerWidth,
                                 navCount: document.querySelectorAll('.nav[data-tab]').length,
+                                navCoverage: (() => {
+                                    const sidebar=document.querySelector('#app>.shell>.sidebar');
+                                    const box=sidebar.getBoundingClientRect();
+                                    const nav=Array.from(sidebar.querySelectorAll('.nav[data-tab]'));
+                                    const clipped=nav.filter(node=>{
+                                        const r=node.getBoundingClientRect();
+                                        return r.left<box.left-1||r.right>box.right+1||r.top<box.top-1||r.bottom>box.bottom+1;
+                                    }).map(node=>node.dataset.tab);
+                                    const textOverflow=nav.filter(node=>node.scrollWidth>node.clientWidth+1)
+                                        .map(node=>node.dataset.tab);
+                                    return {total:nav.length,clipped,textOverflow};
+                                })(),
+                                resourceCoverage: (() => {
+                                    const bar=document.querySelector('#app>.topbar');
+                                    const box=bar.getBoundingClientRect();
+                                    const items=Array.from(bar.querySelectorAll('.resources .res'));
+                                    const hidden=items.filter(node=>getComputedStyle(node).display==='none'||!node.getClientRects().length)
+                                        .map(node=>(node.innerText||'').trim());
+                                    const clipped=items.filter(node=>{
+                                        const r=node.getBoundingClientRect();
+                                        return r.left<box.left-1||r.right>box.right+1||r.top<box.top-1||r.bottom>box.bottom+1;
+                                    }).map(node=>(node.innerText||'').trim());
+                                    const textOverflow=items.filter(node=>node.scrollWidth>node.clientWidth+1)
+                                        .map(node=>(node.innerText||'').trim());
+                                    return {total:items.length,hidden,clipped,textOverflow};
+                                })(),
                                 pageCounter: document.querySelector('#nl-screen-count')?.textContent || '',
                                 contentLen: (document.querySelector('#view')?.innerText || '').length,
                                 active: document.querySelector('.nav.active[data-tab]')?.dataset.tab || '',
@@ -93,12 +119,53 @@ def main() -> int:
                             # QA must detect a blank screen and accidental document scroll, not only no JS exceptions.
                             if metrics["docW"] > width + 2 or metrics["bodyScroll"] > height + 2:
                                 results["errors"].append(f"{width}x{height}/{tab['id']}: document overflow: {metrics}")
+                            if (metrics["navCoverage"]["total"] != metrics["navCount"]
+                                    or metrics["navCoverage"]["clipped"]
+                                    or metrics["navCoverage"]["textOverflow"]):
+                                results["errors"].append(
+                                    f"{width}x{height}/{tab['id']}: navigation buttons are clipped or unreadable: "
+                                    f"{metrics['navCoverage']}")
+                            if (metrics["resourceCoverage"]["total"] != 8
+                                    or metrics["resourceCoverage"]["hidden"]
+                                    or metrics["resourceCoverage"]["clipped"]
+                                    or metrics["resourceCoverage"]["textOverflow"]):
+                                results["errors"].append(
+                                    f"{width}x{height}/{tab['id']}: resource bar is clipped or unreadable: "
+                                    f"{metrics['resourceCoverage']}")
                             if metrics["active"] != tab["id"] or not metrics["screenControl"]:
                                 results["errors"].append(f"{width}x{height}/{tab['id']}: window navigation inactive: {metrics}")
                             if metrics["contentLen"] < 24 or metrics["visiblePaneCount"] < 1:
                                 results["errors"].append(f"{width}x{height}/{tab['id']}: screen appears blank: {metrics}")
                             if tab["id"] == "city" and not metrics["cityMapVisible"]:
                                 results["errors"].append(f"{width}x{height}/city: city map is not the initial visible window")
+                            if tab["id"] == "heroes" and width <= 650:
+                                hero_screen=page.evaluate("""() => {
+                                    const root=document.querySelector('#view .nlh-root');
+                                    const roster=root?.querySelector('.nlh-roster-grid');
+                                    const nav=root?.querySelectorAll('.nlh-system-button')||[];
+                                    const art=root?.querySelector('.nlh-character');
+                                    return {root:!!root,portraitCount:root?.querySelectorAll('.nlh-portrait-card').length||0,
+                                        rosterColumns:roster?getComputedStyle(roster).gridTemplateColumns:'',
+                                        systemCount:nav.length,artLoaded:!!art&&art.complete&&art.naturalWidth>0,
+                                        bodyScroll:document.documentElement.scrollHeight>innerHeight+2,
+                                        screenWidth:root?.scrollWidth,screenClientWidth:root?.clientWidth};
+                                }""")
+                                if (not hero_screen["root"] or hero_screen["portraitCount"] < 3
+                                        or hero_screen["systemCount"] != 12 or not hero_screen["artLoaded"]
+                                        or hero_screen["bodyScroll"] or hero_screen["screenWidth"] > hero_screen["screenClientWidth"]+2):
+                                    results["errors"].append(f"{width}x{height}/heroes: fixed-window hero layout failed: {hero_screen}")
+                                else:
+                                    page.locator('.nlh-system-button[data-nlh-target="recruit"]').click()
+                                    page.wait_for_timeout(100)
+                                    recruit_visible=page.locator('#view [data-nla-recruit-panel]').is_visible()
+                                    if not recruit_visible:
+                                        results["errors"].append(f"{width}x{height}/heroes: recruit flow missing from development rail")
+                                    page.locator('.nlh-system-button[data-nlh-target="hero"]').click()
+                                    results.setdefault("interactions", []).append({
+                                        "viewport": f"{width}x{height}",
+                                        "flow": "portrait grid -> development rail -> live recruitment -> hero profile",
+                                        "result": "PASS" if recruit_visible else "FAIL",
+                                    })
                             if tab["id"] == "formation" and width <= 650:
                                 if not metrics["formationBoardVisible"] or metrics["formationRosterVisible"]:
                                     results["errors"].append(f"{width}x{height}/formation: board/picker not separated on first window")
@@ -162,7 +229,8 @@ def main() -> int:
                                     if game.get("version") != 5 or game.get("slots", [None])[0] != hero_id:
                                         results["errors"].append("Mobile formation: hero slot was not saved under v5")
                                     else:
-                                        page.reload(wait_until="domcontentloaded")
+                                        page.reload(wait_until="domcontentloaded", timeout=180000)
+                                        page.wait_for_function("() => typeof window.__P2_QA__?.getGame === 'function' && !!document.querySelector('.nav[data-tab=formation]')", timeout=60000)
                                         page.locator('.nav[data-tab="formation"]').click()
                                         page.wait_for_timeout(150)
                                         # Visible game cards show a localized hero NAME, not the internal
@@ -207,7 +275,7 @@ def main() -> int:
         server.shutdown()
         server.server_close()
 
-    results["status"] = "PASS" if len(results["screens"]) >= 28 and not results["errors"] else "BLOCKED_OR_FAIL"
+    results["status"] = "PASS" if len(results["screens"]) == 30 and not results["errors"] else "BLOCKED_OR_FAIL"
     (args.out / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
     print("status:", results["status"], "screenshots:", len(results["screens"]))
     for e in results["errors"]:

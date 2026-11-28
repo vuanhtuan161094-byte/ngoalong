@@ -163,6 +163,7 @@ p2Unit=function(id,team,slot,stage){
  const unit=nlr03PriorUnit(id,team,slot,stage);
  if(team!=='p'||battle?.mode==='cltq')return unit;
  const branch=nlr03BranchFor(id);if(!branch)return unit;
+ const projectSkill=nlr03PriorSkill(unit);if(typeof projectSkill?.tag==='string')unit.skill=projectSkill.tag;
  if(branch.troop)unit.troop=branch.troop;
  if(branch.combatType)unit.type=branch.combatType;
  for(const [key,factor] of Object.entries(branch.stats||{}))if(Number.isFinite(unit[key]))unit[key]=Math.round(unit[key]*factor);

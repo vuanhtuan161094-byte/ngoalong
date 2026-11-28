@@ -1,4 +1,5 @@
 # Content C — full-source data projection, native P2 expansion (2026-11-24)
+> **Historical implementation snapshot.** The 249-map/NPC projection and 28-stage native binding are distinct coverage layers. Keep source provenance and simulated boundaries; Mobile-first continuation is tracked in [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md).
 
 Branch: feature/nl-web-review-20261122. Starting HEAD: 8b9f6b823fdd072dbbe9bd172d2aea41eb5f707a. No merge, no Codex Cloud, no alternate game.
 

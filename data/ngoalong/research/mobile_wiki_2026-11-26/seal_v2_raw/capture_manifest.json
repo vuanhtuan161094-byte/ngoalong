@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "retrievedDate": "2026-11-26",
+  "sourceEdition": "CURRENT_VNG_MOBILE",
+  "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/an-tran",
+  "clientBundle": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/ngoa-long-wiki.js",
+  "retrieval": "Public unauthenticated HTTPS GET; no private endpoint or authentication bypass. Page bundle taiTra() loads all 14 data JSON resources listed here; quan-an-detail.json is fetched by moQuanAn().",
+  "files": [
+    {
+      "file": "an-tran.html",
+      "url": "https://ngoalong.vnggames.com/ngoa-long-wiki/an-tran",
+      "bytes": 51403,
+      "sha256": "c767e1c4a355b48b2e9ac2d801c0e90da2e55ed617759d81381f95e07f6d4b94"
+    },
+    {
+      "file": "ngoa-long-wiki.js",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/ngoa-long-wiki.js",
+      "bytes": 285111,
+      "sha256": "1ae2aace7ec3655b79bbd9bfb2f9c7a92a151630b35c22208ad2d5f5ded068d6"
+    },
+    {
+      "file": "buff-map.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/buff-map.json",
+      "bytes": 96001,
+      "sha256": "4be9552771ec0ee975034b5cbbe30e1c8d4350ee5014615aba329b2a8ea2a0e0"
+    },
+    {
+      "file": "seal-map.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/seal-map.json",
+      "bytes": 147649,
+      "sha256": "8480c259182f0ecc72f4c3b5dda98bbb20f034937b1d431de1adabab087671bf"
+    },
+    {
+      "file": "thuong-dan-binh.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/thuong-dan-binh.json",
+      "bytes": 46332,
+      "sha256": "1093c68e0af0c1b10c8db2b5cadeed0dc5a44756a28535381494fe5dae182824"
+    },
+    {
+      "file": "nguyen-lieu.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/nguyen-lieu.json",
+      "bytes": 693,
+      "sha256": "39915b49b70e8323be11a607c9b40efd5a1446b41398967157f9c34e60c09146"
+    },
+    {
+      "file": "exp-nguyen-lieu.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/exp-nguyen-lieu.json",
+      "bytes": 291,
+      "sha256": "9c7213327d45be5f4b08fca1de6793a63e2e856f7219790b867c82072b9e6204"
+    },
+    {
+      "file": "chi-phi-toi-luyen.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/chi-phi-toi-luyen.json",
+      "bytes": 1115,
+      "sha256": "7b67face8d20e218b6a11c70ef66e00365d12509a6f4d0dfb29ae28d18f112c6"
+    },
+    {
+      "file": "kismet-map.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/kismet-map.json",
+      "bytes": 107431,
+      "sha256": "c3a74e851aaac9ec6510bcfdcabcd5750f103e8fa0371fd2ff72cb68c1fa0a57"
+    },
+    {
+      "file": "hero-mini.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/hero-mini.json",
+      "bytes": 35005,
+      "sha256": "dfbaf1367724866bba72f30c74f956a2e64c79795eb56fd2d703e4bb27776705"
+    },
+    {
+      "file": "buff-page.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/buff-page.json",
+      "bytes": 86868,
+      "sha256": "18c7f9d9c27172f2357898509f2afd1f2f5ccc3369d90c9f66d85c7c7e0557a5"
+    },
+    {
+      "file": "seal-buff.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/seal-buff.json",
+      "bytes": 7406,
+      "sha256": "eb7a5927cd47638f2ef81981df45bfd5bf2573996e3cae7c8d8817194d9ed2d5"
+    },
+    {
+      "file": "buff-thu-tu.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/buff-thu-tu.json",
+      "bytes": 1813,
+      "sha256": "1d0b6c8451c1afb21a638b6d256110974bf37173c56a6deaa9d4bfa31f96fdb2"
+    },
+    {
+      "file": "seal-detail.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/seal-detail.json",
+      "bytes": 147937,
+      "sha256": "90a4f34df2869bb00d9415f4d2a6e0d439d36a280320a0a7486874e65195ab33"
+    },
+    {
+      "file": "unit-detail.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/unit-detail.json",
+      "bytes": 210404,
+      "sha256": "4651f561e568627472608a60d84e0f0bbb79a424bf1171888699bbcc1761b906"
+    },
+    {
+      "file": "women-detail.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/women-detail.json",
+      "bytes": 80874,
+      "sha256": "3794ee5b4d7711187bdf88b6cc5e2ebfbc8ca8b34760fb540e7382830274bf87"
+    },
+    {
+      "file": "quan-an-detail.json",
+      "url": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "bytes": 57148,
+      "sha256": "d386472f03e4422c9213ef27ed8ce005383dfc99c486840ef376c1b7d24eb4f1"
+    }
+  ]
+}

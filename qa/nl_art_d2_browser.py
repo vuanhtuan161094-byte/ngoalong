@@ -26,6 +26,9 @@ with sync_playwright() as p:
           const dims=d.raster();result.originalRaster=dims.p41[0]===800&&dims.p41[1]===5184&&dims.p5[0]===400&&dims.p5[1]===2880;
           result.rasterPainted=m.raster>0&&m.raster+m.vector===m.soldiers;
           result.polishedVfx=m.polishFx>0;
+          result.squadLayout=d.layout('infantry','p').length===6&&d.layout('archer','p').length===6&&d.layout('cavalry','e').length===4;
+          result.mirrored=d.layout('spear','p').every(([x,y])=>d.layout('spear','e').some(([a,b])=>a===-x&&b===y));
+          result.advance=d.advance(0,'infantry','p')===0&&d.advance(430,'infantry','p')>0&&d.advance(430,'infantry','e')<0&&d.advance(1000,'infantry','p')===0&&d.advance(430,'archer','p')===0;
           result.vfx=m.fx>0;result.state=JSON.stringify(q.getGame())===saved&&b.p.length+b.e.length===count&&b.events.length===events;
           result.save=q.getGame().version===5;return {result,m,count,events};
         }""")

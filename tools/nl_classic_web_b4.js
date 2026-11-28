@@ -67,7 +67,7 @@ p2Unit=function(id,team,slot,stage){
    if(Number.isFinite(u[prop]))u[prop]=Math.max(1,Math.round(u[prop]*nlwB4Factor(prop,k[source],troop.tier)));
  }
  u.nlClassicWebUnit=troop.id;u.nlClassicWebName=troop.name;
- u.nlClassicWebAbility=troop.ability;u.nlClassicWebPattern=troop.skillPattern;
+ u.nlClassicWebAbility=troop.ability;u.nlClassicWebPattern=troop.skillPattern;u.nlClassicWebTier=troop.tier;
  u.troop=troop.ability==='drum'?'drum':troop.ability==='dancer'?'dancer':troop.family;
  u.type=troop.family==='spear'?'infantry':troop.family;
  if(troop.ability==='drum'||troop.ability==='dancer')u.type='support';
@@ -86,9 +86,10 @@ p2Skill=function(actor){
  const descriptor=nlwB4PriorSkill(actor);
  if(!actor||actor.team!=='p'||battle?.mode!=='campaign'||!descriptor)return descriptor;
  const kind=actor.nlClassicWebPattern;
- if(['row','column','back'].includes(kind)&&descriptor.pattern==='single')
-   return {...descriptor,pattern:kind,mult:descriptor.mult*.75};
- return descriptor;
+ let out={...descriptor};
+ if(['row','column','back'].includes(kind)&&out.pattern==='single'){out.pattern=kind;out.mult*=.75;}
+ if(actor.nlClassicWebAbility==='control'&&out.pattern!=='heal'&&!out.apply){out.apply='daze';out.applyChance=.18+.03*(actor.nlClassicWebTier||1);}
+ return out;
 };
 const nlwB4PriorHit=p2Hit;
 p2Hit=function(actor,target,kind,mult=1,opts={}){
@@ -96,23 +97,27 @@ p2Hit=function(actor,target,kind,mult=1,opts={}){
  if(actor.team==='p'&&actor.nlClassicWebAbility==='crit'&&['physical','tactic'].includes(kind))
    opts={...opts,crit:(opts.crit||0)+.045};
  if(target.team==='p'&&target.nlClassicWebAbility==='guard'&&kind==='physical')mult*=.93;
+ // Counter specialists exploit an existing matchup advantage; no extra hit or retaliation resolver.
+ if(actor.team==='p'&&actor.nlClassicWebAbility==='counter'&&typeof p3CounterFactor==='function'&&p3CounterFactor(actor.troop,target.troop)>1)mult*=1.12;
  return nlwB4PriorHit(actor,target,kind,mult,opts);
 };
 // Original 2D courtyard art: project-generated, NOT a source-game image.
 const NLW_B4_BACKGROUND=new Image();
 NLW_B4_BACKGROUND.src='data:image/webp;base64,__NL_B4_IMAGE_BASE64__';
+const NLW_B4_ALTERNATES=__NL_WLY2_BATTLE_ALTERNATES__.map(src=>{const im=new Image();im.src=src;return im;});
 const nlwB4PriorBackground=drawBackground;
 drawBackground=function(ctx,now){
  if(!NLW_B4_BACKGROUND.complete||NLW_B4_BACKGROUND.naturalWidth<1)
    return nlwB4PriorBackground(ctx,now);
- ctx.save();ctx.drawImage(NLW_B4_BACKGROUND,0,0,1056,480);
- ctx.fillStyle='rgba(3,21,23,.17)';ctx.fillRect(0,0,1056,480);
+ const backgrounds=[NLW_B4_BACKGROUND,...NLW_B4_ALTERNATES],stage=Number(battle?.stage?.id||battle?.stageId||battle?.stage||1)||1;
+ const bg=backgrounds[(Math.max(1,stage)-1)%backgrounds.length];const selected=bg.complete&&bg.naturalWidth?bg:NLW_B4_BACKGROUND;
+ ctx.save();ctx.drawImage(selected,0,0,1056,480);
+ ctx.fillStyle='rgba(8,17,24,.05)';ctx.fillRect(0,0,1056,480);
  let shade=ctx.createLinearGradient(0,0,0,125);shade.addColorStop(0,'rgba(4,17,19,.75)');shade.addColorStop(1,'rgba(4,17,19,0)');
  ctx.fillStyle=shade;ctx.fillRect(0,0,1056,125);
  ctx.textAlign='center';ctx.font='bold 17px Georgia';ctx.fillStyle='#f7e3ba';
  ctx.shadowColor='#132126';ctx.shadowBlur=5;
- ctx.fillText((NATIONS[game.nation]?.name||'ĐỒNG MINH').toUpperCase()+' QUÂN',190,43);
- ctx.fillText('QUÂN ĐỊCH',858,43);ctx.font='bold 27px Georgia';ctx.fillText('VS',526,51);
+ if(!document.querySelector('.nl-premium-versus')){ctx.fillText((NATIONS[game.nation]?.name||'ĐỒNG MINH').toUpperCase()+' QUÂN',190,43);ctx.fillText('QUÂN ĐỊCH',858,43);ctx.font='bold 27px Georgia';ctx.fillText('VS',526,51);}
  ctx.restore();
 };
 const nlwB4PriorDrawUnit=drawUnit;
@@ -157,14 +162,14 @@ function nlwB4Panel(){
      fee=nlwB4Cost(u.tier);
    return '<article class="nlw-unit" data-nlw-unit="'+esc(u.id)+'">'+nlwB4Glyph(u)+
    '<div class="nlw-txt"><b>'+esc(u.name)+'</b><small>'+esc(u.sourceName)+' · '+esc(u.familyName)+' · cấp '+u.tier+'</small>'+
-   '<small>'+esc(({drum:'Cổ vũ sĩ khí',dancer:'Nhiễu loạn sĩ khí',line:'Đòn lan tuyến',back:'Tập kích hậu quân',guard:'Chống đỡ',crit:'Đòn chí mạng',counter:'Phản kích',control:'Kiềm chế',standard:'Công thủ cân bằng'})[u.ability]||'Hỗ trợ')+'</small></div>'+
+   '<small>'+esc(({drum:'Cổ vũ sĩ khí',dancer:'Nhiễu loạn sĩ khí',line:'Đòn lan tuyến',back:'Tập kích hậu quân',guard:'Chống đỡ',crit:'Đòn chí mạng',counter:'Tăng 12% sát thương khi khắc chế',control:'Chiến pháp có xác suất choáng',standard:'Công thủ cân bằng'})[u.ability]||'Hỗ trợ')+'</small></div>'+
    '<button class="gold-button" data-nlw-choose="'+esc(u.id)+'" '+(!ready||owned?'disabled':'')+'>'+
      (owned?'Đang dùng':level<u.tier?'Doanh Trại '+u.tier:'Chọn'+(fee?' · '+fmt(fee)+' Bạc':''))+'</button></article>';
  }).join('')+'</div>'+(!shown.length?'<p class="tiny">Không có kết quả.</p>':'')+
  '<div class="nlw-page"><button class="dark-button" data-nlw-page="prev" '+(nlwB4Page===0?'disabled':'')+'>◀ Trước</button>'+
  '<span>Trang '+(nlwB4Page+1)+'/'+(pageMax+1)+' · '+list.length+' loại quân</span>'+
  '<button class="dark-button" data-nlw-page="next" '+(nlwB4Page>=pageMax?'disabled':'')+'>Sau ▶</button></div>'+
- '<p class="tiny">Khi chuyển quân, đội hình và quân số vẫn giữ nguyên; chỉ số, chức năng dòng quân được áp dụng trong P2 và không tính hai lần. Cấp Doanh Trại/phí chuyển do dự án mô phỏng.</p></section>';
+ '<p class="tiny">Khi chuyển quân, đội hình và quân số vẫn giữ nguyên; chỉ số, chức năng dòng quân được áp dụng trong P2 và không tính hai lần. Cấp Doanh Trại/phí chuyển và hiệu ứng chiến thuật do dự án mô phỏng.</p></section>';
 }
 const nlwB4PriorBarracks=renderBarracks;
 renderBarracks=function(){return nlwB4PriorBarracks()+nlwB4Panel();};

@@ -7,22 +7,37 @@ legacy regression, real device QA or publisher-source provenance.
 from __future__ import annotations
 
 import json
+import mmap
+import os
 from pathlib import Path
+import shutil
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from threading import Thread
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+HTML_PATH = ROOT / "index.html"
 SAVE_KEY = "muu_dinh_tam_quoc_v1"
-STUB = """<script>window.__P2_ENABLE_QA__=true;
+STUB = """window.__P2_ENABLE_QA__=true;
 const __nlStore=__NL_STORE__;
 Object.defineProperty(window,'localStorage',{configurable:true,value:{
 getItem:k=>Object.prototype.hasOwnProperty.call(__nlStore,k)?__nlStore[k]:null,
 setItem:(k,v)=>__nlStore[k]=String(v),
 removeItem:k=>delete __nlStore[k],
 clear:()=>Object.keys(__nlStore).forEach(k=>delete __nlStore[k])
-}});</script>"""
+}});"""
 checks: list[tuple[str,bool]] = []
 errors: list[str] = []
+
+
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self, *_args):
+        pass
+
+
+server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=str(ROOT)))
+Thread(target=server.serve_forever, daemon=True).start()
 
 
 def check(name: str, result: bool) -> None:
@@ -36,8 +51,9 @@ def open_page(browser, stored: str | None = None, width: int = 1280):
     page.on("pageerror", lambda error: errors.append(str(error)))
     script = STUB.replace("__NL_STORE__", json.dumps(
         {} if stored is None else {SAVE_KEY: stored}, ensure_ascii=False))
-    page.set_content(HTML.replace("<script>", script + "<script>", 1),
-                     wait_until="domcontentloaded")
+    page.add_init_script(script)
+    page.goto(f"http://127.0.0.1:{server.server_port}/index.html",
+              wait_until="domcontentloaded", timeout=120000)
     return page
 
 
@@ -45,28 +61,50 @@ def state(page):
     return page.evaluate("window.__P2_QA__.getGame()")
 
 
+def visible_window(page, selector):
+    elements = page.locator(selector)
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        options = chooser.locator("option")
+        for index in range(options.count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(80)
+            for element_index in range(elements.count()):
+                element = elements.nth(element_index)
+                if element.is_visible():
+                    return element
+    raise AssertionError(f"No visible pane contains {selector}")
+
+
 def main() -> None:
-    if "NL-ITEMS-INJECTED-BY-BUILDER" not in HTML:
-        raise RuntimeError("NL item integration block missing from built canonical HTML")
+    with HTML_PATH.open("rb") as html_file:
+        with mmap.mmap(html_file.fileno(), 0, access=mmap.ACCESS_READ) as content:
+            if content.find(b"NL-ITEMS-INJECTED-BY-BUILDER") < 0:
+                raise RuntimeError("NL item integration block missing from built canonical HTML")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
-            headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+            headless=True,
+            executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH") or shutil.which("chromium"),
+            args=["--no-sandbox", "--disable-dev-shm-usage"])
         page = open_page(browser)
         counts = page.evaluate("window.__NL_ITEM_QA__.getCounts()")
-        check("411 playable + 392 reference gear, single-file runtime", counts ==
-              {"playable": 411, "references": 392})
+        check("810 playable gear, with 399 Mobile and 392 reference gear",
+              counts.get("playable") == 810 and counts.get("projectPlayable") == 411 and
+              counts.get("mobilePlayable") == 399 and counts.get("sourceRouteGear") == 114 and
+              counts.get("fallbackRouteGear") == 285 and counts.get("references") == 392)
         original = state(page)
         check("Save schema v5 preserved and new item ledger exists",
               original["version"] == 5 and
               isinstance(original.get("nlItemsV1", {}).get("receipts"), dict))
         page.locator('.nav[data-tab="equipment"]').click()
+        visible_window(page, '[data-nl-item-bridge]')
         check("group 04 seven-slot equipment interface mounted",
               page.locator('[data-nl-item-bridge]').count() == 1 and
               page.locator('.nli-slot').count() == 7)
         check("legacy shop remains available for previous 19 project gear",
               page.locator('[data-buy]').count() == 19)
-        page.locator('[data-nli-shop="1"]').click()
-        purchase = page.locator('[data-nli-action="buy"][data-item="mdt-equip02-1"]')
+        visible_window(page, '[data-nli-shop="1"]').click()
+        purchase = visible_window(page, '[data-nli-action="buy"][data-item="mdt-equip02-1"]')
         check("new project equipment is purchasable from real game screen",
               purchase.count() == 1 and purchase.is_enabled())
         purchase.click()
@@ -76,7 +114,7 @@ def main() -> None:
               selected is not None and original["silver"] - bought["silver"] == 920+154*4 and
               original["grain"] - bought["grain"] == (154+1)//2 and
               original["iron"] == bought["iron"])
-        page.locator('[data-nli-shop="0"]').click()
+        visible_window(page, '[data-nli-shop="0"]').click()
         if selected:
             # Fail fast with a state/UI snapshot rather than waiting 30 seconds
             # for a locator that is absent after rerender.
@@ -91,7 +129,7 @@ def main() -> None:
                   .map(x=>x.outerHTML.slice(0,500))
               })""", selected["uid"])
             print("NL_ITEM_UI_AFTER_SHOP_SWITCH " + json.dumps(snap,ensure_ascii=False), flush=True)
-            target = page.locator('[data-nli-action="equip"][data-uid="' + selected["uid"] + '"]')
+            target = visible_window(page, '[data-nli-action="equip"][data-uid="' + selected["uid"] + '"]')
             check("newly bought item visible in real bag UI after shop switch",
                   target.count() == 1)
             if target.count() == 1:
@@ -105,7 +143,7 @@ def main() -> None:
               equipped["gear"][hero]["weapon"] == selected["uid"] and
               actual_bonus["weaponAtk"] == 8 and actual_bonus == legacy_qa_bonus)
         if selected:
-            page.locator('[data-nli-action="reinforce"][data-uid="' + selected["uid"] + '"]').click()
+            visible_window(page, '[data-nli-action="reinforce"][data-uid="' + selected["uid"] + '"]').click()
         enhanced = state(page)
         bonus_after = page.evaluate("h=>window.__NL_ITEM_QA__.bonus(h)", hero)
         check("enhance spends game resources and raises actual battle stats",
@@ -154,22 +192,22 @@ def main() -> None:
 
         mobile = open_page(browser, saved, width=390)
         mobile.locator('.nav[data-tab="equipment"]').click()
-        mobile.locator('[data-nli-shop="1"]').click()
-        check("mobile shop paginates 411 gear without rendering a huge list",
+        visible_window(mobile, '[data-nli-shop="1"]').click()
+        check("mobile shop paginates expanded gear without rendering a huge list",
               mobile.locator('[data-nli-action="buy"]').count() == 30 and
               mobile.locator('[data-nli-page="1"]').count() == 1)
-        mobile.locator('[data-nli-page="1"]').click()
+        visible_window(mobile, '[data-nli-page="1"]').click()
         check("mobile equipment next page navigates within current panel",
               'Trang 2/' in mobile.locator('.nli-pages').inner_text())
-        mobile.locator('[data-nli-search]').fill('Thanh Cương Kiếm')
+        visible_window(mobile, '[data-nli-search]').fill('Thanh Cương Kiếm')
         check("mobile equipment search filters the current shop",
               mobile.locator('.nli-gear').count() >= 1 and
               all('Thanh Cương Kiếm' in text for text in
                   mobile.locator('.nli-gear header strong').all_inner_texts()))
-        mobile.locator('[data-nli-shop="0"]').click()
-        mobile.locator('[data-nli-search]').fill('')
-        mobile.locator('[data-nli-item-mode="wiki"]').click()
-        mobile.locator('[data-nli-item-search]').fill('khong-co-san-pham-nay')
+        visible_window(mobile, '[data-nli-shop="0"]').click()
+        visible_window(mobile, '[data-nli-search]').fill('')
+        visible_window(mobile, '[data-nli-item-mode="wiki"]').click()
+        visible_window(mobile, '[data-nli-item-search]').fill('khong-co-san-pham-nay')
         check("mobile warehouse Wiki browser search remains read-only",
               mobile.locator('[data-nli-items-results="0"]').count() == 1 and
               mobile.locator('[data-nli-item-action]').count() == 0)

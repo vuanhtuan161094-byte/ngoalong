@@ -1,0 +1,3314 @@
+{
+  "schema": 1,
+  "created": "2026-11-27",
+  "status": "REFERENCE_ONLY",
+  "runtime_imported": false,
+  "version_match": "UNKNOWN",
+  "sources": [
+    {
+      "repo": "MatrixHan/-111111",
+      "ref": "2270db0984a6455cf3b0f33b553fb80d97d91da8",
+      "license": null,
+      "paths": [
+        "project_wly2_lua_client/res/animation/soldier",
+        "project_wly2_lua_client/res/animation/effect",
+        "project_wly2_lua_client/src/app/modules/battle",
+        "project_wly2_lua_client/src/app/modules/embattle",
+        "project_wly2_lua_client/res/map"
+      ],
+      "purpose": "version-scoped reference only"
+    },
+    {
+      "repo": "hackerlank/WolongYin",
+      "ref": "c4ed6fe1694a1ba1c8635197c06cc40be90216d2",
+      "license": "MIT (repository declaration; third-party assets not verified)",
+      "paths": [
+        "project/client/Assets/Code",
+        "project/client/Assets/Arts"
+      ],
+      "purpose": "Unity architecture reference"
+    },
+    {
+      "repo": "karl8335755/wly-game",
+      "ref": "6137b9e133c4290e7eb66979a81c4ae3d1f9e028",
+      "license": null,
+      "paths": [
+        "src/app/components/Battle",
+        "src/app/data"
+      ],
+      "purpose": "Web architecture reference"
+    },
+    {
+      "repo": "khanhego/ngoalongwiki",
+      "ref": "b3d9d865c3714b4fa9eca15c715fdd810c642c40",
+      "license": null,
+      "paths": [
+        "data/tree.json",
+        "data/tree-cam-nang-nang-cao.json",
+        "data/tree-cam-nang-thuc-quoc.json",
+        "data/tree-ban-mem.json"
+      ],
+      "purpose": "Wiki discovery, confirm facts against official source"
+    }
+  ],
+  "inventory": [
+    {
+      "directory": "project_wly2_lua_client/res/animation/soldier",
+      "files": [
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_1.plist",
+          "blob_sha": "f68b4c9de4b377b1a8e95f2ccc8e0cd80ca0e4f4",
+          "bytes": 40614
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_1.png",
+          "blob_sha": "63549fc79ee8f575f52df0ddcab940c5479d3da7",
+          "bytes": 1360178
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_2.plist",
+          "blob_sha": "e0a92d67446c8e4254172dc1999a9f902c1a5209",
+          "bytes": 40622
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_2.png",
+          "blob_sha": "c1e6e02125062517b4909bd695c64305fc69eb3b",
+          "bytes": 1335016
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1000_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_1.plist",
+          "blob_sha": "74efdf3286a4e53f125aa26fa44576fa200fb98a",
+          "bytes": 40617
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_1.png",
+          "blob_sha": "8009caff75376773143cf4e7a8739173cef0aa36",
+          "bytes": 1433489
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_2.plist",
+          "blob_sha": "abdfb93774f779515665bed25ced9c6d6019414e",
+          "bytes": 40614
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_2.png",
+          "blob_sha": "c1526fa76e32c074e2c1c2a92e2140345f380f1f",
+          "bytes": 1407030
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1100_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_1.plist",
+          "blob_sha": "7193c42923562bba9f9fb9079bf4cfc79acd6f33",
+          "bytes": 40611
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_1.png",
+          "blob_sha": "14772442afd665010251aab8b23ef50574aedcfb",
+          "bytes": 1659990
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_2.plist",
+          "blob_sha": "78667448a40bba26957c74c4e2c8cb8ae11ef6e5",
+          "bytes": 40610
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_2.png",
+          "blob_sha": "2c6a21478ebfd1d53a4c1ba8cce19a5be81adc2a",
+          "bytes": 1643663
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ1200_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_1.plist",
+          "blob_sha": "0b4114456e22ae0d38d522315981ebc780a34dfd",
+          "bytes": 40614
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_1.png",
+          "blob_sha": "bee0a19d7b9013c0692482a14f0157b6b9fd3aa3",
+          "bytes": 1410761
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_2.plist",
+          "blob_sha": "7d523d0504707e10c2ca9b681c66602ee1647bae",
+          "bytes": 40614
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_2.png",
+          "blob_sha": "7f258a4551fe070f57c12c7384297e4c17d9ae31",
+          "bytes": 1411785
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2000_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_1.plist",
+          "blob_sha": "bde5c64ee8abb8eaecc3b10457c73bf50003aaf2",
+          "bytes": 40613
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_1.png",
+          "blob_sha": "a7fa2c908463feca774c4b168e16909949bd628b",
+          "bytes": 1512309
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_2.plist",
+          "blob_sha": "2506b0cf9faeae352c8ce25d7fd7e2170a7f09cb",
+          "bytes": 40612
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_2.png",
+          "blob_sha": "f69022c327b85f68f3613cbbfbbd9595c7132766",
+          "bytes": 1504054
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2100_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_1.plist",
+          "blob_sha": "6d93bbc458bdaac616ca3f4a52cf94e1956948ea",
+          "bytes": 40611
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_1.png",
+          "blob_sha": "0b2ef4bc3e83fd9d14345c2619df9ad5b0ee164c",
+          "bytes": 1487877
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_2.plist",
+          "blob_sha": "bcde70cd7c84df05ff430b7c969f74ae5ce25725",
+          "bytes": 40605
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_2.png",
+          "blob_sha": "2a918094e7d5d3ba1d4a9635de5f61ba311bc4b3",
+          "bytes": 1521645
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ2200_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_1.plist",
+          "blob_sha": "d16dfdf802035208be83bd28eb01a6128492fcac",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_1.png",
+          "blob_sha": "dec04d3ffeab7ef53508591b2373e9d1c6bd4597",
+          "bytes": 2926913
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_2.plist",
+          "blob_sha": "64e8ef5e5742d2822bcf950a59440a77ed51d516",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_2.png",
+          "blob_sha": "f16d068879eda46ed79fd0da0dd41b668c03266d",
+          "bytes": 2839969
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3000_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_1.plist",
+          "blob_sha": "e1eadc5baf072854cbed0ad3f77dbf94db3b41e1",
+          "bytes": 40609
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_1.png",
+          "blob_sha": "84c56371055d67de28bcd987d0c9f7e8d2f63b7f",
+          "bytes": 2835983
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_2.plist",
+          "blob_sha": "aaa97b751610e5607f7519e4d1421263a8b255d6",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_2.png",
+          "blob_sha": "5891e23419911eebc4f794ef5e2bfa398de6610a",
+          "bytes": 2788502
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3100_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_1.plist",
+          "blob_sha": "baf93768a2ce34cbb55eae09cb60ed0c859e4e78",
+          "bytes": 40609
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_1.png",
+          "blob_sha": "cfa2f016d8c2f023618f45b1e03b2572086cb50c",
+          "bytes": 3053520
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_2.plist",
+          "blob_sha": "e56cacfa1f3dcc034c5398419425cbe28f0ebfe3",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_2.png",
+          "blob_sha": "c82cbc602aaeba0499db3de52e6d3a6581e16de8",
+          "bytes": 2974648
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ3200_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_1.plist",
+          "blob_sha": "bb482ed15d39883db8f0b88e94b5f7de48ee76ba",
+          "bytes": 40610
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_1.png",
+          "blob_sha": "9abdcfe525ad82ecf1cb4ddd150155f840496dfd",
+          "bytes": 1597627
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_2.plist",
+          "blob_sha": "dbc752cf331f5ae2b732d4bfd1cee67184cbef72",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_2.png",
+          "blob_sha": "4a87c30ab5adf9a2778394f62434130d1e8a1395",
+          "bytes": 1567492
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4000_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_1.plist",
+          "blob_sha": "f80b3cb05bfab08324e16d8a5694430ffc2cb4f3",
+          "bytes": 40612
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_1.png",
+          "blob_sha": "2a2c4e9e1e22ed991192d2c22185d6ee4ab7859f",
+          "bytes": 1578226
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_2.plist",
+          "blob_sha": "31dbdcf4fadd9464a6f5d2634e466bcf38709338",
+          "bytes": 40611
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_2.png",
+          "blob_sha": "fa120eb920eda11c7d33a9b9fd0ded3e95426cfa",
+          "bytes": 1539403
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ4100_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_1.plist",
+          "blob_sha": "cbf89ec06c782b67bfa74704272210f936bc4799",
+          "bytes": 40613
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_1.png",
+          "blob_sha": "8229097b9b3bd082aeec98c19a201ba836c0a180",
+          "bytes": 1666038
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_2.plist",
+          "blob_sha": "ab6a5981325141d7b98acae4b65cad7386228f4b",
+          "bytes": 40611
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_2.png",
+          "blob_sha": "1fe00d207d50e283d09137de02f0800f2fd8041f",
+          "bytes": 1632676
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5000_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_1.plist",
+          "blob_sha": "928b39de8ebac346e68ef642f59b037a708ef37e",
+          "bytes": 40610
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_1.png",
+          "blob_sha": "23308b7ad7c5d098aecae72827bee71c5ec1b1d0",
+          "bytes": 1775395
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_1.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_2.plist",
+          "blob_sha": "1533df99e58fe108d41a2f0931f1bfee36e962e8",
+          "bytes": 40608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_2.png",
+          "blob_sha": "a2310dc55fca7728ea2c55de7e38df064b15a80a",
+          "bytes": 1749075
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5100_2.txt",
+          "blob_sha": "9a83b0ccf4aa6875ff358cdc219351096da1090c",
+          "bytes": 598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_1.plist",
+          "blob_sha": "9762a16228486cc905c2745665fb4f66d9b0baac",
+          "bytes": 27359
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_1.png",
+          "blob_sha": "23fbc7efe32b333324d1c991d4452be3124da20f",
+          "bytes": 1881841
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_1.txt",
+          "blob_sha": "f73a83bca944a4d8e0e8954c7ae0cff305488be5",
+          "bytes": 400
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_2.plist",
+          "blob_sha": "f8892ebcfcb3de4f2a8d91649b8eb7e955520947",
+          "bytes": 27359
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_2.png",
+          "blob_sha": "728c2e70c12ec776ba8726ffbc024f7a2dd69498",
+          "bytes": 1801207
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/BZ5230_2.txt",
+          "blob_sha": "f73a83bca944a4d8e0e8954c7ae0cff305488be5",
+          "bytes": 400
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/qilin.plist",
+          "blob_sha": "3ac66fae42616adb342f9c5ab60b245c1fa8dc7a",
+          "bytes": 6945
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/soldier/qilin.png",
+          "blob_sha": "0a3f4facd14df1ed46de9d91a787635674d61276",
+          "bytes": 1205449
+        }
+      ],
+      "directories": []
+    },
+    {
+      "directory": "project_wly2_lua_client/res/animation/effect",
+      "files": [
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_kapaichuxian.plist",
+          "blob_sha": "50815f0ee754c8e86af8b7f6cb834068ff5f1faf",
+          "bytes": 26676
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_kapaichuxian.png",
+          "blob_sha": "ceaf425b81355e822cf31abad47842486e0e6523",
+          "bytes": 445147
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_mengfeng.plist",
+          "blob_sha": "584f67f3124becc9da31733995b4d1eea5e42be4",
+          "bytes": 4878
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_mengfeng.png",
+          "blob_sha": "23ad89ebcf9e59fc7d717b9ddb5ca6e8e34b789a",
+          "bytes": 254352
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi001.plist",
+          "blob_sha": "0ecfaa4575380c23e4a26f20b85498d984d87314",
+          "bytes": 12255
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi001.png",
+          "blob_sha": "86b40b3a3678bbb8eddc54cb168a8acf57c7e8d6",
+          "bytes": 4095433
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi002.plist",
+          "blob_sha": "148c3bcb4524fd135880fb46e0a9bafc26581663",
+          "bytes": 12235
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi002.png",
+          "blob_sha": "8dfbe89a95ac7b6b519d7ffd0cb37e1f6edf88ad",
+          "bytes": 2968592
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi003.plist",
+          "blob_sha": "09f6935c52fc886ca9fffafc224cde76a5771b91",
+          "bytes": 12251
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi003.png",
+          "blob_sha": "dcdfd772dfff52e14982d32e1bd1d9dbc240e57f",
+          "bytes": 2731836
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi004.plist",
+          "blob_sha": "edb5d8aecd604e80e5b4b06b79eabd39cbc7a4da",
+          "bytes": 12239
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi004.png",
+          "blob_sha": "da70a8896c044b2be2b0baadac0b46c98c9b2b27",
+          "bytes": 3114052
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi005.plist",
+          "blob_sha": "0d3ddbdc4e8257b1db005029eefb9ce81848ea1b",
+          "bytes": 12257
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi005.png",
+          "blob_sha": "650549e5f72aeae8cf449f0105e9501194e015d4",
+          "bytes": 3521396
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi006.plist",
+          "blob_sha": "3d3d0717794ec689e886e5a67d46c236d274b71b",
+          "bytes": 12234
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_pinzhi006.png",
+          "blob_sha": "e92badc2e88678997f3094073c18fd7b9f492c83",
+          "bytes": 3627983
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_texiao.plist",
+          "blob_sha": "0700a8a6885aad95c2e0fd3da2edb42c980da456",
+          "bytes": 32334
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/CK_texiao.png",
+          "blob_sha": "34b0c6308dee8b75463325f8b9283f86c14e06ef",
+          "bytes": 12953865
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_anji_BUFF.plist",
+          "blob_sha": "15b8d7f987a342deef99c28ed0a86c8fa40b104e",
+          "bytes": 9427
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_anji_BUFF.png",
+          "blob_sha": "7a6f67c9eaa9db18ee5e868700cec61f679b83a0",
+          "bytes": 391799
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0108.plist",
+          "blob_sha": "0b451120624287b4a8b8e1125589305a7ac418fc",
+          "bytes": 14593
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0108.png",
+          "blob_sha": "878afd12ab9049edddbd2c6a8163e67b05062973",
+          "bytes": 2354703
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0111.plist",
+          "blob_sha": "ca755f345690fd51e6dd6fb704b0132950f0cf63",
+          "bytes": 10035
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0111.png",
+          "blob_sha": "d50036d7b321d233c34bf09523734786c798f4b7",
+          "bytes": 1478964
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0146.plist",
+          "blob_sha": "b0d8c63625c15642b8b5a56f995f9a11e68e0d9f",
+          "bytes": 8874
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0146.png",
+          "blob_sha": "a87ba9aafbd84747c480408776ea9e3861eee67a",
+          "bytes": 1267038
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0154.plist",
+          "blob_sha": "077611abf1f4b272d8750d927ad1a8055e9b5e64",
+          "bytes": 14594
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0154.png",
+          "blob_sha": "82d85c2d6655d067f9982c6d5ce52e0a8b4f7a81",
+          "bytes": 2527377
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0157.plist",
+          "blob_sha": "183bee601ed9a2efe105688775b8627201c540d6",
+          "bytes": 14032
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0157.png",
+          "blob_sha": "6f0d720561eb686216a10e2cb93e3c6ed083edcf",
+          "bytes": 3237674
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0361.plist",
+          "blob_sha": "63e09121bd9dfe0fad8827a5c0c938e5e44a4924",
+          "bytes": 12302
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit1_0361.png",
+          "blob_sha": "86fa241cfd0b236f062a6046888c888768575a09",
+          "bytes": 1620047
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0108.plist",
+          "blob_sha": "fc1217ec368305d455694719fc12b0514e3d8b6b",
+          "bytes": 14612
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0108.png",
+          "blob_sha": "3f1bd730ba5d9b54b22c9884e8ed3a4eec939159",
+          "bytes": 2232206
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0111.plist",
+          "blob_sha": "9a3300bbdb6f2336fbe082fc53566e266ef22e07",
+          "bytes": 10026
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0111.png",
+          "blob_sha": "f6bcd7c2c1e3d7298c8d59352de830178bf92d6d",
+          "bytes": 1574472
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0146.plist",
+          "blob_sha": "8dac471ad17986779ceb4a13c47126988b588b2e",
+          "bytes": 8852
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0146.png",
+          "blob_sha": "93c8290943d6b02dcf7de925c843f9be0f095f6f",
+          "bytes": 432461
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0154.plist",
+          "blob_sha": "7180732dc6ba5db9a06d42314b00284f22fb5b12",
+          "bytes": 14614
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0154.png",
+          "blob_sha": "8d841b8f10beecee0d2c21e52434bc4475f29d20",
+          "bytes": 2352011
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0157.plist",
+          "blob_sha": "89da4d707d4ebb60d68417e4b9a6b0807907a3c8",
+          "bytes": 14002
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0157.png",
+          "blob_sha": "7def8e57e73d78687019d1c7c31e18eaa19bad17",
+          "bytes": 3148135
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0361.plist",
+          "blob_sha": "d449b25bfc5eae5fa47e1a3903f3c375ec795b6c",
+          "bytes": 12315
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit2_0361.png",
+          "blob_sha": "fb5cc1f4cd69af50a2ee865eeb378dd153325d58",
+          "bytes": 1431581
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0019.plist",
+          "blob_sha": "bbd9c0eabecd4806ac5f15140098dfeeca1ae68b",
+          "bytes": 16800
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0019.png",
+          "blob_sha": "35140a8232ad5130624730133319b9174b8b81b2",
+          "bytes": 4858922
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0020.plist",
+          "blob_sha": "96627b9b828576e1854b3103e9ba5c470680e8e4",
+          "bytes": 26968
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0020.png",
+          "blob_sha": "900d9cb91022b74bcf097b2bbc38c35919c701a8",
+          "bytes": 8477176
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0057.plist",
+          "blob_sha": "3b546a292acf34ab9c30120df359e945f92f4f0b",
+          "bytes": 4892
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0057.png",
+          "blob_sha": "6b0d6f11f2a17fa4ccfcc6a5041e3a362e31cc73",
+          "bytes": 650245
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0104.plist",
+          "blob_sha": "ccd6e6a284e216132ee79e9d242e9354d8a22469",
+          "bytes": 8841
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0104.png",
+          "blob_sha": "3abfe83644176976efdf5d9c2e0aa503a581dc8d",
+          "bytes": 775008
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0106.plist",
+          "blob_sha": "42c40b5ae048de91fece1c5e099d6eb4869cd990",
+          "bytes": 4893
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0106.png",
+          "blob_sha": "b4bd701e2e5bb5745e178876ea6914fcab5cbc7b",
+          "bytes": 542139
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0107.plist",
+          "blob_sha": "597954ad0322d15bc7ae2bcfb4eb098c6e6d2fcc",
+          "bytes": 13942
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0107.png",
+          "blob_sha": "c33bd42ce34787e186daf4e1361ac152e85a116e",
+          "bytes": 1332969
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0108.plist",
+          "blob_sha": "b44c135956fbdc213f49ca2544225205379b6f16",
+          "bytes": 8301
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0108.png",
+          "blob_sha": "822a07d7584edd0202197fa11d24f56d087de587",
+          "bytes": 1027476
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0109.plist",
+          "blob_sha": "60542b46b65d0ff97450d9f2c5a47481778ec96d",
+          "bytes": 4891
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0109.png",
+          "blob_sha": "7081d0697131bc52bcc3d5b8f4921598fc95f56d",
+          "bytes": 364806
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0111.plist",
+          "blob_sha": "d04a969225de72eb808d2df71bb67b76de4c5ee1",
+          "bytes": 21314
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0111.png",
+          "blob_sha": "ffcba34b59ec90ef8c9f8d3b64b70a611ab11f3c",
+          "bytes": 10936515
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0115.plist",
+          "blob_sha": "7d640f1049844a47e87e2d84ae507c3d5eb8a286",
+          "bytes": 13379
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0115.png",
+          "blob_sha": "9e84651e1b68a20e85070155417111c185f02947",
+          "bytes": 1219057
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0116.plist",
+          "blob_sha": "22e7965b8650d9d2698b0d786692f93e26cee2f2",
+          "bytes": 13397
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0116.png",
+          "blob_sha": "131ea8d9f265eec5a33a2ead7e57e6c81ae17a9c",
+          "bytes": 2177501
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0118.plist",
+          "blob_sha": "f2bf8915268e6bba58b4f7f8cff1e9c3ac88c13d",
+          "bytes": 7700
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0118.png",
+          "blob_sha": "6ba17fc548ba85333711b65c0fc398f42187e8b8",
+          "bytes": 1001225
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0120.plist",
+          "blob_sha": "12dedd7a0ab226f33c7ecdb60d15104523e49e7e",
+          "bytes": 14492
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0120.png",
+          "blob_sha": "3d7c3e374dd220b1cb16771a2153b697c35843dd",
+          "bytes": 2428030
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0122.plist",
+          "blob_sha": "9e0d332edde70b10f8ac64ceb4db53fbf513d826",
+          "bytes": 9975
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0122.png",
+          "blob_sha": "68680fcd77798e95e1ecf88ce0db871c86181b44",
+          "bytes": 2043825
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0125.plist",
+          "blob_sha": "4fc1949bdcb03e3de762a5f979ef3de1049ef9e5",
+          "bytes": 9421
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0125.png",
+          "blob_sha": "e7e09c3d257dde70d27c9a1abcf7d870ca06e7c5",
+          "bytes": 2035155
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0129.plist",
+          "blob_sha": "4e41229ae389c0ea1d380d5c8a03f4a367cca0ef",
+          "bytes": 11087
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0129.png",
+          "blob_sha": "9e9c67c4ac0a7eeec2434070878dd4351500fb16",
+          "bytes": 793126
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0130.plist",
+          "blob_sha": "f05944473f77e731853827fc447dc3c3c678d66e",
+          "bytes": 12804
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0130.png",
+          "blob_sha": "ad55c1842b4f7d722b9b35a073ff5e45da53146c",
+          "bytes": 3903200
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0138.plist",
+          "blob_sha": "4e145836f49ea9653d16448c8f050b9f69aef731",
+          "bytes": 12217
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0138.png",
+          "blob_sha": "2a4d8c04dd81cdb16f4e95115d4765a19e92dd1a",
+          "bytes": 1245267
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0145.plist",
+          "blob_sha": "128ee8557902756b4c5ff07eecc92d810ba11790",
+          "bytes": 5453
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0145.png",
+          "blob_sha": "0a191c0d1c6ee77c9fa90e04ee9f77c6e36583c6",
+          "bytes": 864759
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0146.plist",
+          "blob_sha": "2261af1997e178aaa807db0169d6d046c1db8a15",
+          "bytes": 8279
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0146.png",
+          "blob_sha": "2ad60385c103928df336ac98a63bc56d0d68df7f",
+          "bytes": 664877
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0147.plist",
+          "blob_sha": "4a22efbb6ed33bba33e6cddc7e052a1b9f7d6c1d",
+          "bytes": 12785
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0147.png",
+          "blob_sha": "2b3cf611da69575b251a516e8168669cc03a6606",
+          "bytes": 2692729
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0150.plist",
+          "blob_sha": "d9b830404c629984a810af21483abaa28a05cd10",
+          "bytes": 15061
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0150.png",
+          "blob_sha": "dbfd0dcd9ad9c72f983e0032ad1834563531504b",
+          "bytes": 1828939
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0152.plist",
+          "blob_sha": "b73ae05f0c6b1ad0f157a0ceab39006afef406cc",
+          "bytes": 13380
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0152.png",
+          "blob_sha": "967c653f1feb1d82ee04e743e562bbfb99021963",
+          "bytes": 2757221
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0154.plist",
+          "blob_sha": "2c5a3ee29408fd5d32ccea9dd15920f975928fab",
+          "bytes": 9436
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0154.png",
+          "blob_sha": "fd1a4237245258b8c4157fe362d9232a9dbc5876",
+          "bytes": 1348714
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0157.plist",
+          "blob_sha": "58540927b4fb7a984310a1bf7d88be9bbd14cd06",
+          "bytes": 4894
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0157.png",
+          "blob_sha": "614f07bc80ab91725647bf14febd076fd6ceb669",
+          "bytes": 593218
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0165.plist",
+          "blob_sha": "07971b3dcdca7815c5067d1f91c4dfed98d8fd89",
+          "bytes": 9443
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0165.png",
+          "blob_sha": "d45b276ea4b74cfc8edf60742c3f5431731f2297",
+          "bytes": 1685967
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0201.plist",
+          "blob_sha": "8603aa59bdcbbb3e93296f0af2739006d06c3cc7",
+          "bytes": 4325
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0201.png",
+          "blob_sha": "80b35beb1dd919fb554f1f83c63c147147acbcbc",
+          "bytes": 223472
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0371.plist",
+          "blob_sha": "7c327db1c6cad990db28480961819608772caa62",
+          "bytes": 8287
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_0371.png",
+          "blob_sha": "9ed3b3d02986e47308e8aa083ce59e8f3e997fef",
+          "bytes": 2409030
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1052.plist",
+          "blob_sha": "81d8cf61ea1ef86b9e9e01ab32b8d8531a2ddae1",
+          "bytes": 12229
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1052.png",
+          "blob_sha": "64712b99604ee38ef8e84ed19fe00b0cb9e8df39",
+          "bytes": 4128876
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1072.plist",
+          "blob_sha": "eb03f5c4251c0138535780b3add31964740816fa",
+          "bytes": 14503
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1072.png",
+          "blob_sha": "9a32c9e460ba80bf7b1d59ea734671d09880e3bf",
+          "bytes": 1731851
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1082.plist",
+          "blob_sha": "7ec6aa169bef8d1146a87c5125ea42e1f8ef1f4a",
+          "bytes": 22452
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hit_1082.png",
+          "blob_sha": "276014dd0994c617415288074f6682091569fe9c",
+          "bytes": 3890478
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hunluan_BUFF.plist",
+          "blob_sha": "07b904cb30c74586447cbe623adb418b3e497121",
+          "bytes": 9526
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_hunluan_BUFF.png",
+          "blob_sha": "70805a310b52798efacaefe8403ebcfcb4d2f9ab",
+          "bytes": 317829
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_juqi_BUFF.plist",
+          "blob_sha": "574a716b0a5cb23335513cde80b712fde99ff85c",
+          "bytes": 6039
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_juqi_BUFF.png",
+          "blob_sha": "b831b54c92de2523087d21c8d983a51c5045383b",
+          "bytes": 719862
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0020.plist",
+          "blob_sha": "77ebe34b7bfff741d37670089f56f9109c0defdd",
+          "bytes": 5999
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0020.png",
+          "blob_sha": "615762728931210d73647de0d63f6ffc9823dee0",
+          "bytes": 1503348
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0104.plist",
+          "blob_sha": "b727ea7969ee84878e9958b95b4c406e78e63302",
+          "bytes": 7144
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0104.png",
+          "blob_sha": "d793070329e431a5e43ce5db90f702e2942da054",
+          "bytes": 1107007
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0106.plist",
+          "blob_sha": "66e48f76b6e0240aa201a6930f8059c85bfe6d6b",
+          "bytes": 4317
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0106.png",
+          "blob_sha": "31068c856690cf1c7e35fa8ae998537dec539741",
+          "bytes": 632868
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0108.plist",
+          "blob_sha": "90ab32d1db13257ddf809a5453a19eb30d28dd30",
+          "bytes": 9958
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0108.png",
+          "blob_sha": "71c953804e3e3cbe04d697e11494701d6200cf38",
+          "bytes": 2485381
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0109.plist",
+          "blob_sha": "7afb064dda55faba08bc6542e0eb0821dcda2a9f",
+          "bytes": 4326
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0109.png",
+          "blob_sha": "1c09fe1d86c5bcc3c397787a3a21b052846018b4",
+          "bytes": 501570
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0111.plist",
+          "blob_sha": "8faf4f5ad782d2606a4fce799c89ddc977de2407",
+          "bytes": 8811
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0111.png",
+          "blob_sha": "454ae110294262229bce5d082c6f6ca99b693ab4",
+          "bytes": 642856
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0115.plist",
+          "blob_sha": "81bb3acdf6921c45709cfb456bd8362a08f970f8",
+          "bytes": 7710
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0115.png",
+          "blob_sha": "711907fd1350458179e6db8613536a1eff3e6371",
+          "bytes": 524239
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0116.plist",
+          "blob_sha": "7a67bf7db088afadbaf06b41c80ed1f6fed5a072",
+          "bytes": 14519
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0116.png",
+          "blob_sha": "612159d27ea1e72ca7b1dbab67d5ddedd06c6060",
+          "bytes": 3716037
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0122.plist",
+          "blob_sha": "cf0c982370d278d8eaf21850c11a5a3ac85ebeae",
+          "bytes": 2628
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0122.png",
+          "blob_sha": "3f01c4a4ebf5996f411b9caf3731cafdb986d2d6",
+          "bytes": 181342
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0125.plist",
+          "blob_sha": "09a3234ac021b7885ec0b67dafe4e6b026c4f861",
+          "bytes": 4317
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0125.png",
+          "blob_sha": "6ea54f1c28b64adae8b6db47e77a85b68d9862a8",
+          "bytes": 209010
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0130.plist",
+          "blob_sha": "176e8d3ab4e8c88ccecc2763da50c456014b58c7",
+          "bytes": 9906
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0130.png",
+          "blob_sha": "8b04706e63d78bfffed67480e915aeb0d64e569e",
+          "bytes": 435040
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0138.plist",
+          "blob_sha": "cae9d9f2d801fac47ec5457c784faffdb700a3c0",
+          "bytes": 6005
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0138.png",
+          "blob_sha": "e99665c54e85e0ed159979d35ac8ba8e644aa783",
+          "bytes": 1381471
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0145.plist",
+          "blob_sha": "d7a23b3b36d6a0621e99c0e58f4c7efabc4431f3",
+          "bytes": 5986
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0145.png",
+          "blob_sha": "ba0ad34b10ae0e25ba8fea78edf6da6db0230e2f",
+          "bytes": 437657
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0146.plist",
+          "blob_sha": "3a5355210ea70f69ec81574088e52ab86983fd62",
+          "bytes": 9925
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0146.png",
+          "blob_sha": "7440a7d95de20601224c8d574e59718f809f0d48",
+          "bytes": 4511456
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0147.plist",
+          "blob_sha": "a306febaf8a57dd9fef4208606e943b6de4ac403",
+          "bytes": 4870
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0147.png",
+          "blob_sha": "94d26ab9b832c0e239456df4a95f78c15ce1becd",
+          "bytes": 317079
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0150.plist",
+          "blob_sha": "4c3d87bed93f81a4eecf086feba33e0110c91e55",
+          "bytes": 7139
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0150.png",
+          "blob_sha": "870628a1178154aaba2f858ad4ea494e79274aa4",
+          "bytes": 1538879
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0152.plist",
+          "blob_sha": "48ac7f096035186c513d42e360ad46a9c4e2b2de",
+          "bytes": 9384
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0152.png",
+          "blob_sha": "6790c608494ca5ae786a08630d041d909cc01737",
+          "bytes": 1727440
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0154.plist",
+          "blob_sha": "ab3574351c6c801b8d1e5dcdabf36f1ee16c5c41",
+          "bytes": 11060
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0154.png",
+          "blob_sha": "fa091cfc57d0a132f9fe00c9244a347a5dea28e0",
+          "bytes": 2129149
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0157.plist",
+          "blob_sha": "37aa87d464b55bf385b3e646f1a8315beedbff80",
+          "bytes": 8814
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0157.png",
+          "blob_sha": "3ad689436c09bf3e3b24e0139d037a9f683fe6c3",
+          "bytes": 1991522
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0159.plist",
+          "blob_sha": "ebfb30175962275dacdef894a7fcca85267e26d7",
+          "bytes": 8804
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0159.png",
+          "blob_sha": "0fed29151d8cb30c52a99caac9698c0458db49cc",
+          "bytes": 1698570
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0165.plist",
+          "blob_sha": "2d5e15e9a076bb26614ca18a1af8434357955cfd",
+          "bytes": 10554
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0165.png",
+          "blob_sha": "a5ba3a412c9bb690c2c64d203c8d13c6796deb0d",
+          "bytes": 2183925
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0371.plist",
+          "blob_sha": "fec89189277fca4fd643fbff44457b242344fa8f",
+          "bytes": 7137
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_sf_0371.png",
+          "blob_sha": "94324401295b05e8abdac9a3f8066cffd762183d",
+          "bytes": 1044871
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_shifa_BUFF.plist",
+          "blob_sha": "fe2f3b4573776c64bbf1fd1ceac466ca69e2c53b",
+          "bytes": 3215
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_shifa_BUFF.png",
+          "blob_sha": "b4d14099b804f23ad23b2841ae5b18b60a6dfde6",
+          "bytes": 98881
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_shiqi_BUFF.plist",
+          "blob_sha": "7b29784f818cec6461fbc0848cffc99e3feec5e3",
+          "bytes": 9453
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_shiqi_BUFF.png",
+          "blob_sha": "d9aedd64585d860ffa4aa112800768e98b2b0a43",
+          "bytes": 683919
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0015.plist",
+          "blob_sha": "7da7fb848b2a17a88c9d632726d8fdbdcf279315",
+          "bytes": 18598
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0015.png",
+          "blob_sha": "a9209a3eb2e412908bb141d3f7dd3305b920b80a",
+          "bytes": 6035380
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0019.plist",
+          "blob_sha": "44614e3a9ff1cd2b12e58279464d31515e575ed9",
+          "bytes": 14611
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0019.png",
+          "blob_sha": "108bec8584264ac605186d2d38d76b2150f33b2c",
+          "bytes": 6166110
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0020.plist",
+          "blob_sha": "eee9186324b58746237ce639bda0a17f1915dbd4",
+          "bytes": 27108
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0020.png",
+          "blob_sha": "78db10d6f5a439164f2a97c36e7c6ab195ddbc55",
+          "bytes": 9627489
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0021.plist",
+          "blob_sha": "6bdde4b42df150bbadb4ab2faf5b3df6721d640e",
+          "bytes": 6070
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0021.png",
+          "blob_sha": "745845cbd7a3a343775cf1c873e7cd47a007b949",
+          "bytes": 573498
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0022.plist",
+          "blob_sha": "21e424bf86bb2aed636b1ec8c2a3db565e1122cd",
+          "bytes": 21408
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0022.png",
+          "blob_sha": "57d3998a0dd0eaeabff760e742cbadde0a800327",
+          "bytes": 6279148
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0023.plist",
+          "blob_sha": "449ad527f6170ba79073443b96132a67e1069332",
+          "bytes": 19180
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0023.png",
+          "blob_sha": "a9703cb298f20c832cb23976a32047972d009fc5",
+          "bytes": 5470072
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0025.plist",
+          "blob_sha": "2f760291c4462a336cbc86000996cdf2894731c5",
+          "bytes": 18610
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0025.png",
+          "blob_sha": "6b10738734c963592623fe939e7c1ae21fac240c",
+          "bytes": 5631159
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0027.plist",
+          "blob_sha": "5f64f4310fbdf07b30205f0c1fdd0c3229cc10c1",
+          "bytes": 25414
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_skill_0027.png",
+          "blob_sha": "ccc013460e2f0fbf9f2452da7fc2f81ff7037f51",
+          "bytes": 9850957
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_tiebi_BUFF.plist",
+          "blob_sha": "8ed4777ebc0e104280c696aabf37032503296e0d",
+          "bytes": 9436
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_tiebi_BUFF.png",
+          "blob_sha": "32a52d86a0041c6e91d23208db328dde281131e9",
+          "bytes": 775788
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_xixue_BUFF.plist",
+          "blob_sha": "af63132efad56ec384f0d1760e3c5dc9e83ad95f",
+          "bytes": 9437
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_xixue_BUFF.png",
+          "blob_sha": "b5cf99cee5ca766fdaf1f861866ccadd51e59cb6",
+          "bytes": 422574
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_yayi_BUFF.plist",
+          "blob_sha": "b846a61e5610c5062914cfec52eb988b746cebc4",
+          "bytes": 9420
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_yayi_BUFF.png",
+          "blob_sha": "aecc01baa6470849a868d3b82bfd5ece92faea85",
+          "bytes": 801156
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_yinyun_BUFF.plist",
+          "blob_sha": "42d291d2ccb260da00c915cf348c4ee2db1e3278",
+          "bytes": 9473
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_yinyun_BUFF.png",
+          "blob_sha": "c5b564f811d003e95a576c78f3687aba8aaf7248",
+          "bytes": 244138
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_zhongdu_BUFF.plist",
+          "blob_sha": "540e66090952aa8909fffd311d8d0d6273f60ef3",
+          "bytes": 9519
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_zhongdu_BUFF.png",
+          "blob_sha": "622ccca2e4e3bfe310aa4e35b7976da40400d267",
+          "bytes": 863296
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_zhuoshao_BUFF.plist",
+          "blob_sha": "dd5c4f2de69405b9293ed8b8588966c83e59a720",
+          "bytes": 9567
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/TX_zhuoshao_BUFF.png",
+          "blob_sha": "48a84da9b553f63a8d1924a769eb67b2711807e5",
+          "bytes": 859100
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/beijing.plist",
+          "blob_sha": "45ab550b27cf6e3954f1b4f83b64aa14d604dc2c",
+          "bytes": 12039
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/beijing.png",
+          "blob_sha": "31ffa9be63d74ad9e089e493e79f68f498a19cc9",
+          "bytes": 2383657
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/juqi.plist",
+          "blob_sha": "036ff3decbaee5f75f93285e054e7abe0f022cf1",
+          "bytes": 8630
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/juqi.png",
+          "blob_sha": "d1c6071604c1daaf88f9466f2863ebf8864cb55c",
+          "bytes": 1570930
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/kapaifanzhuan.plist",
+          "blob_sha": "4c9d9a8074fb4d9eb6109e208a7782ae8db6ed6c",
+          "bytes": 8897
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/kapaifanzhuan.png",
+          "blob_sha": "6f82e096690bbf934649800f236ac9066443bb39",
+          "bytes": 184657
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/lizibaozha.plist",
+          "blob_sha": "0ffa08c31f67ea9dcc2b53fe6391bcb64f12a202",
+          "bytes": 14410
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/lizibaozha.png",
+          "blob_sha": "f9cb480c2e174654c2bd0d4382e46ef42894691f",
+          "bytes": 7862616
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/skill_bg_01.plist",
+          "blob_sha": "808df2e5e96facc786f2e5b828a28b8e2e209778",
+          "bytes": 6484
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/skill_bg_01.png",
+          "blob_sha": "210e8e5714ae03193d7ab725978880f2f25db697",
+          "bytes": 238085
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/skill_bg_02.plist",
+          "blob_sha": "70327d35943ccce5c994b4c0281588b86eb3256a",
+          "bytes": 7688
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/skill_bg_02.png",
+          "blob_sha": "0f6b65d60a677d634156fd3f71c4a2a71feac860",
+          "bytes": 1016886
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_0.plist",
+          "blob_sha": "e1139be7af5947f06041d8af085c26653e195298",
+          "bytes": 2042
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_0.png",
+          "blob_sha": "47e78a4606ee9ca3a18134034cfc7fd81df0a5b8",
+          "bytes": 20238
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_1.plist",
+          "blob_sha": "7be57631cfd8fc404b7ec39683e8f4b0ee1cd918",
+          "bytes": 5383
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_1.png",
+          "blob_sha": "017f06067c54b61deca01341c865c725cd49e5fb",
+          "bytes": 703788
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_10.plist",
+          "blob_sha": "ce48b0e11bded6b59d7c7cc7a294bf551932c181",
+          "bytes": 9818
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_10.png",
+          "blob_sha": "726e70d7cbebf44403cdbf985d0837d42556ee23",
+          "bytes": 538033
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_11.plist",
+          "blob_sha": "5a0676ddf1000c420e91df73c818ad96f12eb98e",
+          "bytes": 9822
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_11.png",
+          "blob_sha": "6f28e90740e435d80697e7407a95d55c8f75c32c",
+          "bytes": 645996
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_12.plist",
+          "blob_sha": "e8e19c48f5b78958dc4c81fad6c4cbe6032bcfae",
+          "bytes": 9800
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_12.png",
+          "blob_sha": "c2731d815c2246edce2746e17f65ca653046db25",
+          "bytes": 877017
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_13.plist",
+          "blob_sha": "56d556919032749cafca7ea8129ffe325f5b52d2",
+          "bytes": 9780
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_13.png",
+          "blob_sha": "c7c000128dcb0c36716561fa09d7558805cbcd08",
+          "bytes": 72960
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_21.plist",
+          "blob_sha": "e6eb66165bf099f2fa29f4886da525f2635934cc",
+          "bytes": 14229
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_21.png",
+          "blob_sha": "4436e73dc1c20d6293c02ac186156cf11ef05c0f",
+          "bytes": 165577
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_22.plist",
+          "blob_sha": "234ae72807374f5d972913d7cfbd7c7f49aa9aab",
+          "bytes": 7557
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_22.png",
+          "blob_sha": "830b3ae8992fd37e40c8c70a056f349cd789d98d",
+          "bytes": 57807
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_23.plist",
+          "blob_sha": "2e12f27bfb18badbc9a2bf7619b33a8b08a08ac5",
+          "bytes": 14155
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_23.png",
+          "blob_sha": "f4e43d65247ed10db5480662f2e1908c27c50492",
+          "bytes": 160903
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_50.plist",
+          "blob_sha": "78c866d5915002ec826d1b096a912551e4dbdba6",
+          "bytes": 12077
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_50.png",
+          "blob_sha": "6ecd739a11e319eedb44edf91d7f3abb30d81c5e",
+          "bytes": 2521530
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_51.plist",
+          "blob_sha": "ca6692245da2e9c1c29c298babd4b34592db70d9",
+          "bytes": 11903
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_51.png",
+          "blob_sha": "7052c32e2e80402f5475596a20bda1dd44ea53cb",
+          "bytes": 21153
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_52.plist",
+          "blob_sha": "323aed627d12209c536fee63fc54cd00236e01ba",
+          "bytes": 11926
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_52.png",
+          "blob_sha": "7448e894c18315b6959f2ca9b767bdb9536d131a",
+          "bytes": 146208
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_53.plist",
+          "blob_sha": "eaa449f2e69ad2c450126995346f83939e2e3170",
+          "bytes": 11887
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_0_53.png",
+          "blob_sha": "444e6a302e32fd25b473155028512d3f74c8a10c",
+          "bytes": 67875
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_1.plist",
+          "blob_sha": "24f8898079ad1fd3a8cb677a797a55b2451919a6",
+          "bytes": 23312
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_1.png",
+          "blob_sha": "d9e5160049aa9bcd16923b17a7c5f9099eb22a8b",
+          "bytes": 623407
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_2.plist",
+          "blob_sha": "e1f75f87f484d6d5902b27cee8bc4def5171f149",
+          "bytes": 12098
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_2.png",
+          "blob_sha": "bd2f1995aeedbb3c4a280ed1e8b9af17d25dad49",
+          "bytes": 311146
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_3.plist",
+          "blob_sha": "e00cae9b0a6b6398325f6721f7b55b827c5a674a",
+          "bytes": 23890
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_3.png",
+          "blob_sha": "ea658eb38b62ce7bf5b8b8ed9d685ffa765a9ad5",
+          "bytes": 22536308
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_4.plist",
+          "blob_sha": "f400e527ab9bc26c6c480119a59e20c82fec2823",
+          "bytes": 16646
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_100_4.png",
+          "blob_sha": "f244c3862016501c7ece3fc1a6a4c1b4c9b8617f",
+          "bytes": 5915023
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_1.plist",
+          "blob_sha": "8021cdf7a4b0a5792d7c7dc66311bcd7c4d1d75a",
+          "bytes": 5954
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_1.png",
+          "blob_sha": "9f19a765b3c2cc1173ed4a81106410ee794fd8d9",
+          "bytes": 341244
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_10.plist",
+          "blob_sha": "31add3ab18376458d6ecab9cc17ee74a55dd129b",
+          "bytes": 9861
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_10.png",
+          "blob_sha": "597b82546c7df2170de851b51726a6cf8164667f",
+          "bytes": 56394
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_2.plist",
+          "blob_sha": "13c82f8cc4560e0bf01678b7b5b659ee71422f5b",
+          "bytes": 6475
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_2.png",
+          "blob_sha": "9e7b96eb10ff4a67f7e46ecf7bfe776c0c4f58f1",
+          "bytes": 45126
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_3.plist",
+          "blob_sha": "0e049ddda357665ddc979c076a9eb5b01996b686",
+          "bytes": 8752
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_3.png",
+          "blob_sha": "48e30c5680048817028c1d100772d8a11c787245",
+          "bytes": 1740461
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_4.plist",
+          "blob_sha": "db4559acd86870fd6daf11136612c457b8f5f900",
+          "bytes": 8734
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_4.png",
+          "blob_sha": "6fd37209e3d159e4a8ffd87f815e6f4b294a9201",
+          "bytes": 2086796
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_5.plist",
+          "blob_sha": "545d83a0170c76b112d4a7d0947e0aff3019b9be",
+          "bytes": 9837
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_5.png",
+          "blob_sha": "c40208f6e8dadbd2244b9c1c57576a4a3df7e9a8",
+          "bytes": 686994
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_6.plist",
+          "blob_sha": "8a64cadfbc49d3d4675151c6a87caf62c076ac00",
+          "bytes": 4267
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_10_6.png",
+          "blob_sha": "dd4f6806cf90459be47a73c3f2bca3ec966454d7",
+          "bytes": 132046
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_12_1.plist",
+          "blob_sha": "5335b75f72c5189a00e2bce93257ccc6d60895ff",
+          "bytes": 9824
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_12_1.png",
+          "blob_sha": "eeff2e8fbc40fc76f01b7bd760c8ccd8ae614d26",
+          "bytes": 350157
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_1.plist",
+          "blob_sha": "c208fdc4d7cceceb96ca0bc638c13b7857d7f595",
+          "bytes": 4268
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_1.png",
+          "blob_sha": "19f03bf85fbec150c93fb9a8965641968ec0224a",
+          "bytes": 559835
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_2.plist",
+          "blob_sha": "f4b7e16d2c3da1f1627fd2d208d1ad3097548826",
+          "bytes": 9903
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_2.png",
+          "blob_sha": "7f16ee88f6d67bbb11a057e9052bb67013b24629",
+          "bytes": 6488143
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_3.plist",
+          "blob_sha": "2eeea6039f8984fdb4ed9d8ec8b5dea313169fe7",
+          "bytes": 12623
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_3.png",
+          "blob_sha": "e8f96109e5cdaa82de3f6a48ded5e921f963840a",
+          "bytes": 3070169
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_4.plist",
+          "blob_sha": "8197b09e3201c1ffa847ca0d3a2e8e9574aa7e1b",
+          "bytes": 13201
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_4.png",
+          "blob_sha": "e11e5e49d6fab3f5338ddc559d0977ece528882c",
+          "bytes": 3858385
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_5.plist",
+          "blob_sha": "36cb5f9125fe0ac17d54d4a7967474b32cc1f851",
+          "bytes": 8105
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_5.png",
+          "blob_sha": "2663614516162cb5e8a81323a5387cb471d5363c",
+          "bytes": 27008
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_6.plist",
+          "blob_sha": "81881dcb5b2fa12415619fa0547dc77df1076363",
+          "bytes": 5939
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_14_6.png",
+          "blob_sha": "43f41a478a51705b18261ae1533a88dd5fc26725",
+          "bytes": 162557
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_1.plist",
+          "blob_sha": "765aeb4c7adc79592c243ee8a11bb26bb0eedf28",
+          "bytes": 9357
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_1.png",
+          "blob_sha": "839f2bff26f495eb24e71fbe3c0ca697f4de03da",
+          "bytes": 7667875
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_2.plist",
+          "blob_sha": "c2074969766ca6343f123602e9c7c8aad946795f",
+          "bytes": 9847
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_2.png",
+          "blob_sha": "cc7212cf8c91b7c569c3c615e6370cbc870d0130",
+          "bytes": 831280
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_3.plist",
+          "blob_sha": "6390624d2e1d0848bd83e1584c88cacf449611e0",
+          "bytes": 9824
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_3.png",
+          "blob_sha": "405e9f794ebe8264b2de51042f6ff17dce3ec513",
+          "bytes": 135224
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_4.plist",
+          "blob_sha": "dabb97c2abbcb5e9854bf266fbbc03f5021cdc06",
+          "bytes": 5896
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_4.png",
+          "blob_sha": "6d929dcd9984df81851761490e72d8f742d6c356",
+          "bytes": 6513
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_6.plist",
+          "blob_sha": "344d53054d13a799c96373d24d26a9ea161982a7",
+          "bytes": 9829
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_6.png",
+          "blob_sha": "eab4ba6ab6d696bd2d91807eb1f56b2488787d22",
+          "bytes": 1390838
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_7.plist",
+          "blob_sha": "6c9cb1360c0054f3b2fbf1ddd87d26473ba0e6ed",
+          "bytes": 12060
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_7.png",
+          "blob_sha": "6c139eb6c60f47edb05772dc8dcce91b4d3dce36",
+          "bytes": 471852
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_8.plist",
+          "blob_sha": "d8e89ca2d3062cbce24e02ef5d991886c6eb7900",
+          "bytes": 12067
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_8.png",
+          "blob_sha": "a8dab224b8ce63cf8b9f127716dd32e850f05dc9",
+          "bytes": 255704
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_9.plist",
+          "blob_sha": "7bd625f9679d0ff7192f87fe53c23965ec46a882",
+          "bytes": 12050
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_16_9.png",
+          "blob_sha": "9ce085f6d3956ce133d6e5413fb5acb0d6bcab0c",
+          "bytes": 289646
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_1.plist",
+          "blob_sha": "524e8f8f1c0bb31efe0abfe38837ef614e5cfc73",
+          "bytes": 9829
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_1.png",
+          "blob_sha": "cae860e605de2e70aa6b5d3874a8db1db2e0f80a",
+          "bytes": 693770
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_2.plist",
+          "blob_sha": "20dc2f2385841491bebb5e94009c34d51c716998",
+          "bytes": 5939
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_2.png",
+          "blob_sha": "db54496a3ee9cb5b9561f85d48d5da820557b3ec",
+          "bytes": 156633
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_3.plist",
+          "blob_sha": "f63ffe44b3eb166bb530104a9b8262bc43e3591b",
+          "bytes": 9845
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_3.png",
+          "blob_sha": "57d79b083e5800d9ecefd3fe898c0a67c6f40262",
+          "bytes": 1256408
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_4.plist",
+          "blob_sha": "a5de69e7ffedade729f6586fced4c7f9ba5b4b1e",
+          "bytes": 9354
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_4.png",
+          "blob_sha": "1f3d73fbb58407a344f2bbd997af38e8723da547",
+          "bytes": 7192596
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_5.plist",
+          "blob_sha": "e8acd54ef46a21386c4e6f6181a7c1840d34dc90",
+          "bytes": 5897
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_17_5.png",
+          "blob_sha": "4aa9917fb8d07d48e21249f0ed1966cf56dcbf95",
+          "bytes": 11339
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_20_1.plist",
+          "blob_sha": "6cb99f935a2d58b57aedc693c76bdf676d8f2159",
+          "bytes": 2609
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_20_1.png",
+          "blob_sha": "1eaf116d286a5b610c860ce70e350d2d076e86d3",
+          "bytes": 127629
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_20_2.plist",
+          "blob_sha": "99b4528c3c63d7cbdbdcd4454b3a702298eb53ff",
+          "bytes": 6492
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_20_2.png",
+          "blob_sha": "d392f325ce9d0270896d908204e36a077e858381",
+          "bytes": 849684
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_25_1.plist",
+          "blob_sha": "0b5db098ed74497d0e52eec1175cfaea59154881",
+          "bytes": 5888
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_25_1.png",
+          "blob_sha": "72416115f087c88d0d1903faaf8abf02fa0bff48",
+          "bytes": 59514
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_25_2.plist",
+          "blob_sha": "8f6aeb42b7a64f38766687ac37bfa522a0014bd5",
+          "bytes": 5899
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_25_2.png",
+          "blob_sha": "7a60622a4b32163e15a105ad53800555f2b1e8d2",
+          "bytes": 61261
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_1.plist",
+          "blob_sha": "090299c5321d3478289cf2e88de35870a57c9d1d",
+          "bytes": 9790
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_1.png",
+          "blob_sha": "738c57a1aae19887a4e0c9b979eaadcae86d054e",
+          "bytes": 280876
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_2.plist",
+          "blob_sha": "76a334dc003bf2c6b8d83c8a3fb1074c8c49b9f9",
+          "bytes": 9873
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_2.png",
+          "blob_sha": "bf73696c0de2404bfd4fc38f8822847139538eb3",
+          "bytes": 1222009
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_3.plist",
+          "blob_sha": "3766f802e034350a74f725fd56c85fbf9a3df835",
+          "bytes": 9859
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_3.png",
+          "blob_sha": "3d81b8fe91663b837c9f7b3a2a418f7158af01e4",
+          "bytes": 928493
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_4.plist",
+          "blob_sha": "fe8e0f77b8c4bd0f37c776610f82dd0106fdd0b8",
+          "bytes": 9830
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_4.png",
+          "blob_sha": "a2f2a7b94d06ee75d3eb7bcf2ae81d31b2904f3a",
+          "bytes": 121778
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_5.plist",
+          "blob_sha": "1fce4289a5459d179f8bd0903523e0074efcc9d2",
+          "bytes": 5354
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_5.png",
+          "blob_sha": "b448f51a0fd8d648a6110c024bff72edd8dd8349",
+          "bytes": 33103
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_6.plist",
+          "blob_sha": "63ae7ad6081efb43360a64685c36d520de04b0eb",
+          "bytes": 9815
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_26_6.png",
+          "blob_sha": "0a2ac9ca5c008b58b9adc6e8b415c3c1fac8d9dd",
+          "bytes": 18544
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_1.plist",
+          "blob_sha": "ed5d1be020c5a7909de7fd179a0a48d431cbab4e",
+          "bytes": 5391
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_1.png",
+          "blob_sha": "4b89e464bd35a5ee5dd0d07366f17e0bfb75ebd6",
+          "bytes": 640568
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_2.plist",
+          "blob_sha": "735cd4e98bf7f16415628318cd636da2bb7904d4",
+          "bytes": 5954
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_2.png",
+          "blob_sha": "830b839a49845b58745f1bb8505eef32ad2a62fb",
+          "bytes": 89398
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_3.plist",
+          "blob_sha": "0e534c3e903ff6d2bd04bb1df064ee5af018e7a6",
+          "bytes": 3726
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_27_3.png",
+          "blob_sha": "6c3de06c6fa1354838d720db262978ea66958ebf",
+          "bytes": 100512
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_28_1.plist",
+          "blob_sha": "e6d3e5673e04a355863b2fd2006d341ecb9c8fe1",
+          "bytes": 8180
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_28_1.png",
+          "blob_sha": "860a0aa924f09a2e03db026de2d22949c903a80e",
+          "bytes": 1897456
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_1.plist",
+          "blob_sha": "cf965d224cf40671bbee99d4579b5e55bb56ee3b",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_1.png",
+          "blob_sha": "74c43627d37345da414885d572bf494076a7386e",
+          "bytes": 8155
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_10.plist",
+          "blob_sha": "3e4efcf216737b94b25f51617a8d121f7890bad0",
+          "bytes": 9802
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_10.png",
+          "blob_sha": "e5a168f716007430a50c9ecdaf4030825153538a",
+          "bytes": 721634
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_11.plist",
+          "blob_sha": "ea0e67fc927ed8703e31944fdfdcb95c4dc347fc",
+          "bytes": 9749
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_11.png",
+          "blob_sha": "692320c8ab4f5f2728c909796b499691790c4196",
+          "bytes": 164862
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_12.plist",
+          "blob_sha": "e4a2ceb9c2b91b5e573947edc55f95c4b1194948",
+          "bytes": 9266
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_12.png",
+          "blob_sha": "454c5d59b7abf7a57e1682e5b3f2de35f71cca62",
+          "bytes": 1148279
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_13.plist",
+          "blob_sha": "5a0d776fc22162a5f3ecea22e6f11518747caebe",
+          "bytes": 12005
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_13.png",
+          "blob_sha": "d21742aadd0d7e58e409812c5343d832d5e7a3f4",
+          "bytes": 69881
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_14.plist",
+          "blob_sha": "dfbb0fcd13896f2581ef031f93c781d3a8566946",
+          "bytes": 12053
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_14.png",
+          "blob_sha": "99fb183a47aacbfcd4c0e04f7a0e0e7018b652a3",
+          "bytes": 2197005
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_2.plist",
+          "blob_sha": "0fcdb7f1748949e3682f5789611e1e6425d80e7b",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_2.png",
+          "blob_sha": "4a958a29307bccc353e90459a7265c768d5dfe72",
+          "bytes": 10037
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_3.plist",
+          "blob_sha": "cb798978208ffd733f918889100acb9d01e6b5a8",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_3.png",
+          "blob_sha": "044ca9412ab4e0bcfb2be6ff96154168c2f66e0a",
+          "bytes": 8293
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_4.plist",
+          "blob_sha": "f41f42a5ed9d3c6f8d6f6c296c58a455180401a9",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_4.png",
+          "blob_sha": "d03f380a47a268455418a49669462eeb60f8d5ff",
+          "bytes": 9745
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_5.plist",
+          "blob_sha": "6629712b1a9e186096ed493551ca495bb699135b",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_5.png",
+          "blob_sha": "dbf2d78fca736a69a9a8c68c3ba6b7081ca70138",
+          "bytes": 8047
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_6.plist",
+          "blob_sha": "5bdeb13c020182206943ae295ebde248b0828e3f",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_6.png",
+          "blob_sha": "825bf8b9f1ec4696258a39a0e491049cdf92c153",
+          "bytes": 10352
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_7.plist",
+          "blob_sha": "3d8d1b88c898ba44af5372b4ad6000b80660f6fa",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_7.png",
+          "blob_sha": "27b021cd8e48a7fa8791b12a96b8a8aad668159f",
+          "bytes": 8986
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_8.plist",
+          "blob_sha": "ba3b36441ceca0d585499a0ca227d6c6e805ac7d",
+          "bytes": 1486
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_8.png",
+          "blob_sha": "41b9e8217024434dbd65d160d43e67a6555e3f7c",
+          "bytes": 10465
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_9.plist",
+          "blob_sha": "a01c674d2b4b68a64e74dd3e6b187983a6e651b4",
+          "bytes": 3700
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_2_9.png",
+          "blob_sha": "a3f5e4c5e7df88b3240d17b2ad3ed482f5f3eb38",
+          "bytes": 185740
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_1.plist",
+          "blob_sha": "1af99d154a53f6dfb86a61fb307ef839c7fc5e2a",
+          "bytes": 9864
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_1.png",
+          "blob_sha": "2d485492dc9ab46d83974c7d0dd57ac95654574a",
+          "bytes": 185049
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_2.plist",
+          "blob_sha": "4234f89cfb7990e814209e9a7df70eb24e70b0b6",
+          "bytes": 9836
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_2.png",
+          "blob_sha": "e42841f782f3201a99b198b8e2a48c74e049c88c",
+          "bytes": 3420118
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_3.plist",
+          "blob_sha": "dd0a14ff583b0c55df3e9b845fb9367855f95c4e",
+          "bytes": 9816
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_36_3.png",
+          "blob_sha": "2b20739c54736a0682be4c9715053303b3cf62cc",
+          "bytes": 864887
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_1.plist",
+          "blob_sha": "ee21d2cc34e66cd3f0a4e1bfe6b9aab879f63fbb",
+          "bytes": 7592
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_1.png",
+          "blob_sha": "d1a46e60bac54043e39b5552ff09f72a5720a4ee",
+          "bytes": 135902
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_2.plist",
+          "blob_sha": "ea4e66208e47292c59746996fa4998547da2c7ee",
+          "bytes": 7586
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_2.png",
+          "blob_sha": "32007169f1d8a19f6d46cd90d4e7d9c9d8a17c75",
+          "bytes": 896473
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_20.plist",
+          "blob_sha": "27cb5fef4b3f7868073d91868ad3aea1bf07e6f1",
+          "bytes": 4271
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_20.png",
+          "blob_sha": "5935c55ffefb87d3578be9afa302376f67c079eb",
+          "bytes": 165775
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_3.plist",
+          "blob_sha": "df7e4b62c69f21af01b5a2c6ee6c9a01086a7031",
+          "bytes": 9228
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_3.png",
+          "blob_sha": "b11a388b4fca2b9b486ed6a886b3012e32bfb6ea",
+          "bytes": 176054
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_4.plist",
+          "blob_sha": "8cbba91679032908e3224539fbdcd813818a1c97",
+          "bytes": 7503
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_4.png",
+          "blob_sha": "0ce52a90c169859718e8558eb4282abd80bb39e2",
+          "bytes": 23977
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_5.plist",
+          "blob_sha": "ab890ec18c3e74aba5efcb0710ea92b3c2da9cbf",
+          "bytes": 7579
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_5.png",
+          "blob_sha": "0892bcbb92a58d21de67900121a1bacaa72b35a8",
+          "bytes": 174784
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_6.plist",
+          "blob_sha": "78790ff0559b56d9d40455b41c92261d2d1ed39c",
+          "bytes": 4252
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_6.png",
+          "blob_sha": "7fa536e2193d9abd571891ae857eb0a5e1a16e73",
+          "bytes": 203047
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_7.plist",
+          "blob_sha": "23c9fd538253c6a46e9c7b0ea569842aa26a9e6a",
+          "bytes": 5364
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_7.png",
+          "blob_sha": "3082e03987d5190311b46086c571e33e94dd121f",
+          "bytes": 1077916
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_8.plist",
+          "blob_sha": "bd5872e1719ffd812424b12f7c82e41081a35f3d",
+          "bytes": 8667
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_8.png",
+          "blob_sha": "adbd903cedda1a6adcb00466957a021b45d705c1",
+          "bytes": 100748
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_9.plist",
+          "blob_sha": "a8c042738491b452cd61d2df9e8919d63569336d",
+          "bytes": 5352
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_3_9.png",
+          "blob_sha": "8a4b9e3ac22a77a49521b3576b411a789166a102",
+          "bytes": 83890
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_1.plist",
+          "blob_sha": "242f9bcc001ccf916d6942e51be83ffb46e3b8e6",
+          "bytes": 7612
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_1.png",
+          "blob_sha": "55eef34245fbf92360018e1a2e37cb429395eb1c",
+          "bytes": 916267
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_10.plist",
+          "blob_sha": "bbc9487b13287fc88801925dde0e17f4bd59e58a",
+          "bytes": 5948
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_10.png",
+          "blob_sha": "42563d6de7fdd94248c2f4d46b45578a67ef73d4",
+          "bytes": 137423
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_11.plist",
+          "blob_sha": "d547b70a2395576f2b49e09973a9e36861def3e5",
+          "bytes": 9894
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_11.png",
+          "blob_sha": "99135af3cfa8fb1e56ce7d2c8fa98e1577d0741e",
+          "bytes": 2618691
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_12.plist",
+          "blob_sha": "fa15eb6bc7baa0448a91216ec3156bcd9f308cae",
+          "bytes": 9875
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_12.png",
+          "blob_sha": "bdce11cfb72d3afbf1203efc494f15aeb1031a40",
+          "bytes": 653912
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_13.plist",
+          "blob_sha": "52f52501156f126adddb91b448d47fe96290fd5d",
+          "bytes": 9866
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_13.png",
+          "blob_sha": "f718feb7ff58f2f4e12071192000a81366bb2b51",
+          "bytes": 658049
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_14.plist",
+          "blob_sha": "707bcb73edb354ec701834cf44c5d86b9c1fd325",
+          "bytes": 9842
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_14.png",
+          "blob_sha": "10ec5d2903958963e18931cb99823419950f044e",
+          "bytes": 1213903
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_15.plist",
+          "blob_sha": "7230eb46f635b9d525bf3ffd26ad72b424251f10",
+          "bytes": 9874
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_15.png",
+          "blob_sha": "fb91f98bbaa9ce1fa9c5a36cd77ab87db756b3c7",
+          "bytes": 68888
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_2.plist",
+          "blob_sha": "5dd1a7aaa9023fc23c0b1ce00bc2a7e72b540d74",
+          "bytes": 9237
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_2.png",
+          "blob_sha": "3a8a341f6e3c312cddc27691dc3ffb46ecc93b00",
+          "bytes": 652148
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_3.plist",
+          "blob_sha": "c4d4c028fc72b11d6ed8e2541097ddd9ca530525",
+          "bytes": 3164
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_3.png",
+          "blob_sha": "aa1658273f7c768ac3d170542d080ecbe6a94489",
+          "bytes": 123510
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_4.plist",
+          "blob_sha": "ac482db6a5d8acb20ac15a0d47bdd2b45f76b2fd",
+          "bytes": 2605
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_4.png",
+          "blob_sha": "0f76db13c1b9ddda3d8be115569e20e696a3a8a6",
+          "bytes": 700504
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_5.plist",
+          "blob_sha": "737b9041acfdd5ddd36511eb73770466d79afd02",
+          "bytes": 9847
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_5.png",
+          "blob_sha": "7cc87c0a28970cb8660d0420e06a56cb51a2aeda",
+          "bytes": 2781832
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_6.plist",
+          "blob_sha": "6cfb81fa7f5eea1ec100652562bdafd57114979e",
+          "bytes": 2053
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_6.png",
+          "blob_sha": "01c6c4402879a8c25ae4e8ee10e3c4c00db915be",
+          "bytes": 277080
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_7.plist",
+          "blob_sha": "c475aff5877bbf64f90a4b6fc4d3d6a93c3a9f05",
+          "bytes": 9885
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_7.png",
+          "blob_sha": "c1b38a12e12dbd0b890ea569569ed91ad1483a19",
+          "bytes": 2906781
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_8.plist",
+          "blob_sha": "4497cbd6d6c81f4c7a86a2515c46c5ba2694020c",
+          "bytes": 9870
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_8.png",
+          "blob_sha": "c53a5509b46a62f4e6c9c846c9899a7cdcf25b5c",
+          "bytes": 3622125
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_9.plist",
+          "blob_sha": "4b2e15f9d22e7ac6c03a38720ea804fdcbdf79b5",
+          "bytes": 9875
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_40_9.png",
+          "blob_sha": "0f77964b14b0e1bfd47e7d1a245d04db19c9f86b",
+          "bytes": 2972750
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_42_1.plist",
+          "blob_sha": "4984d8cd26fe5ee90a2d1294e5ba449d8074cf0d",
+          "bytes": 9811
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_42_1.png",
+          "blob_sha": "473755bc6076af1938b4bc9b84f1a290198eb979",
+          "bytes": 210815
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_44_1.plist",
+          "blob_sha": "860e69c1416316956c8b4f5bc9b4af2be545a2e9",
+          "bytes": 9838
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_44_1.png",
+          "blob_sha": "bfa5b907b360fd86869c06aece28d7181fcb3926",
+          "bytes": 504679
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_49_1.plist",
+          "blob_sha": "24659bd3387688b68c33b803e97be54182743986",
+          "bytes": 6504
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_49_1.png",
+          "blob_sha": "9c6ca47527095a6d9562a05fe37d8ac5a5be1a1e",
+          "bytes": 970651
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_49_2.plist",
+          "blob_sha": "23b1a44ebb14b95a5e4e82c35df35355b9275902",
+          "bytes": 9831
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_49_2.png",
+          "blob_sha": "a6f9a194b6408fb5a9a9692d22ceba5688a60061",
+          "bytes": 359316
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_0.plist",
+          "blob_sha": "1ddd45e8ab8645e32642884249683d62c29056c6",
+          "bytes": 13119
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_0.png",
+          "blob_sha": "4bd872adde154562d73794fb737e718143b953fa",
+          "bytes": 1712310
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_10.plist",
+          "blob_sha": "c3aec978942f49ad856654a64952ac6a8f756ef8",
+          "bytes": 7626
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_10.png",
+          "blob_sha": "0b2164df875d0161618418660fa0ce4f3378d01f",
+          "bytes": 1150026
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_20.plist",
+          "blob_sha": "647867c1f408ea876781d77f221fe43bd63a8ceb",
+          "bytes": 12077
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_20.png",
+          "blob_sha": "7b688a67a3aa49de20433924f9eab952646c4840",
+          "bytes": 4183302
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_21.plist",
+          "blob_sha": "1187ba6e4514f8bf3b1adfd8c3545e621b60e02b",
+          "bytes": 12080
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_21.png",
+          "blob_sha": "e8048e5e34f9227d94ceaddbede60a6d30231aef",
+          "bytes": 1095202
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_30.plist",
+          "blob_sha": "847ac6b15e9f3a4f7e0562712c7520cd1115f79f",
+          "bytes": 6502
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_30.png",
+          "blob_sha": "41f50f8977959b979749d337db59167a5d55cad0",
+          "bytes": 899149
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_31.plist",
+          "blob_sha": "837ac440e4a75192b152916095f7f5d88137eea5",
+          "bytes": 12057
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_31.png",
+          "blob_sha": "865eb8614c8bfe07004ae1dbe680e616c0939867",
+          "bytes": 2005573
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_40.plist",
+          "blob_sha": "e72d8ce15ad6b058730a86629af29ed6bd552116",
+          "bytes": 12093
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_40.png",
+          "blob_sha": "7855dfd365614e7483f7b03556762baea6a709cb",
+          "bytes": 1175291
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_50.plist",
+          "blob_sha": "47350a4cc7b57535915f9bd78df4a333c94e60d8",
+          "bytes": 12115
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_50.png",
+          "blob_sha": "a0c1c30321c237c0cb17ec05154d3de4c9f20904",
+          "bytes": 1981280
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_51.plist",
+          "blob_sha": "096a7484561202f4fd3115ab03c6466731c2a736",
+          "bytes": 8167
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_4_51.png",
+          "blob_sha": "905c80734dd09180a476cbb758b3a66993dee347",
+          "bytes": 1016046
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_57_1.plist",
+          "blob_sha": "55cf775b8939ba367ea24c0360f4e87ece98d96a",
+          "bytes": 16512
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_57_1.png",
+          "blob_sha": "ac582f68c748477c466617eb1298365ea87e2335",
+          "bytes": 9858389
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_57_2.plist",
+          "blob_sha": "9d040bd6431d5258e2e5e39061aa70a0a3b0ad49",
+          "bytes": 9851
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_57_2.png",
+          "blob_sha": "4cc1d2f1c6c11b43a9fceb3cd13fef282edc3315",
+          "bytes": 225653
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_2.plist",
+          "blob_sha": "a60a0a7181c41a1c7138c73bee046473334fc500",
+          "bytes": 9304
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_2.png",
+          "blob_sha": "99caa3edb79eaee5e108b799ab863d1db2978675",
+          "bytes": 1501265
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_3.plist",
+          "blob_sha": "30b2f278bb42e508fc938fa51638dba905f23f8e",
+          "bytes": 9784
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_3.png",
+          "blob_sha": "a19985bc1c5bc1ac8dcc6cd71fd0dccb931cae5d",
+          "bytes": 281272
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_4.plist",
+          "blob_sha": "876ec6c052494abf7fcf0c98c76818faacedbfb4",
+          "bytes": 9835
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_4.png",
+          "blob_sha": "9cecc0d4af67d70254c4f714c48e7b4a5ead4de8",
+          "bytes": 322551
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_5.plist",
+          "blob_sha": "247f92ae211c05faf13470fc14801ddfb7b096b5",
+          "bytes": 1494
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_5.png",
+          "blob_sha": "3e498c2519028017228e963c0ee90e6c38a4551b",
+          "bytes": 31978
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_6.plist",
+          "blob_sha": "5ac63c965a7c32dd7a403a9c6df63b225bcebb20",
+          "bytes": 1494
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_58_6.png",
+          "blob_sha": "b51daeeb1907f3e9edad98e23bb96917aa79e571",
+          "bytes": 25101
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_1.plist",
+          "blob_sha": "5afc206e9eab94402e60cdb2faed3ab66d693f7d",
+          "bytes": 8720
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_1.png",
+          "blob_sha": "15e7bbe20d2f5f785a4e15700dc2b930523b72b6",
+          "bytes": 1340606
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_2.plist",
+          "blob_sha": "7167ff1300383bf54a361b6bb2628956ee540aea",
+          "bytes": 12073
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_2.png",
+          "blob_sha": "cd592532f0e386a4b7794625f9e9666d4afe9160",
+          "bytes": 147128
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_3.plist",
+          "blob_sha": "fdaa6e76c77c04931450c9cb1d5260a1d28ea701",
+          "bytes": 9838
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_3.png",
+          "blob_sha": "bda5117622e53f0c6a1420676c4e16500e16c24d",
+          "bytes": 164231
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_4.plist",
+          "blob_sha": "8fd92172b48b19dd6eb92db73b3431644e37f924",
+          "bytes": 9305
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_4.png",
+          "blob_sha": "083e8102a2225851396119a75b55916e901b449d",
+          "bytes": 348901
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_5.plist",
+          "blob_sha": "212cbfdd82cc7ba33d42fbb68a1dd025d43e95a1",
+          "bytes": 9292
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_5.png",
+          "blob_sha": "fcf8b79b897f0aeadce95be56b79aff44c31ac44",
+          "bytes": 465950
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_6.plist",
+          "blob_sha": "e88171d00c729d4b404fbc5607614590d22edf31",
+          "bytes": 12059
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_59_6.png",
+          "blob_sha": "d75ee4b3fa608f5ff48a89621d22272e8b83cda0",
+          "bytes": 565015
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_63_1.plist",
+          "blob_sha": "d35b07c861980a4f0d25fd9156494328e28b5937",
+          "bytes": 14064
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_63_1.png",
+          "blob_sha": "79dc878979dbfb9a9c448b3921a35636b50f13f8",
+          "bytes": 377665
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_1.plist",
+          "blob_sha": "c2b6ebd8b8f4eacfa96861726d8b453958828f78",
+          "bytes": 2043
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_1.png",
+          "blob_sha": "c4f2eadca74ed1e758cacf3868b6199c718bd838",
+          "bytes": 86659
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_2.plist",
+          "blob_sha": "3260e32ad59d1eb4358c79071075602d232d80e9",
+          "bytes": 5920
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_2.png",
+          "blob_sha": "8890a700a96dee5498930ad858167ecf58aade78",
+          "bytes": 212780
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_3.plist",
+          "blob_sha": "9046875d37fb19c10a9b7cedd8a5ae49602761b4",
+          "bytes": 9816
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_3.png",
+          "blob_sha": "de4606b76f2cead2bce22b8753bc625e93e5a445",
+          "bytes": 1847581
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_4.plist",
+          "blob_sha": "3c98d9b720cce96ed9968de717ea3ebc05a0b15f",
+          "bytes": 9319
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_4.png",
+          "blob_sha": "4896187d6bfaa2e59fd3aba0ccb203f6c1853a7b",
+          "bytes": 7679640
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_5.plist",
+          "blob_sha": "63cf3dca1d3fcb5b714a51d4ade8bd9909c90acb",
+          "bytes": 9320
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_6_5.png",
+          "blob_sha": "63f640e7df09a4353d43a04a461ec4e14730313a",
+          "bytes": 7648894
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_1.plist",
+          "blob_sha": "a2eaf1320b0c2a506a5f1416c827290e4858bc27",
+          "bytes": 7623
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_1.png",
+          "blob_sha": "bf4649e4ba62794b29ac0ea61406aa373a198b8c",
+          "bytes": 786263
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_2.plist",
+          "blob_sha": "21988be335835c8360628e492899ad4b468920a0",
+          "bytes": 9797
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_2.png",
+          "blob_sha": "2e1ea3d31e270570c18b856fd14170ecfc065421",
+          "bytes": 120688
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_3.plist",
+          "blob_sha": "5934dfb17b8ef4c58fce6eb7d09109bf9b0208c3",
+          "bytes": 11475
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_3.png",
+          "blob_sha": "2937c5fcac60c407d8bc73338c0158c954afeccd",
+          "bytes": 173828
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_4.plist",
+          "blob_sha": "9f54ed20844f37e58c0f837243dafa9cfbbceff3",
+          "bytes": 2613
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_4.png",
+          "blob_sha": "89447cf177991c47ca495b0d1449b3d15e817869",
+          "bytes": 91626
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_5.plist",
+          "blob_sha": "4b7566bc30b2ef7505f3daf678df3e2af6547097",
+          "bytes": 12070
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_72_5.png",
+          "blob_sha": "027476dd2b560902007e87cecc73dc7d6837c67d",
+          "bytes": 488188
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_1.plist",
+          "blob_sha": "2b36ea6b000278315aef21cd92ae32655bf94dad",
+          "bytes": 3731
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_1.png",
+          "blob_sha": "e790b1512a4ad5755acd68d40ecaa9fb2e0ce5ef",
+          "bytes": 1134650
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_2.plist",
+          "blob_sha": "46e1121924b0b2a66f37213f1acfb0105b4a41d8",
+          "bytes": 9868
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_2.png",
+          "blob_sha": "1ff6fda6ca460fe79cd18f7cbab7a5b3e96e0000",
+          "bytes": 2423150
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_5.plist",
+          "blob_sha": "b19d4545a1ab64b122577dd132047209fc167e04",
+          "bytes": 7094
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_5.png",
+          "blob_sha": "c74c4e756de0d4e04458d295583642d21ca58e0c",
+          "bytes": 1330283
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_6.plist",
+          "blob_sha": "61fb113e805c1a095ae665fedd6cd68d084dbf2d",
+          "bytes": 4837
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_73_6.png",
+          "blob_sha": "098ba3d7d9a5f3edc5df878d63bef06bfe6dd7e5",
+          "bytes": 746599
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_7_1.plist",
+          "blob_sha": "fe05a7193ba546f4fe410a72188539897c78bbd0",
+          "bytes": 9811
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_7_1.png",
+          "blob_sha": "f6bf01ee3dea1f40f99c668118e4eb5599e562d6",
+          "bytes": 1242453
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_1.plist",
+          "blob_sha": "65a419a1fe0c75bafca75df2db30c4ae7e7bc893",
+          "bytes": 8734
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_1.png",
+          "blob_sha": "5dd5135a002669374c6d21ebfa07f4ef3c7afced",
+          "bytes": 1361349
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_2.plist",
+          "blob_sha": "0f2b05fe58568b3598b82f8aecaece3862e97f64",
+          "bytes": 8722
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_2.png",
+          "blob_sha": "66174338334fd2b9d267b88c4a5a7fc687ccdfbf",
+          "bytes": 1176785
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_3.plist",
+          "blob_sha": "203855bdda07dd8753e13c62256ac2ce91f56d5a",
+          "bytes": 8737
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_3.png",
+          "blob_sha": "a596005d529fe4672c9253848ca731504f41ecb3",
+          "bytes": 1166248
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_4.plist",
+          "blob_sha": "56b59ba32c077019b2cd0d01740c63e30db08304",
+          "bytes": 8722
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_80_4.png",
+          "blob_sha": "cf59dd9e994c2bfedfaaf2267c6ae060168fba24",
+          "bytes": 1000120
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_1.plist",
+          "blob_sha": "1b8f051ff6904972a76e2f0387ddae5aa52fccbb",
+          "bytes": 7608
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_1.png",
+          "blob_sha": "55708afc6f70c66fcf63041f8c96dbd1c1b674d7",
+          "bytes": 773980
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_2.plist",
+          "blob_sha": "09dbcb0964b15c4f320a137e866a3eb9ffd31fab",
+          "bytes": 9276
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_2.png",
+          "blob_sha": "508707e7cce394c63c6994dfc57f45496db386b8",
+          "bytes": 796776
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_3.plist",
+          "blob_sha": "ca18051355d4ca24cfc7b2dc24cb73f0c3c594bc",
+          "bytes": 8684
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_81_3.png",
+          "blob_sha": "2129f1eaedb63d2501900a012e96f96c9f4d0718",
+          "bytes": 78599
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_1.plist",
+          "blob_sha": "0230b6c65b29885a34b7ff7eae620a2a996fe3cc",
+          "bytes": 5945
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_1.png",
+          "blob_sha": "90934e57594d29b0e548ecd53bf65cd0525d1b9c",
+          "bytes": 541392
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_2.plist",
+          "blob_sha": "db24e8f971152a0f6414b73bd31da51f772be01a",
+          "bytes": 6493
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_2.png",
+          "blob_sha": "b949ac2ae8030c08a670a18d5d098ae19dd1ddf4",
+          "bytes": 98278
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_3.plist",
+          "blob_sha": "822a171e39b7445a40438489fe6631adb71bf4dd",
+          "bytes": 9315
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_3.png",
+          "blob_sha": "8a70c42f9c45797ae621c39703706a9324e220a5",
+          "bytes": 2665677
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_4.plist",
+          "blob_sha": "403db2a48e30a597c7c41d568e000e8e2782ca61",
+          "bytes": 1491
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_4.png",
+          "blob_sha": "1e51fc61ea433048f55ff8d397fc1e76ff36e484",
+          "bytes": 7001
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_5.plist",
+          "blob_sha": "635bc9bca87ad6cf64605d5d0c01aaf28f14492d",
+          "bytes": 2605
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_86_5.png",
+          "blob_sha": "0fa82c40b8d7cd131747bceab2907ebec7fb7fd2",
+          "bytes": 71500
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_1.plist",
+          "blob_sha": "2bfa36f29da12a8de693a97a29ee909e5ce97b6a",
+          "bytes": 9736
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_1.png",
+          "blob_sha": "6ba43df579bcca96374e5810a230bf1df3fcc85f",
+          "bytes": 172123
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_2.plist",
+          "blob_sha": "bebaab0372fe9ef50ad00606054215a0a40c3a7e",
+          "bytes": 9797
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_2.png",
+          "blob_sha": "4aa8a2632cf4be6297501fd5575c5377baaa27f1",
+          "bytes": 159274
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_3.plist",
+          "blob_sha": "ae4c764320901f6da6769eb676787c7d2f270f2f",
+          "bytes": 9801
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_3.png",
+          "blob_sha": "1f110a3db6a93711e15a08f34318050069b8cf54",
+          "bytes": 162812
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_4.plist",
+          "blob_sha": "efe83d90835d981ca9018b1a22870c9165d0f141",
+          "bytes": 9765
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_8_4.png",
+          "blob_sha": "10710ec83d7f19c38304ed572be9de6f2835784e",
+          "bytes": 189397
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_1.plist",
+          "blob_sha": "a90dc90372ca2f35797c81db211552083630bab2",
+          "bytes": 17587
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_1.png",
+          "blob_sha": "dee38546f7b8a88a5a4ca62d9d0249b49b6503b9",
+          "bytes": 173424
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_2.plist",
+          "blob_sha": "6c18c46522977ecc8fd09c03ed0b12b38a86b787",
+          "bytes": 5941
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_2.png",
+          "blob_sha": "be016e00fab32b26ba3db7afd432a4894f51ded5",
+          "bytes": 98309
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_3.plist",
+          "blob_sha": "fb2878f2c2985f61877b4a2e542a8910ea2ad413",
+          "bytes": 11965
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_3.png",
+          "blob_sha": "5bd14779cecca2c1dafcdf3ba37ee8cf8d4f1ef5",
+          "bytes": 120434
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_4.plist",
+          "blob_sha": "b736ab03fcf91840a3162704a3925239e0bfd281",
+          "bytes": 9184
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_96_4.png",
+          "blob_sha": "cda83d4f986c2fee53e1f276be3daadd70ca46c4",
+          "bytes": 84496
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_97_1.plist",
+          "blob_sha": "173d7d675f240a79443d5c8a70178bf10b4da8fa",
+          "bytes": 5961
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_97_1.png",
+          "blob_sha": "61a3905fe67b56d251dfc9a62fbdcb92785214bc",
+          "bytes": 621028
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_97_2.plist",
+          "blob_sha": "c9574d6dbbcdd2b51436b731842fb86d7a55dc61",
+          "bytes": 12096
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/txf_97_2.png",
+          "blob_sha": "40951977539504b103db469a7d2636c444a9b36b",
+          "bytes": 485985
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/zhanlitisheng.plist",
+          "blob_sha": "ac6c21ee72eb109a64faa42fb3bb3a4a3157d438",
+          "bytes": 12292
+        },
+        {
+          "path": "project_wly2_lua_client/res/animation/effect/zhanlitisheng.png",
+          "blob_sha": "10ee08fcb92db819e13e3a5535ef680049abe92c",
+          "bytes": 864690
+        }
+      ],
+      "directories": []
+    },
+    {
+      "directory": "project_wly2_lua_client/src/app/modules/battle",
+      "files": [
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/ArrangeEnemyItem.lua",
+          "blob_sha": "7dd19f26b3191b1fb9df91298298a7306264ec7e",
+          "bytes": 6726
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/ArrangedBeforeWar.lua",
+          "blob_sha": "3de2eb4bba7a72e5cc261148812cdb052ac99943",
+          "bytes": 63503
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/ArrangedItem.lua",
+          "blob_sha": "edc10aaea49a778f685c0ef0bbd38f2e2e5f7d70",
+          "bytes": 15297
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BattlePopText.lua",
+          "blob_sha": "98a0611719213f39f18b8915bd7113f0fa586353",
+          "bytes": 2473
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BattleSoldier.lua",
+          "blob_sha": "b849d5968e48c22587e4253a4151e14888aa055a",
+          "bytes": 6635
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BattleSoldierGroup.lua",
+          "blob_sha": "3a6e10558234d2881531a21e54341183e88e3a41",
+          "bytes": 30951
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BattleSoldierInfo.lua",
+          "blob_sha": "16bdb5c0782c4d81cc2c7b1f3513adbc48c33dd4",
+          "bytes": 2446
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BattleStartAnimation.lua",
+          "blob_sha": "56fdcae3ebcf3904f602212566fac44112d65983",
+          "bytes": 859
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BuffIntroductionCell.lua",
+          "blob_sha": "616ddad3a2711c198053901e776af9049e0ae8de",
+          "bytes": 2240
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/BuffPopList.lua",
+          "blob_sha": "b1cea857bb3693afa72dd416ea20a8c83c70fa0b",
+          "bytes": 2436
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/FullScreenSkillEffect.lua",
+          "blob_sha": "481b99c64bbd10ff22c11958719a6179f698bc16",
+          "bytes": 3579
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/ObjectAnimation.lua",
+          "blob_sha": "47389d256724fc5181f39036db540582a916ddd3",
+          "bytes": 3148
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/SingleBattleModule.lua",
+          "blob_sha": "2927a9aaaf7b726b2ad9b0b5123ead775dc898c0",
+          "bytes": 22309
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/SkillPop.lua",
+          "blob_sha": "5908ec7ff6f75bcd2463791caa0c1cbf7d227c91",
+          "bytes": 3157
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/battle/SkillPopFull.lua",
+          "blob_sha": "5f3ce2603718a7975a9db7da65be14fb22c9a7b9",
+          "bytes": 1789
+        }
+      ],
+      "directories": []
+    },
+    {
+      "directory": "project_wly2_lua_client/src/app/modules/embattle",
+      "files": [
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleBottom.lua",
+          "blob_sha": "39ac3282342df0988e472dd65dd018518226b06e",
+          "bytes": 4732
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleFormation.lua",
+          "blob_sha": "c27d86c9a3099bdc3863e7c59231bd7556c16a85",
+          "bytes": 1628
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleFormationItem.lua",
+          "blob_sha": "01a805c07e1644a973bf6980fc35261b6a2ff495",
+          "bytes": 1886
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleGeneralTip.lua",
+          "blob_sha": "8e2d3b0c0e1af7623889860b3dc087c6cbce3c22",
+          "bytes": 6277
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleItem.lua",
+          "blob_sha": "ca2e4f6db28c7aa9f0fb67b124eb72f9374198e6",
+          "bytes": 14051
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleListItem.lua",
+          "blob_sha": "39dc8d8c53ba62ba0dffadb18b89d3394b1c45c9",
+          "bytes": 1391
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattlePos.lua",
+          "blob_sha": "fb0ad91d416def24d28869f144cd2d6507989d82",
+          "bytes": 1221
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleRoleCard.lua",
+          "blob_sha": "8c4a3c17cc07798ad0e57fc3c15870dba93f1db4",
+          "bytes": 7961
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/EmbattleView.lua",
+          "blob_sha": "3a7b54aadeb29277c6e35d43a3bf117254c8a2a6",
+          "bytes": 23423
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/FilterChoiceModule.lua",
+          "blob_sha": "e87e3f4a74513fe31dca5e2bddf1e82e55d377e3",
+          "bytes": 2569
+        },
+        {
+          "path": "project_wly2_lua_client/src/app/modules/embattle/FormationItem.lua",
+          "blob_sha": "1e11d085c9488ae63b9c50ef53282fbcd8ecdf73",
+          "bytes": 930
+        }
+      ],
+      "directories": []
+    },
+    {
+      "directory": "project_wly2_lua_client/res/map",
+      "files": [],
+      "directories": [
+        {
+          "path": "project_wly2_lua_client/res/map/castle",
+          "tree_sha": "ac1bfb1e6a4da617c4ef5bbc6038b920076f6940"
+        },
+        {
+          "path": "project_wly2_lua_client/res/map/world",
+          "tree_sha": "bbb224f26cd737bd44e6754289781fe78f0f48e0"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "Source battle separates individual soldier animation, squad presentation and battle orchestration.",
+    "Sample soldier atlas uses PNG, plist frame geometry and text action timing. Original renderer should support independent action clips and per-unit depth sorting.",
+    "Current production runtime remains one 3x3 field and up to five generals per side, with P2 as sole combat authority.",
+    "Do not embed or redistribute external assets unless rights and provenance are established. No downloaded source executed."
+  ],
+  "handoff": {
+    "priority": [
+      "inventory and classify source assets",
+      "compare source formation presentation to current renderer",
+      "implement original visual changes driven by P2 events",
+      "rebuild canonical offline HTML and inspect real battle/replay screenshots"
+    ],
+    "preserve": [
+      "Save v5",
+      "P2",
+      "ART HOLD",
+      "no merge"
+    ]
+  }
+}

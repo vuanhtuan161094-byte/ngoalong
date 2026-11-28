@@ -1,0 +1,98 @@
+name: WLY2 source atlas acquisition and playable review
+on:
+  push:
+    branches: [feature/ngoalong-v1-complete]
+    paths: ['.github/workflows/nl-wly2-source-acquire.yml', 'tools/import_wly2_private.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch and hash-verify the 12 original directional atlases, build offline game
+        run: |
+          set -euo pipefail
+          python tools/validate_ngoalong_data.py
+          python tools/build_ngoa_long_mode.py
+          python tools/build_ngoa_long_r03.py
+          python tools/build_ngoa_long_r04.py
+          python tools/import_wly2_private.py --authorized-local-use --out "$RUNNER_TEMP/wly2-review"
+          sha256sum "$RUNNER_TEMP/wly2-review/index.html" | tee "$RUNNER_TEMP/wly2-review/html.sha256"
+          git rev-parse HEAD > "$RUNNER_TEMP/wly2-review/commit.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wly2-original-atlas-playable-preview
+          path: |
+            ${{ runner.temp }}/wly2-review/index.html
+            ${{ runner.temp }}/wly2-review/atlas-import-gaps.json
+            ${{ runner.temp }}/wly2-review/html.sha256
+            ${{ runner.temp }}/wly2-review/commit.txt
+            ${{ runner.temp }}/wly2-review/source/
+          if-no-files-found: error
+      - name: Browser startup and actual native battle preview
+        run: |
+          python -m pip install playwright==1.58.0
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import os, json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          root=Path(os.environ['RUNNER_TEMP'])/'wly2-review'
+          errors=[]
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+              page=browser.new_page(viewport={'width':1280,'height':720})
+              page.add_init_script("window.__P2_ENABLE_QA__=true;")
+              page.on('pageerror',lambda e:errors.append(str(e)))
+              page.goto((root/'index.html').as_uri(),timeout=120000)
+              page.wait_for_function("window.__P2_QA__ && window.__NL_ART_D2_QA__?.ready()",timeout=120000)
+              data=page.evaluate("""()=>{const q=__P2_QA__,g=q.getGame();q.beginBattle(1,'campaign');const b=q.debugBattle();return {save:g.version,p:b?.p?.length,e:b?.e?.length,sourceAtlases:__NL_ART_D2_QA__.sourceAtlasCount()}}""")
+              page.wait_for_timeout(1500)
+              page.screenshot(path=str(root/'battle.png'))
+              assert data['sourceAtlases']==12 and data['save']==5 and 0<data['p']<=5 and 0<data['e']<=5 and not errors,(data,errors)
+              (root/'smoke.json').write_text(json.dumps(data))
+              browser.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wly2-runtime-evidence
+          path: |
+            ${{ runner.temp }}/wly2-review/battle.png
+            ${{ runner.temp }}/wly2-review/smoke.json
+          if-no-files-found: warn
+  cache:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all pinned animation files, never execute source
+        run: |
+          python - <<'PY'
+          import json,hashlib,urllib.request,os
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor
+          inv=json.loads(Path('data/ngoalong_external_reference_inventory_20261127.json').read_text())
+          files=[f for g in inv['inventory'] for f in g['files'] if '/res/animation/' in f['path']]
+          root=Path(os.environ['RUNNER_TEMP'])/'wly2-animation-source'
+          base='https://raw.githubusercontent.com/MatrixHan/-111111/2270db0984a6455cf3b0f33b553fb80d97d91da8/'
+          def pull(f):
+              with urllib.request.urlopen(urllib.request.Request(base+f['path'],headers={'User-Agent':'Ngoalong-source-acquisition'}),timeout=90) as r:
+                  raw=r.read(f['bytes']+1)
+              assert len(raw)==f['bytes'] and hashlib.sha1(('blob '+str(len(raw))+chr(0)).encode()+raw).hexdigest()==f['blob_sha'],f['path']
+              dest=root/f['path'];dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(raw)
+          with ThreadPoolExecutor(max_workers=6) as ex:
+              for _ in ex.map(pull,files):pass
+          print('Verified files:',len(files),'bytes:',sum(f['bytes'] for f in files))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wly2-all-soldier-and-vfx-original-assets
+          path: ${{ runner.temp }}/wly2-animation-source/
+          if-no-files-found: error

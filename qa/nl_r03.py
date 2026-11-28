@@ -1,8 +1,10 @@
 """NL-R03 Chromium gate for real troop evolutions and four late-campaign tactics."""
 from pathlib import Path
 import json
+import shutil
 import sys
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -26,7 +28,7 @@ def open_page(browser, width=1280, height=720, stored=None):
     page.on("pageerror", lambda error: errors.append(str(error)))
     store = {} if stored is None else {SAVE_KEY: stored}
     stub = STUB.replace("__NL_STORE__", json.dumps(store, ensure_ascii=False))
-    page.set_content(HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
+    navigate_markup(page, HTML.replace("<script>", stub + "<script>", 1), wait_until="domcontentloaded")
     return page
 
 
@@ -34,15 +36,61 @@ def state(page):
     return page.evaluate("window.__P2_QA__.getGame()")
 
 
+def visible_window(page, selector):
+    chooser = page.locator("#nl-screen-select")
+    windows = []
+    if chooser.count():
+        options = chooser.locator("option")
+        for index in range(options.count()):
+            value = options.nth(index).get_attribute("value")
+            chooser.select_option(value)
+            page.wait_for_timeout(220)
+            windows.append(options.nth(index).inner_text())
+            # Branch selection can re-render #view while the compact-window
+            # router is still scheduling its MutationObserver rebuild. Query
+            # the live visible locator after each screen switch so a stale
+            # nth() reference cannot point back to a now-hidden duplicate.
+            visible = page.locator(selector + ":visible")
+            if visible.count():
+                return visible.first
+    matches = page.locator(selector).count()
+    raise AssertionError(f"No visible pane contains {selector}; windows={windows}; matches={matches}")
+
+
+def choose_branch(page, hero, branch):
+    # The branch selector and its action live in one row. Keep the action
+    # scoped to that row and perform it immediately; rescanning all five
+    # windows between select and click lets the one-second game render replace
+    # the row and silently discard the selected value on slower CI runners.
+    select = visible_window(page, f'[data-r03-select="{hero}"]')
+    row = select.locator("xpath=..")
+    # Atomic DOM interaction avoids the fixed-window MutationObserver
+    # hiding a selector between two Playwright RPCs on slower runners.
+    select.evaluate("""(el,args)=>{
+      const [value,hero]=args;
+      if(![...el.options].some(o=>o.value===value))throw Error('Missing troop branch '+value);
+      el.value=value;
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+      const btn=el.parentElement.querySelector('[data-r03-evolve="'+hero+'"]');
+      if(!btn)throw Error('Missing evolve action '+hero);
+      btn.click();
+    }""",[branch,hero])
+
+
 def run():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        browser = playwright.chromium.launch(
+            headless=True,
+            executable_path=shutil.which("chromium"),
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
         page = open_page(browser)
         initial = state(page)
         check("R03 hydration keeps schema v5 and initializes independent evolution state", initial["version"] == 5 and initial["nlr03"] == {"schema": 1, "evolutions": {}})
         check("four late campaign encounters extend the 24-stage story without changing earlier entries", len(page.evaluate("window.__NL_R03_QA__.stages")) == 4 and page.evaluate("window.__NL_R03_QA__.stages[0].number") == 25 and page.evaluate("window.__NL_R03_QA__.stages[3].number") == 28)
         page.locator('.nav[data-tab="campaign"]').click()
-        check("late encounter 25 stays locked until the first 24 campaign wins", page.locator('[data-stage="25"]').count() == 1 and page.locator('[data-stage="25"]').is_disabled())
+        stage25 = visible_window(page, '[data-stage="25"]')
+        check("late encounter 25 stays locked until the first 24 campaign wins", stage25.count() == 1 and stage25.is_visible() and stage25.is_disabled())
 
         # Give QA fixtures five original hero classes and ample real resources.
         fixture = state(page)
@@ -52,13 +100,18 @@ def run():
                 fixture["hero"][hero] = {"level": 1, "xp": 0, "troops": 360}
         fixture["slots"] = ["guan", "zhang", "liu", "sun", "zhou", None, None, None, None]
         fixture["silver"], fixture["grain"], fixture["iron"] = 60000, 30000, 18000
+        # Freeze passive production during exact debit assertions; visiting
+        # semantic windows can otherwise cross the native ten-second tick.
+        fixture["lastTick"] = page.evaluate("Date.now() + 86400000")
         page.evaluate("g=>window.__P2_QA__.setGame(g)", fixture)
         page.locator('[data-tab="barracks"]').click()
         check("barracks exposes the 25-unit playable roster as five classes, tier training and branch choices", all(page.locator(f'[data-r03-select="{hero}"] option').count() == (7 if hero == "zhang" else 4) for hero in ("liu", "guan", "zhang", "sun", "zhou")))
-        check("lineage choices are gated by a real level-2 barracks", page.locator('[data-r03-evolve="guan"]').is_disabled())
+        evolve_guan = visible_window(page, '[data-r03-evolve="guan"]')
+        check("lineage choices are gated by a real level-2 barracks", evolve_guan.is_visible() and evolve_guan.is_disabled())
         old_building = state(page)["buildings"]["barracks"]
-        page.locator('[data-upgrade="barracks"]').click()
-        check("paid barracks upgrade opens the lineage system", old_building == 1 and state(page)["buildings"]["barracks"] == 2 and not page.locator('[data-r03-evolve="guan"]').is_disabled())
+        visible_window(page, '[data-upgrade="barracks"]').click()
+        evolve_guan = visible_window(page, '[data-r03-evolve="guan"]')
+        check("paid barracks upgrade opens the lineage system", old_building == 1 and state(page)["buildings"]["barracks"] == 2 and not evolve_guan.is_disabled())
 
         branches = [
             ("guan", "shock", "catk", "higher", None),
@@ -73,14 +126,27 @@ def run():
                 baseline = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", hero)
             else:
                 baseline = page.evaluate("({id,key})=>window.__NL_R03_QA__.unit(id,'p',2,1)[key]", {"id": hero, "key": metric})
-            page.locator(f'[data-r03-select="{hero}"]').select_option(branch)
-            page.locator(f'[data-r03-evolve="{hero}"]').click()
+            choose_branch(page, hero, branch)
             after = state(page)
             if metric == "skill":
                 changed = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", hero) > baseline
             else:
                 changed = page.evaluate("({id,key})=>window.__NL_R03_QA__.unit(id,'p',2,1)[key]", {"id": hero, "key": metric}) > baseline
-            check(f"{hero} {branch} is an actual paid branch with a live combat effect", after["nlr03"]["evolutions"].get(hero) == branch and before["silver"] - after["silver"] == 1100 and before["grain"] - after["grain"] == 520 and before["iron"] - after["iron"] == 280 and changed)
+            branch_ok = (after["nlr03"]["evolutions"].get(hero) == branch and
+                         before["silver"] - after["silver"] == 1100 and
+                         before["grain"] - after["grain"] == 520 and
+                         before["iron"] - after["iron"] == 280 and changed)
+            if not branch_ok:
+                print("R03 branch detail:", json.dumps({
+                    "hero": hero, "requested": branch,
+                    "actual": after["nlr03"]["evolutions"].get(hero),
+                    "silverDebit": before["silver"] - after["silver"],
+                    "grainDebit": before["grain"] - after["grain"],
+                    "ironDebit": before["iron"] - after["iron"],
+                    "metric": metric, "baseline": baseline,
+                    "current": page.evaluate("({id,key})=>window.__NL_R03_QA__.unit(id,'p',2,1)[key]", {"id": hero, "key": metric}) if metric != "skill" else page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", hero),
+                }, ensure_ascii=False), flush=True)
+            check(f"{hero} {branch} is an actual paid branch with a live combat effect", branch_ok)
             if extra == "burn":
                 descriptor = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'})", hero)
                 check("Hỏa Cơ inserts a real burn status into the strategist skill", descriptor.get("apply") == "burn" and descriptor.get("applyChance", 0) >= .58)
@@ -89,33 +155,26 @@ def run():
         before_invalid = state(page)
         check("a general cannot learn a branch from another troop class", page.evaluate("()=>window.__NL_R03_QA__.evolve('guan','medic')") is False and state(page)["silver"] == before_invalid["silver"])
         same_branch_before = state(page)
-        page.locator('[data-r03-select="guan"]').select_option("shock")
-        page.locator('[data-r03-evolve="guan"]').click()
+        choose_branch(page, "guan", "shock")
         check("reapplying the current lineage cannot charge resources again", state(page)["silver"] == same_branch_before["silver"] and state(page)["nlr03"]["evolutions"]["guan"] == "shock")
 
         volley_base = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'}).mult", "sun")
-        page.locator('[data-r03-select="sun"]').select_option("volley")
-        page.locator('[data-r03-evolve="sun"]').click()
+        choose_branch(page, "sun", "volley")
         volley = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'})", "sun")
         check("Liên Nỗ changes the archer skill to a stronger real double strike", volley["pattern"] == "double" and volley["mult"] > volley_base)
-        page.locator('[data-r03-select="zhou"]').select_option("disrupt")
-        page.locator('[data-r03-evolve="zhou"]').click()
+        choose_branch(page, "zhou", "disrupt")
         disrupted = page.evaluate("id=>window.__NL_R03_QA__.skill({id,team:'p'})", "zhou")
         check("Nhiễu Tâm adds real morale drain to the strategist skill", disrupted.get("drainMorale", 0) >= 18)
-        page.locator('[data-r03-select="zhang"]').select_option("spearwall")
-        page.locator('[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "spearwall")
         spear = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("Thương Phá Kỵ keeps its infantry combat archetype, switches to spear troop and counters cavalry", spear["troop"] == "spear" and spear["type"] == "infantry" and page.evaluate("window.__P3_QA__.counter('spear','cavalry') > 1"))
-        page.locator('[data-r03-select="zhang"]').select_option("phalanx")
-        page.locator('[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "phalanx")
         phalanx = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("spear specialization is selectable on an infantry commander and changes real unit class and defense", phalanx["troop"] == "spear" and phalanx["r03Branch"] == "phalanx" and phalanx["tdef"] >= spear["tdef"])
-        page.locator('[data-r03-select="zhang"]').select_option("impaler")
-        page.locator('[data-r03-evolve="zhang"]').click()
+        choose_branch(page, "zhang", "impaler")
         impaler = page.evaluate("window.__NL_R03_QA__.unit('zhang','p',1,1)")
         check("alternate spear branch is a distinct live combat build", impaler["troop"] == "spear" and impaler["r03Branch"] == "impaler" and impaler["atk"] > phalanx["atk"])
-        page.locator('[data-r03-select="liu"]').select_option("rally")
-        page.locator('[data-r03-evolve="liu"]').click()
+        choose_branch(page, "liu", "rally")
         page.evaluate("window.__P2_QA__.useTroop('liu','drum')")
         page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
         page.evaluate("""() => {
@@ -125,13 +184,12 @@ def run():
           __P2_QA__.stepBattle();
         }""")
         rallied = page.evaluate("window.__P2_QA__.getBattle()")
-        check("Hiệu Lệnh adds 12 morale to every ally in a real drum action", rallied["events"][-1]["mode"] == "drum" and all(unit["morale"] == (63 if unit["id"] == "liu" else 56) for unit in rallied["p"]))
+        check("Hiệu Lệnh adds its 12 morale to the classic WEB 25-morale drum action", rallied["events"][-1]["mode"] == "drum" and all(unit["morale"] == 47 for unit in rallied["p"]))
         page.evaluate("window.__P2_QA__.closeBattle('city')")
 
         # Change the cavalry path and prove the live player action selects a rear target.
         page.locator('.nav[data-tab="barracks"]').click()
-        page.locator('[data-r03-select="guan"]').select_option("raider")
-        page.locator('[data-r03-evolve="guan"]').click()
+        choose_branch(page, "guan", "raider")
         page.evaluate("window.__P2_QA__.beginBattle(1,'campaign')")
         page.evaluate("""() => {
           const b=__P2_QA__.debugBattle();
@@ -165,6 +223,7 @@ def run():
         page.evaluate("window.__P2_QA__.closeBattle('city')")
 
         # Persist the new optional state, then load a pre-R03 v5 save safely.
+        page.evaluate("()=>{const q=window.__P2_QA__,g=q.getGame();g.lastTick=Date.now();q.setGame(g)}")
         serialized = page.evaluate("localStorage.getItem('muu_dinh_tam_quoc_v1')")
         page.close()
         page = open_page(browser, stored=serialized)
@@ -185,9 +244,11 @@ def run():
         unlocked["p3TroopTier"] = {key: 4 for key in unlocked["roster"]}
         page.evaluate("g=>window.__P2_QA__.setGame(g)", unlocked)
         page.locator('.nav[data-tab="campaign"]').click()
-        check("stage 25 opens after real preceding-clearance state and stage 26 remains gated", not page.locator('[data-stage="25"]').is_disabled() and page.locator('[data-stage="26"]').is_disabled())
-        page.locator('[data-stage="25"]').click()
-        page.locator('[data-battle="25"]').click()
+        stage25 = visible_window(page, '[data-stage="25"]')
+        stage26 = visible_window(page, '[data-stage="26"]')
+        check("stage 25 opens after real preceding-clearance state and stage 26 remains gated", not stage25.is_disabled() and stage26.is_disabled())
+        visible_window(page, '[data-stage="25"]').click()
+        visible_window(page, '[data-battle="25"]').click()
         first = page.evaluate("window.__P2_QA__.getBattle()")
         check("stage 25 starts a real battle with its visible defensive rule", first["r03Encounter"]["id"] == "r03-bulwark" and "thế thủ" in page.locator('[data-r03-encounter]').inner_text() and all(any(e["kind"] == "guard" for e in unit["effects"]) for unit in first["e"][:2]))
         page.screenshot(path=str(ROOT / "qa" / "nl-r03-stage25.png"), full_page=False)
@@ -296,18 +357,21 @@ def run():
           window.__P2_QA__.finishBattle();
         }""")
         end_report = page.evaluate("window.__P2_QA__.getGame().battleReports.at(-1)")
-        ending_result = page.locator('[data-nl-campaign-ending="1"]')
-        first_silver = state(page)["silver"]
+        ending_result = visible_window(page, '[data-nl-campaign-ending="1"]')
+        report_count = len(state(page)["battleReports"])
         page.evaluate("window.__P2_QA__.finishBattle()")
-        check("final boss victory settles encounter 28 once and renders the end-of-campaign result", ending_result.count() == 1 and end_report["won"] and end_report["stage"] == 28 and 28 in state(page)["cleared"] and state(page)["silver"] == first_silver)
-        page.locator('[data-end-battle="1"]').click()
+        final_state = state(page)
+        final_boss_ok = ending_result.count() == 1 and end_report["won"] and end_report["stage"] == 28 and final_state["cleared"].count(28) == 1 and len(final_state["battleReports"]) == report_count
+        check("final boss victory settles encounter 28 once and renders the end-of-campaign result", final_boss_ok)
+        visible_window(page, '[data-end-battle="1"]').click()
         page.locator('[data-tab="campaign"]').click()
         check("clearing encounter 28 of chapter 8 renders the ending and the final boss badge", page.locator('[data-nl-campaign-ending="1"]').count() == 1 and "28 cửa ải" in page.locator('[data-nl-campaign-ending="1"]').inner_text() and page.locator('[data-nl-boss="1"]').count() == 1)
 
         mobile = open_page(browser, 390, 844, stored=serialized)
         mobile.locator('[data-tab="barracks"]').click()
         check("mobile evolution panel keeps all five class choices available", mobile.locator('[data-r03-select]').count() == 5 and mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"))
-        mobile.locator('[data-r03-lineage]').screenshot(path=str(ROOT / "qa" / "nl-r03-mobile-lineage.png"))
+        visible_window(mobile, '[data-r03-lineage]')
+        mobile.screenshot(path=str(ROOT / "qa" / "nl-r03-mobile-lineage.png"),full_page=False)
         check("Chromium recorded no JavaScript exceptions", not errors)
         mobile.close()
         browser.close()

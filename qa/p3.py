@@ -1,6 +1,7 @@
 """P3 deterministic end-to-end functional/combat/balance QA; no fake combat results."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import json, sys, traceback, math
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'qa'
@@ -15,21 +16,32 @@ def main():
  with sync_playwright() as p:
   browser=p.chromium.launch(headless=True,executable_path=('/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None),args=['--no-sandbox','--disable-dev-shm-usage'])
   page=browser.new_page(viewport={'width':1280,'height':720});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-  page.set_content(HTML,wait_until='domcontentloaded');page.wait_for_timeout(300)
+  navigate_markup(page, HTML,wait_until='domcontentloaded');page.wait_for_timeout(300)
   check('P3 QA runtime available',page.evaluate('typeof window.__P3_QA__ === "object"'))
   presets=page.evaluate('window.__P3_QA__.presets')
   check('24 distinct named tactical presets',len(presets)==24 and len({x['id'] for x in presets})==24)
   check('six formations with four variants each',all(sum(x['formation']==f for x in presets)==4 for f in {x['formation'] for x in presets}) and len({x['formation'] for x in presets})==6)
   check('all preset slot masks valid',all(len(x['slots'])==5 and len(set(x['slots']))==5 and min(x['slots'])>=0 and max(x['slots'])<=8 for x in presets))
   page.locator('[data-tab="formation"]').first.click()
-  check('24 preset buttons actually rendered',page.locator('[data-p3-preset]').count()==24)
+  p3_presets=page.locator('[data-p3-preset-panel] [data-p3-preset]')
+  core_ids={x['id'] for x in presets}
+  web_added=page.evaluate('''core=>{const q=window.__NL_WEB55_QA__,known=new Set(core);
+    return q.formations.map(f=>f.id+'-van').filter(id=>!known.has(id));}''',list(core_ids))
+  visible_ids=set(p3_presets.evaluate_all('(els)=>els.map(el=>el.dataset.p3Preset)'))
+  check('24 P3 presets and five added WEB formations are rendered',
+        p3_presets.count()==29 and visible_ids==core_ids|set(web_added) and len(web_added)==5 and
+        page.evaluate('window.__NL_WEB55_QA__.oldPresets===24&&window.__NL_WEB55_QA__.newPresets===29'))
   original=page.evaluate('window.__P2_QA__.getGame()');baseline_money=(original['silver'],original['grain'],original['iron'],original['reserve']);
   for preset in presets:
    page.evaluate('(id)=>window.__P3_QA__.assign(id)',preset['id'])
    result=page.evaluate('window.__P2_QA__.getGame()')
    check('deploy preset '+preset['id'],result['p3PresetId']==preset['id'] and result['formation']==preset['formation'] and len([v for v in result['slots'] if v])==3 and len(set(v for v in result['slots'] if v))==3)
+  for preset_id in web_added:
+   deployed=page.evaluate('''id=>{const ok=window.__P3_QA__.assign(id),g=window.__P2_QA__.getGame();return {ok,id:g.p3PresetId,formation:g.formation,slots:g.slots.filter(Boolean).length};}''',preset_id)
+   check('deploy added WEB formation '+preset_id,deployed['ok'] and deployed['id']==preset_id and
+         deployed['formation']==preset_id[:-4] and deployed['slots']==3)
   g=page.evaluate('window.__P2_QA__.getGame()')
-  check('24 deployments never mint or consume resources',(g['silver'],g['grain'],g['iron'],g['reserve'])==baseline_money)
+  check('all 29 deployments never mint or consume resources',(g['silver'],g['grain'],g['iron'],g['reserve'])==baseline_money)
   check('default troop tier 1',page.evaluate("window.__P3_QA__.tier('guan')===1"))
   before=page.evaluate('window.__P2_QA__.getGame()')
   check('tier upgrade blocked by barracks',not page.evaluate("window.__P3_QA__.upgrade('guan')"))
@@ -91,10 +103,13 @@ def main():
   page.locator('[data-tab="formation"]').first.click();page.screenshot(path=str(OUT/'p3-formation-1280x720.png'),full_page=False)
   check('no JS errors in 24 battles',not errors)
   mobile=browser.new_page(viewport={'width':390,'height':844});moberr=[];mobile.on('pageerror',lambda e:moberr.append(str(e)))
-  mobile.set_content(HTML,wait_until='domcontentloaded');mobile.locator('[data-tab="formation"]').first.click()
+  navigate_markup(mobile, HTML,wait_until='domcontentloaded');mobile.locator('[data-tab="formation"]').first.click()
   mobile.screenshot(path=str(OUT/'p3-mobile-390.png'),full_page=True)
   check('mobile 390px has no horizontal document overflow',mobile.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
-  check('mobile 24 tactical controls accessible',mobile.locator('[data-p3-preset]').count()==24 and not moberr)
+  mobile_p3=mobile.locator('[data-p3-preset-panel] [data-p3-preset]')
+  mobile_ids=set(mobile_p3.evaluate_all('(els)=>els.map(el=>el.dataset.p3Preset)'))
+  check('all 29 P3 and WEB formation choices accessible on mobile',mobile_p3.count()==29 and
+        mobile_ids==core_ids|set(web_added) and not moberr)
   browser.close()
  print('BALANCE',json.dumps({'total':len(balances),'wins':wins,'win_rate':round(wins/len(balances),4),'stages':{str(s):{'total':sum(x['stage']==s for x in balances),'wins':sum(x['stage']==s and x['won'] for x in balances)} for s in [1,4,9,16,24]}},ensure_ascii=False))
 

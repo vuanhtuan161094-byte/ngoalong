@@ -1,4 +1,5 @@
 # Mưu Định Tam Quốc — Wiki ↔ runtime gap and repair plan (2026-11-22)
+> **Historical audit snapshot.** Its old branch and WEB-first label do not direct current work. Keep the evidence and IDs; use [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) and [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md) for the Mobile-first backlog.
 
 **Scope:** `feature/nl-web-review-20261122`. This is an engineering audit and repair plan, **not** a declaration that all Wiki entries are implemented, nor acceptance of V1.0. No merge, no Codex Cloud, no Save v5 schema/key change.
 

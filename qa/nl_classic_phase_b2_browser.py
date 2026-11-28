@@ -1,29 +1,58 @@
 #!/usr/bin/env python3
 """B2 original native P2 Chromium: drum, dancer, skills, Save-v5, no dual hit."""
 from pathlib import Path
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import shutil
+from threading import Thread
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
 checks=[]
 
+class QuietStaticHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return
+
 def check(label,ok):
     checks.append((label,bool(ok)))
     print(("PASS " if ok else "FAIL ")+label,flush=True)
 
+def visible_window(page, selector):
+    element=page.locator(selector).first
+    chooser=page.locator("#nl-screen-select")
+    if chooser.count():
+        for index in range(chooser.locator("option").count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(60)
+            if element.is_visible():
+                return element
+    return element
+
 def main():
+    server=ThreadingHTTPServer(("127.0.0.1",0),
+        partial(QuietStaticHandler,directory=str(ROOT)))
+    Thread(target=server.serve_forever,daemon=True).start()
     with sync_playwright() as p:
-        browser=p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+        launch_options={"headless":True,"args":["--no-sandbox","--disable-dev-shm-usage"]}
+        system_chromium=shutil.which("chromium")
+        if system_chromium:
+            launch_options["executable_path"]=system_chromium
+        browser=p.chromium.launch(**launch_options)
         ctx=browser.new_context(viewport={"width":1280,"height":720})
         ctx.add_init_script("window.__P2_ENABLE_QA__=true")
         page=ctx.new_page()
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
-        page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{server.server_port}/index.html",
+                  wait_until="domcontentloaded")
         page.locator('.nav[data-tab="formation"]').click()
+        drum_control=visible_window(page,'[data-troop-mode="liu:drum"]')
+        dancer_control=visible_window(page,'[data-troop-mode="liu:dancer"]')
         check("player sees Kỳ Cổ Thủ and Vũ Nữ role controls",
-              page.locator('[data-troop-mode="liu:drum"]').count()==1
-              and page.locator('[data-troop-mode="liu:dancer"]').count()==1)
-        page.locator('[data-troop-mode="liu:drum"]').click()
+              drum_control.count()==1 and drum_control.is_visible() and
+              dancer_control.count()==1 and dancer_control.is_visible())
+        visible_window(page,'[data-troop-mode="liu:drum"]').click()
         drum=page.evaluate("""() => {
           const q=window.__P2_QA__,g=q.getGame();
           g.silver=100000;g.grain=100000;q.setGame(g);
@@ -62,7 +91,7 @@ def main():
         check("classic drum skill does not debuff enemy again",
               all(x==10 for x in skill["enemy"]))
         page.evaluate("window.__P2_QA__.closeBattle('formation')")
-        page.locator('[data-troop-mode="liu:dancer"]').click()
+        visible_window(page,'[data-troop-mode="liu:dancer"]').click()
         save=page.evaluate("""() => {
           const q=window.__P2_QA__,g=q.getGame();
           return {role:g.troopModes.liu,version:g.version,
@@ -72,6 +101,8 @@ def main():
               save["role"]=="dancer" and save["version"]==5 and
               '"dancer"' in (save["disk"] or ""))
         page.reload(wait_until="domcontentloaded")
+        page.locator('.nav[data-tab="formation"]').click()
+        visible_window(page,'[data-troop-mode="liu:dancer"]')
         check("dancer role survives true page reload",
               page.evaluate("window.__P2_QA__.getGame().troopModes.liu")=="dancer")
         dance=page.evaluate("""() => {
@@ -113,6 +144,8 @@ def main():
               all(x==5 for x in elite["opponents"]))
         check("no browser page exceptions",not errors)
         browser.close()
+    server.shutdown()
+    server.server_close()
     print(f"NL_CLASSIC_B2 {sum(v for _,v in checks)}/{len(checks)}",flush=True)
     return 0 if all(ok for _,ok in checks) else 1
 

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from PIL import Image
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "assets" / "p5" / "cl-p5-infantry-scout-v1"
@@ -102,7 +103,7 @@ with sync_playwright() as playwright:
     page = browser.new_page(viewport={"width": 1280, "height": 720}, device_scale_factor=1)
     page.on("pageerror", lambda error: browser_errors.append(str(error)))
     shim = "<script>window.__P2_ENABLE_QA__=true;const __store={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>__store[k]??null,setItem:(k,v)=>__store[k]=String(v),removeItem:k=>delete __store[k]}});</script>"
-    page.set_content(html.replace("<script>", shim + "<script>", 1), wait_until="domcontentloaded")
+    navigate_markup(page, html.replace("<script>", shim + "<script>", 1), wait_until="domcontentloaded")
     page.wait_for_function("window.__P41_QA__?.p5Image?.complete && window.__P41_QA__.p5Image.naturalWidth === 400 && window.__P41_QA__.p5Image.naturalHeight === 2880", timeout=30000)
     check("new sprite atlas decodes offline in Chromium", page.evaluate("__P41_QA__.p5Image.complete && __P41_QA__.p5Image.naturalWidth===400 && __P41_QA__.p5Image.naturalHeight===2880"))
     check("all 80 action and direction coordinates resolve", page.evaluate("(()=>{for(const a of __P41_QA__.p5Manifest.actions)for(const d of __P41_QA__.p5Manifest.directions)for(let f=0;f<4;f++)if(__P41_QA__.p5Index(d,a,f)<0)return false;return true})()"))

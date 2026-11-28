@@ -1,0 +1,42 @@
+{
+  "assetId": "capital-courtyard-v1",
+  "promptVersion": "v1",
+  "source": {
+    "provider": "OpenAI image_gen.imagegen",
+    "generationId": "exec-3b7276d0-14f3-40b9-9d06-472f7ef2e14e",
+    "createdAtUtc": "2026-11-25 (exact time unavailable)",
+    "prompt": "Original background illustration for an offline Three Kingdoms browser strategy game, premium hand-painted 2.5D isometric ancient Chinese fortress city at golden hour, warm sandstone walls, deep jade roof tiles, blue-green distant mountains, winding stone roads, small courtyards, banners and lantern light, atmospheric layered landscape, elegant historic web strategy game art direction, painterly texture and carefully composed architecture. Broad landscape 16:9 composition intended to sit behind clickable in-game building controls: keep the central 65 percent visually calm with open courtyards and roads, reserve intricate structures and trees toward the distant edges and far background, maintain enough dark midtone contrast for gold and cream UI labels. No text, no letters, no UI, no icons, no logos, no watermark, no recognizable copyrighted character or copied game asset.",
+    "cost": "unknown; provider returned no cost estimate"
+  },
+  "target": {
+    "purpose": "offline interactive capital-city background",
+    "aspectRatio": "16:9",
+    "requestedStyle": "original hand-painted 2.5D isometric game environment"
+  },
+  "files": {
+    "sourcePng": {
+      "path": "assets/ngoalong/original/capital_courtyard_v1_source.png",
+      "width": 1672,
+      "height": 941,
+      "format": "PNG",
+      "bytes": 3114277,
+      "sha256": "4e9795c73594fd8ac936c3926f36bea7aa57c716d1bec497812681ee6a30c482"
+    },
+    "runtimeWebp": {
+      "path": "assets/ngoalong/original/capital_courtyard_v1.webp",
+      "width": 1400,
+      "height": 788,
+      "format": "WebP",
+      "quality": 86,
+      "bytes": 307298,
+      "sha256": "d2d0ffc23af4854e4cf01fe0fa12ec9e730fa7ba9f85dee6c107d44127d9ca56"
+    }
+  },
+  "state": {
+    "imageCreated": true,
+    "fileExported": true,
+    "assetQcPass": true,
+    "integratedInGame": true,
+    "qaEvidence": "qa/nl_city_art_browser.py: desktop/mobile Chromium decode, seven core building actions, 390px overflow and runtime-error gate"
+  }
+}

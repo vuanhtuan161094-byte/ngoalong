@@ -10,11 +10,35 @@ const fx=new Image();fx.src='data:image/svg+xml;base64,'+__NL_D2_FX__;
 // D4: original P41/P5 raster sprites are used for four family groups; the
 // specialist R06 spear, support and war-drum art remains identifiable.
 const raster=__NL_D4_RASTER__;
+// Optional, local-only source atlas preview. Canonical/public builds contain none.
+const privateAtlases=new Map();
+for(const [id,a] of Object.entries(raster.privateWly2||{})){const im=new Image();im.src='data:image/png;base64,'+a.png;privateAtlases.set(id,{...a,im});}
+const wly2=raster.wly2||{},sourceTroops=wly2.soldiers||{},sourceEffects=wly2.effects||{};
+const atlasImages=new Map();
+function atlasImage(id,atlas){if(!atlasImages.has(id)){const im=new Image();im.src='data:image/webp;base64,'+atlas.webp;atlasImages.set(id,im);}return atlasImages.get(id);}
+for(const [id,a] of Object.entries(sourceTroops))atlasImage(id,a);
+// Only preload effects used by the current event adapter; the other source
+// effects stay encoded and are decoded on demand, not during startup.
+const mappedFxIds=['TX_juqi_BUFF','TX_sf_0104','TX_shiqi_BUFF','TX_sf_0106','TX_hit_0104','TX_hit_0106','TX_zhongdu_BUFF','TX_zhuoshao_BUFF','TX_hunluan_BUFF','TX_tiebi_BUFF','TX_xixue_BUFF','TX_yinyun_BUFF','TX_sf_0115','TX_hit_0115','TX_sf_0125','TX_hit_0125','TX_sf_0111','TX_hit_0111'];
+for(const id of mappedFxIds)if(sourceEffects[id])atlasImage(id,sourceEffects[id]);
+function atlasCel(ctx,id,a,i,x,y,w,h){if(!a||!Number.isInteger(i)||i<0||i>=a.frames)return false;const im=atlasImage(id,a);if(!ready(im))return false;ctx.drawImage(im,(i%a.cols)*a.cell,Math.floor(i/a.cols)*a.cell,a.cell,a.cell,x-w/2,y-h,w,h);return true;}
 const p41=new Image(),p5=new Image();
 p41.src='data:image/webp;base64,'+raster.p41;p5.src='data:image/webp;base64,'+raster.p5;
 const families=['infantry','spear','cavalry','archer','strategist','support','drum'];
 const actions=['idle','attack','hit','skill','disappear'];
-const metrics={groups:0,soldiers:0,fx:0,projectiles:0,raster:0,vector:0,polishFx:0,byAction:{},byFamily:{},byFxKind:{}};
+// Original presentation layouts, independent of the logical 3x3 formation.
+const squadLayouts=Object.freeze({
+ infantry:[[-21,-24],[21,-24],[-38,-6],[38,-6],[-24,10],[24,10]],
+ spear:[[-23,-24],[23,-24],[-40,-7],[40,-7],[-25,10],[25,10]],
+ cavalry:[[-26,-19],[26,-19],[-34,5],[34,5]],
+ archer:[[-22,-27],[22,-27],[-39,-11],[39,-11],[-23,6],[23,6]],
+ strategist:[[-26,-19],[26,-19],[-30,6],[30,6]],
+ support:[[-26,-19],[26,-19],[-30,6],[30,6]],
+ drum:[[-27,-19],[27,-19],[-31,6],[31,6]]
+});
+function squadLayout(f,team){const dir=team==='e'?-1:1;return (squadLayouts[f]||squadLayouts.infantry).map(([x,y])=>[x*dir,y]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);}
+function advance(v,f,team){if(!v.actor||v.elapsed<0||v.elapsed>=1000||!['infantry','spear','cavalry'].includes(f))return 0;const t=v.elapsed,dir=team==='e'?-1:1,reach=f==='cavalry'?42:28;return dir*reach*(t<220?0:t<430?(t-220)/210:t<650?1:(1000-t)/350);}
+const metrics={groups:0,soldiers:0,fx:0,projectiles:0,raster:0,vector:0,polishFx:0,sourceTroops:0,sourceFx:0,byAction:{},byFamily:{},byFxKind:{}};
 const ready=im=>im?.complete&&im.naturalWidth>0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function family(u){
@@ -45,11 +69,40 @@ function cel(ctx,im,row,frame,x,y,w,h,flip){
  ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);
  ctx.drawImage(im,frame*160,row*168,160,168,-w/2,-h,w,h);ctx.restore();return true;
 }
+function privateCel(ctx,f,team,v,x,y,w,h,offset){
+ const a=privateAtlases.get(f+'/'+(team==='e'?2:1));if(!a||!ready(a.im))return false;
+ const action=v.moving?'move':v.action==='disappear'?'death':v.action;
+ const clip=a.clips[action]||(action==='skill'?a.clips.attack:null)||a.clips.idle;if(!clip?.length)return false;
+ const n=clip.length,i=action==='idle'?(Math.floor(performance.now()/110)+offset)%n:Math.min(n-1,Math.floor(clamp(v.frame/3,0,1)*(n-1)));
+ const d=a.frames[clip[i]];if(!d)return false;
+ const [sx,sy,sw,sh,rot,ox,oy,fw,fh,tw,th]=d;
+ const scale=Math.min(w/fw,h/fh),dw=tw*scale,dh=th*scale;
+ const dx=x+ox*scale-dw/2,dy=y-fh*scale/2-oy*scale-dh/2;
+ ctx.save();
+ if(rot){ctx.translate(dx,dy+dh);ctx.rotate(-Math.PI/2);ctx.drawImage(a.im,sx,sy,sw,sh,0,0,dh,dw);}
+ else ctx.drawImage(a.im,sx,sy,sw,sh,dx,dy,dw,dh);
+ ctx.restore();return true;
+}
+function sourceTroopId(u,f){
+ const t=String(u?.branch||u?.troop||u?.type||'').toLowerCase();
+ const specific={bulwark:'BZ1100',crusher:'BZ1200',spearwall:'BZ2100',halberd:'BZ2200',shock:'BZ3100',raider:'BZ3200',marksman:'BZ4100',volley:'BZ4100',ember:'BZ5100',disrupt:'BZ5100',medic:'BZ5000',rally:'BZ5230'};
+ const base={infantry:'BZ1000',spear:'BZ2000',cavalry:'BZ3000',archer:'BZ4000',strategist:'BZ5100',support:'BZ5000',drum:'BZ5230'};
+ return (specific[t]||base[f]||'BZ1000')+'_'+(u?.team==='e'?2:1);
+}
+function sourceTroopCel(ctx,u,f,v,x,y,w,h,offset){
+ const id=sourceTroopId(u,f),a=sourceTroops[id];if(!a)return false;
+ const action=v.moving?'move':v.action==='disappear'?'death':v.action;
+ const clip=a.clips[action]||(action==='skill'?a.clips.attack:null)||a.clips.idle;
+ const t=action==='idle'?Math.floor(performance.now()/100)+offset:action==='move'?Math.floor(clamp((v.elapsed-220)/210,0,1)*(clip.length-1)):action==='hit'||action==='death'?Math.floor(clamp((v.elapsed-430)/570,0,1)*(clip.length-1)):Math.floor(clamp(v.elapsed/650,0,1)*(clip.length-1));
+ if(atlasCel(ctx,id,a,clip[t%clip.length],x,y,w,h)){metrics.sourceTroops++;return true;}return false;
+}
 function rasterCel(ctx,f,team,v,x,y,w,h,offset){
+ if(privateCel(ctx,f,team,v,x,y,w,h,offset))return true;
  const dir=team==='e'?'left':'right';
  if(f==='infantry'&&ready(p5)){
-   const act=v.action==='disappear'?'death':v.action==='hit'?'hurt':v.action==='skill'?'attack':v.action;
-   const row=raster.p5Rows.indexOf(act+'/'+dir);
+   const act=v.moving?'move':v.action==='disappear'?'death':v.action==='hit'?'hurt':v.action==='skill'?'attack':v.action;
+   let row=raster.p5Rows.indexOf(act+'/'+dir);
+   if(row<0&&v.moving)row=raster.p5Rows.indexOf('attack/'+dir);
    if(row<0)return false;
    const frame=v.action==='idle'?(v.frame+offset)%4:v.frame;
    ctx.drawImage(p5,frame*100,row*144,100,144,x-w/2,y-h,w,h);
@@ -66,23 +119,20 @@ function rasterCel(ctx,f,team,v,x,y,w,h,offset){
 function companions(ctx,u,now,pos,v){
  const im=sheets.get(sheet(u));if(!ready(im)||(!v.hit&&u.hp<=0))return;
  const f=family(u),dir=u.team==='e'?-1:1;
- const lift=v.actor&&v.phase==='release'&&['infantry','spear','cavalry'].includes(f)?dir*9:0;
- const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?40:36;
- // The native commander remains the large middle actor. Two smaller escorts
- // share the exact logical slot and event, never become additional combat units.
+ const lift=advance(v,f,u.team);
+ const frame=v.frame,row=actions.indexOf(v.action),sz=f==='cavalry'?43:33;
+ const offsets=squadLayout(f,u.team);
  ctx.save();
  if(v.action==='disappear')ctx.globalAlpha=1-frame*.24;
- const offsets=[[-27,-12],[27,-12]];
  for(let i=0;i<offsets.length;i++){
-   const [dx,dy]=offsets[i],x=pos.x+dx+lift,y=pos.y+dy+26;
-   ctx.fillStyle='rgba(8,18,19,.29)';ctx.beginPath();ctx.ellipse(x,y-1,12,3,0,0,Math.PI*2);ctx.fill();
-   // Match the original commander scale with directional painted miniatures.
-   // The native slot, hitbox, HP and target are not altered.
-   if(rasterCel(ctx,f,u.team,v,x,y,sz,sz*1.44,i)){metrics.soldiers++;metrics.raster++;}
+   const [dx,dy]=offsets[i],x=pos.x+dx+lift,y=pos.y+dy+24;
+   const moving=v.actor&&['infantry','spear','cavalry'].includes(f)&&v.phase==='release';
+   const cv={...v,moving};
+   ctx.fillStyle='rgba(8,18,19,.29)';ctx.beginPath();ctx.ellipse(x,y-1,sz*.30,3,0,0,Math.PI*2);ctx.fill();
+   if(sourceTroopCel(ctx,u,f,cv,x,y,sz*1.44,sz*1.44,i)||rasterCel(ctx,f,u.team,cv,x,y,sz,sz*1.44,i)){metrics.soldiers++;metrics.raster++;}
    else if(cel(ctx,im,row,frame,x,y,sz,sz*1.05,dir<0)){metrics.soldiers++;metrics.vector++;}
-   // Small faction pennant at the base; does not obscure the actor.
    ctx.fillStyle=u.team==='e'?'#b36a54':'#6ea0a3';
-   ctx.fillRect(x-4,y+1,8,1.5);
+   ctx.fillRect(x-3,y+1,6,1.5);
  }
  ctx.restore();
  metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;
@@ -119,10 +169,21 @@ function effects(ctx,u,now,pos,v){
  if(!v.active||(!v.actor&&!v.hit))return;
  const f=family(u),row=families.indexOf(f),phase=['charge','release','contact','fade'].indexOf(v.phase);
  polishedFx(ctx,u,pos,v,f);
+ // Explicit presentation mappings; do not equate WLY2 IDs with Mobile skill IDs.
+ const k=effectKind(v,f),sourceId=v.actor&&phase===0?'TX_juqi_BUFF':v.actor&&phase===1?(k==='magic'?'TX_sf_0104':k==='support'||k==='heal'?'TX_shiqi_BUFF':'TX_sf_0106'):v.hit&&phase>=2?(k==='magic'?'TX_hit_0104':'TX_hit_0106'):null;
+ // Optional status cues only from recorded event tags. Source names map
+ // semantically, not by assuming identical skill IDs between editions.
+ const tags=String([v.ev?.kind,v.ev?.tag,v.ev?.skill?.tag,...(v.ev?.hits||[]).filter(h=>same(h.target,u)).map(h=>[h.kind,h.tag,h.status].join(' '))].join(' ')).toLowerCase();
+ const statusId=/poison|trúng độc|nhiễm độc/.test(tags)?'TX_zhongdu_BUFF':/burn|thiêu đốt/.test(tags)?'TX_zhuoshao_BUFF':/confus|hỗn loạn/.test(tags)?'TX_hunluan_BUFF':/shield|khiên/.test(tags)?'TX_tiebi_BUFF':/lifesteal|hút máu/.test(tags)?'TX_xixue_BUFF':/stun|choáng/.test(tags)?'TX_yinyun_BUFF':null;
+ const familyPair={infantry:['TX_sf_0106','TX_hit_0106'],spear:['TX_sf_0115','TX_hit_0115'],cavalry:['TX_sf_0125','TX_hit_0125'],archer:['TX_sf_0111','TX_hit_0111'],strategist:['TX_sf_0104','TX_hit_0104'],support:['TX_shiqi_BUFF','TX_shiqi_BUFF'],drum:['TX_shiqi_BUFF','TX_shiqi_BUFF']}[f];
+ const alternate=v.actor&&phase===1?familyPair?.[0]:v.hit&&phase>=2?familyPair?.[1]:null;
+ const actualId=v.hit&&phase>=2&&statusId&&sourceEffects[statusId]?statusId:alternate&&sourceEffects[alternate]?alternate:sourceId;
+ const a=sourceEffects[actualId];
+ if(a){const t=phase===0?v.elapsed/220:phase===1?(v.elapsed-220)/210:phase===2?(v.elapsed-430)/220:(v.elapsed-650)/350;ctx.save();ctx.globalAlpha=phase===3?.55:.9;if(atlasCel(ctx,actualId,a,Math.floor(clamp(t,0,1)*(a.frames-1)),pos.x,pos.y+22,v.action==='skill'?135:90,v.action==='skill'?135:90))metrics.sourceFx++;ctx.restore();}
  const show=v.actor&&phase<2||v.hit&&phase>=2;
  if(show&&ready(fx)){
    ctx.save();ctx.globalAlpha=phase===3?.55:.88;ctx.globalCompositeOperation='screen';
-   if(cel(ctx,fx,row,phase,pos.x,pos.y+22,74,77,u.team==='e'))metrics.fx++;
+   if(!a||!ready(atlasImages.get(actualId))){if(cel(ctx,fx,row,phase,pos.x,pos.y+22,74,77,u.team==='e'))metrics.fx++;}else metrics.fx++;
    ctx.restore();
  }
  // Ranged trail is anchored to actual native recorded hit targets.
@@ -131,21 +192,90 @@ function effects(ctx,u,now,pos,v){
    const end=coords(target);if(!end||!Number.isFinite(end.x))return;
    const t=clamp((v.elapsed-220)/210,0,1),x=pos.x+(end.x-pos.x)*t,y=pos.y+(end.y-pos.y)*t-18-Math.sin(t*Math.PI)*22;
    const dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;
-   ctx.save();ctx.strokeStyle=f==='strategist'?'#b6e4ff':'#f6dd96';ctx.lineWidth=2.5;ctx.shadowBlur=7;ctx.shadowColor=ctx.strokeStyle;ctx.beginPath();ctx.moveTo(x-dx/dist*21,y-dy/dist*21);ctx.lineTo(x,y);ctx.stroke();ctx.restore();metrics.projectiles++;
+   ctx.save();ctx.strokeStyle=f==='strategist'?'#b6e4ff':'#f6dd96';ctx.lineWidth=f==='strategist'?2.5:1.6;ctx.shadowBlur=5;ctx.shadowColor=ctx.strokeStyle;
+   // Ranged squads share the recorded target; extra trails are visual only.
+   const lanes=f==='archer'?[-5,0,5]:[0];
+   for(const lane of lanes){const ox=-dy/dist*lane,oy=dx/dist*lane;ctx.beginPath();ctx.moveTo(x+ox-dx/dist*21,y+oy-dy/dist*21);ctx.lineTo(x+ox,y+oy);ctx.stroke();metrics.projectiles++;}
+   ctx.restore();
  }
 }
+// Source-native squads replace legacy drawing; fallback only if assets are unavailable.
+const legacyCoords=coords;
+coords=function(u){if(!Object.keys(sourceTroops).length||battle?.mode==='cltq')return legacyCoords(u);const row=Math.floor(u.slot/3),col=u.slot%3;return {x:u.team==='p'?176+col*112:880-col*112,y:148+row*110};};
+function sourceSquad(ctx,u,now,pos,v){
+ const f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id];if(!a||!ready(atlasImages.get(id)))return false;if(u.hp<=0&&!v.hit)return true;
+ const row=Math.floor(u.slot/3),sz=(f==='cavalry'?53:42)*(0.86+row*.07),target=v.ev?.hits?.[0]?.target;let mx=0,my=0;
+ const moving=v.actor&&['infantry','spear','cavalry'].includes(f)&&target&&v.elapsed>=170&&v.elapsed<940;
+ if(moving){const end=coords(target),dx=end.x-pos.x,dy=end.y-pos.y,dist=Math.hypot(dx,dy)||1;const distance=Math.max(0,dist-94);const t=v.elapsed<430?clamp((v.elapsed-170)/260,0,1):v.elapsed<650?1:clamp((940-v.elapsed)/290,0,1);mx=dx/dist*distance*t;my=dy/dist*distance*t;}
+ const dense=['infantry','spear','archer'].includes(f),dir=u.team==='e'?-1:1;const offsets=(dense?[-1,0,1].flatMap(r=>[-1,0,1].map(c=>[(c*27+r*8)*dir,r*18])):[[0,-13],[-26,2],[26,2],[-17,20],[17,20]]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);ctx.save();if(v.action==='disappear')ctx.globalAlpha=1-v.frame*.23;const x=pos.x+mx,y=pos.y+my;
+ for(const [i,[dx,dy]] of offsets.entries()){const px=x+dx,py=y+dy+22;ctx.fillStyle='rgba(12,20,13,.36)';ctx.beginPath();ctx.ellipse(px,py-2,sz*.19,2.7,0,0,Math.PI*2);ctx.fill();if(sourceTroopCel(ctx,u,f,{...v,moving:moving&&v.elapsed<430},px,py,sz,sz,i)){metrics.soldiers++;metrics.raster++;}}
+ ctx.restore();const name=String(u.name||u.id||''),bx=x-39,by=y+38,hp=clamp(Number(u.hp||0)/Math.max(1,Number(u.maxHp||u.maxHP||u.hpMax||u.max||u.hp||1)),0,1),morale=clamp((u.morale||0)/100,0,1);ctx.save();ctx.textAlign='center';ctx.font='600 12px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#14201b';ctx.strokeText(name,x,y-38);ctx.fillStyle='#f7ead3';ctx.fillText(name,x,y-38);ctx.fillStyle='rgba(15,22,20,.84)';ctx.fillRect(x-30,y-31,60,5);ctx.fillStyle=u.team==='e'?'#d87b69':'#7ccce1';ctx.fillRect(x-30,y-31,60*hp,5);ctx.fillStyle='#efce87';ctx.fillRect(x-30,y-24,60*morale,2);ctx.restore();metrics.groups++;metrics.byAction[v.action]=(metrics.byAction[v.action]||0)+1;metrics.byFamily[f]=(metrics.byFamily[f]||0)+1;return true;
+}
+// Barracks: use the same genuine troop atlas as the battlefield, not a
+// placeholder badge. No troop selection, Save or battle-rule changes.
+let barracksDrawn=0,barracksScheduled=false;
+function paintBarracksTroops(){
+ barracksScheduled=false;
+ if(!Object.keys(sourceTroops).length)return;
+ for(const card of document.querySelectorAll('#view .nlw-unit')){
+  if(card.querySelector('.nlw-source-preview'))continue;
+  const crest=card.querySelector('.nlw-crest');if(!crest)continue;
+  const familyClass=[...crest.classList].find(v=>v.startsWith('nlw-family-'))||'';
+  const type=familyClass.replace('nlw-family-','');
+  const name=(card.querySelector('.nlw-txt b')?.textContent||'').toLowerCase();
+  const mapping={infantry:'BZ1000',spear:'BZ2000',cavalry:'BZ3000',archer:'BZ4000',strategist:'BZ5100',drum:'BZ5230',dancer:'BZ5000'};
+  const id=(/trống|đánh trống|cổ vũ/.test(name)?'BZ5230':/vũ cơ|ca cơ/.test(name)?'BZ5000':mapping[type]||'BZ1000')+'_1';
+  const a=sourceTroops[id],im=a&&atlasImages.get(id);
+  if(!a||!ready(im))continue;
+  const preview=document.createElement('canvas');preview.width=100;preview.height=100;
+  preview.className='nlw-source-preview';preview.dataset.sourceAtlas=id;
+  preview.setAttribute('role','img');preview.setAttribute('aria-label','Hình binh chủng trong chiến đấu');
+  const ctx=preview.getContext('2d'),idle=a.clips.idle||a.clips.stand||a.clips.attack;
+  if(!ctx||!idle?.length||!atlasCel(ctx,id,a,idle[0],50,95,79,88))continue;
+  crest.replaceWith(preview);barracksDrawn++;
+ }
+}
+function scheduleBarracks(){
+ if(barracksScheduled)return;barracksScheduled=true;
+ requestAnimationFrame(paintBarracksTroops);
+}
+const barracksRoot=document.getElementById('view');
+if(barracksRoot){
+ new MutationObserver(scheduleBarracks).observe(barracksRoot,{childList:true});
+ for(const id of Object.keys(sourceTroops))atlasImages.get(id)?.addEventListener('load',scheduleBarracks,{once:true});
+ document.addEventListener('click',scheduleBarracks,true);scheduleBarracks();
+}
+
+
+let premiumPreviewTimer=0;
+function premiumPaintHeroTroops(){
+ for(const c of document.querySelectorAll('.nlh-stage-troop,.nl-deploy-army')){if(!c.isConnected||!c.offsetWidth)continue;
+ const u={team:'p',troop:c.dataset.premiumTroop,branch:c.dataset.premiumBranch},f=family(u),id=sourceTroopId(u,f),a=sourceTroops[id],im=a&&atlasImages.get(id);
+ const ctx=c.getContext('2d');if(!ctx)continue;
+ ctx.clearRect(0,0,c.width,c.height);const clip=a&&(a.clips.idle||a.clips.attack);const frame=Math.floor(performance.now()/130);
+ const points=Array.from({length:9},(_,i)=>[145+(i%3)*86+Math.floor(i/3)*12,174+Math.floor(i/3)*67]);
+ for(const [i,[x,y]] of points.entries()){ctx.fillStyle='#060b1460';ctx.beginPath();ctx.ellipse(x,y+5,24,6,0,0,Math.PI*2);ctx.fill();if(a&&ready(im)&&clip?.length)atlasCel(ctx,id,a,clip[(frame+i)%clip.length],x,y,88,88);else rasterCel(ctx,f,'p',{action:'idle',frame:frame%4,moving:false,elapsed:0},x,y,88,88,i);}
+ }
+}
+premiumPreviewTimer=setInterval(premiumPaintHeroTroops,120);
 const oldDraw=drawUnit;
 drawUnit=function(ctx,u,now){
  if(!u||!battle||battle.mode==='cltq'||!Number.isFinite(now))return oldDraw.apply(this,arguments);
  const pos=coords(u);if(!pos||!Number.isFinite(pos.x)||!Number.isFinite(pos.y))return oldDraw.apply(this,arguments);
  const v=visual(u,now);
- companions(ctx,u,now,pos,v);
- oldDraw.apply(this,arguments);
+ if(!sourceSquad(ctx,u,now,pos,v)){companions(ctx,u,now,pos,v);oldDraw.apply(this,arguments);}
  effects(ctx,u,now,pos,v);
 };
 if(window.__P2_ENABLE_QA__)window.__NL_ART_D2_QA__=Object.freeze({
- ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5),count:()=>sheets.size,
+ ready:()=>[...sheets.values()].every(ready)&&ready(fx)&&ready(p41)&&ready(p5)&&[...privateAtlases.values()].every(a=>ready(a.im)),count:()=>sheets.size,
+ sourceAtlasCount:()=>Object.keys(sourceTroops).length||privateAtlases.size,
+ nativeSourceRenderer:()=>Object.keys(sourceTroops).length>0,
+ barracksPreviews:()=>document.querySelectorAll('#view .nlw-source-preview').length,
+ barracksCumulative:()=>barracksDrawn,
+ sourceEffectCount:()=>Object.keys(sourceEffects).length,
+ sourceReady:()=>Object.keys(sourceTroops).every(id=>ready(atlasImages.get(id)))&&mappedFxIds.filter(id=>sourceEffects[id]).every(id=>ready(atlasImages.get(id))),
  raster:()=>({p41:[p41.naturalWidth,p41.naturalHeight],p5:[p5.naturalWidth,p5.naturalHeight]}),
+ layout:(f,team)=>squadLayout(f,team),advance:(elapsed,f,team)=>advance({actor:true,elapsed},f,team),
  visual:(u,now)=>{const v=visual(u,now);return {action:v.action,phase:v.phase,actor:v.actor,hit:v.hit,sheet:sheet(u)}},
  metrics:()=>JSON.parse(JSON.stringify(metrics)),
 });

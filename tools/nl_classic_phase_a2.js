@@ -19,7 +19,11 @@ function nlA2BuildingCost(id){
  const level=game.buildings[id];if(!Number.isInteger(level)||level<1)return null;
  const oldSilver=Math.round(b.base*Math.pow(1.75,level-1));
  const oldIron=Math.round(b.iron*Math.pow(1.65,level-1));
- return {silver:oldSilver+oldIron*NL_A2_EXCHANGE_RATE,grain:Math.ceil(oldIron/2)};
+ const cost={silver:oldSilver+oldIron*NL_A2_EXCHANGE_RATE,grain:Math.ceil(oldIron/2)};
+ // CL-P3's lumberyard consumes its actual wood stock in addition to the A2
+ // silver/grain projection of the retired construction iron cost.
+ if(id==='lumberyard'&&Number.isSafeInteger(game.wood))cost.wood=Math.round(120*Math.pow(1.65,level-1));
+ return cost;
 }
 buildingCost=nlA2BuildingCost;
 upgrade=function(id){
@@ -106,7 +110,7 @@ nlHero207Panel=function(){
  }).join('');
  const rows=visible.map(h=>{
    const route=nlA2Route(h.id),ready=nlHero207CanRecruit(h.id);
-   return '<div class="nl-a2-hero-row"><span>'+esc(h.icon+' '+h.name)+'</span><small>'+esc(nlA2RouteDescription(route))+' · '+fmt(route.silver)+' Bạc</small><b>'+(ready?'Có thể mời':'Chưa đủ điều kiện')+'</b></div>';
+   return '<div class="nl-a2-hero-row" data-nla2-hero="'+esc(h.id)+'"><span>'+esc(h.icon+' '+h.name)+'</span><small>'+esc(nlA2RouteDescription(route))+' · '+fmt(route.silver)+' Bạc</small><b>'+(ready?'Có thể mời':'Chưa đủ điều kiện')+'</b></div>';
  }).join('');
  const buttons=nlA2Routes.map(([id,label])=>'<button type="button" class="dark-button '+(nlA2HeroRoute===id?'picked':'')+'" data-nla2-route="'+id+'">'+label+'</button>').join('');
  return '<section class="panel mini-box nl-a2-recruits" data-nl-hero207="1"><h3>🍵 Danh Tướng · 207 nhân vật mở rộng</h3>'+

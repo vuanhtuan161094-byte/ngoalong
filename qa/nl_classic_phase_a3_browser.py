@@ -13,7 +13,8 @@ def main():
         page=context.new_page()
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
-        page.goto(HTML.as_uri(),wait_until="domcontentloaded")
+        page.goto(HTML.as_uri(),wait_until="domcontentloaded",timeout=120_000)
+        page.wait_for_function("() => !!window.__NL_A3_QA__ && typeof window.__P2_QA__?.getGame === 'function'", timeout=60_000)
         outcome=page.evaluate("""() => {
           const q=window.__NL_A3_QA__,g=window.__P2_QA__.getGame();
           const all=q.prices(),shop=all.filter(x=>x.cost);
@@ -32,7 +33,7 @@ def main():
           const refined=q.dryRefine(refineState,uid,'a3:refine:one');
           const again=refined.ok?q.dryRefine(refined.state,uid,'a3:refine:one'):null;
           return {
-            count:all.length,priced:shop.length,
+            count:all.length,priced:shop.length,projectCount:all.filter(x=>!x.id.startsWith("mobile-vng-equipment-")).length,mobileCount:all.filter(x=>x.id.startsWith("mobile-vng-equipment-")).length,
             allNoIron:all.every(x=>!x.cost||!Object.hasOwn(x.cost,'iron')),
             distinctIds:new Set(all.map(x=>x.id)).size,
             activeModel:q.source,sourceRefs:q.references,
@@ -54,7 +55,7 @@ def main():
           };
         }""")
         checks={
-          "411 playable ID prices with no iron":outcome["count"]==411 and outcome["distinctIds"]==411 and outcome["allNoIron"],
+          "411 project + 399 Mobile distinct gear IDs with no iron":outcome["count"]==810 and outcome["distinctIds"]==810 and outcome["projectCount"]==411 and outcome["mobileCount"]==399 and outcome["allNoIron"] and outcome["activeModel"]["playableGear"]==411,
           "392 reference gear untouched":outcome["sourceRefs"]==392,
           "simulated conversion is declared":outcome["activeModel"]["provenance"]=="PROJECT_SIMULATED",
           "purchase A3 quote":outcome["price"]=={"silver":1536,"grain":77},

@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "system": "Mobile Seal V2 / Ấn Trận",
+  "source": {
+    "classification": "SOURCE_EXACT",
+    "sourceEdition": "CURRENT_VNG_MOBILE",
+    "retrievedDate": "2026-11-26",
+    "page": "https://ngoalong.vnggames.com/ngoa-long-wiki/an-tran",
+    "dataUrl": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+    "rawSha256": "d386472f03e4422c9213ef27ed8ce005383dfc99c486840ef376c1b7d24eb4f1",
+    "bundleSha256": "1ae2aace7ec3655b79bbd9bfb2f9c7a92a151630b35c22208ad2d5f5ded068d6"
+  },
+  "fields": [
+    {
+      "field": "seal.id/name/new/linkedFormation/unlockCondition",
+      "classification": "SOURCE_EXACT",
+      "coverage": 25
+    },
+    {
+      "field": "seal.attributes.fixed/series",
+      "classification": "SOURCE_EXACT",
+      "coverage": "all fixed attributes and 31 × 250 level points"
+    },
+    {
+      "field": "upgradeCosts Lv2-Lv250 including Chiến Tích/Hổ Phù",
+      "classification": "SOURCE_EXACT",
+      "coverage": 249
+    },
+    {
+      "field": "activation rank count and maxTotal",
+      "classification": "SOURCE_EXACT",
+      "coverage": 25
+    },
+    {
+      "field": "activation per-rank distribution and rank costs",
+      "classification": "SIMULATED",
+      "coverage": 25,
+      "reason": "Not present in the public detail payload or its page renderer."
+    },
+    {
+      "field": "seal discount formula and eligibility",
+      "classification": "UNRESOLVED",
+      "reason": "The public page states prices are before discount but exposes no seal-specific rule; equipment discount text is separate."
+    },
+    {
+      "field": "currency acquisition rates",
+      "classification": "SIMULATED",
+      "reason": "Not published by this calculator; earned-only runtime routes are used."
+    },
+    {
+      "field": "native P2 stat projection",
+      "classification": "DERIVED_FROM_SOURCE",
+      "reason": "Explicit 1/1000 flat-scale adapter; raw Wiki stats remain unchanged in the source dataset."
+    },
+    {
+      "sealId": "1001",
+      "field": "attributes.Vật Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1001",
+      "field": "attributes.V.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1002",
+      "field": "attributes.Pháp Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1002",
+      "field": "attributes.C.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1003",
+      "field": "attributes.Mưu Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1003",
+      "field": "attributes.M.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1004",
+      "field": "attributes.Hồi phục (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1004",
+      "field": "attributes.Dẫn binh",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1005",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1005",
+      "field": "attributes.V.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1006",
+      "field": "attributes.Pháp Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1006",
+      "field": "attributes.C.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1007",
+      "field": "attributes.Mưu Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1007",
+      "field": "attributes.M.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1008",
+      "field": "attributes.Hồi phục (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1008",
+      "field": "attributes.Dẫn binh",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1009",
+      "field": "attributes.Hồi phục (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1009",
+      "field": "attributes.Dẫn binh",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1010",
+      "field": "attributes.Vật Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1010",
+      "field": "attributes.Mưu Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1010",
+      "field": "attributes.V.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1010",
+      "field": "attributes.M.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1011",
+      "field": "attributes.Pháp Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1011",
+      "field": "attributes.Mưu Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1011",
+      "field": "attributes.C.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1011",
+      "field": "attributes.M.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1012",
+      "field": "attributes.Pháp Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1012",
+      "field": "attributes.Vật Công (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1012",
+      "field": "attributes.C.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1012",
+      "field": "attributes.V.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1013",
+      "field": "attributes.M.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1013",
+      "field": "attributes.V.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1014",
+      "field": "attributes.C.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1014",
+      "field": "attributes.M.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1015",
+      "field": "attributes.V.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1015",
+      "field": "attributes.C.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1016",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1016",
+      "field": "attributes.V.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1017",
+      "field": "attributes.Tất cả phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1017",
+      "field": "attributes.Tất cả công",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1018",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1018",
+      "field": "attributes.C.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1019",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1019",
+      "field": "attributes.M.C",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1020",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1020",
+      "field": "attributes.V.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1021",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1021",
+      "field": "attributes.C.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1022",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1022",
+      "field": "attributes.M.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1023",
+      "field": "attributes.Tất cả phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1023",
+      "field": "attributes.Tất cả công",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1024",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1024",
+      "field": "attributes.M.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    },
+    {
+      "sealId": "1025",
+      "field": "attributes.Vật Phòng (%)",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Fixed percentage applied once as a multiplier"
+    },
+    {
+      "sealId": "1025",
+      "field": "attributes.C.P",
+      "classification": "SOURCE_EXACT",
+      "source": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/quan-an-detail.json",
+      "runtimeMapping": "Exact raw level value; P2 conversion is recorded separately"
+    }
+  ]
+}

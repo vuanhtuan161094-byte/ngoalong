@@ -9,8 +9,9 @@
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
   const STATS = ['atk', 'def', 'int', 'hp', 'tdef', 'mdef'];
+  const MOBILE_STATS = ['catk', 'matk', 'crit', 'counter', 'dodge'];
   const LANES = ['weaponAtk', 'horseAtk'];
-  const RESOURCES = new Set(['silver', 'iron', 'grain', 'prestige']);
+  const RESOURCES = new Set(['silver', 'gold', 'iron', 'grain', 'prestige']);
   const SLOT_ALIASES = { banner: 'artifact' };
   const owned = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   function problem(code) { const e = new Error(code); e.code = code; throw e; }
@@ -25,11 +26,18 @@
     for (const row of [...pack.equipment, ...pack.items]) {
       assert(row && saneId(row.id) && !ids.has(row.id), 'DUPLICATE_OR_INVALID_ID');
       assert(['PLAYABLE', 'REFERENCE_ONLY'].includes(row.integration), 'BAD_INTEGRATION_STATUS');
-      assert(['VERIFIED', 'DERIVED', 'SIMULATED', 'UNKNOWN'].includes(row.provenance?.classification), 'BAD_PROVENANCE');
+      assert(['VERIFIED', 'DERIVED', 'SIMULATED', 'UNKNOWN', 'SOURCE_EXACT', 'DERIVED_FROM_SOURCE'].includes(row.provenance?.classification), 'BAD_PROVENANCE');
       if (row.integration === 'PLAYABLE') {
-        assert(row.provenance.classification === 'SIMULATED', 'UNAPPROVED_WIKI_ACTIVATION');
+        const sourceEnabled=row.provenance.classification==='SOURCE_EXACT'&&row.sourceEdition==='CURRENT_VNG_MOBILE_WIKI'&&
+          (row.acquisitionRule?.kind==='MOBILE_DROP'||row.acquisitionRule?.kind==='SOURCE_CURRENCY'||row.acquisitionRule?.kind==='MATERIAL_EXCHANGE'||
+           (row.acquisitionRule?.kind==='SHOP'&&['SOURCE_EXACT','SIMULATED_FALLBACK'].includes(row.acquisitionRule.classification)&&
+            row.acquisitionRule.shopCost&&typeof row.acquisitionRule.shopCost==='object'));
+        assert(row.provenance.classification === 'SIMULATED'||sourceEnabled, 'UNAPPROVED_WIKI_ACTIVATION');
         if (row.category === 'equipment') {
-          assert(typeof row.slot === 'string' && row.stats && STATS.every(k => integer(row.stats[k])), 'BAD_EQUIPMENT_STATS');
+          assert(typeof row.slot === 'string' && row.stats && STATS.every(k => integer(row.stats[k])) &&
+            MOBILE_STATS.every(k => row.stats[k] == null || integer(row.stats[k])), 'BAD_EQUIPMENT_STATS');
+          if(sourceEnabled)assert(row.mobileEnhancement?.classification==='SOURCE_EXACT'&&
+            row.mobileEnhancement.formulaId==='VNG_WIKI_BAC_CUONG_HOA_V1','BAD_SOURCE_EQUIPMENT_ADAPTER');
         } else {
           assert(['consumable', 'material'].includes(row.category), 'BAD_ACTIVE_ITEM_CATEGORY');
         }
@@ -152,12 +160,27 @@
         assert(acquisition && ['SHOP','SHOP_OR_AUTHORIZED_REWARD'].includes(acquisition.kind) &&
           acquisition.shopCost, 'EQUIPMENT_NOT_FOR_SALE');
         assert(next.items.length < equipmentCapacity(next), 'EQUIPMENT_CAPACITY');
+        if(acquisition.classification==='SIMULATED_FALLBACK'){
+          assert(integer(acquisition.minCommander,1)&&
+            Math.max(10,Number(next.nlContentC?.mobileCommanderLevel)||10)>=acquisition.minCommander,'COMMANDER_LEVEL_REQUIRED');
+          assert(integer(row.mobileSale?.amount,1)&&integer(acquisition.shopCost.silver,1)&&acquisition.shopCost.silver>row.mobileSale.amount,'FALLBACK_PRICE_ARBITRAGE');
+        }
         pay(next, acquisition.shopCost);
+        for(const material of acquisition.shopMaterials||[]){
+          available(material.id,'material');
+          assert(integer(material.quantity,1)&&integer(m.stacks[material.id]||0)&&
+            (m.stacks[material.id]||0)>=material.quantity,'INSUFFICIENT_MATERIAL');
+        }
+        for(const material of acquisition.shopMaterials||[]){
+          m.stacks[material.id]-=material.quantity;
+          if(m.stacks[material.id]===0)delete m.stacks[material.id];
+        }
         const uids = new Set(next.items.map(x => String(x.uid)));
         let uid;
         do { m.serial++; uid = 'nli-' + m.serial; } while (uids.has(uid));
         next.items.push({ uid, base: id, lv: 1 });
-        return { purchased: id, uid, cost: { ...acquisition.shopCost } };
+        return { purchased: id, uid, cost: { ...acquisition.shopCost,
+          materials:jsonCopy(acquisition.shopMaterials||[]) } };
       });
     }
     function equipmentInstance(state, uid) {
@@ -201,6 +224,48 @@
         return { heroId, uid, slot };
       });
     }
+    function mobilePromoteQuote(state,uid){
+      const item=state.items.find(x=>String(x.uid)===String(uid)),from=item&&catalog[item.base],to=from&&catalog[from.mobilePromotion?.to];
+      if(!from?.mobileEnhancement||!to?.mobileEnhancement||from.slot!==to.slot||!(to.displayedLevel>from.displayedLevel||to.displayedLevel===from.displayedLevel&&to.sourceQuality>from.sourceQuality))return null;
+      const oldSale=from.mobileSale?.amount||0,newSale=to.mobileSale?.amount||0;
+      return {from:from.id,to:to.id,name:to.name,kind:from.mobilePromotion.kind,commander:Math.max(10,Math.min(440,to.displayedLevel||10)),silver:Math.max(1000,newSale-oldSale+1,Math.ceil(newSale*.3)),materials:jsonCopy(from.mobilePromotion.materials||[]),classification:'SOURCE_RELATION_SIMULATED_FEE'};
+    }
+    function mobilePromote(state,uid,receiptId){
+      return execute(state,'MOBILE_PROMOTE',receiptId,uid,(next,m)=>{
+        const item=equipmentInstance(next,uid),q=mobilePromoteQuote(next,uid);
+        assert(q,'MOBILE_PROMOTION_NOT_AVAILABLE');
+        assert(Math.max(10,Number(next.nlContentC?.mobileCommanderLevel)||10)>=q.commander,'COMMANDER_LEVEL_REQUIRED');
+        pay(next,{silver:q.silver});
+        for(const material of q.materials){available(material.id,'material');assert(integer(material.quantity,1)&&integer(m.stacks[material.id]||0)&&(m.stacks[material.id]||0)>=material.quantity,'INSUFFICIENT_MATERIAL');}
+        for(const material of q.materials){m.stacks[material.id]-=material.quantity;if(m.stacks[material.id]===0)delete m.stacks[material.id];}
+        const from=item.base;item.base=q.to;
+        // Keep the owned UID, slot and level, but invalidate incompatible refinement rolls.
+        const dest=catalog[q.to],pool=dest.mobileRefinement?.sourcePools;
+        if(item.mobileRefines)for(const key of Object.keys(item.mobileRefines)){
+          const allowed=pool?.[key];if(!Array.isArray(allowed)){delete item.mobileRefines[key];continue;}
+          item.mobileRefines[key]=item.mobileRefines[key].filter(x=>allowed.some(y=>y.code===x.code&&y.value===x.value&&y.name===x.name));
+        }
+        return {uid,from,to:q.to,level:item.lv,silver:q.silver,materials:q.materials,classification:q.classification};
+      });
+    }
+    function sell(state, uid, receiptId) {
+      return execute(state, 'SELL_EQUIPMENT', receiptId, uid, (next) => {
+        const instance=equipmentInstance(next,uid),row=catalog[instance.base],sale=row.mobileSale;
+        assert(sale?.classification==='SOURCE_EXACT_VALUE_WITH_SIMULATED_CURRENCY'&&
+          integer(sale.amount,1)&&RESOURCES.has(sale.currency)&&
+          sale.currencyClassification==='SIMULATED','EQUIPMENT_NOT_SELLABLE');
+        assert(!Object.values(next.gear).some(slots=>
+          Object.values(slots||{}).some(equipped=>String(equipped)===String(uid))),
+          'EQUIPMENT_EQUIPPED');
+        const balance=next[sale.currency]||0;
+        assert(integer(balance)&&Number.isSafeInteger(balance+sale.amount),'RESOURCE_OVERFLOW');
+        const index=next.items.findIndex(x=>String(x.uid)===String(uid));
+        assert(index>=0,'EQUIPMENT_NOT_OWNED');
+        next.items.splice(index,1);next[sale.currency]=balance+sale.amount;
+        return {sold:instance.base,uid:instance.uid,amount:sale.amount,currency:sale.currency,
+          currencyClassification:sale.currencyClassification};
+      });
+    }
     function pay(state, costs) {
       for (const [resource, amount] of Object.entries(costs)) {
         assert(RESOURCES.has(resource) && integer(amount), 'INVALID_COST');
@@ -208,9 +273,41 @@
       }
       for (const [resource, amount] of Object.entries(costs)) state[resource] = (state[resource] || 0) - amount;
     }
+    function mobileBacCost(level, enhancement) {
+      const G=1/600,e=level;
+      let value=enhancement.inc*enhancement.coef*e*(0.22+e*e*G)*enhancement.qualityCoef*G+5*e+3*enhancement.inc;
+      if(e>=200)value*=2;
+      return Math.floor(value);
+    }
+    function mobileNgocCost(level) {
+      if(level<=200)return 0;
+      if(level>260)return level;
+      return 40*Math.ceil((level-200)/10);
+    }
     // One price source for UI, combat state and all receipt transactions.
-    function reinforcementCost(level, state) {
-      assert(integer(level, 1) && level < rules.reinforcement.maxLevel, 'BAD_REINFORCE_LEVEL');
+    function reinforcementCost(level, state, equipmentId, targetLevel) {
+      assert(integer(level, 1), 'BAD_REINFORCE_LEVEL');
+      const source=equipmentId?catalog[equipmentId]:null,enhancement=source?.mobileEnhancement;
+      if(enhancement){
+        const target=targetLevel==null?level+1:targetLevel;
+        assert(integer(target,level+1)&&target<=enhancement.maxLevel&&integer(enhancement.inc,1)&&
+          Number.isFinite(enhancement.coef)&&Number.isFinite(enhancement.qualityCoef),'BAD_SOURCE_REINFORCE_TARGET');
+        const commander=Number.isSafeInteger(state?.nlContentC?.mobileCommanderLevel)?state.nlContentC.mobileCommanderLevel:1;
+        const discount=commander>=300?.10:commander>=200?.05:0;
+        let silver=0,ngoc=0;
+        // A batch must debit the same rounded amount as applying each level
+        // individually. The Wiki publishes the undiscounted per-level formula;
+        // its level discount is text-only, so this floor is an explicit adapter
+        // assumption, separate from the exact base price.
+        for(let e=level+1;e<=target;e++){
+          const base=mobileBacCost(e,enhancement);
+          silver+=discount?Math.floor(base*(1-discount)):base;
+          ngoc+=mobileNgocCost(e);
+        }
+        const materials=ngoc?[{id:'mobile-vng-resource-res_16',name:'Tranh Ngọc',quantity:ngoc}]:[];
+        return {silver,materials,sourceBaseExact:true,discount,discountClassification:'DERIVED_FROM_SOURCE'};
+      }
+      assert(level < rules.reinforcement.maxLevel, 'BAD_REINFORCE_LEVEL');
       const r=rules.reinforcement;
       const silver=Math.round(r.silverBase*Math.pow(level,r.silverExponent));
       const cost = r.classicA3Pricing===true
@@ -223,20 +320,91 @@
       if(discount)cost.silver=Math.ceil(cost.silver*(1-discount));
       return cost;
     }
-    function reinforce(state, uid, receiptId) {
-      return execute(state, 'REINFORCE', receiptId, uid, next => {
-        const instance = equipmentInstance(next, uid);
-        const r = rules.reinforcement;
-        assert(instance.lv < r.maxLevel, 'REINFORCEMENT_MAX');
-        const cost = reinforcementCost(instance.lv,next);
-        pay(next, cost);
-        instance.lv++;
+    function reinforce(state, uid, receiptId, requestedLevel) {
+      return execute(state, 'REINFORCE', receiptId, [uid,requestedLevel??null], (next,m) => {
+        const instance = equipmentInstance(next, uid),row=catalog[instance.base],mobile=row.mobileEnhancement;
+        const max=mobile?.maxLevel||rules.reinforcement.maxLevel;
+        const target=mobile?(requestedLevel==null?instance.lv+1:requestedLevel):instance.lv+1;
+        assert(integer(target,instance.lv+1)&&target<=max, 'REINFORCEMENT_MAX');
+        const cost = reinforcementCost(instance.lv,next,instance.base,target);
+        const currencies=Object.fromEntries(Object.entries(cost).filter(([key])=>!['materials','sourceExact','sourceBaseExact','discount','discountClassification'].includes(key)));
+        pay(next, currencies);
+        for(const material of cost.materials||[]){
+          available(material.id,'material');
+          assert(integer(m.stacks[material.id]||0)&&(m.stacks[material.id]||0)>=material.quantity,'INSUFFICIENT_MATERIAL');
+        }
+        for(const material of cost.materials||[]){
+          m.stacks[material.id]-=material.quantity;
+          if(m.stacks[material.id]===0)delete m.stacks[material.id];
+        }
+        instance.lv=target;
         return { uid: instance.uid, level: instance.lv, cost };
       });
+    }
+    // Exact source pool values. Unknown prices and weights above 100% use explicit offline adapters.
+    const MOBILE_REFINE_POOLS=['so','cao','dacKy'], MOBILE_REFINE_STONE='mobile-vng-resource-res_62';
+    function mobileRefineQuote(state,uid,pool){
+      const instance=state.items.find(x=>String(x.uid)===String(uid)),row=instance&&catalog[instance.base],p=row?.mobileRefinement?.sourcePools;
+      if(!p||!MOBILE_REFINE_POOLS.includes(pool)||!Array.isArray(p[pool])||!p[pool].length)return null;
+      const i=MOBILE_REFINE_POOLS.indexOf(pool),gate=[1,50,100][i],count=pool==='dacKy'?1:pool==='so'?p.effectNum:p.seniorEffectNum;
+      if(!integer(count,1)||count>3)return null;
+      const sum=p[pool].reduce((n,x)=>n+x.rate,0);
+      if(!Number.isFinite(sum)||sum<=0||!p[pool].every(x=>Number.isFinite(x.value)&&Number.isFinite(x.rate)&&x.rate>0))return null;
+      return {pool,gate,count,silver:600*(i+1)*Math.max(1,row.sourceQuality||1),stone:[1,2,4][i],materialId:MOBILE_REFINE_STONE,
+        weightSum:sum,classification:'SOURCE_EXACT_VALUES_SIMULATED_COST_AND_ROLL'};
+    }
+    function mobileRefineRoll(rows,seed){
+      let hash=2166136261;
+      for(const c of seed)hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
+      let weight=rows.reduce((n,x)=>n+x.rate,0)*(hash/4294967296);
+      for(const x of rows){weight-=x.rate;if(weight<0)return jsonCopy(x);}
+      return jsonCopy(rows[rows.length-1]);
+    }
+    function mobileRefine(state,uid,pool,receiptId){
+      return execute(state,'MOBILE_REFINE',receiptId,[uid,pool],(next,m)=>{
+        const instance=equipmentInstance(next,uid),row=catalog[instance.base],q=mobileRefineQuote(next,uid,pool);
+        assert(q,'MOBILE_REFINE_POOL');
+        assert(instance.lv>=q.gate,'MOBILE_REFINE_LEVEL');
+        available(q.materialId,'material');
+        assert(integer(m.stacks[q.materialId]||0)&&m.stacks[q.materialId]>=q.stone,'INSUFFICIENT_MATERIAL');
+        pay(next,{silver:q.silver});m.stacks[q.materialId]-=q.stone;
+        if(m.stacks[q.materialId]===0)delete m.stacks[q.materialId];
+        if(!instance.mobileRefines||typeof instance.mobileRefines!=='object'||Array.isArray(instance.mobileRefines))instance.mobileRefines={};
+        instance.mobileRefineSerial=integer(instance.mobileRefineSerial)?instance.mobileRefineSerial+1:1;
+        const rolls=Array.from({length:q.count},(_,i)=>mobileRefineRoll(row.mobileRefinement.sourcePools[pool],uid+':'+pool+':'+instance.mobileRefineSerial+':'+i));
+        instance.mobileRefines[pool]=rolls;
+        return {uid,pool,rolls,quote:q};
+      });
+    }
+    function mobileRefineModifiers(state,heroId){
+      const out={lead:0,war:0,intellect:0,atk:0,catk:0,matk:0,def:0,tdef:0,mdef:0,hp:0,crit:0,dodge:0,finalDamage:0,critDamage:0,pierceFlat:0,vs:{},resist:{},allDefense:0,teamDefense:0,unresolved:[]};
+      for(const uid of Object.values(state.gear?.[heroId]||{})){
+        if(uid==null)continue;
+        const item=equipmentInstance(state,uid),p=catalog[item.base]?.mobileRefinement?.sourcePools;
+        if(!p)continue;
+        for(const pool of MOBILE_REFINE_POOLS){
+          const cap=mobileRefineQuote(state,uid,pool)?.count||0;
+          for(const roll of (Array.isArray(item.mobileRefines?.[pool])?item.mobileRefines[pool]:[]).slice(0,cap)){
+            const x=p[pool].find(v=>v.code===roll.code&&v.value===roll.value&&v.name===roll.name);if(!x)continue;
+            const v=x.value,stat=({11:'atk',12:'def',13:'matk',14:'mdef',15:'catk',16:'tdef',27:'lead',28:'war',29:'intellect',55:'dodge',56:'finalDamage',58:'critDamage',60:'crit'})[x.code];
+            if(stat)out[stat]+=v;
+            else if(x.code===7)out.hp+=v*.001*.82;
+            else if(x.code===59){out.lead+=v;out.war+=v;out.intellect+=v;}
+            else if(x.code===45){for(const k of ['atk','catk','matk'])out[k]+=v;}
+            else if(x.code===46){if(/toàn phe ta/i.test(x.name))out.teamDefense+=v;else out.allDefense+=v;}
+            else if(x.code===36)out.pierceFlat+=v*.001;
+            else if(x.code>=47&&x.code<=50){const f=['Thục','Ngụy','Ngô','Quần'][x.code-47];out.vs[f]=(out.vs[f]||0)+v;}
+            else if(x.code>=51&&x.code<=54){const f=['Thục','Ngụy','Ngô','Quần'][x.code-51];out.resist[f]=(out.resist[f]||0)+v;}
+            else out.unresolved.push(x.name);
+          }
+        }
+      }
+      return out;
     }
     function refine(state, uid, receiptId) {
       return execute(state, 'REFINE', receiptId, uid, (next, m) => {
         const instance = equipmentInstance(next, uid), r = rules.refinement;
+        assert(!catalog[instance.base].mobileEnhancement,'MOBILE_REFINE_MECHANICS_UNRESOLVED');
         const rank = instance.refineLv || 0;
         assert(integer(rank) && rank < r.maxLevel, 'REFINE_MAX');
         const material = available(r.materialId, 'material');
@@ -302,10 +470,22 @@
     }
     function bonuses(state, heroId) {
       checkOwned(state);
-      const result = Object.fromEntries([...STATS, ...LANES].map(k => [k, 0]));
+      const result = Object.fromEntries([...STATS, ...MOBILE_STATS, ...LANES].map(k => [k, 0]));
       for (const uid of Object.values(state.gear?.[heroId] || {})) {
         if (uid == null) continue;
         const instance = equipmentInstance(state, uid), row = catalog[instance.base];
+        if(row.mobileEnhancement){
+          const scale=row.mobileEnhancement.statScale||0.001,level=instance.lv;
+          for(const attr of row.sourceStats||[]){
+            const key=({"Vật Công":"atk","Pháp Công":"catk","Mưu Công":"matk","Vật Phòng":"def","Pháp Phòng":"tdef","Mưu Phòng":"mdef","Lính":"hp","Bạo Kích":"crit","Phản Kích":"counter","Né Tránh":"dodge"})[attr.label];
+            if(!key)continue;
+            const raw=attr.pct?(attr.base||0)/100:(attr.base||0)+(level-1)*(attr.growth||0);
+            const adapted=attr.pct?raw:(raw>0?Math.max(1,Math.round(raw*scale)):0);
+            result[key]+=adapted;
+            if(key==='atk'&&row.slot==='weapon')result.weaponAtk+=adapted;
+          }
+          continue;
+        }
         const refineLv = instance.refineLv || 0;
         assert(integer(refineLv) && refineLv <= rules.refinement.maxLevel, 'BAD_REFINE_LEVEL');
         const factor = (1 + (instance.lv - 1) * rules.reinforcement.statBonusPerLevel) *
@@ -318,7 +498,7 @@
       for (const key of STATS) result[key] += setStats[key];
       return result;
     }
-    return { grant, buy, equip, unequip, reinforce, reinforcementCost, refine, use, bonuses, sets, validateState: checkOwned };
+    return { grant, buy, equip, unequip, sell, reinforce, reinforcementCost, refine, mobileRefine, mobileRefineQuote, mobileRefineModifiers, mobilePromote, mobilePromoteQuote, use, bonuses, sets, validateState: checkOwned };
   }
   return { createModule, validateCatalogue };
 });

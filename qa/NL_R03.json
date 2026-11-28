@@ -1,0 +1,173 @@
+{
+  "milestone": "NL-R03",
+  "total": 41,
+  "passed": 41,
+  "failed": [],
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "R03 hydration keeps schema v5 and initializes independent evolution state",
+      "pass": true
+    },
+    {
+      "name": "four late campaign encounters extend the 24-stage story without changing earlier entries",
+      "pass": true
+    },
+    {
+      "name": "late encounter 25 stays locked until the first 24 campaign wins",
+      "pass": true
+    },
+    {
+      "name": "barracks exposes the 25-unit playable roster as five classes, tier training and branch choices",
+      "pass": true
+    },
+    {
+      "name": "lineage choices are gated by a real level-2 barracks",
+      "pass": true
+    },
+    {
+      "name": "paid barracks upgrade opens the lineage system",
+      "pass": true
+    },
+    {
+      "name": "guan shock is an actual paid branch with a live combat effect",
+      "pass": true
+    },
+    {
+      "name": "zhang bulwark is an actual paid branch with a live combat effect",
+      "pass": true
+    },
+    {
+      "name": "sun marksman is an actual paid branch with a live combat effect",
+      "pass": true
+    },
+    {
+      "name": "zhou ember is an actual paid branch with a live combat effect",
+      "pass": true
+    },
+    {
+      "name": "Hỏa Cơ inserts a real burn status into the strategist skill",
+      "pass": true
+    },
+    {
+      "name": "liu medic is an actual paid branch with a live combat effect",
+      "pass": true
+    },
+    {
+      "name": "a general cannot learn a branch from another troop class",
+      "pass": true
+    },
+    {
+      "name": "reapplying the current lineage cannot charge resources again",
+      "pass": true
+    },
+    {
+      "name": "Liên Nỗ changes the archer skill to a stronger real double strike",
+      "pass": true
+    },
+    {
+      "name": "Nhiễu Tâm adds real morale drain to the strategist skill",
+      "pass": true
+    },
+    {
+      "name": "Thương Phá Kỵ keeps its infantry combat archetype, switches to spear troop and counters cavalry",
+      "pass": true
+    },
+    {
+      "name": "spear specialization is selectable on an infantry commander and changes real unit class and defense",
+      "pass": true
+    },
+    {
+      "name": "alternate spear branch is a distinct live combat build",
+      "pass": true
+    },
+    {
+      "name": "Hiệu Lệnh adds its 12 morale to the classic WEB 25-morale drum action",
+      "pass": true
+    },
+    {
+      "name": "Kỵ Tập Hậu changes the real AI target and combat event to the back row",
+      "pass": true
+    },
+    {
+      "name": "Lưu Bị's real healing skill cleanses one harmful effect and grants its catalogued ward",
+      "pass": true
+    },
+    {
+      "name": "ward prevents harmful application and remains unremovable while later cleanse removes burn",
+      "pass": true
+    },
+    {
+      "name": "save reload preserves each selected lineage and other v5 state",
+      "pass": true
+    },
+    {
+      "name": "older v5 saves without the optional field hydrate without losing campaign or CL data",
+      "pass": true
+    },
+    {
+      "name": "stage 25 opens after real preceding-clearance state and stage 26 remains gated",
+      "pass": true
+    },
+    {
+      "name": "stage 25 starts a real battle with its visible defensive rule",
+      "pass": true
+    },
+    {
+      "name": "stage 25 is naturally winnable and records its unique rule in the settlement receipt",
+      "pass": true
+    },
+    {
+      "name": "stage 26 initializes its distinct opponent mechanic and battle callout",
+      "pass": true
+    },
+    {
+      "name": "stage 27 initializes its distinct opponent mechanic and battle callout",
+      "pass": true
+    },
+    {
+      "name": "stage 28 initializes its distinct opponent mechanic and battle callout",
+      "pass": true
+    },
+    {
+      "name": "all four original challenge stages have unique real battle mechanics",
+      "pass": true
+    },
+    {
+      "name": "ambush encounter AI really targets the exposed rear unit",
+      "pass": true
+    },
+    {
+      "name": "stage 25 same-seed formation A/B clears both setups and lowers troop casualties",
+      "pass": true
+    },
+    {
+      "name": "stage 26 same-seed formation A/B clears both setups and lowers troop casualties",
+      "pass": true
+    },
+    {
+      "name": "stage 27 same-seed formation A/B clears both setups and lowers troop casualties",
+      "pass": true
+    },
+    {
+      "name": "stage 28 same-seed formation A/B clears both setups and lowers troop casualties",
+      "pass": true
+    },
+    {
+      "name": "final boss victory settles encounter 28 once and renders the end-of-campaign result",
+      "pass": true
+    },
+    {
+      "name": "clearing encounter 28 of chapter 8 renders the ending and the final boss badge",
+      "pass": true
+    },
+    {
+      "name": "mobile evolution panel keeps all five class choices available",
+      "pass": true
+    },
+    {
+      "name": "Chromium recorded no JavaScript exceptions",
+      "pass": true
+    }
+  ]
+}

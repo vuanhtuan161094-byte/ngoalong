@@ -24,8 +24,11 @@ def open_page(browser,stored=None,width=1280):
     page=browser.new_page(viewport={"width":width,"height":720 if width>600 else 844})
     page.on("pageerror",lambda e:errors.append(str(e)))
     data={} if stored is None else {SAVE_KEY:stored}
-    page.set_content(HTML.replace("<script>",STUB.replace("__NL_STORE__",
-        json.dumps(data,ensure_ascii=False))+"<script>",1),wait_until="domcontentloaded")
+    # Large offline game files must not be serialized through the Playwright
+    # protocol. Install the same isolated storage stub before native navigation.
+    init=STUB.replace("__NL_STORE__",json.dumps(data,ensure_ascii=False))
+    page.add_init_script(init.removeprefix("<script>").removesuffix("</script>"))
+    page.goto((ROOT/"index.html").as_uri(),wait_until="domcontentloaded",timeout=180000)
     return page
 
 def main():

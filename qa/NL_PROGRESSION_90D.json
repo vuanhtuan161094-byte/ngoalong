@@ -1,0 +1,2612 @@
+{
+  "method": "earned-only native Chromium, 1 battle/day",
+  "rows": [
+    {
+      "day": 1,
+      "stage": 1,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 4,
+      "cleared": 1,
+      "mobile": 0,
+      "silver": 40930,
+      "grain": 48275,
+      "reserve": 0,
+      "orders": 59,
+      "levels": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "troops": [
+        438,
+        441,
+        396,
+        312
+      ],
+      "version": 5
+    },
+    {
+      "day": 2,
+      "stage": 2,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 4,
+      "cleared": 2,
+      "mobile": 0,
+      "silver": 66760,
+      "grain": 89160,
+      "reserve": 87,
+      "orders": 59,
+      "levels": [
+        5,
+        5,
+        5,
+        5
+      ],
+      "troops": [
+        504,
+        516,
+        458,
+        505
+      ],
+      "version": 5
+    },
+    {
+      "day": 3,
+      "stage": 3,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 3,
+      "mobile": 0,
+      "silver": 88610,
+      "grain": 130090,
+      "reserve": 135,
+      "orders": 59,
+      "levels": [
+        7,
+        4,
+        7,
+        7,
+        7
+      ],
+      "troops": [
+        539,
+        446,
+        518,
+        551,
+        539
+      ],
+      "version": 5
+    },
+    {
+      "day": 4,
+      "stage": 4,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 4,
+      "mobile": 0,
+      "silver": 111910,
+      "grain": 171520,
+      "reserve": 123,
+      "orders": 59,
+      "levels": [
+        8,
+        5,
+        8,
+        8,
+        8
+      ],
+      "troops": [
+        576,
+        494,
+        564,
+        542,
+        586
+      ],
+      "version": 5
+    },
+    {
+      "day": 5,
+      "stage": 5,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 5,
+      "mobile": 0,
+      "silver": 134840,
+      "grain": 212605,
+      "reserve": 405,
+      "orders": 59,
+      "levels": [
+        9,
+        7,
+        9,
+        9,
+        9
+      ],
+      "troops": [
+        481,
+        517,
+        588,
+        558,
+        589
+      ],
+      "version": 5
+    },
+    {
+      "day": 6,
+      "stage": 6,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 6,
+      "mobile": 0,
+      "silver": 158620,
+      "grain": 254205,
+      "reserve": 148,
+      "orders": 59,
+      "levels": [
+        9,
+        8,
+        9,
+        9,
+        9
+      ],
+      "troops": [
+        556,
+        599,
+        642,
+        639,
+        642
+      ],
+      "version": 5
+    },
+    {
+      "day": 7,
+      "stage": 7,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 7,
+      "mobile": 0,
+      "silver": 182100,
+      "grain": 295440,
+      "reserve": 361,
+      "orders": 59,
+      "levels": [
+        10,
+        9,
+        10,
+        10,
+        10
+      ],
+      "troops": [
+        560,
+        656,
+        639,
+        622,
+        664
+      ],
+      "version": 5
+    },
+    {
+      "day": 8,
+      "stage": 8,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 8,
+      "mobile": 0,
+      "silver": 206580,
+      "grain": 337270,
+      "reserve": 197,
+      "orders": 59,
+      "levels": [
+        11,
+        10,
+        11,
+        11,
+        11
+      ],
+      "troops": [
+        605,
+        642,
+        692,
+        726,
+        678
+      ],
+      "version": 5
+    },
+    {
+      "day": 9,
+      "stage": 9,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 9,
+      "mobile": 0,
+      "silver": 230910,
+      "grain": 378785,
+      "reserve": 360,
+      "orders": 59,
+      "levels": [
+        12,
+        10,
+        12,
+        12,
+        12
+      ],
+      "troops": [
+        749,
+        657,
+        686,
+        720,
+        709
+      ],
+      "version": 5
+    },
+    {
+      "day": 10,
+      "stage": 10,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 10,
+      "mobile": 0,
+      "silver": 256290,
+      "grain": 420895,
+      "reserve": 366,
+      "orders": 59,
+      "levels": [
+        12,
+        11,
+        12,
+        12,
+        12
+      ],
+      "troops": [
+        671,
+        695,
+        712,
+        727,
+        738
+      ],
+      "version": 5
+    },
+    {
+      "day": 11,
+      "stage": 11,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 11,
+      "mobile": 0,
+      "silver": 282170,
+      "grain": 463180,
+      "reserve": 219,
+      "orders": 59,
+      "levels": [
+        13,
+        12,
+        13,
+        13,
+        13
+      ],
+      "troops": [
+        656,
+        673,
+        656,
+        741,
+        722
+      ],
+      "version": 5
+    },
+    {
+      "day": 12,
+      "stage": 12,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 12,
+      "mobile": 0,
+      "silver": 308550,
+      "grain": 505390,
+      "reserve": 137,
+      "orders": 59,
+      "levels": [
+        14,
+        13,
+        14,
+        14,
+        14
+      ],
+      "troops": [
+        691,
+        741,
+        761,
+        784,
+        791
+      ],
+      "version": 5
+    },
+    {
+      "day": 13,
+      "stage": 13,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 13,
+      "mobile": 0,
+      "silver": 335530,
+      "grain": 547725,
+      "reserve": 340,
+      "orders": 59,
+      "levels": [
+        14,
+        13,
+        14,
+        14,
+        14
+      ],
+      "troops": [
+        691,
+        766,
+        700,
+        802,
+        691
+      ],
+      "version": 5
+    },
+    {
+      "day": 14,
+      "stage": 14,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 14,
+      "mobile": 0,
+      "silver": 363010,
+      "grain": 590185,
+      "reserve": 250,
+      "orders": 59,
+      "levels": [
+        15,
+        14,
+        15,
+        15,
+        15
+      ],
+      "troops": [
+        726,
+        800,
+        812,
+        726,
+        726
+      ],
+      "version": 5
+    },
+    {
+      "day": 15,
+      "stage": 15,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 15,
+      "mobile": 0,
+      "silver": 391090,
+      "grain": 632770,
+      "reserve": 300,
+      "orders": 59,
+      "levels": [
+        16,
+        15,
+        16,
+        16,
+        16
+      ],
+      "troops": [
+        726,
+        738,
+        726,
+        780,
+        803
+      ],
+      "version": 5
+    },
+    {
+      "day": 16,
+      "stage": 16,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 15,
+      "mobile": 0,
+      "silver": 412970,
+      "grain": 673130,
+      "reserve": 158,
+      "orders": 59,
+      "levels": [
+        16,
+        15,
+        16,
+        16,
+        16
+      ],
+      "troops": [
+        761,
+        726,
+        761,
+        761,
+        761
+      ],
+      "version": 5
+    },
+    {
+      "day": 17,
+      "stage": 16,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 15,
+      "mobile": 0,
+      "silver": 434850,
+      "grain": 713490,
+      "reserve": 13,
+      "orders": 59,
+      "levels": [
+        16,
+        15,
+        16,
+        16,
+        16
+      ],
+      "troops": [
+        761,
+        726,
+        761,
+        761,
+        761
+      ],
+      "version": 5
+    },
+    {
+      "day": 18,
+      "stage": 16,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 16,
+      "mobile": 0,
+      "silver": 462930,
+      "grain": 755800,
+      "reserve": 0,
+      "orders": 59,
+      "levels": [
+        17,
+        16,
+        17,
+        17,
+        17
+      ],
+      "troops": [
+        796,
+        761,
+        796,
+        796,
+        789
+      ],
+      "version": 5
+    },
+    {
+      "day": 19,
+      "stage": 17,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 16,
+      "mobile": 0,
+      "silver": 484210,
+      "grain": 795685,
+      "reserve": 148,
+      "orders": 59,
+      "levels": [
+        17,
+        16,
+        17,
+        17,
+        17
+      ],
+      "troops": [
+        796,
+        761,
+        796,
+        796,
+        796
+      ],
+      "version": 5
+    },
+    {
+      "day": 20,
+      "stage": 17,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 16,
+      "mobile": 0,
+      "silver": 505490,
+      "grain": 835570,
+      "reserve": 128,
+      "orders": 59,
+      "levels": [
+        18,
+        17,
+        18,
+        18,
+        18
+      ],
+      "troops": [
+        831,
+        796,
+        831,
+        831,
+        831
+      ],
+      "version": 5
+    },
+    {
+      "day": 21,
+      "stage": 17,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 17,
+      "mobile": 0,
+      "silver": 534070,
+      "grain": 878055,
+      "reserve": 283,
+      "orders": 59,
+      "levels": [
+        18,
+        17,
+        18,
+        18,
+        18
+      ],
+      "troops": [
+        831,
+        800,
+        831,
+        831,
+        831
+      ],
+      "version": 5
+    },
+    {
+      "day": 22,
+      "stage": 18,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 17,
+      "mobile": 0,
+      "silver": 555950,
+      "grain": 918365,
+      "reserve": 107,
+      "orders": 59,
+      "levels": [
+        18,
+        18,
+        18,
+        18,
+        18
+      ],
+      "troops": [
+        831,
+        831,
+        831,
+        831,
+        831
+      ],
+      "version": 5
+    },
+    {
+      "day": 23,
+      "stage": 18,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 17,
+      "mobile": 0,
+      "silver": 577230,
+      "grain": 958225,
+      "reserve": 122,
+      "orders": 59,
+      "levels": [
+        19,
+        18,
+        19,
+        19,
+        19
+      ],
+      "troops": [
+        866,
+        831,
+        866,
+        866,
+        866
+      ],
+      "version": 5
+    },
+    {
+      "day": 24,
+      "stage": 18,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 606510,
+      "grain": 1000885,
+      "reserve": 277,
+      "orders": 59,
+      "levels": [
+        19,
+        19,
+        19,
+        19,
+        19
+      ],
+      "troops": [
+        866,
+        910,
+        866,
+        945,
+        866
+      ],
+      "version": 5
+    },
+    {
+      "day": 25,
+      "stage": 19,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 628390,
+      "grain": 1041170,
+      "reserve": 115,
+      "orders": 59,
+      "levels": [
+        20,
+        19,
+        20,
+        20,
+        20
+      ],
+      "troops": [
+        901,
+        866,
+        901,
+        901,
+        901
+      ],
+      "version": 5
+    },
+    {
+      "day": 26,
+      "stage": 19,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 649670,
+      "grain": 1081005,
+      "reserve": 270,
+      "orders": 59,
+      "levels": [
+        20,
+        19,
+        20,
+        20,
+        20
+      ],
+      "troops": [
+        901,
+        866,
+        901,
+        901,
+        901
+      ],
+      "version": 5
+    },
+    {
+      "day": 27,
+      "stage": 19,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 671550,
+      "grain": 1121290,
+      "reserve": 90,
+      "orders": 59,
+      "levels": [
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "troops": [
+        901,
+        901,
+        901,
+        901,
+        901
+      ],
+      "version": 5
+    },
+    {
+      "day": 28,
+      "stage": 19,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 692830,
+      "grain": 1161125,
+      "reserve": 116,
+      "orders": 59,
+      "levels": [
+        21,
+        20,
+        21,
+        21,
+        21
+      ],
+      "troops": [
+        936,
+        901,
+        936,
+        925,
+        936
+      ],
+      "version": 5
+    },
+    {
+      "day": 29,
+      "stage": 19,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 18,
+      "mobile": 0,
+      "silver": 714110,
+      "grain": 1200960,
+      "reserve": 260,
+      "orders": 59,
+      "levels": [
+        21,
+        20,
+        21,
+        21,
+        21
+      ],
+      "troops": [
+        936,
+        901,
+        936,
+        936,
+        936
+      ],
+      "version": 5
+    },
+    {
+      "day": 30,
+      "stage": 19,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 19,
+      "mobile": 0,
+      "silver": 744790,
+      "grain": 1244245,
+      "reserve": 115,
+      "orders": 59,
+      "levels": [
+        21,
+        21,
+        21,
+        21,
+        21
+      ],
+      "troops": [
+        936,
+        913,
+        948,
+        936,
+        936
+      ],
+      "version": 5
+    },
+    {
+      "day": 31,
+      "stage": 20,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 20,
+      "mobile": 0,
+      "silver": 775670,
+      "grain": 1287355,
+      "reserve": 119,
+      "orders": 59,
+      "levels": [
+        22,
+        21,
+        22,
+        22,
+        22
+      ],
+      "troops": [
+        975,
+        936,
+        1069,
+        996,
+        1111
+      ],
+      "version": 5
+    },
+    {
+      "day": 32,
+      "stage": 21,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 20,
+      "mobile": 0,
+      "silver": 797550,
+      "grain": 1327590,
+      "reserve": 241,
+      "orders": 59,
+      "levels": [
+        22,
+        21,
+        22,
+        22,
+        22
+      ],
+      "troops": [
+        971,
+        936,
+        971,
+        971,
+        971
+      ],
+      "version": 5
+    },
+    {
+      "day": 33,
+      "stage": 21,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 829930,
+      "grain": 1371425,
+      "reserve": 61,
+      "orders": 59,
+      "levels": [
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "troops": [
+        971,
+        999,
+        971,
+        971,
+        971
+      ],
+      "version": 5
+    },
+    {
+      "day": 34,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 851210,
+      "grain": 1411185,
+      "reserve": 116,
+      "orders": 59,
+      "levels": [
+        23,
+        22,
+        23,
+        23,
+        23
+      ],
+      "troops": [
+        1006,
+        971,
+        1006,
+        994,
+        1006
+      ],
+      "version": 5
+    },
+    {
+      "day": 35,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 872490,
+      "grain": 1450945,
+      "reserve": 259,
+      "orders": 59,
+      "levels": [
+        23,
+        22,
+        23,
+        23,
+        23
+      ],
+      "troops": [
+        1006,
+        971,
+        1006,
+        1006,
+        1006
+      ],
+      "version": 5
+    },
+    {
+      "day": 36,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 894370,
+      "grain": 1491155,
+      "reserve": 79,
+      "orders": 59,
+      "levels": [
+        23,
+        23,
+        23,
+        23,
+        23
+      ],
+      "troops": [
+        1006,
+        1006,
+        1006,
+        1006,
+        1006
+      ],
+      "version": 5
+    },
+    {
+      "day": 37,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 915650,
+      "grain": 1530915,
+      "reserve": 116,
+      "orders": 59,
+      "levels": [
+        24,
+        23,
+        24,
+        24,
+        24
+      ],
+      "troops": [
+        1041,
+        1006,
+        1041,
+        1019,
+        1041
+      ],
+      "version": 5
+    },
+    {
+      "day": 38,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 936930,
+      "grain": 1570675,
+      "reserve": 249,
+      "orders": 59,
+      "levels": [
+        24,
+        23,
+        24,
+        24,
+        24
+      ],
+      "troops": [
+        1041,
+        1006,
+        1041,
+        1041,
+        1041
+      ],
+      "version": 5
+    },
+    {
+      "day": 39,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 958810,
+      "grain": 1610885,
+      "reserve": 104,
+      "orders": 59,
+      "levels": [
+        24,
+        23,
+        24,
+        24,
+        24
+      ],
+      "troops": [
+        1041,
+        1006,
+        1041,
+        1041,
+        1041
+      ],
+      "version": 5
+    },
+    {
+      "day": 40,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 980090,
+      "grain": 1650645,
+      "reserve": 224,
+      "orders": 59,
+      "levels": [
+        24,
+        24,
+        24,
+        24,
+        24
+      ],
+      "troops": [
+        1041,
+        1041,
+        1041,
+        1041,
+        1041
+      ],
+      "version": 5
+    },
+    {
+      "day": 41,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 1001370,
+      "grain": 1690405,
+      "reserve": 239,
+      "orders": 59,
+      "levels": [
+        25,
+        24,
+        25,
+        25,
+        25
+      ],
+      "troops": [
+        1076,
+        1041,
+        1076,
+        1076,
+        1076
+      ],
+      "version": 5
+    },
+    {
+      "day": 42,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 1023250,
+      "grain": 1730615,
+      "reserve": 94,
+      "orders": 59,
+      "levels": [
+        25,
+        24,
+        25,
+        25,
+        25
+      ],
+      "troops": [
+        1076,
+        1041,
+        1076,
+        1076,
+        1076
+      ],
+      "version": 5
+    },
+    {
+      "day": 43,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 1044530,
+      "grain": 1770375,
+      "reserve": 214,
+      "orders": 59,
+      "levels": [
+        25,
+        25,
+        25,
+        25,
+        25
+      ],
+      "troops": [
+        1076,
+        1076,
+        1076,
+        1076,
+        1076
+      ],
+      "version": 5
+    },
+    {
+      "day": 44,
+      "stage": 22,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 21,
+      "mobile": 0,
+      "silver": 1066410,
+      "grain": 1810585,
+      "reserve": 69,
+      "orders": 59,
+      "levels": [
+        25,
+        25,
+        25,
+        25,
+        25
+      ],
+      "troops": [
+        1076,
+        1076,
+        1076,
+        1076,
+        1076
+      ],
+      "version": 5
+    },
+    {
+      "day": 45,
+      "stage": 22,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 22,
+      "mobile": 0,
+      "silver": 1099190,
+      "grain": 1854245,
+      "reserve": 84,
+      "orders": 59,
+      "levels": [
+        26,
+        25,
+        26,
+        26,
+        26
+      ],
+      "troops": [
+        1111,
+        1076,
+        1111,
+        1111,
+        1111
+      ],
+      "version": 5
+    },
+    {
+      "day": 46,
+      "stage": 23,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 22,
+      "mobile": 0,
+      "silver": 1120470,
+      "grain": 1893980,
+      "reserve": 239,
+      "orders": 59,
+      "levels": [
+        26,
+        25,
+        26,
+        26,
+        26
+      ],
+      "troops": [
+        1111,
+        1076,
+        1111,
+        1111,
+        1111
+      ],
+      "version": 5
+    },
+    {
+      "day": 47,
+      "stage": 23,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 23,
+      "mobile": 0,
+      "silver": 1154850,
+      "grain": 1938365,
+      "reserve": 59,
+      "orders": 59,
+      "levels": [
+        26,
+        26,
+        26,
+        26,
+        26
+      ],
+      "troops": [
+        1111,
+        1136,
+        1111,
+        1224,
+        1111
+      ],
+      "version": 5
+    },
+    {
+      "day": 48,
+      "stage": 24,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 24,
+      "mobile": 0,
+      "silver": 1191130,
+      "grain": 1982775,
+      "reserve": 212,
+      "orders": 59,
+      "levels": [
+        27,
+        26,
+        27,
+        27,
+        27
+      ],
+      "troops": [
+        1146,
+        1111,
+        1286,
+        1146,
+        1270
+      ],
+      "version": 5
+    },
+    {
+      "day": 49,
+      "stage": 25,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 25,
+      "mobile": 0,
+      "silver": 1229210,
+      "grain": 2027810,
+      "reserve": 331,
+      "orders": 59,
+      "levels": [
+        27,
+        27,
+        27,
+        27,
+        27
+      ],
+      "troops": [
+        1146,
+        1124,
+        1286,
+        1146,
+        1146
+      ],
+      "version": 5
+    },
+    {
+      "day": 50,
+      "stage": 26,
+      "npc": null,
+      "won": false,
+      "valid": true,
+      "train": 5,
+      "cleared": 25,
+      "mobile": 0,
+      "silver": 1251090,
+      "grain": 2067920,
+      "reserve": 304,
+      "orders": 59,
+      "levels": [
+        27,
+        27,
+        27,
+        27,
+        27
+      ],
+      "troops": [
+        1146,
+        1146,
+        1146,
+        1146,
+        1146
+      ],
+      "version": 5
+    },
+    {
+      "day": 51,
+      "stage": 26,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 26,
+      "mobile": 0,
+      "silver": 1289970,
+      "grain": 2113230,
+      "reserve": 19,
+      "orders": 59,
+      "levels": [
+        28,
+        27,
+        28,
+        28,
+        28
+      ],
+      "troops": [
+        1181,
+        1146,
+        1211,
+        1181,
+        1181
+      ],
+      "version": 5
+    },
+    {
+      "day": 52,
+      "stage": 27,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 27,
+      "mobile": 0,
+      "silver": 1329250,
+      "grain": 2158365,
+      "reserve": 204,
+      "orders": 59,
+      "levels": [
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "troops": [
+        1215,
+        1146,
+        1321,
+        1181,
+        1321
+      ],
+      "version": 5
+    },
+    {
+      "day": 53,
+      "stage": 28,
+      "npc": null,
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 0,
+      "silver": 1370130,
+      "grain": 2204225,
+      "reserve": 338,
+      "orders": 59,
+      "levels": [
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "troops": [
+        1181,
+        1181,
+        1181,
+        1321,
+        1196
+      ],
+      "version": 5
+    },
+    {
+      "day": 54,
+      "stage": 29,
+      "npc": "wiki-m1-ai75",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 1,
+      "silver": 1392445,
+      "grain": 2245105,
+      "reserve": 208,
+      "orders": 59,
+      "levels": [
+        29,
+        28,
+        29,
+        29,
+        29
+      ],
+      "troops": [
+        1356,
+        1321,
+        1356,
+        1356,
+        1356
+      ],
+      "version": 5
+    },
+    {
+      "day": 55,
+      "stage": 29,
+      "npc": "wiki-m1-ai77",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 2,
+      "silver": 1415960,
+      "grain": 2286885,
+      "reserve": 163,
+      "orders": 59,
+      "levels": [
+        29,
+        28,
+        29,
+        29,
+        29
+      ],
+      "troops": [
+        1356,
+        1321,
+        1356,
+        1356,
+        1356
+      ],
+      "version": 5
+    },
+    {
+      "day": 56,
+      "stage": 29,
+      "npc": "wiki-m1-ai81",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 3,
+      "silver": 1438960,
+      "grain": 2328240,
+      "reserve": 383,
+      "orders": 59,
+      "levels": [
+        29,
+        29,
+        29,
+        29,
+        29
+      ],
+      "troops": [
+        1356,
+        1356,
+        1356,
+        1356,
+        1356
+      ],
+      "version": 5
+    },
+    {
+      "day": 57,
+      "stage": 29,
+      "npc": "wiki-m1-ai82",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 4,
+      "silver": 1462645,
+      "grain": 2370070,
+      "reserve": 338,
+      "orders": 59,
+      "levels": [
+        29,
+        29,
+        29,
+        29,
+        29
+      ],
+      "troops": [
+        1356,
+        1356,
+        1356,
+        1356,
+        1356
+      ],
+      "version": 5
+    },
+    {
+      "day": 58,
+      "stage": 29,
+      "npc": "wiki-m1-ai83",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 5,
+      "silver": 1486555,
+      "grain": 2411925,
+      "reserve": 153,
+      "orders": 59,
+      "levels": [
+        30,
+        29,
+        30,
+        30,
+        30
+      ],
+      "troops": [
+        1391,
+        1356,
+        1391,
+        1391,
+        1391
+      ],
+      "version": 5
+    },
+    {
+      "day": 59,
+      "stage": 29,
+      "npc": "wiki-m2-ai91",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 6,
+      "silver": 1509470,
+      "grain": 2453255,
+      "reserve": 408,
+      "orders": 59,
+      "levels": [
+        30,
+        29,
+        30,
+        30,
+        30
+      ],
+      "troops": [
+        1391,
+        1356,
+        1391,
+        1391,
+        1391
+      ],
+      "version": 5
+    },
+    {
+      "day": 60,
+      "stage": 29,
+      "npc": "wiki-m2-ai92",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 7,
+      "silver": 1532985,
+      "grain": 2495035,
+      "reserve": 328,
+      "orders": 59,
+      "levels": [
+        30,
+        30,
+        30,
+        30,
+        30
+      ],
+      "troops": [
+        1391,
+        1391,
+        1391,
+        1391,
+        1391
+      ],
+      "version": 5
+    },
+    {
+      "day": 61,
+      "stage": 29,
+      "npc": "wiki-m2-ai95",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 8,
+      "silver": 1556585,
+      "grain": 2536840,
+      "reserve": 283,
+      "orders": 59,
+      "levels": [
+        30,
+        30,
+        30,
+        30,
+        30
+      ],
+      "troops": [
+        1391,
+        1391,
+        1391,
+        1391,
+        1391
+      ],
+      "version": 5
+    },
+    {
+      "day": 62,
+      "stage": 29,
+      "npc": "wiki-m2-ai96",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 9,
+      "silver": 1579585,
+      "grain": 2578195,
+      "reserve": 398,
+      "orders": 59,
+      "levels": [
+        31,
+        30,
+        31,
+        31,
+        31
+      ],
+      "troops": [
+        1426,
+        1391,
+        1426,
+        1426,
+        1426
+      ],
+      "version": 5
+    },
+    {
+      "day": 63,
+      "stage": 29,
+      "npc": "wiki-m2-ai105",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 10,
+      "silver": 1603270,
+      "grain": 2620025,
+      "reserve": 353,
+      "orders": 59,
+      "levels": [
+        31,
+        30,
+        31,
+        31,
+        31
+      ],
+      "troops": [
+        1426,
+        1391,
+        1426,
+        1426,
+        1426
+      ],
+      "version": 5
+    },
+    {
+      "day": 64,
+      "stage": 29,
+      "npc": "wiki-m2-ai106",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 11,
+      "silver": 1626955,
+      "grain": 2661855,
+      "reserve": 273,
+      "orders": 59,
+      "levels": [
+        31,
+        31,
+        31,
+        31,
+        31
+      ],
+      "troops": [
+        1426,
+        1426,
+        1426,
+        1426,
+        1426
+      ],
+      "version": 5
+    },
+    {
+      "day": 65,
+      "stage": 29,
+      "npc": "wiki-m2-ai107",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 12,
+      "silver": 1650975,
+      "grain": 2703710,
+      "reserve": 228,
+      "orders": 59,
+      "levels": [
+        31,
+        31,
+        31,
+        31,
+        31
+      ],
+      "troops": [
+        1426,
+        1426,
+        1426,
+        1426,
+        1426
+      ],
+      "version": 5
+    },
+    {
+      "day": 66,
+      "stage": 29,
+      "npc": "wiki-m3-ai108",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 13,
+      "silver": 1673890,
+      "grain": 2745040,
+      "reserve": 343,
+      "orders": 59,
+      "levels": [
+        32,
+        31,
+        32,
+        32,
+        32
+      ],
+      "troops": [
+        1461,
+        1426,
+        1461,
+        1461,
+        1461
+      ],
+      "version": 5
+    },
+    {
+      "day": 67,
+      "stage": 29,
+      "npc": "wiki-m3-ai110",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 14,
+      "silver": 1697405,
+      "grain": 2786820,
+      "reserve": 298,
+      "orders": 59,
+      "levels": [
+        32,
+        31,
+        32,
+        32,
+        32
+      ],
+      "troops": [
+        1461,
+        1426,
+        1461,
+        1461,
+        1461
+      ],
+      "version": 5
+    },
+    {
+      "day": 68,
+      "stage": 29,
+      "npc": "wiki-m3-ai111",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 15,
+      "silver": 1721005,
+      "grain": 2828625,
+      "reserve": 218,
+      "orders": 59,
+      "levels": [
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "troops": [
+        1461,
+        1461,
+        1461,
+        1461,
+        1461
+      ],
+      "version": 5
+    },
+    {
+      "day": 69,
+      "stage": 29,
+      "npc": "wiki-m3-ai112",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 16,
+      "silver": 1744605,
+      "grain": 2870430,
+      "reserve": 173,
+      "orders": 59,
+      "levels": [
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "troops": [
+        1461,
+        1461,
+        1461,
+        1461,
+        1461
+      ],
+      "version": 5
+    },
+    {
+      "day": 70,
+      "stage": 29,
+      "npc": "wiki-m3-ai113",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 17,
+      "silver": 1767605,
+      "grain": 2911785,
+      "reserve": 288,
+      "orders": 59,
+      "levels": [
+        33,
+        32,
+        33,
+        33,
+        33
+      ],
+      "troops": [
+        1496,
+        1461,
+        1496,
+        1496,
+        1496
+      ],
+      "version": 5
+    },
+    {
+      "day": 71,
+      "stage": 29,
+      "npc": "wiki-m3-ai114",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 18,
+      "silver": 1791205,
+      "grain": 2953590,
+      "reserve": 243,
+      "orders": 59,
+      "levels": [
+        33,
+        32,
+        33,
+        33,
+        33
+      ],
+      "troops": [
+        1496,
+        1461,
+        1496,
+        1496,
+        1496
+      ],
+      "version": 5
+    },
+    {
+      "day": 72,
+      "stage": 29,
+      "npc": "wiki-m3-ai115",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 19,
+      "silver": 1814805,
+      "grain": 2995395,
+      "reserve": 163,
+      "orders": 59,
+      "levels": [
+        33,
+        33,
+        33,
+        33,
+        33
+      ],
+      "troops": [
+        1496,
+        1496,
+        1496,
+        1496,
+        1496
+      ],
+      "version": 5
+    },
+    {
+      "day": 73,
+      "stage": 29,
+      "npc": "wiki-m3-ai116",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 20,
+      "silver": 1837805,
+      "grain": 3036750,
+      "reserve": 418,
+      "orders": 59,
+      "levels": [
+        33,
+        33,
+        33,
+        33,
+        33
+      ],
+      "troops": [
+        1496,
+        1496,
+        1496,
+        1496,
+        1496
+      ],
+      "version": 5
+    },
+    {
+      "day": 74,
+      "stage": 29,
+      "npc": "wiki-m3-ai117",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 21,
+      "silver": 1861405,
+      "grain": 3078555,
+      "reserve": 373,
+      "orders": 59,
+      "levels": [
+        33,
+        33,
+        33,
+        33,
+        33
+      ],
+      "troops": [
+        1496,
+        1496,
+        1496,
+        1496,
+        1496
+      ],
+      "version": 5
+    },
+    {
+      "day": 75,
+      "stage": 29,
+      "npc": "wiki-m3-ai118",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 22,
+      "silver": 1885090,
+      "grain": 3120385,
+      "reserve": 188,
+      "orders": 59,
+      "levels": [
+        34,
+        33,
+        34,
+        34,
+        34
+      ],
+      "troops": [
+        1531,
+        1496,
+        1531,
+        1531,
+        1531
+      ],
+      "version": 5
+    },
+    {
+      "day": 76,
+      "stage": 29,
+      "npc": "wiki-m3-ai119",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 23,
+      "silver": 1908175,
+      "grain": 3161765,
+      "reserve": 443,
+      "orders": 59,
+      "levels": [
+        34,
+        33,
+        34,
+        34,
+        34
+      ],
+      "troops": [
+        1531,
+        1496,
+        1531,
+        1531,
+        1531
+      ],
+      "version": 5
+    },
+    {
+      "day": 77,
+      "stage": 29,
+      "npc": "wiki-m3-ai120",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 24,
+      "silver": 1931860,
+      "grain": 3203595,
+      "reserve": 363,
+      "orders": 59,
+      "levels": [
+        34,
+        34,
+        34,
+        34,
+        34
+      ],
+      "troops": [
+        1531,
+        1531,
+        1531,
+        1531,
+        1531
+      ],
+      "version": 5
+    },
+    {
+      "day": 78,
+      "stage": 29,
+      "npc": "wiki-m3-ai121",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 25,
+      "silver": 1955545,
+      "grain": 3245425,
+      "reserve": 318,
+      "orders": 59,
+      "levels": [
+        34,
+        34,
+        34,
+        34,
+        34
+      ],
+      "troops": [
+        1531,
+        1531,
+        1531,
+        1531,
+        1531
+      ],
+      "version": 5
+    },
+    {
+      "day": 79,
+      "stage": 29,
+      "npc": "wiki-m3-ai122",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 26,
+      "silver": 1979230,
+      "grain": 3287255,
+      "reserve": 273,
+      "orders": 59,
+      "levels": [
+        35,
+        34,
+        35,
+        35,
+        35
+      ],
+      "troops": [
+        1531,
+        1531,
+        1531,
+        1531,
+        1531
+      ],
+      "version": 5
+    },
+    {
+      "day": 80,
+      "stage": 29,
+      "npc": "wiki-m3-ai123",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 27,
+      "silver": 2002315,
+      "grain": 3328635,
+      "reserve": 388,
+      "orders": 59,
+      "levels": [
+        35,
+        34,
+        35,
+        35,
+        35
+      ],
+      "troops": [
+        1566,
+        1531,
+        1566,
+        1566,
+        1566
+      ],
+      "version": 5
+    },
+    {
+      "day": 81,
+      "stage": 29,
+      "npc": "wiki-m3-ai124",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 28,
+      "silver": 2026000,
+      "grain": 3370465,
+      "reserve": 343,
+      "orders": 59,
+      "levels": [
+        35,
+        35,
+        35,
+        35,
+        35
+      ],
+      "troops": [
+        1566,
+        1531,
+        1566,
+        1566,
+        1566
+      ],
+      "version": 5
+    },
+    {
+      "day": 82,
+      "stage": 29,
+      "npc": "wiki-m3-ai125",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 29,
+      "silver": 2049770,
+      "grain": 3412320,
+      "reserve": 263,
+      "orders": 59,
+      "levels": [
+        35,
+        35,
+        35,
+        35,
+        35
+      ],
+      "troops": [
+        1566,
+        1566,
+        1566,
+        1566,
+        1566
+      ],
+      "version": 5
+    },
+    {
+      "day": 83,
+      "stage": 29,
+      "npc": "wiki-m3-ai126",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 30,
+      "silver": 2073540,
+      "grain": 3454175,
+      "reserve": 218,
+      "orders": 59,
+      "levels": [
+        35,
+        35,
+        35,
+        35,
+        35
+      ],
+      "troops": [
+        1566,
+        1566,
+        1566,
+        1566,
+        1566
+      ],
+      "version": 5
+    },
+    {
+      "day": 84,
+      "stage": 29,
+      "npc": "wiki-m3-ai127",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 31,
+      "silver": 2096710,
+      "grain": 3495580,
+      "reserve": 333,
+      "orders": 59,
+      "levels": [
+        36,
+        35,
+        36,
+        36,
+        36
+      ],
+      "troops": [
+        1601,
+        1566,
+        1601,
+        1601,
+        1601
+      ],
+      "version": 5
+    },
+    {
+      "day": 85,
+      "stage": 29,
+      "npc": "wiki-m3-ai128",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 32,
+      "silver": 2120480,
+      "grain": 3537435,
+      "reserve": 288,
+      "orders": 59,
+      "levels": [
+        36,
+        35,
+        36,
+        36,
+        36
+      ],
+      "troops": [
+        1601,
+        1566,
+        1601,
+        1601,
+        1601
+      ],
+      "version": 5
+    },
+    {
+      "day": 86,
+      "stage": 29,
+      "npc": "wiki-m3-ai129",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 33,
+      "silver": 2144250,
+      "grain": 3579290,
+      "reserve": 208,
+      "orders": 59,
+      "levels": [
+        36,
+        36,
+        36,
+        36,
+        36
+      ],
+      "troops": [
+        1601,
+        1601,
+        1601,
+        1601,
+        1601
+      ],
+      "version": 5
+    },
+    {
+      "day": 87,
+      "stage": 29,
+      "npc": "wiki-m3-ai599",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 34,
+      "silver": 2168350,
+      "grain": 3621145,
+      "reserve": 163,
+      "orders": 59,
+      "levels": [
+        36,
+        36,
+        36,
+        36,
+        36
+      ],
+      "troops": [
+        1601,
+        1601,
+        1601,
+        1601,
+        1601
+      ],
+      "version": 5
+    },
+    {
+      "day": 88,
+      "stage": 29,
+      "npc": "wiki-m4-ai133",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 35,
+      "silver": 2191350,
+      "grain": 3662500,
+      "reserve": 418,
+      "orders": 59,
+      "levels": [
+        36,
+        36,
+        36,
+        36,
+        36
+      ],
+      "troops": [
+        1601,
+        1601,
+        1601,
+        1601,
+        1601
+      ],
+      "version": 5
+    },
+    {
+      "day": 89,
+      "stage": 29,
+      "npc": "wiki-m4-ai134",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 36,
+      "silver": 2214950,
+      "grain": 3704305,
+      "reserve": 233,
+      "orders": 59,
+      "levels": [
+        37,
+        36,
+        37,
+        37,
+        37
+      ],
+      "troops": [
+        1636,
+        1601,
+        1636,
+        1636,
+        1636
+      ],
+      "version": 5
+    },
+    {
+      "day": 90,
+      "stage": 29,
+      "npc": "wiki-m4-ai135",
+      "won": true,
+      "valid": true,
+      "train": 5,
+      "cleared": 28,
+      "mobile": 37,
+      "silver": 2238550,
+      "grain": 3746110,
+      "reserve": 188,
+      "orders": 59,
+      "levels": [
+        37,
+        36,
+        37,
+        37,
+        37
+      ],
+      "troops": [
+        1636,
+        1601,
+        1636,
+        1636,
+        1636
+      ],
+      "version": 5
+    }
+  ],
+  "pageErrors": []
+}

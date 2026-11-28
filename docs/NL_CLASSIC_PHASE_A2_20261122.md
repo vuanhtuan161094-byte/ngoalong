@@ -1,4 +1,5 @@
 # Mưu Định Tam Quốc — Giai đoạn A2: kinh tế công trình và 207 tướng
+> **Historical implementation snapshot.** Project economy and route values below remain simulated compatibility behavior; Ngọa Long Mobile is now the primary benchmark. See [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md).
 
 **22/11/2026 · nhánh** `feature/nl-web-review-20261122` · **không merge / không Codex Cloud**. Thiết kế hướng tới Ngọa Long WEB giai đoạn cổ điển; công thức và cách gán tuyến 207 nhân vật đều `SIMULATED`, KHÔNG phải công thức/chính sách chiêu mộ chính thức của VNG.
 

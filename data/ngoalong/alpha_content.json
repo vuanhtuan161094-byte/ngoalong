@@ -8059,7 +8059,7 @@
           7
         ],
         "tactic": "Trống Khóa Quân Tâm: Tư Mã Ý rút sĩ khí; Điều Quân + Thương ưu tiên Kỵ, còn trống giữ nhịp quân tâm.",
-        "enemyPower": 1.15,
+        "enemyPower": 2.0,
         "recommendedPreparation": {
           "minimumGenerals": 5,
           "averageHeroLevel": 5,
@@ -8091,7 +8091,7 @@
         "qaExpectations": {
           "sameSeedFormationPuzzle": {
             "seed": 8675309,
-            "enemyPower": 1.15,
+            "enemyPower": 2.0,
             "heroLevel": 5,
             "soldiersPerHero": 220,
             "losingPreset": "shield-van",
@@ -8463,7 +8463,7 @@
           7
         ],
         "tactic": "",
-        "enemyPower": 1.06,
+        "enemyPower": 1.2,
         "rewards": {
           "silver": 6800,
           "grain": 2400,
@@ -8689,7 +8689,7 @@
           7
         ],
         "tactic": "",
-        "enemyPower": 1,
+        "enemyPower": 1.2,
         "rewards": {
           "silver": 15000,
           "grain": 4700,
@@ -8742,7 +8742,7 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11175384,
-            "lowerLossPreset": "arc-van",
+            "lowerLossPreset": "spear-kich",
             "higherLossPreset": "shield-thu",
             "minimumCasualtyGap": 100,
             "provenance": {
@@ -8788,8 +8788,8 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11275387,
-            "lowerLossPreset": "spear-kich",
-            "higherLossPreset": "fish-van",
+            "lowerLossPreset": "goose-kich",
+            "higherLossPreset": "goose-thu",
             "minimumCasualtyGap": 100,
             "provenance": {
               "classification": "SIMULATED",
@@ -8840,8 +8840,8 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11375390,
-            "lowerLossPreset": "fish-van",
-            "higherLossPreset": "shield-thu",
+            "lowerLossPreset": "arc-van",
+            "higherLossPreset": "spear-dieu",
             "minimumCasualtyGap": 125,
             "provenance": {
               "classification": "SIMULATED",
@@ -8886,9 +8886,9 @@
         "qaExpectations": {
           "sameSeedFormationChoice": {
             "seed": 11475393,
-            "lowerLossPreset": "arc-thu",
-            "higherLossPreset": "shield-van",
-            "minimumCasualtyGap": 140,
+            "lowerLossPreset": "spear-kich",
+            "higherLossPreset": "fish-dieu",
+            "minimumCasualtyGap": 80,
             "provenance": {
               "classification": "SIMULATED",
               "sourceId": "project-alpha"

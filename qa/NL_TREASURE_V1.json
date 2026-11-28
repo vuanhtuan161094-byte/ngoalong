@@ -1,0 +1,58 @@
+{
+  "name": "NL_TREASURE_V1",
+  "status": "PARTIAL_SIMULATED",
+  "sourceSha": "c8889188d648243a19e87190bc0ab94b8b77a7be",
+  "sourceScope": {
+    "officialMobileRoute": "NOT_VERIFIED",
+    "notes": "No official Mobile expedition unlock, duration, cost, or reward formula was verified. Project-owned numbers are labeled SIMULATED in the game UI."
+  },
+  "routes": [
+    {
+      "id": "trade-road",
+      "unlockAfterStage": 5,
+      "durationMinutes": 30,
+      "cost": { "silver": 150, "grain": 80 },
+      "reward": { "silver": 650, "merit": 18 }
+    },
+    {
+      "id": "han-ruins",
+      "unlockAfterStage": 12,
+      "durationMinutes": 60,
+      "cost": { "silver": 350, "grain": 140 },
+      "reward": { "silver": 1250, "merit": 36 }
+    },
+    {
+      "id": "royal-vault",
+      "unlockAfterStage": 20,
+      "durationMinutes": 90,
+      "cost": { "silver": 700, "grain": 260 },
+      "reward": { "silver": 2100, "merit": 60 }
+    }
+  ],
+  "mechanics": {
+    "dailyTripLimit": 1,
+    "cooldownHours": 22,
+    "timerContinuesWhileOffline": true,
+    "activeBattleBlocksStartAndClaim": true,
+    "itemReward": "One item selected by the existing stage loot API and granted into the existing inventory.",
+    "fullInventory": "Settles the expedition once and persists the item as pending loot for a later claim.",
+    "save": "Existing Save v5 game.nlClassicAdvanced.treasure state and receipt ledger."
+  },
+  "evidence": {
+    "nodeContracts": { "passed": 31, "total": 31 },
+    "browser": {
+      "desktop": "Route UI, start, timed claim, real inventory item, receipt and Save v5 checked.",
+      "mobile390px": "All routes visible, no horizontal overflow, fixed viewport checked.",
+      "screenshots": ["qa/nl-treasure-desktop.png", "qa/nl-treasure-mobile.png"]
+    },
+    "canonicalHtml": {
+      "bytes": 73200107,
+      "sha256": "6adb72e5afe2698117efe5e967648b8fa7fdca02d8e9e4ab5731d048960a6d80"
+    }
+  },
+  "remaining": [
+    "Research and compare any authoritative Mobile treasure route that can be verified.",
+    "Retest reward clocks, daily reset, reload and pending loot against the committed canonical build.",
+    "Balance costs and reward sources with the broader campaign economy."
+  ]
+}

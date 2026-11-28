@@ -1,0 +1,639 @@
+{
+  "milestone": "ART-B2",
+  "createdOn": "2026-11-25",
+  "repository": "vuanhtuan161094-byte/ngoalong",
+  "branch": "feature/ngoalong-v1-complete",
+  "baseHead": "4ed87cfe1ebfc832afaead84b0c910ba7232d1bb",
+  "counts": {
+    "newHeroTrios": 12,
+    "totalV5HeroIds": 34,
+    "PNGmasters": 36,
+    "runtimeWebp": 36
+  },
+  "canonicalHtml": {
+    "path": "index.html",
+    "bytes": 70440612,
+    "sha256": "d26b36d7234ca39c00911d2bd0f684f67a4712ea8b7ba4248f1a553cfe9e82f7",
+    "offlineSingleFile": true
+  },
+  "browserQA": {
+    "milestone": "NL_HERO_ART_V5_AND_GROWTH",
+    "total": 94,
+    "passed": 94,
+    "failed": [],
+    "pageErrors": []
+  },
+  "validation": {
+    "contactSheets": [
+      "qa/nl-art-b2-character-contact.jpg",
+      "qa/nl-art-b2-portrait-contact.jpg",
+      "qa/nl-art-b2-splash-contact.jpg"
+    ],
+    "desktopRuntimeScreenshot": "qa/nl-art-b2-runtime-desktop.png",
+    "mobileRuntimeScreenshot": "qa/nl-art-b2-runtime-mobile.png"
+  },
+  "ownerVisualReview": "PENDING",
+  "releaseStatus": "V1.0 NOT COMPLETE; ART-B3–B7 and broader gameplay work remain open",
+  "heroes": [
+    {
+      "heroId": "wiki-mobile-hero-043",
+      "name": "Hoàng Nguyệt Anh",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-huang-yueying-v5-portrait.png",
+          "runtimeWebp": "female-huang-yueying-v5-portrait.webp",
+          "generationOutputId": "exec-7596ac29-2ead-46f1-8f31-dfbe5f67e6bc",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "eb125461e0e6feeba49bfd3666017dd2a40f8961dd73a382e9689382a8dcb260",
+          "runtimeSha256": "f2c622539e58b2cc3ea980a5685c4426083c72ba76e8b23689d1623e2870e24b",
+          "sourceSizeBytes": 2906571,
+          "runtimeSizeBytes": 374526,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-huang-yueying-v5-character.png",
+          "runtimeWebp": "female-huang-yueying-v5-character.webp",
+          "generationOutputId": "exec-b48791a1-21ff-4a9a-9213-3513842a1865",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "1278a06e2ce6a75346148018b1ec1aa876777f842b36f130879401d9620f9a92",
+          "runtimeSha256": "483ebc057024f33a3fe4057a25fd59106b1a4c87d76357111474123f588c540f",
+          "sourceSizeBytes": 2932121,
+          "runtimeSizeBytes": 383034,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-huang-yueying-v5-splash.png",
+          "runtimeWebp": "female-huang-yueying-v5-splash.webp",
+          "generationOutputId": "exec-444963a4-d15f-4986-aedd-36e5f1fab511",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "d35f15567c60ad1b4821809a74e28ff77e80db548330d08e428bcf560e407642",
+          "runtimeSha256": "c91e0091fa170d04bc129ef49bebc620475643290d6d4d8e9b1fe80ea5da26b4",
+          "sourceSizeBytes": 2897752,
+          "runtimeSizeBytes": 410118,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-041",
+      "name": "Bàng Thống",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-pang-tong-v5-portrait.png",
+          "runtimeWebp": "female-pang-tong-v5-portrait.webp",
+          "generationOutputId": "exec-72342578-81e2-4435-9e81-c7e1a5385596",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "aa47a43de7cd97ec59d1796afc07b276617c9360aa56fb671505c7d2a7fc8e1f",
+          "runtimeSha256": "399a7934693e965e283c37d6112b6072da2d6c8db75d21056105ed67bfb9bd54",
+          "sourceSizeBytes": 2629972,
+          "runtimeSizeBytes": 313370,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-pang-tong-v5-character.png",
+          "runtimeWebp": "female-pang-tong-v5-character.webp",
+          "generationOutputId": "exec-495ecd8e-52a2-47d5-8993-0d60a3a9e790",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "fc011fdc20a564af3eab2500776005a1e9fdbc88efb8ad70a89391177379f0b7",
+          "runtimeSha256": "4cf4504b40deee2fa98db6874223a29afc69820a3ab1544d14f09498bb02248e",
+          "sourceSizeBytes": 2735989,
+          "runtimeSizeBytes": 364524,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-pang-tong-v5-splash.png",
+          "runtimeWebp": "female-pang-tong-v5-splash.webp",
+          "generationOutputId": "exec-cee38e25-7895-4403-a3d6-fd1f3eb4c2c7",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "12a1a084c133251764c8febf94ac0adf16576df2ecaf1f0daea3d4a2e2dae85e",
+          "runtimeSha256": "bb598ad734c308ce4fe01784576cdabf9917e03fa23b57df34ebbbe970ffb265",
+          "sourceSizeBytes": 2830139,
+          "runtimeSizeBytes": 427150,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-042",
+      "name": "Giản Ung",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-jian-yong-v5-portrait.png",
+          "runtimeWebp": "female-jian-yong-v5-portrait.webp",
+          "generationOutputId": "exec-8d7adb77-dc57-45eb-a115-598e9744a1ea",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "696d038f5881b66814ef8434d9bec641a81a9f776d5a78d4adb015694cb3a995",
+          "runtimeSha256": "d0fd0fb97dbd27d122ce6bbe5f2deae9da08a265b5555beffa690179ddf08104",
+          "sourceSizeBytes": 2588979,
+          "runtimeSizeBytes": 288104,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-jian-yong-v5-character.png",
+          "runtimeWebp": "female-jian-yong-v5-character.webp",
+          "generationOutputId": "exec-cbb2de58-bc58-4bdf-878c-ec8c1882afde",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "2149a6230316d297ae34613afa1b93004df462a212d3ac82e8e2bb49195c624e",
+          "runtimeSha256": "844cf40f1328846a37e85c7f86da345d3ac29e03990392525e77062acc63e427",
+          "sourceSizeBytes": 2562353,
+          "runtimeSizeBytes": 310842,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-jian-yong-v5-splash.png",
+          "runtimeWebp": "female-jian-yong-v5-splash.webp",
+          "generationOutputId": "exec-68a7e2ba-7b5e-4dba-a2df-2df63e6b3776",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "70f8941f103f121d941ad7da6d90ff3597a72ff0078752f436cccbe5d291649a",
+          "runtimeSha256": "022b0fa84634f113d69bd6f4c5fe9232c6d9bd62778da0ce2264d42d03f5e6e3",
+          "sourceSizeBytes": 2724087,
+          "runtimeSizeBytes": 382018,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-045",
+      "name": "Lưu Thiện",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-liu-shan-v5-portrait.png",
+          "runtimeWebp": "female-liu-shan-v5-portrait.webp",
+          "generationOutputId": "exec-6fd4abfb-f25d-491b-9b3b-cd1cd8fbe7f0",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "18fb1e877c37df173da10f54f611b756babec07f6f27b20eeef66df7da4fbc90",
+          "runtimeSha256": "b7a111509fe8efe6895459540dac3c7a5338d15c56096cca6f6c22abaff1f22f",
+          "sourceSizeBytes": 2608617,
+          "runtimeSizeBytes": 287628,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-liu-shan-v5-character.png",
+          "runtimeWebp": "female-liu-shan-v5-character.webp",
+          "generationOutputId": "exec-ede801b1-3148-4561-8a6d-a69bb88b8944",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "ca968286dc71fe4a9f77ab8a4f18a980171f86fd2a54b705654de9e6a3dbe0ee",
+          "runtimeSha256": "cb05e8659b49a1e293ab2de24a11f00aec3699b595e7c10917ec4e65ca6ac91f",
+          "sourceSizeBytes": 2865664,
+          "runtimeSizeBytes": 380002,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-liu-shan-v5-splash.png",
+          "runtimeWebp": "female-liu-shan-v5-splash.webp",
+          "generationOutputId": "exec-69d6ab4a-b85f-4e87-a957-4fef1e0b1c05",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "a56af8b34fa2c9b3577f8c162e6f9fca57a2f02fad02d38b3156641e0dc87cd6",
+          "runtimeSha256": "146a67ac978717adceb83a3d513e89bec0c0d121b5690340ea83217cc751279c",
+          "sourceSizeBytes": 3011371,
+          "runtimeSizeBytes": 450794,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-046",
+      "name": "Mã Tốc",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-ma-su-v5-portrait.png",
+          "runtimeWebp": "female-ma-su-v5-portrait.webp",
+          "generationOutputId": "exec-df342225-d76a-4144-b25c-95794ec067a7",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "6e0ff82695b379495fa57644477ff018041de067b859d166eee602b11dedc56f",
+          "runtimeSha256": "30e76a2a46671dee3c400c680a4854c21326062702acb89ddae4167a06eb6615",
+          "sourceSizeBytes": 2825534,
+          "runtimeSizeBytes": 358168,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-ma-su-v5-character.png",
+          "runtimeWebp": "female-ma-su-v5-character.webp",
+          "generationOutputId": "exec-792d5778-7f74-4614-851b-00a39163d655",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "1a375a2b334f232e20f3045effe952d87a7f6bb9c165e7c69b7c263913cc2938",
+          "runtimeSha256": "56af5627b5723577210a750e0eca77a672dad85c8ee1bdf3f1c2c96ea3e8c753",
+          "sourceSizeBytes": 2708561,
+          "runtimeSizeBytes": 380920,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-ma-su-v5-splash.png",
+          "runtimeWebp": "female-ma-su-v5-splash.webp",
+          "generationOutputId": "exec-8da90116-0b07-405c-8856-992053f55354",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "18e7c8a7d04c049babf181d4679b3a15aa010ac70b0943ae3b8b2a270148c27b",
+          "runtimeSha256": "b13c19da571d3caad531d0c77ffa16e9a03cda38a88e13ba6061eac5e1ec1eba",
+          "sourceSizeBytes": 2732925,
+          "runtimeSizeBytes": 408118,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-047",
+      "name": "Ngụy Diên",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-wei-yan-v5-portrait.png",
+          "runtimeWebp": "female-wei-yan-v5-portrait.webp",
+          "generationOutputId": "exec-a4403472-616d-41f2-9fcf-984a610c1578",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "569f38a3a8bbcdf81ad86adddfdba43ee36bcfb71826baedde3f2e62fed84001",
+          "runtimeSha256": "613750a0173587bb35355f03459f583222583372ebc4af7d0c1fec8b8b5f0330",
+          "sourceSizeBytes": 2837825,
+          "runtimeSizeBytes": 386564,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-wei-yan-v5-character.png",
+          "runtimeWebp": "female-wei-yan-v5-character.webp",
+          "generationOutputId": "exec-63404a8c-e875-4b3e-a739-1da2ec58384d",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "08befc775d7634ce5f5bfc891002c399d7e743a34d3aa49568c7230bcbfb2571",
+          "runtimeSha256": "bda16eaee7c51f79d92b34076a45b97bd823dafb50ce75e6fd1bd9df5eed4752",
+          "sourceSizeBytes": 2678790,
+          "runtimeSizeBytes": 357162,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-wei-yan-v5-splash.png",
+          "runtimeWebp": "female-wei-yan-v5-splash.webp",
+          "generationOutputId": "exec-acbeead9-5a3e-4693-8d60-5243101e2e96",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "b988f8c8436cae3fe35740dc420c9f5699980fb66bb881d4ea626e2e8cf8e0b1",
+          "runtimeSha256": "bed64770a70b9d41f883155a0e2f5ad1f9d4af60605a93db21d5da0b5be38665",
+          "sourceSizeBytes": 2634448,
+          "runtimeSizeBytes": 394480,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-051",
+      "name": "Từ Thứ",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-xu-shu-v5-portrait.png",
+          "runtimeWebp": "female-xu-shu-v5-portrait.webp",
+          "generationOutputId": "exec-4ba3af0d-6388-43b1-bc5a-52418f9fbe80",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "62439c4bf4fc1346cc0818298ba303a4a1fb3fa4d9c0bfcdeecbbc06d93327c1",
+          "runtimeSha256": "c058bd0342b4051a76f1b224a222c06546501562773b996bc25405380c3a1c76",
+          "sourceSizeBytes": 2614726,
+          "runtimeSizeBytes": 275684,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-xu-shu-v5-character.png",
+          "runtimeWebp": "female-xu-shu-v5-character.webp",
+          "generationOutputId": "exec-dc54937a-e6cf-491f-857b-08fbb914a782",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "ee21b2924143928680082c2adfc2e18b02d5fdb9617aaed863605fb91ca516bc",
+          "runtimeSha256": "55c89ae8d4fd7517f295167f223eb3d5371c974c40eae78ad03878b125a27945",
+          "sourceSizeBytes": 2462220,
+          "runtimeSizeBytes": 256758,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-xu-shu-v5-splash.png",
+          "runtimeWebp": "female-xu-shu-v5-splash.webp",
+          "generationOutputId": "exec-91148037-3048-45a2-8074-90d8bc82daf7",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "f6dc0510241bae28ec52a2fc13333b7dc61190c22b4dbe21d836d0fcf3529c13",
+          "runtimeSha256": "79ce260d352f1ff1eed1b92b6ea8ba010c5fc47d894fc4c6b80c837fe33742a5",
+          "sourceSizeBytes": 2733869,
+          "runtimeSizeBytes": 361000,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-053",
+      "name": "Khương Duy",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-jiang-wei-v5-portrait.png",
+          "runtimeWebp": "female-jiang-wei-v5-portrait.webp",
+          "generationOutputId": "exec-3fae6e05-949b-4db4-bbff-a25242753da3",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "523931e5e3386aa989cf06bfa8b2b95c469bdc5ea006f7d686350081bfb8c6ed",
+          "runtimeSha256": "a605dfee624d656b962c689d941d1eb21ac9c710e5ed895e4418ef5e2d533e31",
+          "sourceSizeBytes": 2803436,
+          "runtimeSizeBytes": 336192,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-jiang-wei-v5-character.png",
+          "runtimeWebp": "female-jiang-wei-v5-character.webp",
+          "generationOutputId": "exec-61597d8c-5a1c-4d74-8f13-c526bca87222",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "8c83500cf9c8500ab21f627384587f46a578a7c3779dec18ebc5fa0e84560b81",
+          "runtimeSha256": "3a557f66419f9bf8180fbcf022454aa66241ce40dc8722c0a85348cdb86573c1",
+          "sourceSizeBytes": 2783781,
+          "runtimeSizeBytes": 327602,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-jiang-wei-v5-splash.png",
+          "runtimeWebp": "female-jiang-wei-v5-splash.webp",
+          "generationOutputId": "exec-f59863e1-5909-4b39-accf-3e02ee3a2820",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "4fc095eac17137df84f0c0462aa252868ebf124e0e3319d472740832e0566483",
+          "runtimeSha256": "f1e302bacd58bf11a1c5624471ea1164d2db3c88935cf93251d1c8bd13ea5908",
+          "sourceSizeBytes": 2944296,
+          "runtimeSizeBytes": 404196,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-056",
+      "name": "Mã Vân Lộc",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-ma-yunlu-v5-portrait.png",
+          "runtimeWebp": "female-ma-yunlu-v5-portrait.webp",
+          "generationOutputId": "exec-396ff8c0-0195-4d74-b32b-b0dca638b2fe",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "e6248b19f100ecda494cba21ac6345b406c7b5c637fe7462ef5078351fdc4ad6",
+          "runtimeSha256": "a707a9b84eebe498d390de585714d9a04c6f04b0fb9d50c81899220b4f044207",
+          "sourceSizeBytes": 3083196,
+          "runtimeSizeBytes": 443306,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-ma-yunlu-v5-character.png",
+          "runtimeWebp": "female-ma-yunlu-v5-character.webp",
+          "generationOutputId": "exec-2d1fa2f2-0f8d-4c7d-a3a9-8557e464662f",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "4a4d7547492cab935163db393220f97b873e752b79aae6a426a24e0abb9a94bd",
+          "runtimeSha256": "7f0b95a42a7a25883c78084776b9e7ab5737e1489bdb668212bf37a991b77fc6",
+          "sourceSizeBytes": 3113282,
+          "runtimeSizeBytes": 458216,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-ma-yunlu-v5-splash.png",
+          "runtimeWebp": "female-ma-yunlu-v5-splash.webp",
+          "generationOutputId": "exec-335a4608-848c-4542-99ce-60ce2e74c6d7",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "1b9019f18906b41891ddec6372d50d8828fa3bf730758c4922464b84ac437438",
+          "runtimeSha256": "c684bb0c258aef8eddec69f408b742011cd27f8eb8d0a82df00b215d751e2afe",
+          "sourceSizeBytes": 2822500,
+          "runtimeSizeBytes": 408264,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-057",
+      "name": "Pháp Chính",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-fa-zheng-v5-portrait.png",
+          "runtimeWebp": "female-fa-zheng-v5-portrait.webp",
+          "generationOutputId": "exec-86bada7a-15ac-4294-bcb0-1f1ebe261d46",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "075368f88da5dbda0b0e9dea3707470d9d49bf1e22a2fe96382e08ae5b71d1e2",
+          "runtimeSha256": "1773fd48538853b3f7c7c868c7deac1d10735a188340b6d9fb617bb2277bc03a",
+          "sourceSizeBytes": 2513706,
+          "runtimeSizeBytes": 281940,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-fa-zheng-v5-character.png",
+          "runtimeWebp": "female-fa-zheng-v5-character.webp",
+          "generationOutputId": "exec-8011d045-5da2-40f3-9b43-d76f0e705758",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "3e95d901537e9c30e9cf69825581c678a72496caf89151ab71020975a4ab3a62",
+          "runtimeSha256": "98503e749a4096e0d0b742b404a816f40e0a29743d9fea9ec19b77437e329888",
+          "sourceSizeBytes": 2583184,
+          "runtimeSizeBytes": 330412,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-fa-zheng-v5-splash.png",
+          "runtimeWebp": "female-fa-zheng-v5-splash.webp",
+          "generationOutputId": "exec-6ad1b2b8-dc4e-4897-a019-2014e96cc1af",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "6d291ba9a8f8d3db1e1cd18d81b7266f8b4adca680ae4f9b450c8148b3481f78",
+          "runtimeSha256": "31f8d2caac259eb9a88eb9b434a582d5467ee3ca2326f69196f9b06a29fddbfa",
+          "sourceSizeBytes": 2634742,
+          "runtimeSizeBytes": 371810,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-058",
+      "name": "Quan Bình",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-guan-ping-v5-portrait.png",
+          "runtimeWebp": "female-guan-ping-v5-portrait.webp",
+          "generationOutputId": "exec-9c82c0da-482c-45a8-a80c-132417dea955",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "6ad89bd41c243aba8399bae59681709afec0018e04b131fba2d5bc312d5c369e",
+          "runtimeSha256": "bb4bf94235dc9c212ec66e798f8ddab65113b6e1f889b1ef5de24202225d0131",
+          "sourceSizeBytes": 2743405,
+          "runtimeSizeBytes": 348444,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-guan-ping-v5-character.png",
+          "runtimeWebp": "female-guan-ping-v5-character.webp",
+          "generationOutputId": "exec-92453395-a9b5-4f90-9eb3-893814828582",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "5f4e5deef38e2445ab01a14472093c8ab6c78622bbeac590a1eb47cf2ead07f4",
+          "runtimeSha256": "a7820ec1ccc48dd583cfa5b4873e4603c49577c7f04ca3bc4055997c90f936b5",
+          "sourceSizeBytes": 2700807,
+          "runtimeSizeBytes": 394188,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-guan-ping-v5-splash.png",
+          "runtimeWebp": "female-guan-ping-v5-splash.webp",
+          "generationOutputId": "exec-3b8a394b-df02-488d-8f29-49f1172291e5",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "76dc6c901362fb91927f8d9e7c6def5434bec9bf3da51f69dbcdcd1068955b70",
+          "runtimeSha256": "59e9777102f769754d4344ca24701859645d9c3efa8c016b2025fd4920b6e8d6",
+          "sourceSizeBytes": 2710172,
+          "runtimeSizeBytes": 424426,
+          "integrated": true
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-060",
+      "name": "Trương Bao",
+      "faction": "Thục",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "assets": {
+        "portrait": {
+          "sourcePng": "female-zhang-bao-v5-portrait.png",
+          "runtimeWebp": "female-zhang-bao-v5-portrait.webp",
+          "generationOutputId": "exec-87c334d4-0000-400e-8fcc-d4e79057df22",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSha256": "42d25b6eb0f26c7a969d680b97090134869cfcb665cb580d8e41dc7f2af2ae46",
+          "runtimeSha256": "185ef6d1600553a9d23121848397a027866e416120a810b25d4c462c43619ca7",
+          "sourceSizeBytes": 2780553,
+          "runtimeSizeBytes": 342384,
+          "integrated": true
+        },
+        "character": {
+          "sourcePng": "female-zhang-bao-v5-character.png",
+          "runtimeWebp": "female-zhang-bao-v5-character.webp",
+          "generationOutputId": "exec-09d94ba7-0be5-4680-af4c-0638c5bd5a26",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSha256": "b6a38c26233fe2c7b8aaab38bc8587a892a6056ff3bc4915f89b166076c0f0bc",
+          "runtimeSha256": "fbc7eafc14f972ee4d79605043e624d02afd1a16fc9c8d5827220939c9754a26",
+          "sourceSizeBytes": 2806954,
+          "runtimeSizeBytes": 390356,
+          "integrated": true
+        },
+        "splash": {
+          "sourcePng": "female-zhang-bao-v5-splash.png",
+          "runtimeWebp": "female-zhang-bao-v5-splash.webp",
+          "generationOutputId": "exec-e82eab94-45f2-43d9-8b8a-aaf742270dd2",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSha256": "5961393fb3a5a05809bad094fe813a90a65576dc2ef44a956def2fd888503b9e",
+          "runtimeSha256": "ff0d2ed4a8bb32029664e201d38a6389404960ab2e3b5d5a0916ad594ba0a4a5",
+          "sourceSizeBytes": 2780739,
+          "runtimeSizeBytes": 420970,
+          "integrated": true
+        }
+      }
+    }
+  ]
+}

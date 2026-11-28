@@ -198,3 +198,43 @@ test('A9 warehouse adds five actual equipment slots per level',()=>{
   assert.equal(s.items.length,205);
   rejected(inventory.grant(s,[{id:'b_sword',quantity:1}],'a9:full'),'EQUIPMENT_CAPACITY',s);
 });
+
+test('V9 source training items use the existing receipt ledger and growth wallets',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const rows=[
+ {id:'horse',wallet:'horse-points',qty:175000,factor:1,gate:250},
+ {id:'book',wallet:'book-exp',qty:10,factor:1000,gate:0},
+ {id:'weapon',wallet:'weapon-core',qty:6,factor:1,gate:0},
+ {id:'destiny',wallet:'destiny-jade',qty:1,factor:1,gate:0}
+ ].map(x=>({id:x.id,name:x.id,category:'consumable',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:10},minCommander:x.gate},effectRule:{kind:'OPEN_SOURCE_BUNDLE',outputs:[{name:x.id,wallet:x.wallet,qty:x.qty,factor:x.factor}],minCommander:x.gate}}));
+ const api=create({items:rows},{limits:{stacksKinds:10,quantityEach:999,receipts:100}});
+ let state={version:5,silver:100,nlContentC:{mobileCommanderLevel:249},nlItemsV1:{stacks:{},receipts:{},serial:0}};
+ const bad=api.buySourceBundle(state,'horse','buy:locked');assert.equal(bad.code,'COMMANDER_LEVEL_REQUIRED');assert.equal(state.silver,100);
+ state.nlContentC.mobileCommanderLevel=250;
+ for(const row of rows){state=done(api.buySourceBundle(state,row.id,'buy:'+row.id));state=done(api.use(state,row.id,'use:'+row.id));assert.equal(api.use(state,row.id,'use:'+row.id).duplicate,true);}
+ assert.equal(state.silver,60);assert.equal(state.nlContentC.horsePoints,175000);assert.equal(state.nlContentC.bookExp,10000);
+ assert.equal(state.heroDevelopment.materials.weaponCore,6);assert.equal(state.heroDevelopment.materials.destinyJade,1);assert.equal(state.version,5);
+});
+
+test('R3 source material conversion purchases base and exchanges 2:1 atomically',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const row=(id,acq,effectRule)=>({id,name:id,category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:acq,effectRule});
+ const pack={items:[row('raw',{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:1200},minCommander:100},{kind:'CRAFT_REAGENT',output:'middle',needPieces:2,silverCost:0,outputQuantity:1}),row('middle',{kind:'MATERIAL_EXCHANGE',classification:'SOURCE_EXACT'},{kind:'CRAFT_REAGENT',output:'final',needPieces:2,silverCost:0,outputQuantity:1}),row('final',{kind:'MATERIAL_EXCHANGE',classification:'SOURCE_EXACT'},null)]};
+ const api=create(pack,{limits:{stacksKinds:10,quantityEach:10,receipts:100}});
+ let s={version:5,silver:5000,nlContentC:{mobileCommanderLevel:99},nlItemsV1:{stacks:{},receipts:{},serial:0}};
+ assert.equal(api.buySourceMaterial(s,'raw','locked').code,'COMMANDER_LEVEL_REQUIRED');s.nlContentC.mobileCommanderLevel=100;
+ for(let i=0;i<4;i++)s=done(api.buySourceMaterial(s,'raw','buy:'+i));
+ assert.equal(s.silver,200);assert.equal(api.buySourceMaterial(s,'middle','blocked').code,'NOT_SOURCE_MATERIAL_SHOP');
+ s=done(api.process(s,'raw','x1'));assert.equal(api.process(s,'raw','x1').duplicate,true);
+ s=done(api.process(s,'raw','x2'));s=done(api.process(s,'middle','x3'));assert.equal(s.nlItemsV1.stacks.final,1);assert.equal(s.nlItemsV1.stacks.raw,undefined);
+ assert.equal(api.process(s,'middle','empty').code,'NOT_ENOUGH_ITEMS');assert.equal(s.version,5);
+});
+
+test('R7 reset quality refunds only contiguous actual awakening receipts and consumes token once',()=>{
+ const create=require('../data/ngoalong/modules/inventory/consumables_engine.js').createModule;
+ const item={id:'reset',name:'Truyền Thừa Lệnh-Siêu',category:'material',integration:'PLAYABLE',sourceEdition:'CURRENT_VNG_MOBILE_WIKI',provenance:{classification:'SOURCE_EXACT'},acquisitionRule:{kind:'SHOP',classification:'SIMULATED_FALLBACK',shopCost:{silver:100}},sourceReset:'super',effectRule:null};
+ const api=create({items:[item]},{limits:{stacksKinds:10,quantityEach:999,receipts:100}});
+ const g={version:5,roster:['liu'],hero:{liu:{level:40}},silver:1000,nlItemsV1:{stacks:{reset:1},receipts:{},serial:0},nlContentC:{mobileHeroRanks:{liu:5},mobileHeroMaterials:{},mobileHeroRankReceipts:{'liu:5':{sourceId:'src',from:4,to:5,materials:{'Bánh Bao':10},classification:'SOURCE_EXACT_QUANTITIES'},'liu:4':{sourceId:'src',from:3,to:4,materials:{'Thịt':5},classification:'SOURCE_EXACT_QUANTITIES'}}}};
+ rejected(api.resetMobileQuality(g,'reset','bad','liu','src',5,2),'RESET_RECEIPT_CHAIN_INCOMPLETE',g);
+ const result=done(api.resetMobileQuality(g,'reset','good','liu','src',5,3));assert.equal(result.nlContentC.mobileHeroRanks.liu,3);assert.equal(result.nlContentC.mobileHeroMaterials['Bánh Bao'],10);assert.equal(result.nlContentC.mobileHeroMaterials['Thịt'],5);assert.equal(result.nlItemsV1.stacks.reset,undefined);assert.equal(result.hero.liu.level,40);assert.equal(api.resetMobileQuality(result,'reset','good','liu','src',5,3).duplicate,true);
+});

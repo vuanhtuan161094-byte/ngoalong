@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "sourceEdition": "CURRENT_VNG_MOBILE_WIKI_VIETNAMESE",
+    "retrievedAtUtc": "2026-11-26T03:09:42.199454+00:00",
+    "equipmentPage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+    "itemsPage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham",
+    "equipmentDataUrl": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/equip-detail.json",
+    "itemDataUrl": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/item-detail.json",
+    "itemIndexDataUrl": "https://cdn-mainsite-aka.vnggames.com/products/mwly/landing/2026-ngoa-long-wiki-clone/data/item-catalog.json",
+    "rawSha256": {
+      "equipDetail": "61ebdbc5cededb936da243a73fb470124bfdd3943dd7df39f0893555d49a3ec1",
+      "itemDetail": "d4cb72079f7230d5e4c960c6dc1aee54fc303e9e7b73b2333401a9c10ff514da",
+      "itemCatalog": "4a1cf3d18d1078e9f9822cf3bed2263bf5f617e85771c38b5f2508760f3d2652",
+      "campaignSourceFileDigests": 249
+    }
+  },
+  "coverage": {
+    "equipment": 399,
+    "items": 746,
+    "qualityTiers": 19,
+    "refinementSlots": 7,
+    "campaignDropRows": 893,
+    "equipmentReverseDropRows": 680,
+    "equipmentPurchaseCostRows": 118,
+    "equipmentSellValueRows": 399
+  },
+  "runtimeBinding": {
+    "campaignDropsBoundToEquipment": 36,
+    "campaignDropsBoundToItemMaterials": 30,
+    "campaignDropsBoundToResourceMaterials": 3,
+    "campaignDropRowsUnresolved": 12,
+    "equipmentReverseDropRows": {
+      "total": 680,
+      "matchedNpcAndDrop": 618,
+      "matchedNpcDropAndRate": 613,
+      "rateDrift": 5,
+      "npcNotCaptured": 29,
+      "npcFoundDropNotMatched": 33
+    },
+    "equipmentShopCostRows": {
+      "total": 118,
+      "sourceExact": 96,
+      "unresolved": 22,
+      "runtimeSourceEquipment": 114,
+      "runtimeSourceMaterials": 34
+    },
+    "equipmentSellAudit": {
+      "sourceRows": 399,
+      "positiveValues": 399,
+      "runtimeSellValues": 114,
+      "runtimeCurrency": "silver",
+      "currencyClassification": "SIMULATED"
+    }
+  },
+  "refinementRateSums": {
+    "1": {
+      "so": 1.0,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "2": {
+      "so": 1.0,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "3": {
+      "so": 1.0,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "4": {
+      "so": 1.0,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "5": {
+      "so": 1.0,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "6": {
+      "so": 1.1,
+      "cao": 1.0,
+      "dacKy": 1.0
+    },
+    "7": {
+      "so": 1.0,
+      "cao": 1.08,
+      "dacKy": 1.0
+    }
+  },
+  "fields": [
+    {
+      "sourcePointer": "/equip-detail/items/id",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "stable Mobile equipment ID",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/name,type,quality,level",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "item identity/tier/display level",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/stats/base,growth,pct",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "DERIVED_FROM_SOURCE",
+      "runtimeField": "equipment stat at strengthening level; native P2 scale adapter",
+      "runtimeClassification": "DERIVED_FROM_SOURCE",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/cuongHoa",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "source reinforcement coefficient input",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/equipTiers/*/coef",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "quality reinforcement coefficient",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/client/ngoa-long-wiki-0.js::bacCuongHoa",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "Bạc cost for each destination strengthening level",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/client/ngoa-long-wiki-0.js::ngocCuongHoa",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "Tranh Ngọc cost for each destination level",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/client/ngoa-long-wiki-0.js::discount text",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "DERIVED_FROM_SOURCE",
+      "runtimeField": "account level discount; commander-level adapter in Save v5",
+      "runtimeClassification": "DERIVED_FROM_SOURCE",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/level",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "displayed source equipment level; no hero equip requirement published",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/runtime/requiredHeroLevel",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SIMULATED",
+      "runtimeField": "not published in inspected Mobile data; permit from level 1",
+      "runtimeClassification": "SIMULATED",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/*/usage/drops",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "reverse NPC/map drop reference; compared with NPC-owned source drop",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "REVERSE_SOURCE_CROSSWALK_ONLY_NPC_OWNED_DROP_IS_RUNTIME_AUTHORITY"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/cost,costType,costName",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "source shop cost using verified resource IDs or unresolved ledger",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "96_EXACT_RESOURCE_BINDINGS_APPLIED;_22_COST_TYPE_ZERO_ROWS_UNRESOLVED"
+    },
+    {
+      "sourcePointer": "/equip-detail/items/sell",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "DERIVED_FROM_SOURCE",
+      "runtimeField": "source sell amount; currency is not exposed and is mapped to Bạc",
+      "runtimeClassification": "DERIVED_FROM_SOURCE",
+      "runtimeStatus": "EXACT_AMOUNT_APPLIED;_CURRENCY_BAC_IS_SIMULATED_MAPPING"
+    },
+    {
+      "sourcePointer": "/equip-detail/equipRefine",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "all exact slot/pool property values and rates",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "RAW_SOURCE_RETAINED_RUNTIME_UNRESOLVED"
+    },
+    {
+      "sourcePointer": "/campaign/{map}/vn/npcs/*/drops",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SOURCE_EXACT",
+      "runtimeField": "NPC drop ID/name/category/rate",
+      "runtimeClassification": "SOURCE_EXACT",
+      "runtimeStatus": "APPLIED"
+    },
+    {
+      "sourcePointer": "/campaign/{map}/vn/npcs/*/drops/quantity",
+      "sourcePage": "https://ngoalong.vnggames.com/ngoa-long-wiki/vat-pham/trang-bi",
+      "sourceClassification": "SIMULATED_DEFAULT_ONE",
+      "runtimeField": "quantity per drop",
+      "runtimeClassification": "SIMULATED_DEFAULT_ONE",
+      "runtimeStatus": "APPLIED"
+    }
+  ],
+  "runtimeAdapters": {
+    "equipmentSlotMap": {
+      "1": "weapon",
+      "2": "armor",
+      "3": "horse",
+      "4": "book",
+      "5": "cloak",
+      "6": "shield",
+      "7": "artifact"
+    },
+    "equipmentStatMap": {
+      "Vật Công": "atk",
+      "Pháp Công": "catk",
+      "Mưu Công": "matk",
+      "Vật Phòng": "def",
+      "Pháp Phòng": "tdef",
+      "Mưu Phòng": "mdef",
+      "Lính": "hp",
+      "Bạo Kích": "crit",
+      "Phản Kích": "counter",
+      "Né Tránh": "dodge"
+    },
+    "equipmentStatScale": 0.001,
+    "equipmentStatScaleReason": "Adapter for the native P2 scale: round each positive converted equipment stat to a whole point, with a minimum of one point; source raw values remain separately available.",
+    "reinforcementFormula": "For each destination level e: G=1/600; floor(inc*coef*e*(0.22+e*e*G)*qualityCoef*G + 5*e + 3*inc); double Bạc when e>=200. Sum e=current+1..target. Tranh Ngọc: 0 through e=200; 40*ceil((e-200)/10) through 260; e above 260.",
+    "reinforcementDiscount": "Wiki client text: account level >=200 reduces Bạc by 5%; >=300 reduces Bạc by 10%. Save v5 uses simulated mobileCommanderLevel as the account-level adapter; per-destination-level floor and that adapter are not source verified. Building/technology discounts have no published coefficients and are not applied.",
+    "runtimeDropRoll": "SOURCE_EXACT per-NPC item and rate; DERIVED_FROM_SOURCE independent P2 seeded roll using rate/100. Quantity is omitted by the source and defaults to one (SIMULATED).",
+    "equipmentSale": "Sell amount is SOURCE_EXACT. Source field omits the currency; runtime pays Bạc as SIMULATED currency mapping.",
+    "refinementActivation": "UNRESOLVED: raw exact property pools are retained. Mobile Wiki client says rates are chances per roll, but slot 6 'so' sums to 1.10 and slot 7 'cao' sums to 1.08; runtime activation/cost and combat semantics require a source-consistent rule.",
+    "unresolvedCampaignDrops": "12 rows have no unique item detail/resource binding (including id 0 'Sách Vạn Năng' and generic 'Nguyên liệu'); preserved but not granted."
+  },
+  "unresolvedCampaignDrops": [
+    {
+      "mapId": "298",
+      "npcId": 5525,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "300",
+      "npcId": 5568,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "302",
+      "npcId": 5610,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "304",
+      "npcId": 5652,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "307",
+      "npcId": 5716,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "311",
+      "npcId": 5779,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "312",
+      "npcId": 5821,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "315",
+      "npcId": 5884,
+      "sourceId": "0",
+      "name": "Sách Vạn Năng",
+      "category": "Quân Đoàn",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "80",
+      "npcId": 1678,
+      "sourceId": "0",
+      "name": "Nguyên liệu",
+      "category": "",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "80",
+      "npcId": 1679,
+      "sourceId": "0",
+      "name": "Nguyên liệu",
+      "category": "",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "80",
+      "npcId": 1680,
+      "sourceId": "0",
+      "name": "Nguyên liệu",
+      "category": "",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    },
+    {
+      "mapId": "80",
+      "npcId": 1681,
+      "sourceId": "0",
+      "name": "Nguyên liệu",
+      "category": "",
+      "reason": "NO_PUBLIC_ITEM_ID_OR_UNIQUE_RESOURCE_INDEX_MATCH"
+    }
+  ],
+  "unresolvedEquipmentPurchaseCosts": [
+    {
+      "equipmentId": "94",
+      "name": "Hắc Long",
+      "cost": 580,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "150",
+      "name": "Binh Võ Kinh",
+      "cost": 580,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "105",
+      "name": "Đằng Vân",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "115",
+      "name": "Đoạn Giang",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "119",
+      "name": "Hoàng Đỉnh",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "109",
+      "name": "Lạc Phượng",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "111",
+      "name": "Lạc Tinh",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "112",
+      "name": "Long Tường",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "118",
+      "name": "Mộng Cảnh Sa",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "102",
+      "name": "Ngự Phong",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "107",
+      "name": "Oanh Minh",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "116",
+      "name": "Tam Tài",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "110",
+      "name": "Thất Tuyệt",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "122",
+      "name": "Thiên Diểu",
+      "cost": 460,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "120",
+      "name": "Thương Huyền",
+      "cost": 18,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "101",
+      "name": "Trích Tinh",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "103",
+      "name": "Trường Hà",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "104",
+      "name": "Truy Nguyệt",
+      "cost": 11,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "114",
+      "name": "Tử Hà",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "113",
+      "name": "Vãn Khê",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "108",
+      "name": "Vọng Nguyệt",
+      "cost": 13,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    },
+    {
+      "equipmentId": "117",
+      "name": "Xích Ngấn",
+      "cost": 15,
+      "costType": 0,
+      "costName": "",
+      "reason": "COST_TYPE_HAS_NO_PUBLIC_RESOURCE_BINDING"
+    }
+  ]
+}

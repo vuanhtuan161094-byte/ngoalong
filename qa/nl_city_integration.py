@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -30,13 +32,28 @@ def page_for(browser, saved=None, width=1280):
     payload = {} if saved is None else {SAVE_KEY: saved}
     markup = HTML.replace("<script>", STUB.replace("__NL_STORE__",
         json.dumps(payload, ensure_ascii=False)) + "<script>", 1)
-    page.set_content(markup, wait_until="domcontentloaded")
+    navigate_markup(page, markup, wait_until="domcontentloaded")
     return page
+
+def visible_window(page, selector):
+    element = page.locator(selector).first
+    chooser = page.locator("#nl-screen-select")
+    if chooser.count():
+        for index in range(chooser.locator("option").count()):
+            chooser.select_option(str(index))
+            page.wait_for_timeout(60)
+            if element.is_visible():
+                return element
+    return element
 
 def main():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True,
-            args=["--no-sandbox", "--disable-dev-shm-usage"])
+        launch_options = {"headless": True,
+            "args": ["--no-sandbox", "--disable-dev-shm-usage"]}
+        system_chromium = shutil.which("chromium")
+        if system_chromium:
+            launch_options["executable_path"] = system_chromium
+        browser = playwright.chromium.launch(**launch_options)
         page = page_for(browser)
         ready = page.evaluate("""()=>({
           loaded:!!window.__NL_CITY_QA__,
@@ -57,35 +74,48 @@ def main():
               tactics.get("liveV2CombatEnabled") is True and
               tactics.get("rewardAuthority") == "native-p2")
         page.locator('.nav[data-tab="campaign"]').click()
+        stage_one = visible_window(page, '[data-nl-v2-intel="1"]')
         check("stage-one V2 tactical data appears inside the real campaign UI",
-              page.locator('[data-nl-v2-intel="1"]').count() == 1)
+              stage_one.count() == 1 and stage_one.is_visible())
         check("Boss 28 authored tactical dossier comes from the same source pack",
               "final-war-drum" in page.evaluate("window.__NL_TACTICS_QA__.renderStage(28)"))
         page.locator('.nav[data-tab="city"]').click()
-        check("native city and new live building panel coexist",
-              page.locator('[data-nl-command]').count() == 1 and
-              page.locator('[data-nl-city-panel]').count() == 1 and
+        command_panel = visible_window(page, '[data-nl-command]')
+        check("city navigation retains a reachable native command hub window",
+              command_panel.count() == 1 and command_panel.is_visible())
+        city_panel = visible_window(page, '[data-nl-city-panel]')
+        check("live building panel opens as its own city window",
+              city_panel.count() == 1 and city_panel.is_visible() and
               page.locator('[data-nl-city-kind="select"]').count() == 38)
-        check("existing four original legacy resources remain visible",
-              all(x in page.locator('[data-nl-city-panel]').inner_text()
-                  for x in ["Bạc","Lương","Sắt","Uy danh"]))
+        city_resources = city_panel.inner_text()
+        check("project city shows Bạc, Lương and Uy danh while retaining legacy Sắt only in Save",
+              all(x in city_resources for x in ["Bạc","Lương","Uy danh"]) and
+              "Sắt" not in city_resources and
+              page.evaluate("window.__P2_QA__.getGame().iron") == 3200)
         # Supply test resources through the existing QA state authority, not the city engine.
         original = page.evaluate("window.__P2_QA__.getGame()")
         original.update({"silver":100000,"grain":50000,"iron":20000})
+        # Freeze passive production so the reload assertion measures Save
+        # persistence instead of resources earned while Chromium reloads.
+        original["lastTick"] = page.evaluate("Date.now()+86400000")
         page.evaluate("g=>window.__P2_QA__.setGame(g)", original)
         page.locator('.nav[data-tab="city"]').click()
-        page.locator('[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]').click()
-        upgrade = page.locator('[data-nl-city-kind="build"][data-nl-city-id="nl_city_ironworks"]')
+        ironworks = visible_window(page, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
+        check("target building appears in an accessible city subwindow", ironworks.count() == 1 and ironworks.is_visible())
+        ironworks.click()
+        upgrade = visible_window(page, '[data-nl-city-kind="build"][data-nl-city-id="nl_city_ironworks"]')
         check("new building exposes executable paid construction button",
               upgrade.count() == 1 and upgrade.is_enabled())
         upgrade.click()
         after = page.evaluate("window.__P2_QA__.getGame()")
         receipt = after["nlCity"]["receipts"]
         check("construction reserves one job and debits actual game resources",
-              after["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks" and
+              len(receipt) == 1 and
+              (after["nlCity"].get("construction") or {}).get("id") == "nl_city_ironworks" and
               after["silver"] < original["silver"] and
               after["grain"] < original["grain"] and
-              after["iron"] < original["iron"] and len(receipt) == 1)
+              after["iron"] == original["iron"] and
+              "iron" not in receipt[0].get("debit",{}))
         check("single persisted city receipt and schema-v5 authority",
               after["version"] == 5 and
               len(after["nlCity"]["receiptIndex"]) == 1 and
@@ -99,14 +129,22 @@ def main():
               page.locator('[data-nl-city-panel]').count() == 1)
         reopened = page_for(browser, saved)
         reloaded = reopened.evaluate("window.__P2_QA__.getGame()")
-        check("reload preserves construction, costs and one-time receipt",
+        # On a slow runner the 30s building timer can legally complete during reload.
+        job = after["nlCity"].get("construction") or {}
+        pending = reloaded["nlCity"].get("construction")
+        completed = (pending is None and
+                     reloaded["nlCity"]["levels"]["nl_city_ironworks"] == job.get("targetLevel",1) and
+                     reloaded["nlCity"]["lastAt"] >= job.get("finishAt",0))
+        check("reload preserves construction or its completed level, costs and one-time receipt",
               reloaded["silver"] == after["silver"] and
+              reloaded["grain"] == after["grain"] and
               reloaded["nlCity"]["receiptIndex"] == after["nlCity"]["receiptIndex"] and
-              reloaded["nlCity"].get("construction",{}).get("id") == "nl_city_ironworks")
+              ((pending is not None and pending == job) or completed))
         mobile = page_for(browser, saved, 390)
         mobile.locator('.nav[data-tab="city"]').click()
+        mobile_tile = visible_window(mobile, '[data-nl-city-kind="select"][data-nl-city-id="nl_city_ironworks"]')
         check("mobile 390px shows city tiles and no horizontal overflow",
-              mobile.locator('[data-nl-city-kind="select"]').count() == 38 and
+              mobile.locator('[data-nl-city-kind="select"]').count() == 38 and mobile_tile.is_visible() and
               mobile.evaluate("document.documentElement.scrollWidth <= innerWidth + 4"))
         check("no new Chromium exceptions", not errors)
         for tab in (page, reopened, mobile):

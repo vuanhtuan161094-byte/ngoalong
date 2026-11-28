@@ -1,4 +1,5 @@
 # A3 — Classic WEB item economy and 30/60-minute accelerated QA
+> **Historical implementation snapshot.** Retain the tests and legacy conversion facts, but do not use Classic WEB prices as current Mobile economy design. See [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md).
 
 Source: project-original SIMULATED economy, not official VNG pricing.
 

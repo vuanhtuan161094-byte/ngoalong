@@ -1,4 +1,5 @@
 # B2 — Kỳ Cổ Thủ, Vũ Nữ and native morale timing
+> **Historical combat-source snapshot.** Classic WEB formulas and the explicitly separated Mobile example below are evidence for named versions, not a single shared rule set.
 **Date:** 2026-11-23. Runtime is project-authored, not VNG IP.
 
 Classic WEB sources:

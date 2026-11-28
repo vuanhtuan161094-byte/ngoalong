@@ -1,4 +1,5 @@
 # Classic WEB B4 — Code-first expansion (24/11/2026)
+> **Historical runtime snapshot.** B4 data/rules remain in the build for compatibility, but are not the current Mobile troop/formation authority. Their simulated fields stay labelled as such.
 
 **Implementation scope:** One canonical generated HTML. 55 historical troop **names and 6 source coefficients** from the Lequ public 2018 detailed classic-lineage table, 10 historical formation names from 2011 web-era sources. Transliteration, battle balancing, formation slot layouts, effects, unlocks and sprite style are **PROJECT_SIMULATED**. The 2018 troop table is NOT proof individual numbers match the 2011 launch build.
 

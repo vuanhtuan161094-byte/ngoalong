@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "id": "nl-trial-tower-100-v1",
+  "provenance": "PROJECT_SIMULATED",
+  "sourceNote": "The captured Mobile Wiki page describes Võ Khôi Tháp difficulty tiers gated by commander level, not numbered floors 420 or 500. Native floors 1-20 remain the baseline; floors 21-100 keep their original project-simulated encounters; floors 101-500 are generated project-simulated encounters, not recovered official floor data.",
+  "nativeFloors": 20,
+  "maxFloor": 500,
+  "generatedExpansion": {
+    "firstFloor": 101,
+    "lastFloor": 500,
+    "provenance": "PROJECT_SIMULATED",
+    "arcLength": 10,
+    "templateCount": 8,
+    "layoutCount": 10,
+    "note": "Rotate the eight existing tactical templates and ten 3x3 layouts; enemy count and strength rise by milestone. Do not describe generated floors as official source records."
+  },
+  "eliteEvery": 5,
+  "chapterBossEvery": 10,
+  "enemyCountBands": [
+    {"first": 21, "last": 30, "count": 3},
+    {"first": 31, "last": 50, "count": 4},
+    {"first": 51, "last": 100, "count": 5},
+    {"first": 101, "last": 200, "count": 4},
+    {"first": 201, "last": 500, "count": 5}
+  ],
+  "rewardFormula": {
+    "normal": {"silverBase": 1100, "silverPerFloor": 420, "grainBase": 150, "grainPerFloor": 30, "prestigeBase": 60, "prestigePerFloor": 30, "soulBase": 30, "soulPerFloor": 1},
+    "chapterBossBonus": {"silver": 5000, "grain": 800, "prestige": 500, "soul": 50}
+  },
+  "layouts": [
+    {"order": [0, 1, 2, 3, 4], "slots": [2, 5, 8, 4, 7]},
+    {"order": [1, 2, 3, 4, 0], "slots": [8, 5, 2, 7, 4]},
+    {"order": [2, 3, 4, 0, 1], "slots": [2, 1, 0, 5, 4]},
+    {"order": [3, 4, 0, 1, 2], "slots": [6, 7, 8, 3, 4]},
+    {"order": [4, 0, 1, 2, 3], "slots": [0, 4, 8, 1, 7]},
+    {"order": [0, 2, 4, 1, 3], "slots": [6, 3, 0, 7, 1]},
+    {"order": [1, 3, 0, 2, 4], "slots": [4, 5, 6, 1, 2]},
+    {"order": [2, 4, 1, 3, 0], "slots": [8, 4, 0, 5, 3]},
+    {"order": [3, 0, 2, 4, 1], "slots": [2, 4, 6, 5, 3]},
+    {"order": [4, 1, 3, 0, 2], "slots": [6, 4, 2, 7, 1]}
+  ],
+  "arcs": [
+    {
+      "id": "stone-gate", "firstFloor": 21, "name": "Bát Môn Thạch Trận", "doctrine": "Phòng tuyến và hộ trị", "counterplay": "Dùng đòn quét hàng để phá tiền tuyến; giữ một đòn đánh hàng sau cho Quân Y.", "aiStyle": "protect",
+      "roster": [
+        {"name": "Thiết Vệ", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Cường Nỗ", "role": "archer", "skill": "Phá Giáp"},
+        {"name": "Hồng Kích", "role": "spear", "skill": "Xuyên Phong"},
+        {"name": "Tán Kế", "role": "strategist", "skill": "Huyễn Thuật"},
+        {"name": "Quân Y", "role": "support", "skill": "Hồi Xuân"}
+      ]
+    },
+    {
+      "id": "wind-cavalry", "firstFloor": 31, "name": "Kỵ Phong Hành Lang", "doctrine": "Cơ động và áp lực", "counterplay": "Dùng Thương khắc Kỵ, giữ tuyến sau khỏi bị đánh xuyên.", "aiStyle": "pressure",
+      "roster": [
+        {"name": "Bộ Thuẫn", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Thiết Kỵ", "role": "cavalry", "skill": "Xuyên Phong"},
+        {"name": "Phi Kỵ", "role": "cavalry", "skill": "Hoành Tảo"},
+        {"name": "Nỏ Thủ", "role": "archer", "skill": "Phá Giáp"},
+        {"name": "Quân Sư", "role": "strategist", "skill": "Huyễn Thuật"}
+      ]
+    },
+    {
+      "id": "hundred-bows", "firstFloor": 41, "name": "Thập Bát Cung Trận", "doctrine": "Hỏa lực hàng sau", "counterplay": "Mở đường bằng Kỵ hoặc đòn xuyên; đừng để Cung Thủ tự do tích sĩ khí.", "aiStyle": "finish",
+      "roster": [
+        {"name": "Hộ Cung", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Thần Tý", "role": "archer", "skill": "Hoành Tảo"},
+        {"name": "Liên Châu", "role": "archer", "skill": "Phá Giáp"},
+        {"name": "Kình Nỗ", "role": "archer", "skill": "Xuyên Phong"},
+        {"name": "Chủ Soái", "role": "strategist", "skill": "Huyễn Thuật"}
+      ]
+    },
+    {
+      "id": "mist-stratagem", "firstFloor": 51, "name": "Mê Vụ Cổ Đạo", "doctrine": "Khống chế và sĩ khí", "counterplay": "Ưu tiên hạ Mưu Sĩ trước khi sĩ khí đội hình bị rút cạn.", "aiStyle": "protect",
+      "roster": [
+        {"name": "Thương Trận", "role": "spear", "skill": "Xuyên Phong"},
+        {"name": "Mưu Chủ", "role": "strategist", "skill": "Huyễn Thuật"},
+        {"name": "Vũ Cơ", "role": "dancer", "skill": "Hoành Tảo"},
+        {"name": "Kỵ Vệ", "role": "cavalry", "skill": "Thiết Bích"},
+        {"name": "Kỳ Cổ Thủ", "role": "drum", "skill": "Hồi Xuân"}
+      ]
+    },
+    {
+      "id": "ember-line", "firstFloor": 61, "name": "Hỏa Kế Bạch Nha", "doctrine": "Thiêu đốt và dồn sát thương", "counterplay": "Phân tán đội hình khỏi đòn quét; dùng khiên hoặc giải trừ để giảm thiệt hại kéo dài.", "aiStyle": "counter",
+      "roster": [
+        {"name": "Tiền Phong", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Hỏa Tiễn", "role": "archer", "skill": "Bộc Viêm"},
+        {"name": "Hỏa Kỵ", "role": "cavalry", "skill": "Hoành Tảo"},
+        {"name": "Quân Sư Hỏa Công", "role": "strategist", "skill": "Bộc Viêm"},
+        {"name": "Vũ Cơ", "role": "dancer", "skill": "Hồi Xuân"}
+      ]
+    },
+    {
+      "id": "iron-fortress", "firstFloor": 71, "name": "Thiết Thành Bất Động", "doctrine": "Phòng thủ bền bỉ", "counterplay": "Dồn sát thương theo một tuyến; ngăn Quân Y kéo dài giao tranh.", "aiStyle": "protect",
+      "roster": [
+        {"name": "Thiết Giáp", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Trọng Kích", "role": "spear", "skill": "Xuyên Phong"},
+        {"name": "Thạch Thuẫn", "role": "infantry", "skill": "Hoành Tảo"},
+        {"name": "Quân Y Trưởng", "role": "support", "skill": "Hồi Xuân"},
+        {"name": "Bày Trận Sư", "role": "strategist", "skill": "Huyễn Thuật"}
+      ]
+    },
+    {
+      "id": "dragon-serpent", "firstFloor": 81, "name": "Long Xà Vô Thường", "doctrine": "Đổi tuyến và đánh bọc", "counterplay": "Bảo vệ hàng sau, đổi đội hình khi đối thủ đổi hướng tấn công.", "aiStyle": "finish",
+      "roster": [
+        {"name": "Long Kỵ", "role": "cavalry", "skill": "Xuyên Phong"},
+        {"name": "Ảnh Tiễn", "role": "archer", "skill": "Phá Giáp"},
+        {"name": "Bạch Y Mưu Sĩ", "role": "strategist", "skill": "Huyễn Thuật"},
+        {"name": "Vũ Cơ Long Môn", "role": "dancer", "skill": "Hồi Xuân"},
+        {"name": "Cổ Hiệu", "role": "drum", "skill": "Hoành Tảo"}
+      ]
+    },
+    {
+      "id": "hundred-generals", "firstFloor": 91, "name": "Bách Tướng Vô Song", "doctrine": "Đội hình hỗn hợp", "counterplay": "Đọc khắc chế ở từng vị trí; đổi chiến pháp theo tuyến thay vì dồn một loại quân.", "aiStyle": "counter",
+      "roster": [
+        {"name": "Đại Đao Vệ", "role": "infantry", "skill": "Thiết Bích"},
+        {"name": "Phá Trận Kích", "role": "spear", "skill": "Xuyên Phong"},
+        {"name": "Thần Tốc Kỵ", "role": "cavalry", "skill": "Hoành Tảo"},
+        {"name": "Thiên Lý Cung", "role": "archer", "skill": "Phá Giáp"},
+        {"name": "Quân Sư Thống Lĩnh", "role": "strategist", "skill": "Huyễn Thuật"}
+      ]
+    }
+  ]
+}

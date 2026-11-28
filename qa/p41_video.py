@@ -4,6 +4,7 @@ No gameplay rewards are fabricated; no detached mock animation is rendered.
 """
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from nl_browser_navigation import navigate_markup
 import subprocess,json,os,hashlib
 ROOT=Path(__file__).resolve().parents[1]
 HTML=(ROOT/'index.html').read_text(encoding='utf-8')
@@ -17,7 +18,7 @@ with sync_playwright() as p:
     browser=p.chromium.launch(headless=True,executable_path=os.environ.get('CHROMIUM_BIN') or None,args=['--no-sandbox'])
     page=browser.new_page(viewport={'width':1280,'height':720},device_scale_factor=1)
     errors=[];page.on('pageerror',lambda err:errors.append(str(err)))
-    page.set_content(HTML.replace('<script>',SHIM+'<script>',1),wait_until='domcontentloaded')
+    navigate_markup(page, HTML.replace('<script>',SHIM+'<script>',1),wait_until='domcontentloaded')
     page.wait_for_function('window.__P41_QA__?.image?.complete && __P41_QA__.image.naturalWidth===800',timeout=30000)
     page.evaluate("__P2_QA__.beginBattle(1,'campaign')")
     # Guarantee a real skill event in the visual sample despite counter/timing balance changes.

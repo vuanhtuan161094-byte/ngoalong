@@ -1,0 +1,177 @@
+{
+  "milestone": "ART-B3A",
+  "createdOn": "2026-11-25",
+  "repository": "vuanhtuan161094-byte/ngoalong",
+  "branch": "feature/ngoalong-v1-complete",
+  "baseHead": "a4f338152e01e1e58301fcf11425c7021fb11f98",
+  "status": "PARTIAL_IMAGEGEN_QUOTA_LIMIT",
+  "provider": "OpenAI ImageGen",
+  "imageGenerationLimit": {
+    "type": "usage_limit_reached",
+    "httpStatus": 429,
+    "retryAfterSeconds": 49711,
+    "note": "Do not retry generation until the provider reset; 10 heroes still need portrait/splash outputs."
+  },
+  "counts": {
+    "newCompleteHeroTrios": 2,
+    "totalCompleteV5HeroTrios": 36,
+    "newPNGmasters": 6,
+    "newRuntimeWebP": 6,
+    "additionalFullBodyMastersStaged": 10,
+    "recoveredPartialSecondaryImagesStaged": 2,
+    "completeFullBodyMastersCreatedInBatch": 12
+  },
+  "canonicalHtml": {
+    "path": "index.html",
+    "bytes": 73195846,
+    "sha256": "20decdfb766148958d0d46252c7951cb2d83d425562f2358ff55cdfe8d6669a4",
+    "offlineSingleFile": true
+  },
+  "browserQA": {
+    "milestone": "NL_HERO_ART_V5_AND_GROWTH",
+    "total": 101,
+    "passed": 101,
+    "failed": [],
+    "pageErrors": []
+  },
+  "reviewArtBrowserQA": {
+    "viewports": [
+      {
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "heroCatalogEntries": 403,
+    "nativeAndReviewIcons": 18,
+    "navigationIcons": 15,
+    "cityBuildingIcons": 9,
+    "mapCatalogEntries": 249,
+    "saveSchema": 5,
+    "result": "PASS"
+  },
+  "validation": {
+    "contactSheets": [
+      "qa/nl-art-b3-character-contact.jpg",
+      "qa/nl-art-b3-recovered-contact.jpg"
+    ],
+    "runtimeScreenshots": [
+      "qa/nl-art-b3-runtime-desktop.png",
+      "qa/nl-art-b3-runtime-mobile.png"
+    ],
+    "partialAssetInventory": "qa/NL_ART_B3_PARTIAL.json"
+  },
+  "heroes": [
+    {
+      "heroId": "wiki-mobile-hero-001",
+      "name": "Bàng Đức",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "artifacts": {
+        "portrait": {
+          "generationOutputId": "exec-03505431-ec60-4f0b-a33b-f80b8335ca4a",
+          "png": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-portrait.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-portrait.webp",
+          "dimensions": [
+            1254,
+            1254
+          ],
+          "pngBytes": 2765884,
+          "webpBytes": 344348,
+          "pngSha256": "19c7120e4de75941952a6dcbed32bdc1c25b3887defda52d31c40af03051e702",
+          "webpSha256": "fdee687d1921897166be82dea338b153868ccb1822b4c0df0ae47467b96a702f",
+          "integratedInGame": true,
+          "promptKey": "exec-03505431-ec60-4f0b-a33b-f80b8335ca4a"
+        },
+        "character": {
+          "generationOutputId": "exec-b941e701-b0c8-43a8-ac84-dc451e2a7c8e",
+          "png": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-character.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-character.webp",
+          "dimensions": [
+            1024,
+            1536
+          ],
+          "pngBytes": 2833636,
+          "webpBytes": 362954,
+          "pngSha256": "f9b562f893612074952ba0e624edf02c9d5af352f23b697c129d1e75f8d3ab9f",
+          "webpSha256": "9e529aae0b726c3f1bff95050b9063512fa9fa27e6112a328160eac8cef26aaf",
+          "integratedInGame": true,
+          "promptKey": "exec-b941e701-b0c8-43a8-ac84-dc451e2a7c8e"
+        },
+        "splash": {
+          "generationOutputId": "exec-bac2d643-58a2-4e8a-8cd4-174a5490665f",
+          "png": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-splash.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-pang-de-v5-splash.webp",
+          "dimensions": [
+            1672,
+            941
+          ],
+          "pngBytes": 2644339,
+          "webpBytes": 355294,
+          "pngSha256": "5b5f2bf361ad8c8bdb7afe52e74a7dece52fa946ed4b1470d3347f5af418d82d",
+          "webpSha256": "0f698d3c8f0efb3b1007d71878fea6525b3d9e898f0c40f7acb3e3118b3179bf",
+          "integratedInGame": true,
+          "promptKey": "exec-bac2d643-58a2-4e8a-8cd4-174a5490665f"
+        }
+      }
+    },
+    {
+      "heroId": "wiki-mobile-hero-002",
+      "name": "Chân Cơ",
+      "faction": "Ngụy",
+      "reviewStatus": "INTERNAL_VISUAL_QC_PASS_OWNER_REVIEW_PENDING",
+      "artifacts": {
+        "portrait": {
+          "generationOutputId": "exec-b748c7bf-52dd-46c9-a1df-64b66dc6b0c8",
+          "png": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-portrait.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-portrait.webp",
+          "dimensions": [
+            1254,
+            1254
+          ],
+          "pngBytes": 2705371,
+          "webpBytes": 303798,
+          "pngSha256": "caef20e12e157691fd8e2b584cc6b557c5d1659312f0cf52b2a042971b08ba49",
+          "webpSha256": "9eec5211e75ba283cbb34de39694b52a903599b999130d472eceb0a055788ca5",
+          "integratedInGame": true,
+          "promptKey": "exec-b748c7bf-52dd-46c9-a1df-64b66dc6b0c8"
+        },
+        "character": {
+          "generationOutputId": "exec-d5e80828-7df2-4a3a-a41b-f384ff9e8e3c",
+          "png": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-character.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-character.webp",
+          "dimensions": [
+            1024,
+            1536
+          ],
+          "pngBytes": 2759978,
+          "webpBytes": 343190,
+          "pngSha256": "6630fc83dc525236a2730879a2d64e72ee657b32417e1436d67311fc934fe4c4",
+          "webpSha256": "caa5111d9720d41644e052ff2cc6a35879ea274ed83b7d3d605660f7b13517fa",
+          "integratedInGame": true,
+          "promptKey": "exec-d5e80828-7df2-4a3a-a41b-f384ff9e8e3c"
+        },
+        "splash": {
+          "generationOutputId": "exec-cbb5912d-6d86-47e6-9933-07496a8277e9",
+          "png": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-splash.png",
+          "webp": "assets/ngoalong/nl_v1/portraits/female-zhen-ji-v5-splash.webp",
+          "dimensions": [
+            1672,
+            941
+          ],
+          "pngBytes": 2750835,
+          "webpBytes": 356632,
+          "pngSha256": "e19eb7b9b39c8e3e0a5edf33f780c874c69cfece0e0ede678da5fd9e2c8262a2",
+          "webpSha256": "9a88886f563e987079b54ec2910862721197f0997f55bebb389137b7da9a2a29",
+          "integratedInGame": true,
+          "promptKey": "exec-cbb5912d-6d86-47e6-9933-07496a8277e9"
+        }
+      }
+    }
+  ],
+  "ownerVisualReview": "PENDING",
+  "releaseStatus": "V1.0 NOT COMPLETE; ART-B3 remainder, ART-B4–B7, other production art, broader gameplay inventory, hosted exact-SHA CI, and owner/device acceptance remain open"
+}

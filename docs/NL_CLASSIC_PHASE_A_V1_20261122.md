@@ -1,4 +1,5 @@
 # Mưu Định Tam Quốc — Giai đoạn A: classic WEB core economy & recruiting
+> **Historical implementation snapshot.** Keep source/version limits, but do not treat WEB economy or recruit behavior as the active Mobile benchmark. Current gaps are in [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md).
 
 **Implementation date:** 22/11/2026. **Scope:** branch `feature/nl-web-review-20261122`, one generated `index.html`, no merge, no Codex Cloud. This is Phase A V1, **not full classic parity**.
 

@@ -1,0 +1,7 @@
+V4 production prompt record for Quan Vũ — character.
+Record status: reconstructed from the generation brief because the original tool prompt text was not retained in the checkpoint; this is not represented as a verbatim prompt.
+Image provider: OpenAI ImageGen. Output ID: exec-ff14d337-5ab7-42fa-b67e-b59a61620198.
+Prompt version: NL_FEMALE_HERO_ART_V4. Created during task session: 2026-11-25 (provider timestamp unavailable). Target/actual resolution: 1024x1536.
+Cost: unknown; no estimate was returned.
+
+A mature adult woman Guan Yu (age 35+), historically recognizable through deep jade-green palette, long dark braid, gold dragon hair ornament, red tassels, and the Green Dragon Crescent Blade. Luxury Oriental Fantasy, premium semi-realistic fashion editorial. She sits in a composed, relaxed side pose on a moonlit palace settee, one hand resting on the armrest and one hand holding her iconic guandao; poised direct gaze, calm queenly confidence, balanced upright face. Fitted emerald silk corset dress with dragon embroidery, sheer layered shawl, high slit, opaque lining, lace thigh-high stockings, elegant long legs and pronounced hourglass shape. Candlelight and silver moon rim light, no text, UI, watermark or logo. Vertical full-body character illustration, 2:3.

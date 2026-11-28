@@ -2,7 +2,7 @@ name: Muu Dinh Tam Quoc · Ngọa Long-focused full regression and release
 
 on:
   push:
-    branches: [main-ngoalong, 'codex/**', 'feature/nl-codex-cloud-v1-finish', 'feature/nl-mcv2-08-items-integration', 'feature/nl-integration-review-20261119']
+    branches: [main-ngoalong, 'codex/**', 'feature/nl-codex-cloud-v1-finish', 'feature/nl-mcv2-08-items-integration', 'feature/nl-integration-review-20261119', 'feature/ngoalong-v1-complete']
   workflow_dispatch:
 
 permissions:
@@ -47,7 +47,7 @@ jobs:
     needs: changed_sources
     if: needs.changed_sources.outputs.core == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -93,8 +93,11 @@ jobs:
           python qa/ngoa_long_mode.py
           python qa/nl_heroes207_browser.py
           python qa/nl_premerge_hero207_items.py
+          python qa/nl_hero_demotion_browser.py
+          python qa/nl_save_transfer.py
           python qa/nl_city_integration.py
           python qa/nl_native_pve_a1_browser.py
+          python qa/nl_audio_browser.py
           python qa/nl_r02.py
           python qa/nl_r03.py
           python qa/nl_progression.py
@@ -104,6 +107,7 @@ jobs:
           python qa/cl_p6.py
           python qa/p2_full.py
           python qa/p2_advanced.py
+          python qa/nl_city_art_browser.py
       - name: Upload focused exact-SHA QA evidence (not a release)
         if: always()
         uses: actions/upload-artifact@v4
@@ -179,20 +183,28 @@ jobs:
         run: python qa/nl_heroes207_browser.py
       - name: Combined Hero207 + Items browser/save/replay gate
         run: python qa/nl_premerge_hero207_items.py
+      - name: Cross-origin Save transfer, validation, confirmation and rollback
+        run: python qa/nl_save_transfer.py
       - name: CHAT03 City real browser, shared Save and mobile integration
         run: python qa/nl_city_integration.py
       - name: A1 28-stage native Combat V2, Boss AI, troop, replay and receipt browser gate
         run: python qa/nl_native_pve_a1_browser.py
+      - name: Original synthesized audio settings and native battle cue browser gate
+        run: python qa/nl_audio_browser.py
       - name: P2 smoke Chromium
         run: python qa/smoke.py
       - name: Ngọa Long 3x3 command center desktop/mobile browser gate
         run: python qa/ngoa_long_mode.py
+      - name: Original capital art, offline asset and building interaction browser gate
+        run: python qa/nl_city_art_browser.py
       - name: NL-R02 same-seed combat, morale, AI and save migration Chromium gate
         run: python qa/nl_r02.py
       - name: NL-R03 data-driven evolutions and tactical encounters Chromium gate
         run: python qa/nl_r03.py
       - name: NL-R03 hero training, equipment and research progression gate
         run: python qa/nl_progression.py
+      - name: G02 receipt-backed hero demotion and Save v5 browser gate
+        run: python qa/nl_hero_demotion_browser.py
       - name: NL-V2 Item inventory, seven slots, Save v5, real battle bonus and unique rewards
         run: |
           node --test qa/nl_item_inventory_group08.test.cjs qa/nl_item_equipment_ui_group08.test.cjs qa/nl_item_balance_v3.test.cjs qa/nl_item_economy_b2.test.cjs

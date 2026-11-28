@@ -113,6 +113,12 @@ function nlARecruitHero(id){
   game.roster.push(id);
   game.hero[id]={level:1,xp:0,troops:160};
   if(!game.troopModes||typeof game.troopModes!=='object')game.troopModes={};
+  // Keep a newly recruited hero available to the five-commander world army.
+  // The classic WEB chooser is authoritative; assign only to an open slot.
+  if(game.cltq&&Array.isArray(game.cltq.commanders)){
+    const slot=game.cltq.commanders.findIndex(hero=>!hero);
+    if(slot>=0){game.cltq.commanders[slot]=id;if(!game.cltq.selectedArmy.includes(id))game.cltq.selectedArmy.push(id);}
+  }
   if(row.method==='tavern')a.talkUsed++;
   if(id==='zhao' && game.freeRecruit)game.freeRecruit=false;
   a.recruitReceipts.push({id,method:row.method,stage:row.stage||null,cost:price,at:Date.now(),source:'SIMULATED'});

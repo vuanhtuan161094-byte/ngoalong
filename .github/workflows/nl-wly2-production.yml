@@ -1,0 +1,127 @@
+name: WLY2 production source asset build
+on:
+  push:
+    branches: [feature/ngoalong-v1-complete]
+    paths: ['.github/workflows/nl-wly2-production.yml', 'tools/build_wly2_source_pack.py', 'tools/nl_art_d2.js', 'tools/build_ngoa_long_items_v1.py', 'qa/nl_native_pve_a1_browser.py', 'tools/nl_hero_systems_v1.js', 'tools/nl_hero_systems_v1.css', 'tools/nl_city_art_v1.js', 'tools/nl_classic_web_b4.js','tools/nl_content_c_runtime.js','tools/acquire_wly2_environment.py','tools/acquire_nl_premium_icons.py','qa/nl_premium_browser.py']
+  workflow_dispatch:
+concurrency:
+  group: wly2-production-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Cache hash-pinned original WLY2 source assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.temp }}/wly2-original
+            ${{ runner.temp }}/wly2-environment/source
+          key: wly2-originals-v1-${{ hashFiles('data/ngoalong_external_reference_inventory_20261127.json', 'data/ngoalong_wly2_environment_inventory.json') }}
+      - name: Verify and pack complete source library
+        run: |
+          python -m pip install pillow==11.3.0
+          python tools/build_wly2_source_pack.py --cache "$RUNNER_TEMP/wly2-original" --out "$RUNNER_TEMP/wly2-pack.json"
+          echo "NL_WLY2_PACK=$RUNNER_TEMP/wly2-pack.json" >> "$GITHUB_ENV"
+          python tools/acquire_wly2_environment.py --out "$RUNNER_TEMP/wly2-environment"
+          echo "NL_WLY2_ENV_PACK=$RUNNER_TEMP/wly2-environment/runtime-pack.json" >> "$GITHUB_ENV"
+      - name: Build canonical game, not a mockup
+        run: |
+          set -euo pipefail
+          python tools/validate_ngoalong_data.py
+          python tools/build_ngoa_long_mode.py
+          python tools/build_ngoa_long_r03.py
+          python tools/build_ngoa_long_r04.py
+          python tools/build_ngoa_long_items_v1.py
+          python tools/build_ngoa_long_items_v1.py --check
+          sha256sum index.html | tee qa/wly2-html.sha256
+          git rev-parse HEAD > qa/wly2-commit.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ngoalong-one-game-wly2-candidate
+          path: |
+            index.html
+            qa/wly2-html.sha256
+            qa/wly2-commit.txt
+            ${{ runner.temp }}/wly2-pack.report.json
+          if-no-files-found: error
+      - name: Actual P2 source renderer smoke
+        run: |
+          python -m pip install playwright==1.58.0
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          sys.path.insert(0,'qa')
+          from nl_native_pve_a1_browser import open_page,errors
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+              page=open_page(browser,width=1280)
+              page.on('pageerror',lambda e:print('RENDER ERROR:',str(e),flush=True))
+              page.wait_for_function("__NL_ART_D2_QA__?.ready() && __NL_ART_D2_QA__?.sourceReady()",timeout=120000)
+              page.evaluate("""()=>{const q=__P2_QA__;q.beginBattle(1,'campaign');q.debugBattle().next=Date.now()+999999;q.stepBattle()}""")
+              page.wait_for_function("__P2_QA__.debugBattle()?.current?.attacker")
+              for ms in (70,290,520,790):
+                  page.evaluate("(ms)=>{__P41_QA__.setVisualElapsed(ms);__P41_QA__.drawScene(performance.now())}",ms)
+                  page.wait_for_timeout(250)
+                  page.evaluate("(ms)=>{__P41_QA__.setVisualElapsed(ms);__P41_QA__.drawScene(performance.now())}",ms)
+                  page.locator("#battle-canvas").screenshot(path=f"qa/wly2-battle-{ms}.png")
+              result=page.evaluate("""()=>{const d=__NL_ART_D2_QA__,q=__P2_QA__;return {troops:d.sourceAtlasCount(),effects:d.sourceEffectCount(),renderer:d.nativeSourceRenderer(),metrics:d.metrics(),save:q.getGame().version}}""")
+              print(json.dumps(result))
+              Path('qa/wly2-smoke.json').write_text(json.dumps(result,indent=2))
+              assert result['renderer'] and result['troops']==28 and result['effects']>0 and result['metrics']['sourceTroops']>0 and result['metrics']['sourceFx']>0 and result['save']==5 and not errors,(result,errors)
+              browser.close()
+          PY
+      - name: Verify source troop visual occupancy and animated clip packing
+        run: |
+          python - <<'PY'
+          import json,base64,io,statistics
+          from pathlib import Path
+          from PIL import Image
+          p=json.loads(Path(__import__('os').environ['NL_WLY2_PACK']).read_text())
+          occupancy={}
+          for sid,atlas in p['soldiers'].items():
+              assert atlas.get('normalized') is True, sid
+              image=Image.open(io.BytesIO(base64.b64decode(atlas['webp']))).convert('RGBA')
+              areas=[]
+              for idx in atlas['clips']['idle'][:6]:
+                  cell=atlas['cell'];cols=atlas['cols']
+                  cel=image.crop(((idx%cols)*cell,(idx//cols)*cell,(idx%cols+1)*cell,(idx//cols+1)*cell))
+                  b=cel.getchannel('A').point(lambda a:255 if a>=24 else 0).getbbox()
+                  if b:areas.append(max(b[2]-b[0],b[3]-b[1]))
+              assert areas and statistics.median(areas)>=45,(sid,areas)
+              occupancy[sid]=round(statistics.median(areas),1)
+          print('WLY2 source soldier idle visible span:',json.dumps(occupancy))
+          PY
+      - name: Premium hero stage and battle shell actual runtime
+        run: python qa/nl_premium_browser.py
+      - name: Actual city source map and live building interaction
+        run: python qa/nl_city_art_browser.py
+      - name: Actual audio settings and P2 cue smoke
+        run: python qa/nl_audio_browser.py
+      - name: Full size original-source troop art in playable Barracks
+        run: python qa/nl_source_barracks_browser.py
+      - name: All 15 desktop and 15 mobile screens from the actual canonical game
+        if: always()
+        run: python qa/nl_review_screenshots.py --html index.html --out qa/wly2-all-screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ngoalong-wly2-runtime-evidence
+          path: |
+            qa/wly2-battle-*.png
+            qa/wly2-smoke.json
+            qa/nl-city-art-*.png
+            qa/wly2-barracks-*.png
+            qa/wly2-all-screens/**
+            qa/nl-premium-evidence/**
+            ${{ runner.temp }}/wly2-environment/mobile-icons/report.json
+          if-no-files-found: warn

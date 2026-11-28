@@ -1,5 +1,7 @@
 # NL-REF-REV-A — Kiểm toán sai lệch Ngọa Long / Mưu Định Tam Quốc
 
+> **Historical audit snapshot (2026-11-17).** Its old Heoofgaia path, branch, and classic-WEB comparison baseline do not direct current work. Use [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md) for the active Mobile-first product decision and [`NL_MOBILE_FEATURE_INVENTORY.md`](NL_MOBILE_FEATURE_INVENTORY.md) for current gaps. Preserve this file as evidence; its source/version caveats remain valid.
+
 **17/11/2026 — NL-WIKI-01 AND NL-R02 EXACT-SHA ACTIONS PASS; WIKI COVERAGE PARTIAL**. Repository vuanhtuan161094-byte/Heoofgaia, task branch `codex/nl-wiki-01-r02-20261117`, based on `main-ngoalong` SHA 05cb413b08e917e1aa4026fb54a5ff621373153e. The implementation delta is measured against this frozen baseline; see the task-branch evidence addendum in `docs/NL_REFERENCE_MATRIX.md`. No changes were made to Hero or Save schema v5.
 
 ## Evidence và giới hạn

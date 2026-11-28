@@ -1,4 +1,6 @@
-# Mưu Định Tam Quốc — CHAT 00 / Master Control V1
+# [RETIRED] Mưu Định Tam Quốc — CHAT 00 / Master Control V1
+
+> **Retired 2026-11-25.** This older multi-chat control points to a different repository/branch and classic-WEB-first direction. Do not follow its migration or authorization steps. Use [`PRODUCT_AUTHORITY.md`](PRODUCT_AUTHORITY.md), [`AGENTS.md`](../AGENTS.md), and the current Draft PR #1 instead. Preserve the material below as historical evidence only.
 **As of:** 2026-11-18  
 **Authority:** Owner instruction "Quy trình phát triển đa chat V1"; `AGENTS.md`, `docs/NGOA_LONG_REBUILD_SPEC_V1.md`, `docs/NL_DATA_DRIVEN_V2.md`, Issue #4.  
 **Product:** ONE independent, original strategy game inspired by the **classic Ngọa Long gameplay loop**. No copying protected art, code, audio, or original game expression. No Codex.

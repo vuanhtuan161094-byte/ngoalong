@@ -1,0 +1,511 @@
+{
+  "milestone": "ART-B3",
+  "createdOn": "2026-11-25",
+  "repository": "vuanhtuan161094-byte/ngoalong",
+  "branch": "feature/ngoalong-v1-complete",
+  "baseHead": "a4f338152e01e1e58301fcf11425c7021fb11f98",
+  "status": "PARTIAL_IMAGEGEN_QUOTA_LIMIT",
+  "provider": "OpenAI ImageGen",
+  "imageGenerationError": {
+    "type": "usage_limit_reached",
+    "httpStatus": 429,
+    "retryAfterSeconds": 49711,
+    "note": "Portrait/splash generation call exceeded current usage quota; do not retry until provider reset."
+  },
+  "counts": {
+    "fullBodyMastersCreated": 12,
+    "completeTrios": 2,
+    "stagedCharacterOnly": 10,
+    "recoveredSecondaryImagesUnassignedToCompleteTrios": 2
+  },
+  "completedHeroIds": [
+    "wiki-mobile-hero-001",
+    "wiki-mobile-hero-002"
+  ],
+  "stagedHeroes": [
+    {
+      "heroId": "wiki-mobile-hero-003",
+      "name": "Điển Vi",
+      "faction": "Ngụy",
+      "age": 34,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-83a82320-18e4-434b-80c2-6ee84291572b",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Điển Vi as a clearly adult woman age 34, mature and unmistakably grown, with strong feminine cheekbones, amber eyes, fearless smirk, thick dark braid with bronze tiger clasp. Preserve Wei identity and signature cues: black, oxblood and antique bronze, signature twin crescent halberds. Sensual luxury oriental fashion editorial outfit: black silk battle-corset with opaque coverage, asymmetric bare shoulder, light bronze armor accents, translucent red overskirt with opaque shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: sitting confidently on a carved stone bench with one halberd across her knees, relaxed direct gaze. Refined backdrop: candle-lit weapon hall with tiger reliefs. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-003-female-dian-wei-wei-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-003-female-dian-wei-wei-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2681026,
+          "runtimeSizeBytes": 331984,
+          "sourceSha256": "bb9f3016588a37f74005e8c26f98dcc7c68daf34fadf6efe6e5293efb1440dd4",
+          "runtimeSha256": "b6761cc447a07eaba296dd0d5d161b836edd461d26cbaca95b3933af50cd8bca",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        },
+        "portrait": {
+          "kind": "portrait",
+          "generationOutputId": "exec-3cfb11bb-38cc-40d3-bddc-96afec39773d",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Use the referenced full-body artwork as a strict identity reference. Preserve the same clearly adult 34-year-old woman Điển Vi: strong feminine cheekbones, amber eyes, fearless smirk, thick dark braid with bronze tiger clasp. Preserve her Wei identity, signature cues, palette and silk costume: black, oxblood and antique bronze, signature twin crescent halberds; preserve her overall luxurious corset/sheer-fabric fashion with opaque coverage. Premium semi-realistic Chinese fantasy game CG with mature facial proportions, expressive eyes, luminous natural skin and polished fabric. Create a square 1:1 close portrait from head to upper torso, face and eyes dominate 80% of frame, shoulders and lined neckline visible, with a distinct magnetic expression. Refined palace background softly out of focus, cinematic soft light. One woman only. No text, logo, watermark, UI, nudity or explicit sexual content.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": "generated_images/exec-83a82320-18e4-434b-80c2-6ee84291572b.png",
+          "referenceSha256": "bb9f3016588a37f74005e8c26f98dcc7c68daf34fadf6efe6e5293efb1440dd4",
+          "targetResolution": "1:1 square portrait",
+          "actualResolution": [
+            1254,
+            1254
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-003-female-dian-wei-wei-v5-portrait.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-003-female-dian-wei-wei-v5-portrait.webp",
+          "resolution": [
+            1254,
+            1254
+          ],
+          "sourceSizeBytes": 2649159,
+          "runtimeSizeBytes": 313382,
+          "sourceSha256": "917ee173e690c2f6ef06f9bdbba43ded0fccfe902016cdfd7847d3c093cb163e",
+          "runtimeSha256": "9b01bcd1bc5a66749127e449b140515eb2f8775d07a41eae789305db5afb324b",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-004",
+      "name": "Giả Hủ",
+      "faction": "Ngụy",
+      "age": 38,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-83d61523-44f0-45cb-9c69-41df79de3689",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Giả Hủ as a clearly adult woman age 38, mature and unmistakably grown, with refined mature face, narrow dark plum eyes and knowing smile; sleek dark hair with antique-gold hairpin. Preserve Wei identity and signature cues: deep plum, ink black and gold, lacquer fan and sealed scroll. Sensual luxury oriental fashion editorial outfit: luxury fitted plum corset gown, opaque lining, one bare shoulder, transparent embroidered sleeves and long slit; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: reclining diagonally across a scholar's chaise, turning a sealed scroll between her fingers. Refined backdrop: private palace study lit by low amber lanterns. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2667961,
+          "runtimeSizeBytes": 335002,
+          "sourceSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+          "runtimeSha256": "51330bf552db2bcfbb468f25314e9fe01400184f5fa9a7731975a15a2b0c28c3",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        },
+        "splash": {
+          "kind": "splash",
+          "generationOutputId": "exec-772405c1-b4fd-4b16-9b48-879ab0016534",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Use the referenced full-body artwork as a strict identity reference. Preserve the same clearly adult 38-year-old woman Giả Hủ: refined mature face, narrow dark plum eyes and knowing smile; sleek dark hair with antique-gold hairpin. Preserve her Wei identity, signature cues, palette and silk costume: deep plum, ink black and gold, lacquer fan and sealed scroll; preserve her overall luxurious corset/sheer-fabric fashion with opaque coverage. Premium semi-realistic Chinese fantasy game CG with mature facial proportions, expressive eyes, luminous natural skin and polished fabric. Create a wide cinematic 16:9 splash illustration with the same clearly adult woman, face unmistakable, three-quarter or full figure visible, elegant confident relaxed fashion-editorial pose inspired by the reference, flowing silk and chiffon, figure prominent across the composition. Sophisticated Wei palace or private pavilion background, depth of field and polished premium character illustration. One woman only, unobstructed face. No text, logo, watermark, UI, nudity, exposed nipples/genitals, or explicit sexual activity.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": "generated_images/exec-83d61523-44f0-45cb-9c69-41df79de3689.png",
+          "referenceSha256": "d3fe3e0bf28178bf491cb08cf3ef70e7d4acb302a581b96f68216259f407208e",
+          "targetResolution": "16:9 horizontal splash art",
+          "actualResolution": [
+            1672,
+            941
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-004-female-jia-xu-v5-splash.webp",
+          "resolution": [
+            1672,
+            941
+          ],
+          "sourceSizeBytes": 2924701,
+          "runtimeSizeBytes": 447338,
+          "sourceSha256": "138c0449ed1d857cb65e168d47679d321468a8171bf625fe76390ec693fff6a5",
+          "runtimeSha256": "9801fbf268df548a7b490e8b8b2b72922cbb4e29ef5cf7ca13dca8e7ddb39f23",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-005",
+      "name": "Hạ Hầu Đôn",
+      "faction": "Ngụy",
+      "age": 36,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-de6fe55d-8d19-4845-89f5-fad8df6bd3b1",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Hạ Hầu Đôn as a clearly adult woman age 36, mature and unmistakably grown, with commanding mature face, steel-blue eye and composed smile, ornate jeweled eyepatch over the other eye, braided dark ponytail. Preserve Wei identity and signature cues: crimson, black and silver, dragon glaive with red tassel. Sensual luxury oriental fashion editorial outfit: sleek crimson silk corset with opaque coverage, one plated shoulder, open back, translucent black cape and high slit over shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: standing at an angle beside a throne, one hand on the glaive, chin raised. Refined backdrop: royal war chamber with a blurred red standard. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-005-female-xiahou-dun-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2512558,
+          "runtimeSizeBytes": 304362,
+          "sourceSha256": "da99ead17c3a59f0fe6a21199aac511d28c8ff2fff28dc22d81354178afb1a1d",
+          "runtimeSha256": "e0c9c78a42f59131eb2f5d87eb4652526c512b4981b52e553905f780c17cf9d5",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-006",
+      "name": "Tào Chương",
+      "faction": "Ngụy",
+      "age": 32,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-c8b131fa-b514-40a5-bce2-5d1d7552dc7e",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Tào Chương as a clearly adult woman age 32, mature and unmistakably grown, with athletic mature face, bright gold-brown eyes and playful grin, dark hair in a high riding ponytail. Preserve Wei identity and signature cues: amber gold, jade and black, cavalry bow and lion medallion. Sensual luxury oriental fashion editorial outfit: fitted gold riding corset lined for full coverage, bare shoulders, jade chiffon cape, high slit over opaque riding shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: perched on an ornate saddle, twisting to look back while holding a bow. Refined backdrop: imperial stable pavilion with warm late-afternoon light. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-006-female-cao-zhang-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2803685,
+          "runtimeSizeBytes": 369962,
+          "sourceSha256": "54b249b257fd33b59d8b810169cedeabf871702d58be0f5e8b040ed8e8034ba0",
+          "runtimeSha256": "27fbed75cc52c0e02a9cbefbd5a8f8a14ce4625ca8e6a0ee0ae072634f449c32",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-007",
+      "name": "Tào Duệ",
+      "faction": "Ngụy",
+      "age": 30,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-500ab97b-d49e-4b4e-b104-a7628d7c1a75",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Tào Duệ as a clearly adult woman age 30, mature and unmistakably grown, with poised mature queenly face, dark red eyes and proud restrained smile; long black hair under a delicate imperial crown. Preserve Wei identity and signature cues: imperial jade, vermilion and gold, phoenix seal and ornamental fan. Sensual luxury oriental fashion editorial outfit: high-couture satin court corset with opaque lining, sculpted bare shoulders, sheer red train, jeweled waist and high slit; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: seated sideways on the imperial throne with crossed legs and a direct regal gaze. Refined backdrop: refined red-and-gold palace chamber, soft candle glow. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-007-female-cao-rui-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2913944,
+          "runtimeSizeBytes": 406728,
+          "sourceSha256": "4a97ed56a59ef0b1cf02064bba8ba972fb6fd4b6d0f07b8463c903db1d3f7d8f",
+          "runtimeSha256": "98caefe84424dec83c8753978403c331b34fe3534371841d4bdecb9997d1d524",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-008",
+      "name": "Tào Thực",
+      "faction": "Ngụy",
+      "age": 29,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-14fb0d91-3567-49da-87f9-296207c25218",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Tào Thực as a clearly adult woman age 29, mature and unmistakably grown, with sensitive mature face, expressive hazel eyes and poetic smile; long loose dark hair with plum blossom pin. Preserve Wei identity and signature cues: lavender, ivory and muted gold, calligraphy brush and wine cup. Sensual luxury oriental fashion editorial outfit: flowing lavender silk gown with opaque corset lining, bare shoulders, translucent sleeves, open back and high slit; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: leaning over a writing desk, brush in one hand, looking up with a wistful smile. Refined backdrop: quiet moonlit scholar's chamber with poems and plum blossoms. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-008-female-cao-zhi-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2811393,
+          "runtimeSizeBytes": 348172,
+          "sourceSha256": "12ead57de4ef532e878955fe9bd6e2343457f344335562de14760a541605d32c",
+          "runtimeSha256": "92fab581f7ea08ba072d10a1f5d442cc5b23f2d2f991dec08b36b10c7d0c3916",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-009",
+      "name": "Trương Hợp",
+      "faction": "Ngụy",
+      "age": 33,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-14ca8e01-726c-40ca-bca1-9b196c31f202",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Trương Hợp as a clearly adult woman age 33, mature and unmistakably grown, with elegant mature face, emerald eyes and confident theatrical smile; glossy black hair with feathered gold headdress. Preserve Wei identity and signature cues: deep rose, ivory and gold, ornate spear and peacock feather. Sensual luxury oriental fashion editorial outfit: dramatic rose silk corset with opaque lining, one bare shoulder, sheer feather-pattern cape and slit skirt over opaque shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: standing by a carved pillar, one knee bent and spear resting behind her shoulder. Refined backdrop: luxury palace performance hall with subtle golden lights. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-009-female-zhang-he-wei-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2959754,
+          "runtimeSizeBytes": 420352,
+          "sourceSha256": "c6a1533cf90cf23212330c4be536c32a4455a86a4c858d0522ef60574b5c2ce8",
+          "runtimeSha256": "0b842f07a19d4a730f3aaf20091266e84809554c3a5cab228375e3dd1285a1f9",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-010",
+      "name": "Trương Liêu",
+      "faction": "Ngụy",
+      "age": 36,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-bd3a03e7-edeb-42fb-b346-494ff8215442",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Trương Liêu as a clearly adult woman age 36, mature and unmistakably grown, with focused mature face, sharp grey eyes, calm confident expression; long dark ponytail tied with red-gold cord. Preserve Wei identity and signature cues: black, crimson and steel, long crescent spear and wolf emblem. Sensual luxury oriental fashion editorial outfit: black satin corset with opaque coverage, light steel shoulder guard, bare collarbones, sheer crimson sash, high slit over opaque shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: relaxed seated pose on a lacquered railing, spear laid beside her, looking directly at viewer. Refined backdrop: night palace terrace overlooking a distant city. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-010-female-zhang-liao-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2753865,
+          "runtimeSizeBytes": 342626,
+          "sourceSha256": "91a9bf4ef371ae2b6b2e294d91aac4f207d591f23a9d52b33ee71d3cbf7c4d67",
+          "runtimeSha256": "6bb264c09eab349741474be7672648e0dd2ee784cdf3cb200754983f8ca98fae",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-011",
+      "name": "Tuân Vực",
+      "faction": "Ngụy",
+      "age": 37,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-759319b4-527c-40ed-848d-444a57cdc260",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Tuân Vực as a clearly adult woman age 37, mature and unmistakably grown, with scholarly mature face, bright brown eyes and gentle knowing smile; dark hair in a neat half-up style with jade comb. Preserve Wei identity and signature cues: ivory, pale teal and bronze, horsehair fan and bamboo memorial. Sensual luxury oriental fashion editorial outfit: elegant ivory silk corset gown with opaque lining, off-shoulder teal chiffon, open back and tasteful high slit; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: sitting at a chess table with one leg crossed, fanning herself while studying the viewer. Refined backdrop: softly lit strategist's study with lattice windows. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-011-female-xun-yu-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2772979,
+          "runtimeSizeBytes": 342594,
+          "sourceSha256": "60dc901874de2c3be878e8c9f7afc8f11a259bcb614c71c83a78081f8fc8b7ec",
+          "runtimeSha256": "5a3fde93dfbe04ac242d0ffbe3b566df185965ae93eb3b14552823488b557c46",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    },
+    {
+      "heroId": "wiki-mobile-hero-012",
+      "name": "Hạ Hầu Uyên",
+      "faction": "Ngụy",
+      "age": 35,
+      "status": "STAGED_PARTIAL_WAITING_FOR_REMAINING_ART",
+      "assets": {
+        "character": {
+          "kind": "character",
+          "generationOutputId": "exec-e04632b5-1d41-497b-a080-b274b073074f",
+          "promptVersion": "NL_CHARACTER_ART_V5_BOLD_SHEER_BATCH_3",
+          "promptRecordStatus": "VERBATIM",
+          "prompt": "Premium semi-realistic Chinese fantasy game illustration, high-end Asian game CG, vertical 2:3 full-body character art. Depict Hạ Hầu Uyên as a clearly adult woman age 35, mature and unmistakably grown, with decisive mature face, bright pale-blue eyes and lively smile; long dark hair tied with silver-blue ribbon. Preserve Wei identity and signature cues: midnight blue, silver and pale jade, signature bow and lightning-shaped arrow fletching. Sensual luxury oriental fashion editorial outfit: silver-blue fitted corset with opaque coverage, light shoulder armor, open shoulders, translucent cape and slit skirt over shorts; all intimate areas remain covered by opaque lining. Relaxed asymmetric pose: leaning beside a moonlit archery stand, bow in one hand, other hand brushing hair back. Refined backdrop: palace roof garden under a clear blue night. Soft cinematic natural skin lighting, detailed expressive eyes, polished silk and chiffon, distinctive face and silhouette, whole figure visible and fills 80% of frame. Elegant adult glamour; one woman only. No text, watermark, logo, UI, nudity, exposed nipples/genitals or explicit sexual activity; no photorealistic camera, plastic 3D or chibi.",
+          "provider": "OpenAI ImageGen",
+          "referenceAsset": null,
+          "targetResolution": "2:3 vertical full-body character illustration",
+          "actualResolution": [
+            1024,
+            1536
+          ],
+          "sourcePng": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.png",
+          "runtimeWebp": "assets/ngoalong/nl_v1/portraits/staging/art-b3/wiki-mobile-hero-012-female-xiahou-yuan-v5-character.webp",
+          "resolution": [
+            1024,
+            1536
+          ],
+          "sourceSizeBytes": 2920932,
+          "runtimeSizeBytes": 387908,
+          "sourceSha256": "8087f478c3e244bee78c92005b5d6cb4f8163c6a245e34db9955e2c97907571e",
+          "runtimeSha256": "337731ae86ff90059f4784d5a93d4c8f00b1953d7fccfa38555a540340504dd5",
+          "image_created": true,
+          "file_exported": true,
+          "asset_qc_pass": true,
+          "integrated_in_game": false,
+          "owner_review": "PENDING"
+        }
+      },
+      "missingKinds": [
+        "portrait",
+        "splash"
+      ]
+    }
+  ],
+  "contactSheets": [
+    "qa/nl-art-b3-character-contact.jpg",
+    "qa/nl-art-b3-recovered-contact.jpg"
+  ],
+  "ownerReview": "PENDING",
+  "integratedInGame": false
+}
