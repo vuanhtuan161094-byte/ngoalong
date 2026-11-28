@@ -254,3 +254,44 @@
 #app #view .nl-hero-troop-stats div{display:flex;justify-content:space-between;background:#ffffff0a;padding:6px;border-radius:6px;font-size:12px}
 #app #view .nl-hero-troop-lock{color:#eeb785}
 @media(max-width:650px){#app #view .nl-hero-troop-picker p,#app #view .nl-hero-troop-picker select,#app #view .nl-hero-troop-stats div{font-size:10px}#app #view .nl-hero-troop-summary img{width:30px;height:30px}}
+
+/* Mobile-inspired hierarchy: a narrow roster, compact contextual menu, legible scene. */
+@media(min-width:651px){
+ #app #view .nlh-root{grid-template-columns:minmax(98px,clamp(112px,13vw,168px)) minmax(0,1fr) minmax(104px,clamp(112px,10vw,132px));gap:8px}
+ #app #view .nlh-main{grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:8px}
+ #app #view .nlh-toolbar{padding:3px 2px;gap:2px;justify-content:flex-start}
+ #app #view .nlh-system-button{grid-template-columns:18px minmax(0,1fr);min-height:31px;padding:4px 5px;gap:4px;font-size:11px}
+ #app #view .nlh-system-no{width:16px;height:16px}
+ #app #view .nlh-toolbar-title{font-size:10px;padding:5px 0}
+ #app #view .nlh-roster-head{padding:7px 5px;gap:4px}
+ #app #view .nlh-roster-head strong{font-size:11px;letter-spacing:0}
+ #app #view .nlh-roster-head small{font-size:10px}
+ #app #view .nlh-roster-grid{gap:5px;padding:5px}
+ #app #view .nlh-portrait-card{height:clamp(54px,10vh,81px)}
+ #app #view .nlh-portrait-card b{font-size:10px}
+ #app #view .nlh-profile{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;justify-content:stretch;background:#101c28!important}
+ #app #view .nlh-profile .nlh-hero-art{position:relative!important;inset:auto;min-height:0;grid-row:1;height:100%}
+ #app #view .nlh-profile .nlh-character{height:100%;object-fit:contain;object-position:center 20%}
+ #app #view .nlh-profile .nlh-profile-info{position:relative;grid-row:2;gap:5px;padding:9px 10px!important;background:#14212e!important;min-height:0}
+ #app #view .nlh-profile-info .nlh-name-plate h2{font-size:22px;line-height:1.05;margin:2px 0}
+ #app #view .nlh-profile-info .nlh-stat{padding:3px 5px}
+ #app #view .nlh-profile-info .nlh-stat b{font-size:12px}
+ #app #view .nlh-profile-actions .nlh-button{min-height:27px;padding:4px}
+ #app #view .nlh-showcase .nlh-stage-heading{padding:32px 12px 10px}
+}
+#app #view .nlh-detail{background:#172532!important}
+#app #view .nlh-main-body{padding:10px!important}
+#app #view .nlh-main-body .nlh-section-head{font-size:14px;margin-bottom:8px!important}
+#app #view .nlh-main-body .nlh-section-title{font-size:16px;margin:6px 0}
+#app #view .nlh-main-body .nlh-feature-panel{padding:8px;margin:6px 0}
+#app #view .nlh-main-body .nlh-copy{line-height:1.45;font-size:12px}
+#app #view .nlh-material-drawer{margin:8px 0;color:#ccd6e2;font-size:11px}
+#app #view .nlh-material-drawer summary{cursor:pointer;padding:5px;background:#233341;border-radius:5px}
+#app #view .nlh-profile .nlh-hero-art .nlh-grade-badge,#app #view .nlh-profile .nlh-art-tabs{background:#13202edb!important;z-index:6}
+@media(max-width:650px){
+ #app #view .nlh-root{grid-template-columns:65px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 81px;gap:4px}
+ #app #view .nlh-toolbar{grid-template-rows:12px repeat(3,minmax(0,1fr));gap:1px;padding:2px}
+ #app #view .nlh-system-button{min-height:0;padding:1px 2px;font-size:8px}
+ #app #view .nlh-profile-info{background:linear-gradient(0deg,#101722 76%,#101722e0 88%,transparent)!important}
+ #app #view .nlh-main-body .nlh-copy{font-size:10px}
+}

@@ -41,3 +41,6 @@ Baseline cab43fa6. Mobile-first product authority, one offline game, Save v5, na
 | Settings | audio/save/export/import, no lost state | open |
 | Combat | native unit/skill/effect/morale/AI/settlement/replay | regression red |
 No new systems, art or unnecessary balance passes until UI -> state -> combat path audited. Prioritize P0 correctness, then remove duplicated routes while preserving underlying data. No test bypass.
+
+## UI hierarchy correction
+Owner rejected current presentation: oversized persistent navigation, repeated headings, stat text on full-body art, inventory cards stretched to full screen. Rechecked actual cab43fa6 screenshots and owner 1/6 and 4/6 reference (user benchmark, not independently verified official client). Changes: compact desktop dock; 12 contextual tabs narrowed; hero art separated from readable stat panel; native equipment slots and owned-inventory controls displayed together, paginated using existing controls; hide no gameplay condition, keep existing Group04 and Save routes. ART HOLD. This is a code change, not visual acceptance. New screenshots/QA pending.

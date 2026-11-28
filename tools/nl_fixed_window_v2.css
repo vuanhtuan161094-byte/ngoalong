@@ -185,3 +185,42 @@ body{background:#0a1417!important}
 
 /* Mobile resource HUD: reserve both complete resource rows. */
 @media(max-width:650px){#app>.topbar{height:122px!important;min-height:122px!important;max-height:122px!important;flex-basis:122px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:32px minmax(0,1fr)!important;padding:4px 6px!important;gap:3px!important}#app>.topbar .resources{grid-area:2/1/3/3!important;height:100%!important;min-height:0!important;grid-template-rows:repeat(2,minmax(0,1fr))!important}#app>.topbar .resources .res{height:100%!important;min-height:0!important;max-height:none!important;box-sizing:border-box!important;padding:3px 4px!important}#app>.topbar .resources .res span{line-height:1!important;font-size:9px!important}#app>.topbar .resources .res b{line-height:1.15!important;font-size:12px!important}#app #view .city-visual{height:clamp(230px,calc(100dvh - 375px),470px)!important}}
+
+/* Functional screen polish: compact chrome, not fifteen oversized buttons. */
+@media(min-width:651px){
+ #app>.shell{grid-template-rows:minmax(0,1fr) 43px!important}
+ #app>.shell>.sidebar{padding:2px 7px!important;gap:3px!important}
+ #app>.shell>.sidebar .nav{height:38px!important;min-height:38px!important;gap:1px!important;font-size:10px!important;line-height:1.05!important}
+ #app>.shell>.sidebar .nav .ico{width:17px!important;height:17px!important;flex:0 0 17px!important}
+ #app>.shell>.sidebar .nav .nl-nav-icon{width:17px!important;height:17px!important}
+ #app>.topbar{height:46px!important;min-height:46px!important;max-height:46px!important;flex-basis:46px!important}
+ #app #nl-screen-toolbar{height:30px!important;flex-basis:30px!important;min-height:30px!important;margin:0 0 2px!important}
+ #app #nl-screen-toolbar .nl-screen-ctrl button,#app #nl-screen-toolbar .nl-screen-ctrl select{min-height:25px!important;padding:3px 6px!important}
+}
+#app[data-nl-screen="heroes"] #nl-screen-toolbar .nl-screen-caption,#app[data-nl-screen="equipment"] #nl-screen-toolbar .nl-screen-caption{visibility:hidden}
+#app #nl-screen-toolbar.nl-single-page .nl-screen-ctrl{opacity:.45}
+#app[data-nl-screen="equipment"] #view .nl-equipment-workspace{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:10px;min-height:0;max-height:calc(100% - 40px);align-items:start}
+#app #view .nl-equipment-workspace>.panel{padding:12px!important}
+#app #view .nl-equipment-workspace .equipment-slots{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+#app #view .nl-equipment-workspace .slot-item{min-width:0!important;min-height:68px!important;padding:7px 3px!important;background:#263b3e70!important;border:0!important;border-radius:7px!important}
+#app #view .nl-equipment-workspace .slot-item .feature-icon{width:30px!important;height:30px!important;font-size:17px!important;margin:0 auto 3px!important}
+#app #view .nl-equipment-workspace .slot-item b{font-size:12px!important}
+#app #view .nl-equipment-workspace .slot-item small{font-size:10px!important}
+#app #view .nl-equipment-inventory{min-width:0;min-height:0}
+#app #view .nl-equipment-inventory .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+#app #view .nl-equipment-inventory .feature-card{padding:8px!important;min-height:0!important}
+#app #view .nl-equipment-inventory .feature-card h3{font-size:13px!important;margin:0!important}
+#app #view .nl-equipment-inventory .feature-card p{font-size:11px!important;margin:6px 0!important}
+#app #view .nl-equipment-inventory .feature-card .feature-icon{width:34px!important;height:34px!important;font-size:19px!important}
+#app #view .nl-equipment-inventory .item-actions{gap:4px!important;flex-wrap:wrap!important}
+#app #view .nl-equipment-inventory .item-actions button{font-size:10px!important;padding:5px 7px!important;min-height:29px!important}
+@media(max-width:650px){
+ #app[data-nl-screen="equipment"] #view .nl-equipment-workspace{grid-template-columns:1fr;gap:5px;max-height:calc(100% - 28px);overflow:auto}
+ #app #view .nl-equipment-workspace>.panel{padding:7px!important}
+ #app #view .nl-equipment-workspace .equipment-slots{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ #app #view .nl-equipment-workspace .slot-item{min-height:52px!important;padding:4px 1px!important}
+ #app #view .nl-equipment-workspace .slot-item .feature-icon{width:20px!important;height:20px!important;font-size:12px!important}
+ #app #view .nl-equipment-workspace .slot-item b{font-size:10px!important}
+ #app #view .nl-equipment-workspace .slot-item small{font-size:8px!important}
+ #app #view .nl-equipment-inventory .feature-grid{grid-template-columns:1fr!important}
+}

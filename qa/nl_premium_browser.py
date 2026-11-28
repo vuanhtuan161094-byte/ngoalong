@@ -19,6 +19,9 @@ with sync_playwright() as p:
             page.wait_for_timeout(300)
             assert page.locator(".nlh-main-body").count()==1
             assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
+            if width>650:
+                assert page.evaluate("document.querySelector('#sidebar').getBoundingClientRect().height<=45")
+                assert page.evaluate("document.querySelector('.nlh-toolbar').getBoundingClientRect().width<=145")
             if tab=="troops":
                 # Exercise the actual selected-hero control instead of merely checking a screenshot.
                 owner=page.locator("[data-hero-troop-owner]").get_attribute("data-hero-troop-owner")

@@ -30,6 +30,12 @@
  }
  function addPageForRoot(root,tab){
    const narrow=viewportNarrow();
+   if(root.classList.contains('nl-equipment-workspace')){
+     const inventory=root.querySelector('.feature-grid'),items=inventory?children(inventory):[];
+     const size=narrow?3:4;
+     if(items.length<=size){pushPage(root,'Trang bị và kho');return;}
+     makeChunks(root,inventory,items,size,'Trang bị và kho');return;
+   }
    const recruitList=root.matches('[data-nla-recruit-panel]')
      ?root.querySelector('.nl-a-hero-list')
      :root.querySelector('[data-nla-recruit-panel] .nl-a-hero-list');
@@ -100,6 +106,22 @@
      title.textContent=(nav()?.getAttribute('title')||nav()?.textContent||'Thành Trì').replace(/\s+/g,' ').trim();
      bar.querySelector('#nl-screen-caption').textContent=tab==='formation'&&viewportNarrow()?'Chọn võ tướng → đặt ô trận đồ':tab==='city'?'Chọn công trình để quản lý':'Chọn mục chức năng';
      let roots=children(view);const head=roots.find(el=>el.classList.contains('head'));
+     // Compose the actual legacy slot and owned-item controls into one workbench.
+     // Existing Group04 shop/consumable pages and their ledger remain untouched.
+     if(tab==='equipment'&&!view.querySelector(':scope > .nl-equipment-workspace')){
+       const slotPanel=roots.find(el=>el.querySelector('.equipment-slots'));
+       const inventory=roots.find(el=>el.classList.contains('feature-grid')&&el.querySelector('[data-equip]'));
+       if(slotPanel&&inventory&&slotPanel!==inventory){
+         const workspace=document.createElement('section');workspace.className='nl-equipment-workspace';
+         const right=document.createElement('div');right.className='nl-equipment-inventory';
+         const label=inventory.previousElementSibling;
+         view.insertBefore(workspace,slotPanel);
+         workspace.appendChild(slotPanel);
+         if(label?.classList.contains('section-break'))right.appendChild(label);
+         else{const title=document.createElement('h3');title.textContent='Kho trang bị sở hữu';right.appendChild(title);}
+         right.appendChild(inventory);workspace.appendChild(right);
+       }
+     }
      // Make the city scene the actual first screen, not an isolated text fragment.
      if(tab==='city'){
        const cityRoot=view.querySelector('.city-visual')?.closest('.grid-2');
@@ -180,12 +202,13 @@
    const roots=children(view),head=roots.find(el=>el.classList.contains('head'));
    for(const root of roots)if(root!==head&&root!==p.root&&root!==p.preLabel)root.classList.add(hidden);
    for(const pick of p.choices){for(const item of pick.items)if(!pick.allowed.includes(item))item.classList.add(hidden)}
-   count.textContent=`${idx+1}/${pages.length}`;chooser.value=String(idx);chooser.title=p.label;prev.disabled=idx===0;next.disabled=idx===pages.length-1;
+   bar.classList.toggle('nl-single-page',pages.length===1);count.textContent=`${idx+1}/${pages.length}`;chooser.value=String(idx);chooser.title=p.label;prev.disabled=idx===0;next.disabled=idx===pages.length-1;
    // Fit a complete semantic component, never break a battle grid or hide all its cells.
    const budget=Math.max(100,view.clientHeight-(head?head.getBoundingClientRect().height+12:0));
    for(const root of [p.root]){
      if(!root)continue;
      const fullHeight=root.getBoundingClientRect().height;
+     if(root.matches('.nlh-root,.nl-equipment-workspace'))continue;
      if(fullHeight>budget+8){const scale=Math.max(.62,Math.min(1,budget/fullHeight));root.classList.add('nl-pane-scaling');root.style.transform='scale('+scale+')';root.style.width=(100/scale)+'%';}
    }
    view.scrollTop=0;
