@@ -14,3 +14,6 @@ Owner scope: original game art, keep One Game/Save v5/P2 gameplay, no merge, no 
 | Pipeline | OPEN | Stable IDs, masters, optimized WebP, checksums, offline runtime and screenshots |
 
 Do not mark artwork accepted without inspecting actual game output. Existing images are retained until replacements are integrated and verified.
+
+## Fast track
+Reuse 399 equipment + 90 hero gear catalogue records, exact seal icons, and existing source scenery. Weapon family art is explicitly labelled; unmatched art stays missing. Destiny category art is representative, not exact. Tower and arena use existing scenic textures as interim improvements. All runtime artwork requires exact-SHA visual acceptance. No new source-client exploration or gameplay changes.

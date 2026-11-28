@@ -3,6 +3,7 @@
 'use strict';
 const env=__NL_WLY2_ENV_DATA__;
 window.__NL_PREMIUM_ICONS__=Object.freeze(env.mobileIcons||{});
+window.__NL_PREMIUM_SCENES__=Object.freeze({city:env.castle||'',battle:env.battle||'',...(env.presentation||{})});
 const sourceCity=Boolean(env.castle);
 const image=env.castle||__NL_CITY_ART_DATA_URL__;
 if(typeof image!=='string'||!image.startsWith('data:image/webp;base64,'))
@@ -104,6 +105,13 @@ if(sourceCity){
    @media(max-width:600px){#app #view .city-visual{height:320px!important}}
   `;
  }
+}
+if(env.presentation){
+ const p=env.presentation;
+ style.textContent+=`
+ #app[data-nl-screen="tower"] #view .tower-art{background:linear-gradient(#11182720,#111827a0),url("${p.towerBackground}") center/cover!important;border:0!important}
+ #app[data-nl-screen="arena"] #view .arena-emblem{background:linear-gradient(#20202a15,#10162180),url("${p.arenaBackground}") center/cover!important;border:0!important;text-shadow:0 2px 6px #000}
+ `;
 }
 document.head.appendChild(style);
 const previousCity=renderCity;

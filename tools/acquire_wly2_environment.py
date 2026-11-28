@@ -84,6 +84,7 @@ def main():
     ui_names.update({"resourceSilver":"03_0002.png","resourceGrain":"03_0007.png","resourcePrestige":"03_0004.png","resourceMerit":"03_0001.png","resourceOrder":"03_0005.png","resourceGold":"03_0003.png","resourceScore":"03_0014.png","resourceToken":"03_0013.png","navIdle":"g02_000080.png","selected":"g01_0025.png","frame":"g01_0039_1.png","header":"g01_000023.png","divider":"g01_000043.png","panelSoft":"g01_0036.png"})
     pack["ui"]={k:image_url(root/"common/ui"/v,(640,320)) for k,v in ui_names.items()}
     pack["battleAlternates"]=[image_url(root/"bg/battle"/v,(1400,800)) for v in ("BF_007.png","ZDGC0001.jpg")]
+    pack["presentation"]={"tower":image_url(root/"main_city/s03_0007023.png",(300,300)),"towerBackground":image_url(root/"bg/battle/ZDGC0001.jpg",(1200,800)),"arenaBackground":image_url(root/"bg/battle/BF_007.png",(1200,800))}
     pack["buildingAlternates"]={v:image_url(root/"building/maincity"/v,(384,384)) for v in ("nt2.png","xby2.png","mj2.png","dzs2.png","phb.png","sr.png")}
     # Complete source UI catalogue is available offline for subsequent semantic bindings.
     pack["uiLibrary"]={p.name:image_url(p,(512,512)) for p in sorted((root/"common/ui").glob("*.png"))}

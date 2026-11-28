@@ -24,6 +24,15 @@ def pack_mobile_icons(cache):
         for appearance in force.get("appearances",[]):
             add("elite",appearance)
             for skill in appearance.get("skills",[]):add("skill",skill)
+    gear_meta={}
+    for filename,kind in (("equip-detail.json","equipment"),("tuongkhi-detail.json","heroGear")):
+        for row in load(filename)["items"]:
+            if not isinstance(row,dict):continue
+            key=str(row.get("id",""))
+            if not key:continue
+            add(kind,dict(row,name=key))
+            if key in records.get(kind,{}):
+                gear_meta.setdefault(kind,{})[key]={k:row.get(k) for k in ("name","typeName","quality","qualityName")}
     names=sorted({icon for rows in records.values() for icon in rows.values()})
     def pull(icon):
         path=cache/icon
@@ -49,4 +58,5 @@ def pack_mobile_icons(cache):
     report={"source":CDN,"requested":len(names),"downloaded":len(got),"bindings":{k:len(v) for k,v in result.items()},"missing":failures,"hashes":{k:v["sha256"] for k,v in got.items()}}
     (cache/"report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
     print("NL premium source icons:",json.dumps({k:v for k,v in report.items() if k not in ("hashes","missing")},ensure_ascii=False))
+    result["gearMeta"]=gear_meta
     return result

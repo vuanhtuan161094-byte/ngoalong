@@ -225,3 +225,18 @@
 #app #view .nlh-detail .nlc-elite-detail,#app #view .nlh-detail .nlc-panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
 @media(min-width:651px) and (min-aspect-ratio:4/3){.nl-premium-battle .battle-canvas-wrap canvas{object-fit:cover!important}}
 @media(max-width:650px){#app #view .nlh-detail{flex:1 1 auto;min-height:0}#app #view .nlh-detail-pager{flex-basis:25px;gap:8px;padding:2px;font-size:9px}#app #view .nlh-detail-pager button{width:21px;height:21px;font-size:15px}#app #view .nlh-preview-formation{gap:3px}}
+
+/* Asset fast track: catalogue art and source backgrounds. */
+#app #view .nlh-showcase:has(.nlh-fast-relic):before,#app #view .nlh-showcase:has(.nlh-destiny-orbit):before,#app #view .nlh-showcase:has(.nlh-gear-art-grid):before{opacity:.48;filter:blur(2px)}
+#app #view .nlh-fast-relic{left:12%;top:9%;width:76%;height:64%;object-fit:contain;border-radius:16px;filter:drop-shadow(0 10px 28px #000a)}
+#app #view .nlh-art-caption{position:absolute;left:12px;top:12px;color:#f1d7a1;background:#141c27b3;border-radius:16px;padding:5px 10px;font-size:11px}
+#app #view .nlh-art-unavailable{position:absolute;inset:15% 10% 25%;display:grid;place-items:center;text-align:center;color:#d0d4dd;font-size:13px}
+#app #view .nlh-destiny-orbit{position:absolute;inset:8% 7% 25%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-content:center;background:radial-gradient(ellipse,#72a1d245,transparent 70%);overflow:auto}
+#app #view .nlh-destiny-node{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:5px;color:#e8e8ff;font-size:11px;min-width:0;border-radius:14px}
+#app #view .nlh-destiny-node img{width:clamp(32px,6vw,82px);aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 0 9px #79bbff99)}
+#app #view .nlh-destiny-node.active{background:#326d9e44;box-shadow:inset 0 0 24px #84bff344}
+#app #view .nlh-gear-art-grid{position:absolute;inset:8% 6% 24%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-content:center}
+#app #view .nlh-gear-art-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:45px;background:#1724368f;border-radius:9px;padding:5px;font-size:10px;text-align:center}
+#app #view .nlh-gear-art-slot img{width:clamp(24px,5vw,64px);aspect-ratio:1;object-fit:contain;border-radius:7px}
+#app #view .nlh-gear-art-slot small{color:#c0c6d4;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:650px){#app #view .nlh-destiny-node{font-size:8px;padding:1px;gap:1px}#app #view .nlh-destiny-node img{width:24px}#app #view .nlh-gear-art-slot{font-size:7px;min-height:22px;padding:2px}#app #view .nlh-art-caption{font-size:7px;top:5px;left:5px;padding:3px}}
