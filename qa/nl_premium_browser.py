@@ -19,6 +19,22 @@ with sync_playwright() as p:
             page.wait_for_timeout(300)
             assert page.locator(".nlh-main-body").count()==1
             assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+2")
+            if tab=="troops":
+                # Exercise the actual selected-hero control instead of merely checking a screenshot.
+                owner=page.locator("[data-hero-troop-owner]").get_attribute("data-hero-troop-owner")
+                assert owner==page.evaluate("__NL_HERO_SYSTEMS_QA__.state().selectedHero")
+                assert page.locator("[data-hero-troop-preview] option").count()>0
+                assert page.locator(".nl-hero-troop-stats div").count()==6
+                candidate=page.evaluate("""(owner)=>Array.from(document.querySelectorAll('[data-hero-troop-preview] option')).map(o=>o.value).find(t=>__NL_CONTENT_C_QA__.mobileTroopCanSelect(owner,t))||null""",owner)
+                if candidate:
+                    before=page.evaluate("__P2_QA__.getGame().silver")
+                    page.locator("[data-hero-troop-preview]").select_option(candidate)
+                    page.locator("[data-hero-troop-confirm]").click()
+                    assert page.evaluate("(owner)=>__NL_CONTENT_C_QA__.mobileTroopAssigned(owner)?.id",owner)==candidate
+                    assert page.evaluate("(owner)=>__NL_HERO_SYSTEMS_QA__.unit(owner).nlMobileTroop?.id",owner)==candidate
+                    assert page.evaluate("__P2_QA__.getGame().silver")<=before
+                else:
+                    assert page.locator("[data-hero-troop-confirm]").is_disabled()
             if tab=="commander":assert page.locator('[data-nlc-panel="mobile-elite"]').count()==1
             page.screenshot(path=str(OUT/f"{width}-{tab}.png"))
             screens.append(f"{width}-{tab}")

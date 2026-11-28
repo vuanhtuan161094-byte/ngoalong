@@ -2794,6 +2794,40 @@ function mobileElitePanel(){
   '<h4>Vật liệu Tinh Nhuệ</h4>'+materialWallet+
   '<p class="tiny">Thời gian và chi phí nâng cấp, điều kiện Thành Chính, ngoại hình, hệ số và chữ kỹ năng được giữ từ Wiki. Giá mua vật liệu 12 Bạc/đơn vị, chế độ hệ số nước, một ngoại hình cho mỗi tướng và không gán trùng ngoại hình là SIMULATED. Hệ số và các hiệu ứng chính của 60 tuyến kỹ năng Tinh Nhuệ có adapter P2; hiệu ứng phụ và thời điểm còn một phần mô phỏng. Giải giáp từng ngoại hình hoàn trả đúng nguyên liệu có chứng từ; mặc định miễn phí hoặc thiếu lịch sử không được hoàn trả.</p></div>');
 }
+// Hero screen: explicitly bind to selected hero, not Barracks' separate heroId.
+const heroTroopPreview=new Map();
+function heroTroopPanel(id){
+ if(!owned(id))return '';
+ const active=mobileTroopAssigned(id);
+ const rows=MOBILE_TROOP_PLAYABLE.filter(t=>mobileHeroTroopAllowed(id,t.type)).sort((a,b)=>a.type-b.type||a.tier-b.tier||a.name.localeCompare(b.name,'vi'));
+ if(!rows.length)return '<p>Chưa có binh chủng tương thích.</p>';
+ const current=active||rows.find(t=>t.id===mobileTroopSourceId(game.troopModes?.[id]||HEROES[id]?.type));
+ const pick=rows.find(t=>t.id===heroTroopPreview.get(id))||current||rows.find(t=>mobileTroopCanSelect(id,t.id))||rows[0];
+ const q=mobileTroopQuote(pick),on=active?.id===pick.id,st=pick.stats,allowed=mobileTroopCanSelect(id,pick.id);
+ const reasons=[];
+ if((game.buildings?.barracks||0)<q.barracks)reasons.push('Doanh trại cấp '+q.barracks);
+ if(state().mobileCommanderLevel<q.commander)reasons.push('Chỉ huy cấp '+q.commander);
+ if(game.silver<q.silver)reasons.push('Thiếu '+fmt(q.silver-game.silver)+' Bạc');
+ if(nlAState().merit<q.merit)reasons.push('Thiếu '+fmt(q.merit-nlAState().merit)+' Chiến công');
+ if(battle)reasons.push('Đang chiến đấu');
+ const icon=window.__NL_PREMIUM_ICONS__?.troop?.[pick.name];
+ const opt=rows.map(t=>'<option value="'+esc(t.id)+'" '+(t.id===pick.id?'selected':'')+'>'+esc(t.name)+' · Bậc '+t.tier+(active?.id===t.id?' · Đang dùng':mobileTroopCanSelect(id,t.id)?'':' · Khóa')+'</option>').join('');
+ const stats=[['V.C',st.strengthAtk],['C.C',st.leaderAtk],['M.C',st.intellectAtk],['V.P',st.strengthDef],['C.P',st.leaderDef],['M.P',st.intellectDef]];
+ return '<section class="nl-hero-troop-picker" data-hero-troop-owner="'+esc(id)+'"><div class="nlh-section-head"><span>Binh chủng · '+esc(HEROES[id]?.name||id)+'</span><span>'+rows.length+' lựa chọn</span></div><p>Đang dùng: <b>'+esc(active?.name||current?.name||'Binh chủng hiện tại')+'</b></p><label>Chọn binh chủng<select data-hero-troop-preview="'+esc(id)+'">'+opt+'</select></label><div class="nl-hero-troop-summary">'+(icon?'<img src="'+icon+'" alt="">':'')+'<div><b>'+esc(pick.name)+'</b><small>'+esc(pick.typeName)+' · Bậc '+pick.tier+'</small></div></div><div class="nl-hero-troop-stats">'+stats.map(([k,v])=>'<div><small>'+k+'</small><b>'+esc(String(v))+'</b></div>').join('')+'</div><p>'+esc(pick.desc||'')+'</p><p>Chi phí: '+fmt(q.silver)+' Bạc · '+fmt(q.merit)+' Chiến công</p>'+(reasons.length?'<p class="nl-hero-troop-lock">'+esc(reasons.join(' · '))+'</p>':'')+'<button class="nlh-button" data-hero-troop-confirm="'+esc(id)+'" data-hero-troop-id="'+esc(pick.id)+'" '+(!allowed?'disabled':'')+'>'+(on?'Đang dùng':allowed?'Chuyển binh chủng':'Chưa đủ điều kiện')+'</button><small class="nlh-source-note">Điều kiện và phí chuyển quân là quy tắc mô phỏng của game offline.</small></section>';
+}
+window.__NL_HERO_TROOP_VIEW__=heroTroopPanel;
+document.addEventListener('change',e=>{
+ const el=e.target;if(!el.matches?.('[data-hero-troop-preview]'))return;
+ const id=el.dataset.heroTroopPreview,t=MOBILE_TROOP_SELECTABLE.get(el.value);
+ if(id!==game.heroDevelopment?.selectedHero||!owned(id)||!t||!mobileHeroTroopAllowed(id,t.type))return;
+ heroTroopPreview.set(id,t.id);render();
+});
+document.addEventListener('click',e=>{
+ const el=e.target.closest?.('[data-hero-troop-confirm]');if(!el||el.disabled)return;
+ const id=el.dataset.heroTroopConfirm,tid=el.dataset.heroTroopId;
+ if(id!==game.heroDevelopment?.selectedHero)return;
+ if(mobileTroopChoose(id,tid))heroTroopPreview.set(id,tid);
+});
 window.__NL_PREMIUM_ELITE_VIEW__=mobileElitePanel;
 function troopPanel(){if(!owned(heroId))heroId=game.roster[0]||'';return pane('troops','Quân WEB cấp 4 · '+tier4.size,'<p>Nhánh WEB 2011 · yêu cầu 10 lần chuyển sinh, Tháp 40, Doanh Trại 4 · 300 Tướng Hồn + 5.000 Bạc.</p><select data-nlc-hero>'+game.roster.map(id=>'<option value="'+esc(id)+'" '+(id===heroId?'selected':'')+'>'+esc(HEROES[id]?.name||id)+'</option>').join('')+'</select>'+pages(NL_C_TIER4,unitPage,t=>row(t.name,t.sourceName+' · '+t.familyName,btn('tier4',t.id,nlwB4Active(heroId)?.id===t.id?'Đang dùng':'Chuyển quân',!!battle||!owned(heroId)||floor()<40||nat(game.nlClassicWorldA4?.rebirth?.[heroId])<10||game.buildings.barracks<4||state().soul<300||game.silver<5000)),'unit-page'));}
 function towerPanel(){

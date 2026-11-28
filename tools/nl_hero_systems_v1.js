@@ -492,6 +492,7 @@ function nlhSystemBody(system,id){
  const controls=[1,5,10].map(n=>'<button class="nlh-button" data-nlh-action="trainBatch" data-nlh-count="'+n+'" '+(d.level>=q.cap||battle||!nlhCanPay(q.cost,{})?'disabled':'')+'>Luyện ×'+n+'</button>').join(' ');
  return '<div class="nlh-section-head"><span>Huấn Luyện · '+hsEsc(h.name)+'</span><span class="nlh-status">Cấp '+d.level+'/'+q.cap+'</span></div><h3 class="nlh-section-title">Tu luyện kinh nghiệm</h3>'+nlhProgress(xp,need,d.level>=q.cap?'Đã đạt giới hạn':'Kinh nghiệm tới cấp '+(d.level+1),d.level>=q.cap?100:xp/need*100)+'<p class="nlh-copy">Mỗi lượt +'+q.xp+' XP · '+hsEsc(nlhCostText(q.cost,{}))+' · tự dừng khi đủ cấp hoặc thiếu tài nguyên.</p><div class="nlh-action-row">'+controls+'</div><p class="nlh-source-note">Đột phá và chuyển sinh tại Dưỡng tướng trong Thành trì để nâng giới hạn. Sử dụng chung hàm addExp và Save v5; thông số SIMULATED.</p><button class="nlh-button secondary" data-tab="city">Mở Thành trì</button>';
  }
+ if(system==='troops'&&typeof window.__NL_HERO_TROOP_VIEW__==='function')return window.__NL_HERO_TROOP_VIEW__(id);
  if(system==='troops'){const troop=nlhCurrentTroop(id);return '<div class="nlh-section-head"><span>Binh Chủng · '+hsEsc(h.name)+'</span><span class="nlh-status">Bậc '+troop.tier+'</span></div><h3 class="nlh-section-title">'+hsEsc(troop.name)+'</h3><p class="nlh-copy">'+hsEsc(troop.description||'')+' · '+hsEsc(troop.kind)+'. Một võ tướng vẫn là một đơn vị logic; lính đi theo chỉ là sprite trình diễn.</p><div class="nlh-facts"><div class="nlh-fact"><small>CẤP DOANH TRẠI</small><b>'+nlhFmt(game.buildings?.barracks||1)+'</b></div><div class="nlh-fact"><small>QUÂN SỐ TƯỚNG</small><b>'+nlhFmt(d.troops)+'</b></div></div><p class="nlh-copy">Kho tham chiếu: 55 quân chủng Ngọa Long WEB; 25 ID và 18 nhánh tiến hóa của dự án. Hệ số chiến đấu chưa xác minh đều gắn SIMULATED.</p><button class="nlh-button" data-tab="barracks">Mở Doanh Trại · chọn quân chủng</button>';}
  if(system==='commander')return (typeof window.__NL_PREMIUM_ELITE_VIEW__==='function'?window.__NL_PREMIUM_ELITE_VIEW__():'')+'<div class="nlh-section-head"><span>Chỉ huy cá nhân · mô phỏng · '+hsEsc(h.name)+'</span><span class="nlh-status">'+hsEsc(nlhGateText(system))+'</span></div>'+nlhQuotePanel(system,id,dev.commanderLevel,skill.maxLevel,'Mỗi cấp: +1,2% Công/Thủ và +1 Tốc. SIMULATED.')+'<p class="nlh-source-note">Cần vượt 6 ải, Binh Thư Thống Soái và tài nguyên. Hệ này là thiết kế mới của dự án, không gán cho nguồn chính thức.</p>';
  if(system==='specialWeapon'&&nlhSourceWeapon(id))return nlhSourcePanel(id,'weapon');
@@ -564,6 +565,7 @@ function bindPremiumDetail(){
 function schedulePremiumDetail(){if(detailPending||typeof requestAnimationFrame!=='function')return;detailPending=true;requestAnimationFrame(bindPremiumDetail);}
 const premiumView=document.getElementById('view');if(premiumView&&typeof MutationObserver==='function'){new MutationObserver(schedulePremiumDetail).observe(premiumView,{childList:true});if(typeof window.addEventListener==='function')window.addEventListener('resize',schedulePremiumDetail);schedulePremiumDetail();}
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlh-page]');if(!b||b.disabled)return;const body=b.closest('.nlh-detail')?.querySelector('.nlh-main-body');if(body){body.scrollTop+=(b.dataset.nlhPage==='next'?1:-1)*Math.max(1,body.clientHeight-24);detailScroll=body.scrollTop;schedulePremiumDetail();}});
+if(typeof renderBattleShell==='function'){
 const premiumPriorBattleShell=renderBattleShell;
 renderBattleShell=function(){
  const out=premiumPriorBattleShell.apply(this,arguments);
@@ -575,6 +577,7 @@ renderBattleShell=function(){
  if(header&&!header.querySelector('.nl-premium-versus')){const banner=document.createElement('div');banner.className='nl-premium-versus';banner.innerHTML='<span>'+hsEsc(left)+'</span><b>VS</b><span>'+hsEsc(right)+'</span>';header.prepend(banner);}
  return out;
 };
+}
 const NLH_NAV_ICON_PATH={
  city:'<path d="M3 10h18v10H3zM2 10l10-7 10 7M7 13v3m5-3v3m5-3v3M8 20v-4h8v4"/>',
  formation:'<path d="M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"/>',

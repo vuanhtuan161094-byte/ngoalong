@@ -240,3 +240,17 @@
 #app #view .nlh-gear-art-slot img{width:clamp(24px,5vw,64px);aspect-ratio:1;object-fit:contain;border-radius:7px}
 #app #view .nlh-gear-art-slot small{color:#c0c6d4;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:650px){#app #view .nlh-destiny-node{font-size:8px;padding:1px;gap:1px}#app #view .nlh-destiny-node img{width:24px}#app #view .nlh-gear-art-slot{font-size:7px;min-height:22px;padding:2px}#app #view .nlh-art-caption{font-size:7px;top:5px;left:5px;padding:3px}}
+
+/* Direct per-hero troop selection — compact, no duplicate character selector. */
+#app #view .nl-hero-troop-picker{display:flex;flex-direction:column;gap:6px;min-width:0}
+#app #view .nl-hero-troop-picker p{margin:0;font-size:12px;line-height:1.4}
+#app #view .nl-hero-troop-picker label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#c4cbd7}
+#app #view .nl-hero-troop-picker select{width:100%;min-width:0;background:#202c3b;color:#f5e5cf;border:0;border-radius:6px;padding:8px;font-size:13px}
+#app #view .nl-hero-troop-summary{display:flex;gap:8px;align-items:center;padding:4px 0}
+#app #view .nl-hero-troop-summary img{width:48px;height:48px;object-fit:contain}
+#app #view .nl-hero-troop-summary div{display:grid;gap:3px}
+#app #view .nl-hero-troop-summary small{color:#bdc8d7}
+#app #view .nl-hero-troop-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#app #view .nl-hero-troop-stats div{display:flex;justify-content:space-between;background:#ffffff0a;padding:6px;border-radius:6px;font-size:12px}
+#app #view .nl-hero-troop-lock{color:#eeb785}
+@media(max-width:650px){#app #view .nl-hero-troop-picker p,#app #view .nl-hero-troop-picker select,#app #view .nl-hero-troop-stats div{font-size:10px}#app #view .nl-hero-troop-summary img{width:30px;height:30px}}
