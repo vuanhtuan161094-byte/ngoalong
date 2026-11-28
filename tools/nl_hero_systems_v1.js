@@ -65,10 +65,12 @@ function nlhArt(id){return NL_HS_ART[id]||NL_HS_ART.default||{};}
 window.__NL_HERO_PORTRAIT__=id=>NL_HS_ART[id]?.portrait||NL_HS_ART[id]?.character||null;
 function bindNativeHeroPortraits(){
  const root=document.getElementById('view');if(!root)return;
- function mount(el,id){if(!el||!id)return;const src=window.__NL_HERO_PORTRAIT__(id);let im=el.querySelector(':scope > .nl-native-hero-portrait');if(!src){im?.remove();return;}if(!im){im=document.createElement('img');im.className='nl-native-hero-portrait';im.alt='';im.decoding='async';el.prepend(im);}if(im.dataset.heroId!==id){im.src=src;im.dataset.heroId=id;}}
+ function mount(el,id){if(!el)return;const src=id?window.__NL_HERO_PORTRAIT__(id):null;let im=el.querySelector(':scope > .nl-native-hero-portrait');if(!src){im?.remove();return;}if(!im){im=document.createElement('img');im.className='nl-native-hero-portrait';im.alt='';im.decoding='async';el.prepend(im);}if(im.dataset.heroId!==id){im.src=src;im.dataset.heroId=id;}}
  root.querySelectorAll('[data-nla-hero],[data-nla2-hero]').forEach(el=>mount(el,el.dataset.nlaHero||el.dataset.nla2Hero));
  root.querySelectorAll('.nlc-row').forEach(el=>{const b=el.querySelector('[data-nlc-action="recruit"]');if(b)mount(el,b.dataset.nlcId);});
- root.querySelectorAll('[data-nl207-select]').forEach(sel=>mount(sel.parentElement,sel.value));
+ root.querySelectorAll('[data-nl207-select],[data-nli-hero]').forEach(sel=>mount(sel.parentElement,sel.value));
+ root.querySelectorAll('.roster-list [data-choose-hero]').forEach(el=>mount(el,el.dataset.chooseHero));
+ root.querySelectorAll('.formation-board [data-slot]').forEach(el=>{const index=Number(el.dataset.slot);if(Number.isInteger(index)&&index>=0&&index<9)mount(el,game.slots[index]||null);});
 }
 let heroPortraitPending=false;function scheduleNativeHeroPortraits(){if(heroPortraitPending)return;heroPortraitPending=true;requestAnimationFrame(()=>{heroPortraitPending=false;bindNativeHeroPortraits();});}
 const heroPortraitView=document.getElementById('view');if(heroPortraitView&&typeof MutationObserver==='function'&&typeof requestAnimationFrame==='function'){new MutationObserver(scheduleNativeHeroPortraits).observe(heroPortraitView,{childList:true});document.addEventListener('change',scheduleNativeHeroPortraits,true);document.addEventListener('click',scheduleNativeHeroPortraits,true);scheduleNativeHeroPortraits();}
@@ -576,6 +578,21 @@ function bindPremiumDetail(){
 function schedulePremiumDetail(){if(detailPending||typeof requestAnimationFrame!=='function')return;detailPending=true;requestAnimationFrame(bindPremiumDetail);}
 const premiumView=document.getElementById('view');if(premiumView&&typeof MutationObserver==='function'){new MutationObserver(schedulePremiumDetail).observe(premiumView,{childList:true});if(typeof window.addEventListener==='function')window.addEventListener('resize',schedulePremiumDetail);schedulePremiumDetail();}
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-nlh-page]');if(!b||b.disabled)return;const body=b.closest('.nlh-detail')?.querySelector('.nlh-main-body');if(body){body.scrollTop+=(b.dataset.nlhPage==='next'?1:-1)*Math.max(1,body.clientHeight-24);detailScroll=body.scrollTop;schedulePremiumDetail();}});
+function bindBattleHeroPortraits(root){
+ const header=root.querySelector('.battle-head');if(!header)return;
+ let strip=header.querySelector('.nl-battle-hero-strip');if(!strip){strip=document.createElement('div');strip.className='nl-battle-hero-strip';header.append(strip);}
+ const rows=[battle.p||[],battle.e||[]];
+ const signature=JSON.stringify(rows.map(group=>group.map(u=>[u.id,u.name,u.slot])));
+ if(strip.dataset.signature===signature)return;strip.dataset.signature=signature;
+ strip.replaceChildren();
+ rows.forEach((group,index)=>{const side=document.createElement('div');side.className='nl-battle-hero-side '+(index?'enemy':'ally');
+ group.slice(0,5).forEach(u=>{const tile=document.createElement('div');tile.className='nl-battle-hero-tile';tile.dataset.heroId=String(u.id||'');tile.title=String(u.name||u.id||'');
+ const src=window.__NL_HERO_PORTRAIT__(u.id);
+ if(src){const img=document.createElement('img');img.src=src;img.alt='';img.decoding='async';tile.append(img);}
+ else{const fallback=document.createElement('div');fallback.className='nl-battle-hero-fallback';fallback.textContent=String(u.name||u.id||'?').slice(0,1);tile.append(fallback);}
+ const label=document.createElement('small');label.textContent=String(u.name||u.id||'');tile.append(label);side.append(tile);});strip.append(side);
+ });
+}
 if(typeof renderBattleShell==='function'){
 const premiumPriorBattleShell=renderBattleShell;
 renderBattleShell=function(){
@@ -586,6 +603,7 @@ renderBattleShell=function(){
  const left=NATIONS[game.nation]?.name||'Đồng minh',right=battle.mode==='arena'?'Đối thủ':'Quân địch';
  const header=root.querySelector('.battle-head');
  if(header&&!header.querySelector('.nl-premium-versus')){const banner=document.createElement('div');banner.className='nl-premium-versus';banner.innerHTML='<span>'+hsEsc(left)+'</span><b>VS</b><span>'+hsEsc(right)+'</span>';header.prepend(banner);}
+ bindBattleHeroPortraits(root);
  return out;
 };
 }
@@ -613,6 +631,6 @@ if(typeof renderSidebar==='function'){
  if(document.querySelector('#sidebar'))renderSidebar();
 }
 const nlhPriorHeroes=renderHeroes;renderHeroes=function(){return renderNlhHeroScreen();};
-if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,sourceModifiers:nlhSourceModifiers,sourceUpgrade:nlhSourceUpgrade,sourceEquip:nlhSourceEquip,sourceQuote:nlhSourceQuote,trainBatch:nlhTrainBatch,trainQuote:nlhTrainQuote,skillUpgrade:nlhSkillUpgrade,skillDescriptor:nlhSkillDescriptor,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
+if(window.__P2_ENABLE_QA__)window.__NL_HERO_SYSTEMS_QA__=Object.freeze({config:NL_HS,state:()=>structuredClone(nlhsState()),selectHero:nlhSelectHero,selectSystem:nlhSelectSystem,setArtMode:nlhSetArtMode,upgrade:nlhUpgrade,pickDestiny:nlhPickDestiny,stats:nlhHeroStats,combatGrowth:nlhCombatGrowth,sourceModifiers:nlhSourceModifiers,sourceUpgrade:nlhSourceUpgrade,sourceEquip:nlhSourceEquip,sourceQuote:nlhSourceQuote,trainBatch:nlhTrainBatch,trainQuote:nlhTrainQuote,skillUpgrade:nlhSkillUpgrade,skillDescriptor:nlhSkillDescriptor,ancientUpgrade:nlhAncientUpgrade,illusionChoose:nlhIllusionChoose,materialBuy:nlhMaterialBuy,unit:(id,slot=0,stage=1)=>p2Unit(id,'p',slot,stage),art:id=>({portrait:!!nlhArt(id).portrait,splash:!!nlhArt(id).splash,character:!!nlhArt(id).character}),artCoverage:()=>{const ids=Object.keys(HEROES).sort();return {total:ids.length,missingPortrait:ids.filter(id=>!NL_HS_ART[id]?.portrait).map(id=>({id,name:HEROES[id].name})),missingCharacter:ids.filter(id=>!NL_HS_ART[id]?.character).map(id=>({id,name:HEROES[id].name}))};},render:renderNlhHeroScreen,materials:()=>structuredClone(nlhsState().materials)});
 })();
 // === END NL-HERO-SYSTEMS-V1 ===

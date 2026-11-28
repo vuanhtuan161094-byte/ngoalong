@@ -276,6 +276,16 @@ def payload(private_wly2=None) -> str:
         art_refs[hid] = refs
     hero_art_packed = {"pool": art_pool, "refs": art_refs}
     print(f"NL premium hero art: {len(hero_art)} IDs, {len(art_pool)} unique assets")
+    # Same identity sources used by Content C (14 base + 207 + additions).
+    alpha = json.loads((ROOT / "data/ngoalong/alpha_content.json").read_text(encoding="utf-8"))
+    runtime_roster = {h["id"]: h.get("name", h["id"])
+                      for h in [*alpha["heroes"]["projectRoster"], *alpha["heroes"]["hero207Roster"], *content_c["heroes"]]}
+    missing_portrait = [{"id": hid, "name": name} for hid, name in sorted(runtime_roster.items()) if not hero_art.get(hid, {}).get("portrait")]
+    missing_character = [{"id": hid, "name": name} for hid, name in sorted(runtime_roster.items()) if not hero_art.get(hid, {}).get("character")]
+    unused_art_ids = sorted(set(hero_art) - set(runtime_roster))
+    print("NL HERO ART COVERAGE:", json.dumps({"runtimeIds":len(runtime_roster), "portraitCovered":len(runtime_roster)-len(missing_portrait),
+          "characterCovered":len(runtime_roster)-len(missing_character), "missingPortrait":missing_portrait,
+          "missingCharacter":missing_character,"unusedArtIds":unused_art_ids}, ensure_ascii=False))
     hero_systems = (TOOLS / "nl_hero_systems_v1.js").read_text(encoding="utf-8")
     hero_style = (TOOLS / "nl_hero_systems_v1.css").read_text(encoding="utf-8")
     placeholders = ("__NL_HERO_SYSTEM_CONFIG__", "__NL_HERO_ART__", "__NL_HERO_SYSTEM_STYLE__")

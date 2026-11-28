@@ -313,3 +313,16 @@
 #app #view .nl207-recruit>.nl-native-hero-portrait+select{min-width:0;flex:1}
 #app #view :has(>.nl-native-hero-portrait)>.nl-art-d-img,#app #view .nl207-recruit:has(>.nl-native-hero-portrait)>.nl-art-d-preview{display:none!important}
 @media(max-width:650px){#app #view .nl-native-hero-portrait{width:28px;height:28px;flex-basis:28px}#app #view .nl-a2-hero-row:has(>.nl-native-hero-portrait){grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) auto}}
+
+/* FA4 exact-ID art on equipment, formations, and battle identity strip. */
+#app #view .nli-owner-switch:has(>.nl-native-hero-portrait){display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#app #view .nli-owner-switch select{min-width:0;max-width:100%}
+#app #view .formation-board [data-slot]>.nl-native-hero-portrait,#app #view .roster-list [data-choose-hero]>.nl-native-hero-portrait{margin:0 auto 3px;width:clamp(24px,4vw,48px);height:clamp(24px,4vw,48px);flex:none}
+.nl-premium-battle .battle-head>.nl-battle-hero-strip{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;max-width:900px;margin:4px auto 0;pointer-events:none}
+.nl-battle-hero-side{display:flex;gap:4px;justify-content:flex-start;min-width:0}.nl-battle-hero-side.enemy{justify-content:flex-end}
+.nl-battle-hero-tile{width:clamp(24px,4vw,46px);min-width:0;display:grid;gap:2px;text-align:center}
+.nl-battle-hero-tile img,.nl-battle-hero-fallback{width:100%;aspect-ratio:1;object-fit:cover;object-position:50% 18%;border-radius:4px;border:1px solid #76a9d0;box-sizing:border-box}
+.nl-battle-hero-side.enemy .nl-battle-hero-tile img,.nl-battle-hero-side.enemy .nl-battle-hero-fallback{border-color:#d18a7d}
+.nl-battle-hero-fallback{display:grid;place-items:center;background:#253141;color:#eed9b1;font-size:16px}
+.nl-battle-hero-tile small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:9px system-ui;color:#fff6e2;text-shadow:0 1px 2px #000}
+@media(max-width:650px){.nl-premium-battle .battle-head>.nl-battle-hero-strip{gap:10px;margin-top:2px}.nl-battle-hero-side{gap:2px}.nl-battle-hero-tile{width:clamp(24px,7vw,32px)}.nl-battle-hero-tile small{font-size:7px}}
